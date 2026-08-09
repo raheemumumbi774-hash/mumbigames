@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mumbigames — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA09lEWruy67jcU9EbG_t5hhcr4OSWAAXI",
+    authDomain: "mumbigames.firebaseapp.com",
+    projectId: "mumbigames",
+    storageBucket: "mumbigames.firebasestorage.app",
+    messagingSenderId: "766746284201",
+    appId: "1:766746284201:web:c5a74e1ea6d7778d4499b8"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+</script>
+<style>
+  :root{
+    --bg:#0a0e1a;
+    --panel:#121a2c;
+    --panel-2:#182238;
+    --line:#26314a;
+    --lime:#3b82f6;
+    --lime-dim:#2563eb;
+    --text:#eaf0fb;
+    --sub:#8291ab;
+    --danger:#ff5c5c;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;margin:0;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  /* ---- Gate ---- */
+  #gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .gate-card{width:100%;max-width:340px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:28px;text-align:center;}
+  .cartridge-mark{width:52px;height:52px;margin:0 auto 16px;background:var(--lime);border-radius:8px;position:relative;}
+  .cartridge-mark::after{content:'';position:absolute;top:8px;left:8px;right:8px;bottom:20px;background:var(--bg);border-radius:4px;}
+  .gate-card h1{font-size:20px;letter-spacing:-0.02em;}
+  .gate-card p{color:var(--sub);font-size:13px;margin:6px 0 20px;}
+  input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:9px;font-size:15px;font-family:'Inter',sans-serif;}
+  input:focus{outline:none;border-color:var(--lime);}
+  .btn{cursor:pointer;border:none;border-radius:9px;padding:12px 16px;font-family:'Inter',sans-serif;font-weight:600;font-size:14px;transition:transform .1s ease, opacity .15s ease;}
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--lime);color:#0a0d0a;width:100%;margin-top:14px;}
+  .btn-primary:hover{opacity:.9;}
+  .gate-err{color:var(--danger);font-size:12px;margin-top:10px;min-height:14px;}
+
+  /* ---- App shell ---- */
+  #app{display:none;min-height:100vh;}
+  .topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:rgba(10,13,10,0.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand .cartridge-mark{width:28px;height:28px;margin:0;}
+  .brand span{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;}
+  .brand small{display:block;color:var(--sub);font-size:10px;letter-spacing:.08em;text-transform:uppercase;}
+
+  .tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 14px;border-bottom:1px solid var(--line);scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{flex:none;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;color:var(--sub);background:var(--panel);border:1px solid var(--line);cursor:pointer;white-space:nowrap;}
+  .tab.active{color:#0a0d0a;background:var(--lime);border-color:var(--lime);}
+
+  main{padding:16px;max-width:720px;margin:0 auto;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;}
+  .stat .num{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--lime);}
+  .stat .lbl{font-size:11px;color:var(--sub);margin-top:2px;}
+
+  .section-title{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px;}
+  .section-title h2{font-size:15px;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;}
+
+  .game-card{display:flex;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;position:relative;overflow:hidden;}
+  .game-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--lime);opacity:0;transition:opacity .15s;}
+  .game-card.trending::before{opacity:1;}
+  .thumb{width:56px;height:56px;border-radius:9px;background:var(--bg);border:1px solid var(--line);flex:none;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:10px;}
+  .g-info{flex:1;min-width:0;}
+  .g-info .name{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .g-tags{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;}
+  .tag{font-size:10px;padding:3px 8px;border-radius:20px;background:var(--panel-2);color:var(--sub);border:1px solid var(--line);}
+  .tag.paid{color:var(--lime);border-color:var(--lime-dim);}
+  .tag.free{color:#9fd6ff;}
+  .g-actions{display:flex;flex-direction:column;gap:6px;}
+  .icon-btn{background:var(--panel-2);border:1px solid var(--line);color:var(--sub);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:13px;}
+  .icon-btn.del{color:var(--danger);}
+
+  .empty{text-align:center;padding:30px 10px;color:var(--sub);font-size:13px;}
+
+  /* form */
+  label{display:block;font-size:12px;color:var(--sub);margin:14px 0 6px;font-weight:600;}
+  textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:9px;font-size:14px;font-family:'Inter',sans-serif;resize:vertical;min-height:70px;}
+  select{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:9px;font-size:14px;font-family:'Inter',sans-serif;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .switch-row{display:flex;align-items:center;justify-content:space-between;background:var(--panel-2);border:1px solid var(--line);padding:12px 14px;border-radius:9px;margin-top:14px;}
+  .switch-row span{font-size:13px;font-weight:500;}
+  .switch{position:relative;width:42px;height:24px;background:var(--bg);border:1px solid var(--line);border-radius:20px;cursor:pointer;flex:none;}
+  .switch .knob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--sub);transition:all .15s;}
+  .switch.on{background:rgba(166,255,0,0.15);border-color:var(--lime);}
+  .switch.on .knob{left:20px;background:var(--lime);}
+  .price-box{display:none;}
+  .price-box.show{display:block;}
+  .dl-row{display:flex;gap:8px;margin-top:8px;align-items:center;}
+  .dl-row input{flex:1;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:13px;}
+  .dl-row .rm-btn{flex:none;width:34px;height:34px;border-radius:8px;background:rgba(255,92,92,0.15);color:var(--danger);border:1px solid rgba(255,92,92,0.4);font-size:14px;}
+  input[type=file]{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--sub);padding:10px;border-radius:9px;font-size:13px;}
+  .form-actions{display:flex;gap:10px;margin-top:20px;}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text);}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--lime);color:#0a0d0a;padding:10px 18px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s, bottom .2s;z-index:20;}
+  .toast.show{opacity:1;bottom:30px;}
+
+  .pay-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;}
+  .pay-line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .pay-line:last-child{border-bottom:none;}
+  .pay-line b{color:var(--lime);}
+
+  .link-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .link-card .name{font-size:13px;font-weight:600;}
+  .link-card .url{font-size:11px;color:var(--sub);word-break:break-all;}
+
+  /* Duka moderation cards */
+  .listing-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;display:flex;gap:12px;}
+  .listing-card .lthumb{width:64px;height:64px;border-radius:9px;background:var(--bg);border:1px solid var(--line);flex:none;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:9px;}
+  .listing-card .linfo{flex:1;min-width:0;}
+  .listing-card .lname{font-weight:600;font-size:14px;}
+  .listing-card .ldesc{font-size:12px;color:var(--sub);margin-top:3px;}
+  .listing-card .lmeta{font-size:11px;color:var(--sub);margin-top:5px;}
+  .listing-card .lmeta b{color:var(--lime);}
+  .listing-card .lseller{font-size:11px;color:var(--sub);margin-top:2px;}
+  .listing-actions{display:flex;gap:6px;margin-top:8px;}
+  .proof-row{display:flex;gap:8px;margin-top:8px;}
+  .proof-thumb{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--line);}  .btn-sm{padding:7px 12px;border-radius:8px;border:none;font-size:11.5px;font-weight:600;cursor:pointer;}
+  .btn-approve{background:var(--lime);color:var(--bg);}
+  .btn-reject{background:rgba(255,92,92,0.15);color:var(--danger);border:1px solid rgba(255,92,92,0.4);}
+  .btn-remove{background:var(--panel-2);color:var(--sub);border:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <div class="cartridge-mark"></div>
+    <h1>mumbigames admin</h1>
+    <p>Weka PIN yako kuingia kwenye dashibodi</p>
+    <input type="password" id="pinInput" inputmode="numeric" placeholder="PIN (mfano 1234)" maxlength="12">
+    <button class="btn btn-primary" onclick="tryEnter()">Ingia</button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="cartridge-mark"></div>
+      <div>
+        <span>mumbigames</span>
+        <small>Admin Dashboard</small>
+      </div>
+    </div>
+    <button class="icon-btn" onclick="logout()">⎋</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-view="overview">Muhtasari</div>
+    <div class="tab" data-view="games">Games</div>
+    <div class="tab" data-view="add">+ Weka Game</div>
+    <div class="tab" data-view="payment">Malipo</div>
+    <div class="tab" data-view="duka">Duka</div>
+    <div class="tab" data-view="banners">Banner</div>
+    <div class="tab" data-view="polls">Kura</div>
+    <div class="tab" data-view="social">Social</div>
+  </div>
+
+  <main>
+    <!-- OVERVIEW -->
+    <div class="view active" id="view-overview">
+      <div class="stat-row">
+        <div class="stat"><div class="num" id="statTotal">0</div><div class="lbl">Games zote</div></div>
+        <div class="stat"><div class="num" id="statFree">0</div><div class="lbl">Bure</div></div>
+        <div class="stat"><div class="num" id="statPaid">0</div><div class="lbl">Za kulipia</div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><div class="num" id="statVisits">0</div><div class="lbl">Watembeleaji (jumla)</div></div>
+        <div class="stat"><div class="num" id="statUnique">0</div><div class="lbl">Wageni wapya</div></div>
+        <div class="stat"><div class="num" id="statAccounts">0</div><div class="lbl">Akaunti zilizofunguliwa</div></div>
+      </div>
+      <div class="section-title"><h2>Trending sasa</h2></div>
+      <div id="trendingList"></div>
+      <div class="section-title"><h2>Zilizoongezwa hivi karibuni</h2></div>
+      <div id="recentList"></div>
+      <div class="section-title"><h2>📢 Tangaza machapisho mapya</h2></div>
+      <p style="font-size:12px;color:var(--sub);margin-bottom:10px;">Ukiweka video mpya TikTok au YouTube, bonyeza hapa ili watumiaji waone alama ya "kipya" kwenye website.</p>
+      <div style="display:flex;gap:10px;margin-bottom:20px;">
+        <button class="btn btn-ghost" style="flex:1" onclick="announceSocial('tiktok')">♪ TikTok Mpya</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="announceSocial('youtube')">▶ YouTube Mpya</button>
+      </div>
+    </div>
+
+    <!-- GAMES LIST -->
+    <div class="view" id="view-games">
+      <div class="section-title"><h2>Games zote</h2></div>
+      <div id="allGamesList"></div>
+    </div>
+
+    <!-- ADD / EDIT -->
+    <div class="view" id="view-add">
+      <h2 id="formTitle" style="font-size:16px;margin-bottom:4px;">Weka Game Mpya</h2>
+      <input type="hidden" id="editId">
+
+      <label>Jina la Game</label>
+      <input type="text" id="gName" placeholder="mfano: Subway Rush">
+
+      <label>Maelezo mafupi</label>
+      <textarea id="gDesc" placeholder="Maelezo mafupi ya game..."></textarea>
+
+      <div class="row2">
+        <div>
+          <label>Genre</label>
+          <input type="text" id="gGenre" placeholder="Action, Puzzle...">
+        </div>
+        <div>
+          <label>Inatumika Offline?</label>
+          <select id="gOffline">
+            <option value="yes">Ndiyo</option>
+            <option value="no">Hapana</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Picha ya jalada</label>
+      <div id="imgPreviewWrap" style="display:none;margin-bottom:10px;">
+        <img id="imgPreview" src="" style="width:100%;max-height:160px;object-fit:cover;border-radius:10px;border:1px solid var(--line);">
+      </div>
+      <input type="file" id="gImageFile" accept="image/*" onchange="handleImageSelect()">
+      <div id="imgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin:12px 0;color:var(--sub);font-size:12px;">
+        <div style="flex:1;height:1px;background:var(--line);"></div>
+        AU weka link ya picha
+        <div style="flex:1;height:1px;background:var(--line);"></div>
+      </div>
+      <div class="dl-row" style="margin-top:0;">
+        <input type="text" id="gImageUrlInput" placeholder="https://... (link ya picha)">
+        <button type="button" class="btn btn-ghost" style="flex:none;padding:10px 14px;" onclick="useImageUrl()">Tumia</button>
+      </div>
+
+      <input type="hidden" id="gImage" value="">
+
+      <label style="margin-top:20px;display:block;">Link za kudownload</label>
+      <div style="font-size:11.5px;color:var(--sub);margin-bottom:8px;">Ongeza link kwa kila faili linalohitajika (mfano: Game File, Emulator, Data)</div>
+      <div id="downloadRows"></div>
+      <button type="button" class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="addDownloadRow()">+ Ongeza Link Nyingine</button>
+
+      <div class="switch-row">
+        <span>Game ya kulipia?</span>
+        <div class="switch" id="paidSwitch" onclick="togglePaid()"><div class="knob"></div></div>
+      </div>
+      <div class="price-box" id="priceBox">
+        <label>Bei (TZS)</label>
+        <input type="number" id="gPrice" placeholder="mfano: 1000">
+      </div>
+
+      <div class="switch-row">
+        <span>Onyesha kwenye Trending</span>
+        <div class="switch" id="trendSwitch" onclick="toggleTrend()"><div class="knob"></div></div>
+      </div>
+
+      <label style="margin-top:20px;display:block;">Utendaji Unaotarajiwa (Performance)</label>
+      <select id="gPerformance">
+        <option value="">-- Chagua (si lazima) --</option>
+        <option value="good">Nzuri (60 FPS+)</option>
+        <option value="mid">Wastani (25-40 FPS)</option>
+        <option value="low">Chini ya wastani (chini ya 25 FPS, lag inawezekana)</option>
+      </select>
+
+      <div class="switch-row" style="margin-top:14px;">
+        <span>Game inahitaji kusetiwa (mf. emulator)?</span>
+        <div class="switch" id="setupSwitch" onclick="toggleSetup()"><div class="knob"></div></div>
+      </div>
+      <div class="price-box" id="setupBox">
+        <label>Maelekezo ya kuseti (hatua kwa hatua)</label>
+        <textarea id="gSetupSteps" placeholder="1. Pakua emulator&#10;2. Fungua faili la game&#10;3. ..." style="min-height:100px;"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" id="saveGameBtn" style="flex:1" onclick="saveGame()">Hifadhi Game</button>
+        <button class="btn btn-ghost" onclick="resetForm()">Futa Fomu</button>
+      </div>
+    </div>
+
+    <!-- PAYMENT -->
+    <div class="view" id="view-payment">
+      <div class="section-title"><h2>Maelekezo ya malipo (games za kulipia)</h2></div>
+      <div class="pay-card">
+        <div class="pay-line"><span>Mtandao</span><b>Tigo Pesa</b></div>
+        <div class="pay-line"><span>Namba</span><b class="mono">0703 504 270</b></div>
+        <div class="pay-line"><span>Namba ya kimataifa</span><b class="mono">+255 703 504 270</b></div>
+        <div class="pay-line"><span>Jina la mpokeaji</span><b>Josh Abdallahman</b></div>
+      </div>
+      <p style="color:var(--sub);font-size:12px;margin-top:12px;line-height:1.6;">
+        Haya maelekezo ndiyo yanayoonekana kwa mtumiaji anapojaribu ku-download game ya kulipia. Mtumiaji hawezi kudownload mpaka UWE UMETHIBITISHA ombi lake hapa chini — linganisha namba na kiasi alichojaza na ujumbe wa Tigo Pesa uliopokea kabla ya "Thibitisha".
+      </p>
+
+      <div class="section-title"><h2>🤖 AI ya Msaada (unapokosa muda wa kuangalia)</h2></div>
+      <p style="color:var(--sub);font-size:12px;line-height:1.6;">
+        Ukiwasha hii, na ombi la malipo likikaa "pending" zaidi ya muda uliyoweka bila wewe kulithibitisha, AI itaangalia zile picha mbili za muamala na, ikiwa na uhakika wa kutosha tu, itathibitisha yenyewe. Vinginevyo itabaki ikisubiri wewe. Kadi itaonyesha wazi "Imethibitishwa na AI" ili ujue — na unaweza kubatilisha uamuzi wake wakati wowote. <b>Kumbuka:</b> AI haiwezi kuthibitisha pesa zimefika benki kwako halisi — inaangalia tu kama picha zinaonekana za kweli, hivyo si njia isiyokosea 100%.
+      </p>
+      <div class="switch-row">
+        <span>Washa AI ya msaada</span>
+        <div class="switch" id="aiEnabledSwitch" onclick="toggleAiEnabled()"><div class="knob"></div></div>
+      </div>
+      <div class="row2" style="margin-top:12px;">
+        <div>
+          <label>Subiri dakika ngapi kabla AI haijaingilia</label>
+          <input type="number" id="aiWindowMinutes" placeholder="20" value="20">
+        </div>
+        <div>
+          <label>Uhakika unaohitajika (0.5 - 1.0)</label>
+          <input type="number" id="aiConfidenceThreshold" placeholder="0.8" step="0.05" min="0.5" max="1" value="0.8">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" style="flex:1" onclick="saveAiConfig()">Hifadhi Mipangilio ya AI</button>
+      </div>
+
+      <div class="section-title"><h2>Yanasubiri uthibitisho</h2></div>
+      <div id="payPendingList"></div>
+      <div class="section-title"><h2>Yaliyothibitishwa</h2></div>
+      <div id="payApprovedList"></div>
+      <div class="section-title"><h2>Yaliyokataliwa</h2></div>
+      <div id="payRejectedList"></div>
+    </div>
+
+    <!-- DUKA / MARKETPLACE MODERATION -->
+    <div class="view" id="view-duka">
+      <div class="section-title"><h2>🚩 Ripoti za matapeli</h2></div>
+      <div id="reportsList"></div>
+      <div class="section-title"><h2>Zinasubiri kibali</h2></div>
+      <div id="pendingList"></div>
+      <div class="section-title"><h2>Zilizothibitishwa (zinaonekana kwa umma)</h2></div>
+      <div id="approvedList"></div>
+      <div class="section-title"><h2>Zilizokataliwa</h2></div>
+      <div id="rejectedList"></div>
+    </div>
+
+    <!-- BANNERS -->
+    <div class="view" id="view-banners">
+      <div class="section-title"><h2>Ongeza Banner Mpya</h2></div>
+      <label>Kichwa (title)</label>
+      <input type="text" id="bTitle" placeholder="mfano: God of War imefika!">
+      <label>Maelezo mafupi (si lazima)</label>
+      <input type="text" id="bSubtitle" placeholder="mfano: Pakua sasa, bure wiki hii">
+      <label>Lebo/Badge (si lazima)</label>
+      <input type="text" id="bBadge" placeholder="mfano: Mpya">
+      <label>Mpangilio (order)</label>
+      <input type="number" id="bOrder" placeholder="0" value="0">
+      <label>Picha ya banner</label>
+      <div id="bImgPreviewWrap" style="display:none;margin-bottom:10px;">
+        <img id="bImgPreview" src="" style="width:100%;max-height:160px;object-fit:cover;border-radius:10px;border:1px solid var(--line);">
+      </div>
+      <input type="file" id="bImageFile" accept="image/*" onchange="handleBannerImageSelect()">
+      <div id="bImgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
+      <input type="hidden" id="bImage" value="">
+      <div class="form-actions">
+        <button class="btn btn-primary" style="flex:1" onclick="saveBanner()">Hifadhi Banner</button>
+      </div>
+      <div class="section-title"><h2>Banner zilizopo</h2></div>
+      <div id="bannerList"></div>
+    </div>
+
+    <!-- POLLS -->
+    <div class="view" id="view-polls">
+      <div class="section-title"><h2>Tengeneza Kura Mpya</h2></div>
+      <label>Swali la kura</label>
+      <input type="text" id="pQuestion" placeholder="mfano: Game gani tuiweke wiki hii?">
+      <label style="margin-top:20px;display:block;">Chaguo (options)</label>
+      <div id="pollOptionRows"></div>
+      <button type="button" class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="addPollOptionRow()">+ Ongeza Chaguo</button>
+      <div class="form-actions">
+        <button class="btn btn-primary" style="flex:1" onclick="createPoll()">Anzisha Kura</button>
+      </div>
+      <div class="section-title"><h2>Kura zilizopo</h2></div>
+      <div id="pollList"></div>
+    </div>
+
+    <!-- SOCIAL -->
+    <div class="view" id="view-social">
+      <div class="section-title"><h2>Social media links</h2></div>
+      <div class="link-card">
+        <div><div class="name">YouTube</div><div class="url">youtube.com/@mumbi_gaming</div></div>
+      </div>
+      <div class="link-card">
+        <div><div class="name">WhatsApp Channel</div><div class="url">whatsapp.com/channel/0029VbDMJP384Om5hO18hq0B</div></div>
+      </div>
+      <div class="link-card">
+        <div><div class="name">TikTok</div><div class="url">tiktok.com/@iam_mumbi7</div></div>
+      </div>
+      <p style="color:var(--sub);font-size:12px;margin-top:10px;">Hizi ndizo link zitakazowekwa kwenye nembo za bottom nav ya website/app kuu.</p>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let games = [];
+let editingId = null;
+let paidOn = false;
+let trendOn = false;
+let setupOn = false;
+
+// ---- Auth gate (PIN stored in Firestore) ----
+async function tryEnter(){
+  const val = document.getElementById('pinInput').value.trim();
+  const errEl = document.getElementById('gateErr');
+  if(!val){ errEl.textContent = 'Weka PIN kwanza.'; return; }
+  try{
+    const ref = db.collection('meta').doc('admin');
+    const snap = await ref.get();
+    if(!snap.exists){
+      await ref.set({pin: val});
+      enterApp();
+    } else if(snap.data().pin === val){
+      enterApp();
+    } else {
+      errEl.textContent = 'PIN si sahihi. Jaribu tena.';
+    }
+  }catch(e){
+    console.error(e);
+    errEl.textContent = 'Hitilafu ya kuunganisha. Angalia mtandao wako.';
+  }
+}
+function enterApp(){
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='block';
+  loadGames();
+  loadSiteStats();
+}
+// ---- Visitor + account stats ----
+function announceSocial(type){
+  const field = type === 'tiktok' ? 'tiktokTs' : 'youtubeTs';
+  db.collection('meta').doc('socialUpdates').set({[field]: Date.now()}, {merge:true})
+    .then(()=>showToast('Watumiaji wataona alama ya kipya sasa.'))
+    .catch(e=>{ console.error(e); showToast('Imeshindwa. Jaribu tena.'); });
+}
+
+function loadSiteStats(){
+  db.collection('meta').doc('siteStats').onSnapshot(function(doc){
+    const d = doc.exists ? doc.data() : {};
+    document.getElementById('statVisits').textContent = d.totalVisits || 0;
+    document.getElementById('statUnique').textContent = d.uniqueVisitors || 0;
+  }, function(err){ console.error(err); });
+  db.collection('users').onSnapshot(function(snap){
+    document.getElementById('statAccounts').textContent = snap.size;
+  }, function(err){ console.error(err); });
+}
+function logout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('gate').style.display='flex';
+  document.getElementById('pinInput').value='';
+}
+
+// ---- Tabs ----
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('view-'+tab.dataset.view).classList.add('active');
+    if(tab.dataset.view==='overview' || tab.dataset.view==='games') renderAll();
+    if(tab.dataset.view==='duka'){ loadListings(); loadListingReports(); }
+    if(tab.dataset.view==='banners') loadBannersAdmin();
+    if(tab.dataset.view==='polls') loadPollsAdmin();
+    if(tab.dataset.view==='payment') loadPaymentRequests();
+  });
+});
+
+// ---- Firestore: games ----
+function loadGames(){
+  db.collection('games').onSnapshot(snap=>{
+    games = snap.docs.map(d=>d.data());
+    renderAll();
+  }, err=>{
+    console.error(err);
+    showToast('Imeshindwa kupakia games.');
+  });
+}
+
+// ---- Form toggles ----
+function togglePaid(){
+  paidOn = !paidOn;
+  document.getElementById('paidSwitch').classList.toggle('on', paidOn);
+  document.getElementById('priceBox').classList.toggle('show', paidOn);
+}
+function toggleTrend(){
+  trendOn = !trendOn;
+  document.getElementById('trendSwitch').classList.toggle('on', trendOn);
+}
+function toggleSetup(){
+  setupOn = !setupOn;
+  document.getElementById('setupSwitch').classList.toggle('on', setupOn);
+  document.getElementById('setupBox').classList.toggle('show', setupOn);
+}
+
+function resetForm(){
+  editingId = null;
+  document.getElementById('editId').value='';
+  document.getElementById('formTitle').textContent='Weka Game Mpya';
+  document.getElementById('gName').value='';
+  document.getElementById('gDesc').value='';
+  document.getElementById('gGenre').value='';
+  document.getElementById('gOffline').value='yes';
+  document.getElementById('gImage').value='';
+  document.getElementById('gImageFile').value='';
+  document.getElementById('gImageUrlInput').value='';
+  document.getElementById('imgPreviewWrap').style.display='none';
+  document.getElementById('imgUploadStatus').textContent='';
+  document.getElementById('gPrice').value='';
+  document.getElementById('gPerformance').value='';
+  document.getElementById('gSetupSteps').value='';
+  document.getElementById('downloadRows').innerHTML='';
+  addDownloadRow();
+  paidOn=false; trendOn=false; setupOn=false;
+  document.getElementById('paidSwitch').classList.remove('on');
+  document.getElementById('priceBox').classList.remove('show');
+  document.getElementById('trendSwitch').classList.remove('on');
+  document.getElementById('setupSwitch').classList.remove('on');
+  document.getElementById('setupBox').classList.remove('show');
+}
+
+// ---- Use a direct image URL instead of uploading a file ----
+function useImageUrl(){
+  const input = document.getElementById('gImageUrlInput');
+  const url = input.value.trim();
+  if(!url){ showToast('Weka link ya picha kwanza.'); return; }
+  if(!/^https?:\/\//i.test(url)){ showToast('Link lazima lianze na http:// au https://'); return; }
+  if(/^https?:\/\/ibb\.co\//i.test(url)){
+    showToast('Hii ni link ya ukurasa, si picha moja kwa moja. Tumia "Direct link" (huanza na i.ibb.co).');
+    return;
+  }
+  // Reset any stuck file-upload state so URL method always works
+  imgUploading = false;
+  const saveBtn = document.getElementById('saveGameBtn');
+  if(saveBtn){ saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
+
+  document.getElementById('gImage').value = url;
+  const previewImg = document.getElementById('imgPreview');
+  previewImg.onerror = function(){
+    showToast('Link hii haionekani kuwa picha halali. Angalia tena.');
+  };
+  previewImg.onload = function(){
+    document.getElementById('imgUploadStatus').style.color = 'var(--sub)';
+    document.getElementById('imgUploadStatus').textContent = 'Picha imewekwa kutoka link ✓';
+  };
+  previewImg.src = url;
+  document.getElementById('imgPreviewWrap').style.display = 'block';
+}
+
+
+async function handleImageSelect(){
+  const fileInput = document.getElementById('gImageFile');
+  const file = fileInput.files[0];
+  if(!file) return;
+  const statusEl = document.getElementById('imgUploadStatus');
+  const saveBtn = document.getElementById('saveGameBtn');
+  imgUploading = true;
+  statusEl.style.color = 'var(--sub)';
+  statusEl.textContent = 'Inapakia picha... (usibonyeze Hifadhi mpaka imalize)';
+  if(saveBtn){ saveBtn.disabled = true; saveBtn.style.opacity = '0.5'; }
+  const path = 'game-images/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'');
+  try{
+    const ref = storage.ref().child(path);
+    const uploadPromise = ref.put(file).then(function(snap){ return snap.ref.getDownloadURL(); });
+    const timeoutPromise = new Promise(function(_, reject){
+      setTimeout(function(){ reject(new Error('timeout')); }, 25000);
+    });
+    const url = await Promise.race([uploadPromise, timeoutPromise]);
+    document.getElementById('gImage').value = url;
+    document.getElementById('imgPreview').src = url;
+    document.getElementById('imgPreviewWrap').style.display = 'block';
+    statusEl.textContent = 'Picha imepakiwa ✓';
+  }catch(e){
+    console.error(e);
+    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = e && e.message === 'timeout'
+      ? 'Imechukua muda mrefu sana. Tumia "weka link ya picha" chini badala yake.'
+      : 'Imeshindwa kupakia picha. Angalia mtandao wako, au tumia "weka link ya picha" chini.';
+  }finally{
+    imgUploading = false;
+    if(saveBtn){ saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
+  }
+}
+
+// ---- Multiple download links ----
+let dlRowCounter = 0;
+function addDownloadRow(label, url){
+  dlRowCounter++;
+  const id = 'dlrow_' + dlRowCounter;
+  const row = document.createElement('div');
+  row.className = 'dl-row';
+  row.id = id;
+  row.innerHTML = `
+    <input type="text" placeholder="Jina (mf. Game File, Emulator)" class="dl-label" value="${label ? escapeAttr(label) : ''}">
+    <input type="text" placeholder="https://..." class="dl-url" value="${url ? escapeAttr(url) : ''}">
+    <button type="button" class="rm-btn" onclick="document.getElementById('${id}').remove()">✕</button>
+  `;
+  document.getElementById('downloadRows').appendChild(row);
+}
+function escapeAttr(s){
+  return (s||'').replace(/"/g,'&quot;');
+}
+
+// ---- Poll option rows ----
+let pollRowCounter = 0;
+function addPollOptionRow(val){
+  pollRowCounter++;
+  const id = 'pollopt_' + pollRowCounter;
+  const row = document.createElement('div');
+  row.className = 'dl-row';
+  row.id = id;
+  row.innerHTML = `
+    <input type="text" placeholder="Chaguo" class="poll-opt-input" value="${val ? escapeAttr(val) : ''}">
+    <button type="button" class="rm-btn" onclick="document.getElementById('${id}').remove()">✕</button>
+  `;
+  document.getElementById('pollOptionRows').appendChild(row);
+}
+function collectPollOptions(){
+  return Array.from(document.querySelectorAll('.poll-opt-input')).map(i=>i.value.trim()).filter(Boolean);
+}
+
+// ---- Banners: image upload ----
+async function handleBannerImageSelect(){
+  const fileInput = document.getElementById('bImageFile');
+  const file = fileInput.files[0];
+  if(!file) return;
+  const statusEl = document.getElementById('bImgUploadStatus');
+  statusEl.textContent = 'Inapakia picha...';
+  const path = 'banner-images/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'');
+  try{
+    const ref = storage.ref().child(path);
+    const snap = await ref.put(file);
+    const url = await snap.ref.getDownloadURL();
+    document.getElementById('bImage').value = url;
+    document.getElementById('bImgPreview').src = url;
+    document.getElementById('bImgPreviewWrap').style.display = 'block';
+    statusEl.textContent = 'Picha imepakiwa ✓';
+  }catch(e){
+    console.error(e);
+    statusEl.textContent = 'Imeshindwa kupakia picha. Jaribu tena.';
+  }
+}
+
+async function saveBanner(){
+  const title = document.getElementById('bTitle').value.trim();
+  const subtitle = document.getElementById('bSubtitle').value.trim();
+  const badge = document.getElementById('bBadge').value.trim();
+  const order = parseInt(document.getElementById('bOrder').value) || 0;
+  const image = document.getElementById('bImage').value.trim();
+  if(!title){ showToast('Weka kichwa cha banner kwanza.'); return; }
+  try{
+    await db.collection('banners').add({title, subtitle, badge, order, image, createdAt: Date.now()});
+    showToast('Banner imehifadhiwa ✓');
+    document.getElementById('bTitle').value='';
+    document.getElementById('bSubtitle').value='';
+    document.getElementById('bBadge').value='';
+    document.getElementById('bOrder').value='0';
+    document.getElementById('bImage').value='';
+    document.getElementById('bImageFile').value='';
+    document.getElementById('bImgPreviewWrap').style.display='none';
+    document.getElementById('bImgUploadStatus').textContent='';
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kuhifadhi banner.');
+  }
+}
+
+function loadBannersAdmin(){
+  db.collection('banners').orderBy('order','asc').onSnapshot(snap=>{
+    const list = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    document.getElementById('bannerList').innerHTML = list.length ? list.map(b=>`
+      <div class="game-card">
+        <div class="thumb" style="${b.image?`background-image:url('${b.image.replace(/'/g,"")}');background-size:cover;background-position:center;`:''}">${b.image?'':'🖼️'}</div>
+        <div class="g-info">
+          <div class="name">${escapeHtmlAdmin(b.title)}</div>
+          <div class="g-tags"><span class="tag">order: ${b.order||0}</span>${b.badge?`<span class="tag paid">${escapeHtmlAdmin(b.badge)}</span>`:''}</div>
+        </div>
+        <div class="g-actions">
+          <button class="icon-btn del" onclick="deleteBanner('${b.id}')">🗑</button>
+        </div>
+      </div>`).join('') : '<div class="empty">Hakuna banner bado. Ongeza moja hapo juu.</div>';
+  }, err=>console.error(err));
+}
+
+async function deleteBanner(id){
+  if(!confirm('Una uhakika unataka kufuta banner hii?')) return;
+  try{ await db.collection('banners').doc(id).delete(); showToast('Imefutwa.'); }
+  catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
+}
+
+// ---- Polls ----
+async function createPoll(){
+  const question = document.getElementById('pQuestion').value.trim();
+  const options = collectPollOptions();
+  if(!question || options.length < 2){ showToast('Weka swali na angalau chaguo 2.'); return; }
+  try{
+    await db.collection('polls').add({
+      question, options, active: true, counts: {}, voters: {}, createdAt: Date.now()
+    });
+    showToast('Kura imeanzishwa ✓');
+    document.getElementById('pQuestion').value='';
+    document.getElementById('pollOptionRows').innerHTML='';
+    addPollOptionRow(); addPollOptionRow();
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kuanzisha kura.');
+  }
+}
+
+function loadPollsAdmin(){
+  if(document.getElementById('pollOptionRows').children.length===0){
+    addPollOptionRow(); addPollOptionRow();
+  }
+  db.collection('polls').orderBy('createdAt','desc').onSnapshot(snap=>{
+    const list = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    document.getElementById('pollList').innerHTML = list.length ? list.map(p=>{
+      const counts = p.counts || {};
+      const total = (p.options||[]).reduce((s,o)=>s+(counts[o]||0),0);
+      const rows = (p.options||[]).map(o=>`<div class="pay-line"><span>${escapeHtmlAdmin(o)}</span><b>${counts[o]||0}</b></div>`).join('');
+      return `<div class="listing-card" style="flex-direction:column;">
+        <div class="lname">${escapeHtmlAdmin(p.question)}</div>
+        <div class="lmeta">Kura jumla: <b>${total}</b> — ${p.active!==false?'Inaendelea':'Imefungwa'}</div>
+        <div class="pay-card" style="margin-top:8px;">${rows}</div>
+        <div class="listing-actions">
+          <button class="btn-sm ${p.active!==false?'btn-reject':'btn-approve'}" onclick="togglePollActive('${p.id}', ${p.active===false})">${p.active!==false?'Funga Kura':'Fungua Kura'}</button>
+          <button class="btn-sm btn-remove" onclick="deletePoll('${p.id}')">Futa</button>
+        </div>
+      </div>`;
+    }).join('') : '<div class="empty">Hakuna kura bado. Anzisha moja hapo juu.</div>';
+  }, err=>console.error(err));
+}
+
+async function togglePollActive(id, makeActive){
+  try{ await db.collection('polls').doc(id).update({active: makeActive}); showToast('Imesasishwa.'); }
+  catch(e){ console.error(e); showToast('Imeshindwa.'); }
+}
+async function deletePoll(id){
+  if(!confirm('Una uhakika unataka kufuta kura hii?')) return;
+  try{ await db.collection('polls').doc(id).delete(); showToast('Imefutwa.'); }
+  catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
+}
+function escapeHtmlAdmin(s){
+  return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function collectDownloads(){
+  const rows = document.querySelectorAll('#downloadRows .dl-row');
+  const out = [];
+  rows.forEach(row=>{
+    const label = row.querySelector('.dl-label').value.trim();
+    const url = row.querySelector('.dl-url').value.trim();
+    if(url) out.push({label: label || 'Download', url});
+  });
+  return out;
+}
+
+async function saveGame(){
+  const name = document.getElementById('gName').value.trim();
+  if(!name){ showToast('Weka jina la game kwanza.'); return; }
+  if(imgUploading){ showToast('Subiri, picha inaendelea kupakia...'); return; }
+  const data = {
+    id: editingId || ('g_'+Date.now()),
+    name,
+    desc: document.getElementById('gDesc').value.trim(),
+    genre: document.getElementById('gGenre').value.trim(),
+    offline: document.getElementById('gOffline').value,
+    image: document.getElementById('gImage').value.trim(),
+    downloads: collectDownloads(),
+    paid: paidOn,
+    price: paidOn ? (document.getElementById('gPrice').value || '0') : '0',
+    trending: trendOn,
+    performance: document.getElementById('gPerformance').value,
+    needsSetup: setupOn,
+    setupSteps: setupOn ? document.getElementById('gSetupSteps').value.trim() : '',
+    createdAt: editingId ? (games.find(g=>g.id===editingId)?.createdAt || Date.now()) : Date.now()
+  };
+  try{
+    await db.collection('games').doc(data.id).set(data);
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kuhifadhi. Angalia mtandao wako.');
+    return;
+  }
+  showToast(editingId ? 'Game imesasishwa!' : 'Game imeongezwa!');
+  resetForm();
+  document.querySelector('.tab[data-view="games"]').click();
+}
+
+function editGame(id){
+  const g = games.find(x=>x.id===id);
+  if(!g) return;
+  editingId = id;
+  document.getElementById('editId').value=id;
+  document.getElementById('formTitle').textContent='Hariri: '+g.name;
+  document.getElementById('gName').value=g.name;
+  document.getElementById('gDesc').value=g.desc||'';
+  document.getElementById('gGenre').value=g.genre||'';
+  document.getElementById('gOffline').value=g.offline||'yes';
+  document.getElementById('gImage').value=g.image||'';
+  if(g.image){
+    document.getElementById('imgPreview').src = g.image;
+    document.getElementById('imgPreviewWrap').style.display = 'block';
+  } else {
+    document.getElementById('imgPreviewWrap').style.display = 'none';
+  }
+  document.getElementById('downloadRows').innerHTML = '';
+  if(Array.isArray(g.downloads) && g.downloads.length){
+    g.downloads.forEach(d=>addDownloadRow(d.label, d.url));
+  } else if(g.download){
+    addDownloadRow('Game File', g.download);
+  } else {
+    addDownloadRow();
+  }
+  document.getElementById('gPrice').value=g.price||'';
+  document.getElementById('gPerformance').value=g.performance||'';
+  setupOn = !!g.needsSetup;
+  document.getElementById('gSetupSteps').value=g.setupSteps||'';
+  document.getElementById('setupSwitch').classList.toggle('on', setupOn);
+  document.getElementById('setupBox').classList.toggle('show', setupOn);
+  paidOn = !!g.paid;
+  trendOn = !!g.trending;
+  document.getElementById('paidSwitch').classList.toggle('on', paidOn);
+  document.getElementById('priceBox').classList.toggle('show', paidOn);
+  document.getElementById('trendSwitch').classList.toggle('on', trendOn);
+  document.querySelector('.tab[data-view="add"]').click();
+}
+
+async function deleteGame(id){
+  try{
+    await db.collection('games').doc(id).delete();
+  }catch(e){
+    console.error(e);
+  }
+  showToast('Game imefutwa.');
+}
+
+// ---- Rendering ----
+function gameCardHtml(g){
+  const thumbStyle = g.image ? `style="background-image:url('${g.image.replace(/'/g,"")}')"` : '';
+  return `
+    <div class="game-card ${g.trending?'trending':''}">
+      <div class="thumb" ${thumbStyle}>${g.image?'':'IMG'}</div>
+      <div class="g-info">
+        <div class="name">${escapeHtml(g.name)}</div>
+        <div class="g-tags">
+          <span class="tag ${g.paid?'paid':'free'}">${g.paid ? 'Kulipia · TZS '+escapeHtml(g.price) : 'Bure'}</span>
+          ${g.genre?`<span class="tag">${escapeHtml(g.genre)}</span>`:''}
+          <span class="tag">${g.offline==='yes'?'Offline':'Online'}</span>
+          ${g.trending?'<span class="tag" style="color:var(--lime)">🔥 Trending</span>':''}
+        </div>
+      </div>
+      <div class="g-actions">
+        <button class="icon-btn" onclick="editGame('${g.id}')">✎</button>
+        <button class="icon-btn del" onclick="deleteGame('${g.id}')">🗑</button>
+      </div>
+    </div>`;
+}
+function escapeHtml(s){
+  return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function renderAll(){
+  document.getElementById('statTotal').textContent = games.length;
+  document.getElementById('statFree').textContent = games.filter(g=>!g.paid).length;
+  document.getElementById('statPaid').textContent = games.filter(g=>g.paid).length;
+
+  const trending = games.filter(g=>g.trending);
+  document.getElementById('trendingList').innerHTML = trending.length
+    ? trending.map(gameCardHtml).join('')
+    : '<div class="empty">Hakuna game ya trending kwa sasa</div>';
+
+  const recent = [...games].sort((a,b)=>b.createdAt-a.createdAt).slice(0,3);
+  document.getElementById('recentList').innerHTML = recent.length
+    ? recent.map(gameCardHtml).join('')
+    : '<div class="empty">Bado hujaongeza game yoyote</div>';
+
+  document.getElementById('allGamesList').innerHTML = games.length
+    ? games.map(gameCardHtml).join('')
+    : '<div class="empty">Bado hujaongeza game yoyote. Bonyeza "+ Weka Game" kuanza.</div>';
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ---- Duka (marketplace) moderation ----
+let listings = [];
+let listingsListening = false;
+
+function loadListings(){
+  if(listingsListening) return; // already subscribed
+  listingsListening = true;
+  db.collection('listings').onSnapshot(snap=>{
+    listings = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    renderListings();
+  }, err=>{
+    console.error(err);
+    showToast('Imeshindwa kupakia duka.');
+  });
+}
+function escapeHtml2(s){
+  return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function listingCard(l){
+  const thumbStyle = l.image ? `style="background-image:url('${l.image.replace(/'/g,"")}')"` : '';
+  let actions = '';
+  if(l.status==='pending'){
+    actions = `<div class="listing-actions">
+      <button class="btn-sm btn-approve" onclick="setListingStatus('${l.id}','approved')">Thibitisha</button>
+      <button class="btn-sm btn-reject" onclick="setListingStatus('${l.id}','rejected')">Kataa</button>
+    </div>`;
+  } else if(l.status==='approved'){
+    actions = `<div class="listing-actions">
+      <button class="btn-sm btn-remove" onclick="setListingStatus('${l.id}','rejected')">Ondoa (matapeli)</button>
+    </div>`;
+  } else {
+    actions = `<div class="listing-actions">
+      <button class="btn-sm btn-approve" onclick="setListingStatus('${l.id}','approved')">Rejesha/Thibitisha</button>
+    </div>`;
+  }
+  return `<div class="listing-card">
+    <div class="lthumb" ${thumbStyle}>${l.image?'':'IMG'}</div>
+    <div class="linfo">
+      <div class="lname">${escapeHtml2(l.title)}</div>
+      <div class="ldesc">${escapeHtml2(l.desc)}</div>
+      <div class="lmeta">Bei: <b>TZS ${escapeHtml2(l.price)}</b></div>
+      <div class="lseller">Muuzaji: ${escapeHtml2(l.sellerName)} · ${escapeHtml2(l.sellerPhone)}</div>
+      ${l.ownerEmail ? `<div class="lseller">Akaunti: ${escapeHtml2(l.ownerEmail)}</div>` : ''}
+      ${actions}
+    </div>
+  </div>`;
+}
+async function setListingStatus(id, status){
+  try{
+    await db.collection('listings').doc(id).update({status});
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kusasisha.');
+    return;
+  }
+  showToast(status==='approved' ? 'Bidhaa imethibitishwa!' : 'Imekataliwa/imeondolewa.');
+}
+function renderListings(){
+  const pending = listings.filter(l=>l.status==='pending');
+  const approved = listings.filter(l=>l.status==='approved');
+  const rejected = listings.filter(l=>l.status==='rejected');
+  document.getElementById('pendingList').innerHTML = pending.length ? pending.map(listingCard).join('') : '<div class="empty">Hakuna inayosubiri kibali</div>';
+  document.getElementById('approvedList').innerHTML = approved.length ? approved.map(listingCard).join('') : '<div class="empty">Bado hakuna bidhaa iliyothibitishwa</div>';
+  document.getElementById('rejectedList').innerHTML = rejected.length ? rejected.map(listingCard).join('') : '<div class="empty">Hakuna zilizokataliwa</div>';
+}
+
+// ---- Duka: scam reports from users ----
+let reports = [];
+let reportsListening = false;
+function loadListingReports(){
+  if(reportsListening) return;
+  reportsListening = true;
+  db.collection('listingReports').orderBy('createdAt','desc').onSnapshot(snap=>{
+    reports = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    renderReports();
+  }, err=>{
+    console.error(err);
+  });
+}
+function renderReports(){
+  const el = document.getElementById('reportsList');
+  if(!reports.length){ el.innerHTML = '<div class="empty">Hakuna ripoti kwa sasa</div>'; return; }
+  el.innerHTML = reports.map(r=>`
+    <div class="listing-card">
+      <div class="linfo">
+        <div class="lname">🚩 ${escapeHtml2(r.listingTitle||'Bidhaa')}</div>
+        <div class="ldesc">${escapeHtml2(r.reason||'(hakuna maelezo)')}</div>
+        <div class="lmeta">${new Date(r.createdAt||Date.now()).toLocaleString()}</div>
+        <div class="listing-actions">
+          <button class="btn-sm btn-remove" onclick="removeReportedListing('${r.listingId}','${r.id}')">Ondoa Bidhaa (matapeli)</button>
+          <button class="btn-sm btn-reject" onclick="dismissReport('${r.id}')">Futa Ripoti</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+async function dismissReport(id){
+  try{ await db.collection('listingReports').doc(id).delete(); }catch(e){ console.error(e); }
+}
+async function removeReportedListing(listingId, reportId){
+  try{
+    if(listingId) await db.collection('listings').doc(listingId).update({status:'rejected'});
+    await db.collection('listingReports').doc(reportId).delete();
+    showToast('Bidhaa imeondolewa.');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa. Jaribu tena.');
+  }
+}
+
+// ---- Payment requests: manual verification queue for paid games ----
+let paymentRequests = [];
+let paymentListening = false;
+function loadPaymentRequests(){
+  if(paymentListening) return;
+  paymentListening = true;
+  db.collection('paymentRequests').onSnapshot(snap=>{
+    paymentRequests = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    renderPaymentRequests();
+  }, err=>{
+    console.error(err);
+    showToast('Imeshindwa kupakia malipo.');
+  });
+}
+// ---- AI payment fallback config ----
+let aiEnabledOn = false;
+function toggleAiEnabled(){
+  aiEnabledOn = !aiEnabledOn;
+  document.getElementById('aiEnabledSwitch').classList.toggle('on', aiEnabledOn);
+}
+async function loadAiConfig(){
+  try{
+    const snap = await db.collection('meta').doc('aiConfig').get();
+    const d = snap.exists ? snap.data() : {};
+    aiEnabledOn = d.enabled === true;
+    document.getElementById('aiEnabledSwitch').classList.toggle('on', aiEnabledOn);
+    document.getElementById('aiWindowMinutes').value = d.windowMinutes || 20;
+    document.getElementById('aiConfidenceThreshold').value = (d.confidenceThreshold != null) ? d.confidenceThreshold : 0.8;
+  }catch(e){ console.error(e); }
+}
+async function saveAiConfig(){
+  const windowMinutes = parseInt(document.getElementById('aiWindowMinutes').value, 10) || 20;
+  const confidenceThreshold = parseFloat(document.getElementById('aiConfidenceThreshold').value) || 0.8;
+  try{
+    await db.collection('meta').doc('aiConfig').set({
+      enabled: aiEnabledOn, windowMinutes, confidenceThreshold
+    }, {merge:true});
+    showToast('Mipangilio ya AI imehifadhiwa.');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kuhifadhi.');
+  }
+}
+loadAiConfig();
+
+function paymentCard(p){
+  let actions = '';
+  if(p.status==='pending'){
+    actions = `<div class="listing-actions">
+      <button class="btn-sm btn-approve" onclick="setPaymentStatus('${p.id}','approved')">Thibitisha</button>
+      <button class="btn-sm btn-reject" onclick="setPaymentStatus('${p.id}','rejected')">Kataa</button>
+    </div>`;
+  } else if(p.status==='approved'){
+    actions = `<div class="listing-actions">
+      <button class="btn-sm btn-remove" onclick="setPaymentStatus('${p.id}','rejected')">Bandua (si sahihi)</button>
+    </div>`;
+  } else {
+    actions = `<div class="listing-actions">
+      <button class="btn-sm btn-approve" onclick="setPaymentStatus('${p.id}','approved')">Thibitisha</button>
+    </div>`;
+  }
+  const proofs = (p.proof1 || p.proof2) ? `<div class="proof-row">
+      ${p.proof1 ? `<a href="${p.proof1}" target="_blank"><img src="${p.proof1}" class="proof-thumb"></a>` : ''}
+      ${p.proof2 ? `<a href="${p.proof2}" target="_blank"><img src="${p.proof2}" class="proof-thumb"></a>` : ''}
+    </div>` : `<div class="lseller" style="color:var(--danger);">⚠️ Hakuna picha za muamala zilizotumwa</div>`;
+  const aiNote = p.decidedBy === 'ai'
+    ? `<div class="lmeta" style="color:var(--lime);">🤖 Imethibitishwa na AI (uhakika ${Math.round((p.aiConfidence||0)*100)}%) — angalia picha kuhakikisha.</div>`
+    : (p.aiFlag ? `<div class="lmeta" style="color:var(--danger);">🤖 AI ilikagua lakini haikuwa na uhakika: ${escapeHtml2(p.aiReason||'')}</div>` : '');
+  return `<div class="listing-card">
+    <div class="linfo">
+      <div class="lname">🎮 ${escapeHtml2(p.gameName)}</div>
+      <div class="lmeta">Kiasi: <b>TZS ${escapeHtml2(p.price)}</b></div>
+      <div class="lseller">Namba aliyotuma: ${escapeHtml2(p.phone)}</div>
+      ${p.userEmail ? `<div class="lseller">Akaunti: ${escapeHtml2(p.userEmail)}</div>` : ''}
+      <div class="lmeta">${new Date(p.createdAt||Date.now()).toLocaleString()}</div>
+      ${proofs}
+      ${aiNote}
+      ${actions}
+    </div>
+  </div>`;
+}
+async function setPaymentStatus(id, status){
+  try{
+    await db.collection('paymentRequests').doc(id).update({status, updatedAt: Date.now()});
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kusasisha.');
+    return;
+  }
+  showToast(status==='approved' ? 'Malipo yamethibitishwa — mtumiaji ataona download sasa.' : 'Ombi limekataliwa.');
+}
+function renderPaymentRequests(){
+  const pending = paymentRequests.filter(p=>p.status==='pending');
+  const approved = paymentRequests.filter(p=>p.status==='approved');
+  const rejected = paymentRequests.filter(p=>p.status==='rejected');
+  document.getElementById('payPendingList').innerHTML = pending.length ? pending.map(paymentCard).join('') : '<div class="empty">Hakuna yanayosubiri uthibitisho</div>';
+  document.getElementById('payApprovedList').innerHTML = approved.length ? approved.map(paymentCard).join('') : '<div class="empty">Bado hakuna yaliyothibitishwa</div>';
+  document.getElementById('payRejectedList').innerHTML = rejected.length ? rejected.map(paymentCard).join('') : '<div class="empty">Hakuna yaliyokataliwa</div>';
+}
+
+// initialize form with one empty download row
+addDownloadRow();
+</script>
+</body>
+</html>
