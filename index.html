@@ -103,8 +103,11 @@
   /* Quick action row */
   .quick-actions{display:flex;gap:10px;padding:16px 16px 4px;}
   .qa-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--lime);color:#fff;border:none;border-radius:14px;padding:12px 6px;font-size:11.5px;font-weight:700;cursor:pointer;position:relative;}
-  .qa-btn .qa-ic{font-size:18px;}
+  .qa-btn .qa-ic{font-size:20px;}
   .qa-btn.alt{background:var(--panel);color:var(--text);border:1px solid var(--line);}
+  .qa-btn.qa-tiktok{background:linear-gradient(135deg,#25f4ee,#000000 55%,#fe2c55);color:#fff;}
+  .qa-btn.qa-kura{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;}
+  .qa-btn.qa-youtube{background:linear-gradient(135deg,#ff4d4d,#c1121f);color:#fff;border:none;}
   .qa-badge{display:none;position:absolute;top:6px;right:10px;width:10px;height:10px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
 
   /* Trending carousel */
@@ -169,7 +172,8 @@
   .dl-item{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
   .dl-item .dl-icon{color:var(--lime);font-size:16px;}
   .dl-item .dl-name{flex:1;font-size:13.5px;font-weight:600;}
-  .dl-btn{display:block;text-align:center;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:14px;border-radius:12px;margin-bottom:10px;}
+  .dl-btn{display:block;width:100%;text-align:center;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:14px;border-radius:12px;margin-bottom:10px;border:none;font-family:inherit;cursor:pointer;}
+  .dl-btn:disabled{opacity:0.75;cursor:default;}
   .dl-tick{color:#22c55e;font-weight:900;}
   .pay-card{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px;}
   .pay-line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;}
@@ -306,7 +310,7 @@
   #aiView{display:none;flex-direction:column;height:calc(100vh - 78px);}
   .ai-quick{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap;}
   .ai-chip{background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:11.5px;padding:8px 12px;border-radius:20px;cursor:pointer;}
-  .ai-msg{max-width:82%;padding:10px 13px;border-radius:14px;background:var(--panel);border:1px solid var(--line);font-size:13.5px;line-height:1.5;}
+  .ai-msg{max-width:82%;padding:10px 13px;border-radius:14px;background:var(--panel);border:1px solid var(--line);font-size:13.5px;line-height:1.5;white-space:pre-line;}
   .ai-msg.bot{align-self:flex-start;}
   .ai-msg.user{align-self:flex-end;background:rgba(59,130,246,0.16);border-color:var(--lime-dim);}
 </style>
@@ -335,20 +339,9 @@
 </div>
 
 <div class="quick-actions">
-  <a class="qa-btn" href="https://www.tiktok.com/@iam_mumbi7" target="_blank" onclick="markSocialSeen('tiktok')"><span class="qa-badge" id="qaBadgeTiktok"></span><div class="qa-ic">♪</div><span>TikTok</span></a>
-  <div class="qa-btn alt" onclick="showPolls()"><span class="qa-badge" id="qaBadgePoll"></span><div class="qa-ic">🗳️</div><span>Kura</span></div>
-  <a class="qa-btn alt" href="https://youtube.com/@mumbi_gaming" target="_blank" onclick="markSocialSeen('youtube')"><span class="qa-badge" id="qaBadgeYoutube"></span><div class="qa-ic">▶</div><span>YouTube</span></a>
-</div>
-
-<div class="duka-banner" onclick="showDuka()">
-  <div class="db-left">
-    <div class="db-icon">🛍️</div>
-    <div>
-      <div class="db-title" data-i18n="duka_title">Duka la Wachezaji</div>
-      <div class="db-sub" data-i18n="duka_sub_home">Nunua/uza vifaa vya games — vilivyothibitishwa na admin</div>
-    </div>
-  </div>
-  <div class="db-arrow">›</div>
+  <a class="qa-btn qa-tiktok" href="https://www.tiktok.com/@iam_mumbi7" target="_blank" onclick="markSocialSeen('tiktok')"><span class="qa-badge" id="qaBadgeTiktok"></span><div class="qa-ic">🎵</div><span>TikTok</span></a>
+  <div class="qa-btn qa-kura" onclick="showPolls()"><span class="qa-badge" id="qaBadgePoll"></span><div class="qa-ic">🗳️</div><span>Kura</span></div>
+  <a class="qa-btn qa-youtube" href="https://youtube.com/@mumbi_gaming" target="_blank" onclick="markSocialSeen('youtube')"><span class="qa-badge" id="qaBadgeYoutube"></span><div class="qa-ic">▶️</div><span>YouTube</span></a>
 </div>
 
 <div class="chips" id="chips">
@@ -627,7 +620,7 @@
 <div class="bottomnav">
   <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
   <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic">💬</div><span data-i18n="nav_chat">Chat</span></div>
-  <div class="nav-item nav-center" id="navGames" onclick="showHome()"><div class="ic">🎮</div><span>Games</span></div>
+  <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic">🛍️</div><span>Duka</span></div>
   <div class="nav-item" id="navAI" onclick="showAI()"><div class="ic">🤖</div><span>AI</span></div>
   <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic">☺</div><span data-i18n="nav_me">Me</span></div>
 </div>
@@ -687,7 +680,7 @@ function checkNewGameNotification(){
     return;
   }
   if(lastSeen !== latest.id){
-    showAppNotification('Game Mpya! 🎮', latest.name + ' imeongezwa sasa hivi', '🎮');
+    showAppNotification('Kuna Kipya! 🔔', 'Fungua app: "' + latest.name + '" imeongezwa', '🎮');
     localStorage.setItem('mg_last_game_id', latest.id);
   }
 }
@@ -814,8 +807,12 @@ function adminContactRow(){
   </div>`;
 }
 
+let payTimer = null;
+let autoApproveInFlight = false;
+
 function renderPaySection(g, req){
   const el = document.getElementById('modalPaySection');
+  if(payTimer){ clearTimeout(payTimer); payTimer = null; }
   if(req && req.status === 'approved'){
     showModalDownloads(g);
     return;
@@ -824,16 +821,7 @@ function renderPaySection(g, req){
   el.style.display = 'block';
 
   if(req && req.status === 'pending'){
-    el.innerHTML = `
-      <div class="pay-status wait">⏳ Ombi lako la malipo linasubiri uthibitisho. Kwa kawaida admin (binadamu) anaangalia picha zako na kuthibitisha; ikiwa itachukua muda mrefu bila majibu, mfumo wetu wa AI unaweza kuangalia picha zako na kuthibitisha moja kwa moja endapo una uhakika wa kutosha. Download itafunguka hapa moja kwa moja mara itakapothibitishwa — huhitaji kufanya lolote zaidi.</div>
-      <div class="pay-card">
-        <div class="pay-line"><span>Kiasi ulichotuma</span><b>TZS ${escapeHtml(req.price||g.price||'0')}</b></div>
-        <div class="pay-line"><span>Namba uliyotumia</span><b>${escapeHtml(req.phone||'-')}</b></div>
-      </div>
-      ${adminContactRow()}
-      <div class="modal-actions">
-        <button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button>
-      </div>`;
+    renderPendingPayFlow(g, req);
     return;
   }
 
@@ -863,6 +851,140 @@ function renderPaySection(g, req){
       <button class="btn btn-ghost" onclick="closeModal()">Funga</button>
       <button class="btn btn-primary" onclick="submitPaymentClaim()">Nimelipa ✓</button>
     </div>`;
+}
+
+// ---- Timed AI escalation while a payment is pending ----
+const PAY_WAIT_1 = 5*60*1000; // wait before AI chat becomes available
+const PAY_WAIT_2 = 5*60*1000; // wait after user starts chatting with AI
+const PAY_WAIT_3 = 5*60*1000; // final wait before AI auto-unlocks
+
+function renderPendingPayFlow(g, req){
+  const el = document.getElementById('modalPaySection');
+  const now = Date.now();
+  const createdAt = req.createdAt || now;
+  const chatStartedAt = req.aiChatStartedAt || null;
+  const finalStartedAt = req.aiFinalStartedAt || null;
+
+  // Stage: final wait elapsed -> auto-unlock
+  if(finalStartedAt && (now - finalStartedAt) >= PAY_WAIT_3){
+    autoApprovePayment(g, req);
+    el.innerHTML = `<div class="pay-status wait">⏳ Ninathibitisha muamala wako sasa hivi, subiri kidogo...</div>`;
+    return;
+  }
+  // Stage: waiting out the final 5 minutes
+  if(finalStartedAt){
+    const remain = PAY_WAIT_3 - (now - finalStartedAt);
+    el.innerHTML = `
+      <div class="pay-status wait">🤖 Asante! Ninathibitisha muamala wako. Subiri dakika chache zaidi — download itafunguka moja kwa moja hapa hapa bila wewe kufanya lolote zaidi.</div>
+      ${adminContactRow()}
+      <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button></div>`;
+    payTimer = setTimeout(()=>{ if(currentModalGame===g) renderPendingPayFlow(g, req); }, Math.max(1000, remain));
+    return;
+  }
+  // Stage: 5 min of AI chat elapsed -> send final message once
+  if(chatStartedAt && (now - chatStartedAt) >= PAY_WAIT_2){
+    triggerAiFinalMessage(g, req);
+    el.innerHTML = `<div class="pay-status wait">🤖 Inaandaa jibu...</div>`;
+    return;
+  }
+  // Stage: AI chat is open (either mid-conversation or just unlocked)
+  if(chatStartedAt || (now - createdAt) >= PAY_WAIT_1){
+    const remain = chatStartedAt ? (PAY_WAIT_2 - (now - chatStartedAt)) : PAY_WAIT_2;
+    renderAiChatUI(g, req, remain);
+    return;
+  }
+  // Stage: still within the first 5-minute human-verification wait
+  const remain = PAY_WAIT_1 - (now - createdAt);
+  el.innerHTML = `
+    <div class="pay-status wait">⏳ Subiri dakika 5 tunakagua malipo yako. Download itafunguka hapa moja kwa moja mara itakapothibitishwa.</div>
+    <div class="pay-card">
+      <div class="pay-line"><span>Kiasi ulichotuma</span><b>TZS ${escapeHtml(req.price||g.price||'0')}</b></div>
+      <div class="pay-line"><span>Namba uliyotumia</span><b>${escapeHtml(req.phone||'-')}</b></div>
+    </div>
+    ${adminContactRow()}
+    <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button></div>`;
+  payTimer = setTimeout(()=>{ if(currentModalGame===g) renderPendingPayFlow(g, req); }, Math.max(1000, remain));
+}
+
+function renderAiChatUI(g, req, remainMs){
+  const el = document.getElementById('modalPaySection');
+  const log = req.aiChatLog || [];
+  el.innerHTML = `
+    <div class="pay-status wait">🤖 Bado tunasubiri admin athibitishe. Vipi, unaonaje huduma zetu kwa sasa? Niambie hapa nikusaidie.</div>
+    <div id="payAiLog" style="display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto;margin:10px 0;">
+      ${log.map(m=>`<div class="ai-msg ${m.sender==='user'?'user':'bot'}">${escapeHtml(m.text)}</div>`).join('')}
+    </div>
+    <div class="comment-input-row">
+      <input type="text" id="payAiInput" placeholder="Andika hapa..." onkeydown="if(event.key==='Enter') sendPayAiMessage(${JSON.stringify(g.id)})">
+      <button onclick="sendPayAiMessage(${JSON.stringify(g.id)})">Tuma</button>
+    </div>
+    ${adminContactRow()}
+    <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button></div>`;
+  const logEl = document.getElementById('payAiLog');
+  if(logEl) logEl.scrollTop = logEl.scrollHeight;
+  payTimer = setTimeout(()=>{ if(currentModalGame===g) renderPendingPayFlow(g, req); }, Math.max(1000, remainMs));
+}
+
+function aiRespondForPay(text){
+  const lower = text.toLowerCase();
+  const hit = AI_KB.find(k=>k.keys.some(w=>lower.includes(w)));
+  if(hit) return hit.a;
+  return 'Pole kwa usumbufu huo. Naendelea kufuatilia ombi lako la malipo — nitakupa taarifa zaidi hivi punde. Kama una tatizo maalum, niambie zaidi ili nikusaidie vizuri.';
+}
+
+async function sendPayAiMessage(gameId){
+  const input = document.getElementById('payAiInput');
+  if(!input) return;
+  const text = input.value.trim();
+  if(!text || !auth.currentUser) return;
+  input.value = '';
+  input.disabled = true;
+  const uid = auth.currentUser.uid;
+  const ref = db.collection('paymentRequests').doc(paymentDocId(uid, gameId));
+  try{
+    const doc = await ref.get();
+    const data = doc.exists ? doc.data() : {};
+    const isFirst = !data.aiChatStartedAt;
+    const reply = aiRespondForPay(text);
+    let newLog = (data.aiChatLog || []).concat([
+      {sender:'user', text, time: Date.now()},
+      {sender:'bot', text: reply, time: Date.now()}
+    ]);
+    if(newLog.length > 20) newLog = newLog.slice(newLog.length - 20);
+    const update = { aiChatLog: newLog };
+    if(isFirst) update.aiChatStartedAt = Date.now();
+    await ref.set(update, {merge:true});
+  }catch(e){
+    console.error(e);
+  }finally{
+    if(input) input.disabled = false;
+  }
+}
+
+async function triggerAiFinalMessage(g, req){
+  if(!auth.currentUser) return;
+  const uid = auth.currentUser.uid;
+  const ref = db.collection('paymentRequests').doc(paymentDocId(uid, g.id));
+  const finalMsg = 'Kama admin bado hajakujibu, mimi (AI) nitakuhudumia. Hakikisha umeshatuma screenshot za malipo (tayari nazo kwenye ombi lako) — nitasubiri dakika tano nyingine kuthibitisha muamala wako, kisha download itafunguka moja kwa moja.';
+  try{
+    const doc = await ref.get();
+    const data = doc.exists ? doc.data() : {};
+    if(data.aiFinalStartedAt) return;
+    let newLog = (data.aiChatLog || []).concat([{sender:'bot', text: finalMsg, time: Date.now()}]);
+    if(newLog.length > 20) newLog = newLog.slice(newLog.length - 20);
+    await ref.set({aiChatLog: newLog, aiFinalStartedAt: Date.now()}, {merge:true});
+  }catch(e){ console.error(e); }
+}
+
+async function autoApprovePayment(g, req){
+  if(!req || req.status !== 'pending' || autoApproveInFlight) return;
+  autoApproveInFlight = true;
+  const uid = auth.currentUser.uid;
+  const ref = db.collection('paymentRequests').doc(paymentDocId(uid, g.id));
+  try{
+    await ref.set({status:'approved', verifiedBy:'ai_auto', approvedAt: Date.now()}, {merge:true});
+  }catch(e){ console.error(e); }
+  finally{ autoApproveInFlight = false; }
 }
 
 async function handlePaymentProofSelect(input, slot){
@@ -961,12 +1083,33 @@ function showModalDownloads(g){
   const list = (g.downloads && g.downloads.length) ? g.downloads : (g.download ? [{label:'Download', url:g.download}] : []);
   document.getElementById('modalThanks').style.display = 'none';
   document.getElementById('modalDownloadsList').innerHTML = list.length ? list.map((d,i)=>`
-    <a class="dl-btn" id="dlbtn-${i}" href="${d.url}" target="_blank" rel="noopener noreferrer" style="background:${DL_COLORS[i % DL_COLORS.length]};" onclick="recordDownload(${JSON.stringify(g.id)},${JSON.stringify(g.name)});markDownloaded(${i})">
-      ${escapeHtml(d.label)} <span class="dl-tick" id="dltick-${i}" style="display:none;">✓</span>
-    </a>`).join('') : '<div class="empty">Link ya kudownload bado haijawekwa na admin.</div>';
+    <button type="button" class="dl-btn" id="dlbtn-${i}" style="background:${DL_COLORS[i % DL_COLORS.length]};" onclick='startDownloadCountdown(${i}, ${JSON.stringify(d.url)}, ${JSON.stringify(g.id)}, ${JSON.stringify(g.name)})'>
+      ${escapeHtml(d.label)}<span class="dl-count" id="dlcount-${i}"></span> <span class="dl-tick" id="dltick-${i}" style="display:none;">✓</span>
+    </button>`).join('') : '<div class="empty">Link ya kudownload bado haijawekwa na admin.</div>';
 }
 
 let downloadedSet = new Set();
+function startDownloadCountdown(i, url, gameId, gameName){
+  const btn = document.getElementById('dlbtn-' + i);
+  const countEl = document.getElementById('dlcount-' + i);
+  if(!btn || btn.disabled) return;
+  btn.disabled = true;
+  let secs = 5;
+  countEl.textContent = ' (' + secs + ')';
+  const timer = setInterval(()=>{
+    secs--;
+    if(secs > 0){
+      countEl.textContent = ' (' + secs + ')';
+    } else {
+      clearInterval(timer);
+      countEl.textContent = '';
+      window.open(url, '_blank', 'noopener,noreferrer');
+      recordDownload(gameId, gameName);
+      markDownloaded(i);
+      btn.disabled = false;
+    }
+  }, 1000);
+}
 function markDownloaded(i){
   downloadedSet.add(i);
   const tick = document.getElementById('dltick-' + i);
@@ -990,6 +1133,9 @@ function recordDownload(gameId, gameName){
   db.collection('games').doc(gameId).set({
     downloadCount: firebase.firestore.FieldValue.increment(1)
   }, {merge:true}).catch(()=>{});
+  db.collection('downloadLogs').add({
+    gameId, gameName, time: Date.now()
+  }).catch(()=>{});
   if(!auth.currentUser) return;
   db.collection('purchases').add({
     uid: auth.currentUser.uid,
@@ -1167,8 +1313,8 @@ try{ loadBanners(); }catch(e){ console.error('loadBanners failed', e); customBan
 function loadSocialUpdates(){
   db.collection('meta').doc('socialUpdates').onSnapshot(doc=>{
     const d = doc.exists ? doc.data() : {};
-    checkSocialBadge('tiktok', d.tiktokTs || 0, 'TikTok Mpya! ♪', 'Video mpya imewekwa kwenye TikTok');
-    checkSocialBadge('youtube', d.youtubeTs || 0, 'YouTube Mpya! ▶', 'Video mpya imewekwa kwenye YouTube');
+    checkSocialBadge('tiktok', d.tiktokTs || 0, 'Kuna Kipya! 🔔', 'Fungua app: video mpya TikTok');
+    checkSocialBadge('youtube', d.youtubeTs || 0, 'Kuna Kipya! 🔔', 'Fungua app: video mpya YouTube');
   }, err=>console.error(err));
 }
 function checkSocialBadge(type, latestTs, title, sub){
@@ -1236,7 +1382,7 @@ function checkNewPollNotification(polls){
     return;
   }
   if(isNew){
-    showAppNotification('Kura Mpya! 🗳️', latest.question, '🗳️');
+    showAppNotification('Kuna Kipya! 🔔', 'Fungua app: kura mpya imewekwa', '🗳️');
   }
   if(badge) badge.style.display = isNew ? 'block' : 'none';
 }
@@ -1292,24 +1438,32 @@ async function votePoll(pollId, option){
 }
 
 // ---- AI Msaidizi (smart FAQ assistant) ----
+const YT_CHANNEL = 'https://youtube.com/@mumbi_gaming';
 const AI_KB = [
-  {keys:['lipa','malipo','pay','pesa','tigo'], a:'Kulipia game: fungua game, tuma pesa Tigo Pesa 0703504270 (jina: Josh Abdallahman), jaza namba uliyotumia, pakia picha MBILI za screenshot ya muamala, kisha bonyeza "Nimelipa ✓". Ombi lako litasubiri admin (binadamu) athibitishe kwa kuangalia picha zako — download itafunguka moja kwa moja mara tu atakapothibitisha. Ukisubiri muda mrefu unaweza kumpigia admin simu au WhatsApp kwenye ukurasa huo huo. Kwa bidhaa za dukani, malipo pia hupitia admin ili kukukinga na matapeli — usiwahi kutuma pesa moja kwa moja kwa muuzaji.'},
-  {keys:['seti','setup','install','weka game','emulator'], a:'Kama game inahitaji usanidi (setup), fungua game, bonyeza download, kisha chini ya download utaona "Je unahitaji msaada wa kuseti?" — bonyeza Ndiyo utapata hatua kamili.'},
-  {keys:['duka','uza','nunua','bidhaa'], a:'Duka la Wachezaji liko kwenye Home. Unaweza kutazama bidhaa au kuweka bidhaa yako mwenyewe kwa kujaza fomu — admin ataithibitisha kabla haijaonekana kwa umma.'},
-  {keys:['kura','vote','poll'], a:'Bonyeza kitufe cha "Kura" kwenye Home kuona kura zilizopo na kupiga kura yako. Kila mtumiaji anaweza kupiga kura mara moja kwa kila swali.'},
-  {keys:['download','pakua','haifunguki','tatizo'], a:'Kama download haifanyi kazi, hakikisha una mtandao mzuri na jaribu tena. Kama tatizo linaendelea, wasiliana na admin kupitia WhatsApp.'},
-  {keys:['akaunti','login','ingia','jisajili','password'], a:'Nenda Profile (chini kulia), jaza email na password kuunda akaunti au kuingia. Akaunti inakusaidia kuona games ulizonunua hata ukibadili simu.'},
-  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat.'}
+  {keys:['lipa','malipo','pay','pesa','tigo','kulipia'], a:'Kulipia game: fungua game, tuma pesa Tigo Pesa 0703504270 (jina: Josh Abdallahman), jaza namba uliyotumia, pakia picha MBILI za screenshot ya muamala, kisha bonyeza "Nimelipa ✓". Ombi lako litasubiri admin (binadamu) athibitishe kwa kuangalia picha zako — download itafunguka moja kwa moja mara tu atakapothibitisha. Ukisubiri zaidi ya dakika 5, mimi (AI) ninaweza kuanza kukusaidia moja kwa moja kwenye ukurasa huo huo. Kwa bidhaa za dukani, malipo pia hupitia admin ili kukukinga na matapeli — usiwahi kutuma pesa moja kwa moja kwa muuzaji.'},
+  {keys:['bure','free','za bure'], a:'Games za "Bure" unaweza kuzidownload moja kwa moja bila malipo — bonyeza game, kisha "DOWNLOAD GAME FILE" (na "DOWNLOAD EMULATOR" kama linahitaji). Chuja kwa kubonyeza kichupo "Bure" juu ya orodha ya games kuona zote za bure tu.'},
+  {keys:['za kulipia','paid','bei','price'], a:'Games za "Kulipia" zina bei iliyoonyeshwa. Baada ya kulipa na kuthibitishwa (ona swali la "malipo"), download inafunguka. Unaweza pia kupata game la kulipia BURE kwa kutumia point 500 ulizokusanya kwa kualika marafiki — angalia Profile → "Alika Marafiki".'},
+  {keys:['seti','setup','install','weka game','emulator','winlator','ppsspp'], a:'Jinsi ya kuseti games kulingana na emulator:\n\n🔧 WINLATOR (kwa games za PC zinazochezwa kwenye Android):\n1. Download Winlator na uisakinishe (allow "install from unknown sources" kwenye mipangilio ya simu)\n2. Fungua Winlator, unda "Container" mpya (bonyeza +), chagua Windows version (kawaida Windows 10)\n3. Ndani ya container, bonyeza "Install" kisha chagua faili la game (.exe) ulilodownload\n4. Subiri isakinishwe, kisha bonyeza icon ya game kuianzisha\n5. Rekebisha graphics driver (Box86/Box64, DXVK) kwenye container settings kama game halifanyi kazi vizuri\n\n🎮 PPSSPP (kwa games za PSP):\n1. Download na sakinisha PPSSPP kutoka Play Store au link tuliyokupa\n2. Fungua PPSSPP, bonyeza "Games" tab\n3. Elekeza kwenye folder uliyoweka faili la game (.iso au .cso)\n4. Bonyeza game kuianzisha — mipangilio ya graphics iko kwenye Settings ndani ya PPSSPP\n\nKila game kwenye app ina maelekezo yake maalum pia — fungua game, bonyeza download, kisha chini utaona "Je unahitaji msaada wa kuseti?" bonyeza Ndiyo kuona hatua maalum za game hilo.\n\n📺 Ukiwa bado hujaelewa vizuri, tazama video za maelekezo kwenye channel yetu ya YouTube: ' + YT_CHANNEL},
+  {keys:['duka','uza','nunua','bidhaa','marketplace'], a:'Duka la Wachezaji unalipata kwa kubonyeza button ya "Duka" katikati ya menu ya chini (icon ya mfuko wa ununuzi 🛍️). Humo unaweza kutazama vifaa vya games vinavyouzwa na wachezaji wengine (vilivyothibitishwa na admin), au kuweka bidhaa yako mwenyewe kwa kujaza fomu — admin ataithibitisha kabla haijaonekana kwa umma. Malipo yote ya dukani pia hupitia utaratibu wa uthibitisho kama games za kulipia, ili kukukinga na matapeli.'},
+  {keys:['kura','vote','poll'], a:'Bonyeza kitufe cha "Kura" (icon ya 🗳️) kwenye Home kuona kura zilizopo na kupiga kura yako. Kila mtumiaji anaweza kupiga kura mara moja kwa kila swali. Ukiona kitone (dot) chekundu juu ya button ya Kura, maana yake kuna kura mpya iliyowekwa na admin — fungua uione.'},
+  {keys:['tiktok'], a:'Bonyeza button ya "TikTok" (icon ya 🎵, rangi nyeusi/bluu/pink) kwenye Home kufungua channel yetu ya TikTok moja kwa moja, kuona video za hivi karibuni za games. Ukiona kitone chekundu juu ya button hiyo, maana yake kuna video mpya.'},
+  {keys:['youtube'], a:'Bonyeza button ya "YouTube" (icon nyekundu ▶️) kwenye Home kufungua channel yetu ya YouTube: ' + YT_CHANNEL + ' — humo kuna video za maelekezo ya jinsi ya kuseti games kwa Winlator na PPSSPP, pamoja na maudhui mengine ya games.'},
+  {keys:['chat','ujumbe','mazungumzo'], a:'Ukurasa wa "Chat" (icon ya 💬 kwenye menu ya chini) ni sehemu ya mazungumzo ya jamii ya mumbigames na channel ya WhatsApp ya admin kwa msaada wa moja kwa moja.'},
+  {keys:['point','pointi','alika','referral','mwaliko','msimbo'], a:'Mfumo wa Points: kila ukimwalika rafiki kwa kutumia msimbo wako wa kipekee (unaupata Profile → "Alika Marafiki"), akijisajili na kuweka msimbo wako, unapata point 50. Ukifikisha point 500, unaweza kupata game LOLOTE la kulipia BURE kabisa (Profile → "Chagua Game la Kupata Bure"). Msimbo wako unaonekana kwenye Profile, na kuna button ya "Shea APK + Msimbo Wangu" ya kutuma kwa rafiki yako moja kwa moja.'},
+  {keys:['download','pakua','haifunguki','tatizo'], a:'Kama download haifanyi kazi, hakikisha una mtandao mzuri na jaribu tena. Kumbuka: baada ya kubonyeza download, subiri hesabu ya sekunde ipite kabla faili halijafunguka — hii ni ya kawaida. Kama tatizo linaendelea, wasiliana na admin kupitia WhatsApp kwenye ukurasa wa Chat.'},
+  {keys:['akaunti','login','ingia','jisajili','password'], a:'Nenda Profile (chini kulia, icon ya ☺), jaza email na password kuunda akaunti au kuingia. Akaunti inakusaidia kuona games ulizonunua hata ukibadili simu, kutumia mfumo wa points, na kutoa maoni kwenye games.'},
+  {keys:['maoni','comment'], a:'Kila game ina sehemu ya "💬 Maoni" — bonyeza namba iliyo karibu na icon ya 💬 kwenye card ya game kuona maoni ya wengine na kutoa lako mwenyewe.'},
+  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'}
 ];
 
 function initAI(){
   const quick = document.getElementById('aiQuick');
   if(quick.dataset.init) return;
   quick.dataset.init = '1';
-  const topics = ['Jinsi ya kulipia','Jinsi ya kuseti game','Duka linafanyaje kazi','Jinsi ya kupiga kura'];
+  const topics = ['Jinsi ya kulipia','Jinsi ya kuseti Winlator','Jinsi ya kuseti PPSSPP','Duka linafanyaje kazi','Jinsi ya kupiga kura','Mfumo wa Points','TikTok na YouTube'];
   quick.innerHTML = topics.map(t=>`<div class="ai-chip" onclick="aiAsk(${JSON.stringify(t)})">${t}</div>`).join('');
   const box = document.getElementById('aiMessages');
-  box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni msaidizi wa mumbigames 🤖 Niulize kuhusu malipo, kuseti game, duka, au kura — nitakusaidia haraka.</div>`;
+  box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni msaidizi wa mumbigames 🤖 Niulize kuhusu malipo, kuseti games (Winlator/PPSSPP), duka, kura, points, TikTok, YouTube, au chochote kuhusu app hii — nitakusaidia haraka.</div>`;
 }
 
 function aiRespond(text){
@@ -1361,7 +1515,6 @@ function showHome(){
   hideAllViews();
   document.getElementById('homeView').style.display = 'block';
   document.getElementById('navHome').classList.add('active');
-  document.getElementById('navGames').classList.add('active');
 }
 function showChat(){
   hideAllViews();
@@ -1374,6 +1527,7 @@ function showChat(){
 function showDuka(){
   hideAllViews();
   document.getElementById('dukaView').style.display = 'flex';
+  document.getElementById('navGames').classList.add('active');
   loadListings();
 }
 function showSettings(){
