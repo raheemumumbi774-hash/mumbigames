@@ -569,8 +569,19 @@
         <div style="font-size:11px;color:var(--sub);margin-top:2px;" id="profileMeta">—</div>
       </div>
       <div class="settings-section">
-        <div class="settings-label">🎮 Michezo Yangu</div>
-        <div id="myGamesList" style="margin-top:10px;"></div>
+        <div class="settings-label">📊 Takwimu Zangu</div>
+        <div style="display:flex;gap:10px;margin-top:10px;">
+          <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
+            <div style="font-size:22px;">👥</div>
+            <div style="font-size:20px;font-weight:800;margin-top:4px;" id="profileReferralCount">0</div>
+            <div style="font-size:11px;color:var(--sub);margin-top:2px;">Marafiki walioalikwa</div>
+          </div>
+          <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
+            <div style="font-size:22px;">⬇️</div>
+            <div style="font-size:20px;font-weight:800;margin-top:4px;" id="profileDownloadsCount">0</div>
+            <div style="font-size:11px;color:var(--sub);margin-top:2px;">Downloads zako</div>
+          </div>
+        </div>
       </div>
       <div class="settings-section">
         <div class="settings-label">🎁 Alika Marafiki, Pata Game Bure</div>
@@ -1130,10 +1141,14 @@ function startDownloadCountdown(i, url, gameId, gameName){
       countEl.textContent = ' (' + secs + ')';
     } else {
       clearInterval(timer);
-      countEl.textContent = '';
+      countEl.textContent = ' — Inapakua...';
       window.open(url, '_blank', 'noopener,noreferrer');
-      markDownloaded(i, gameId, gameName);
-      btn.disabled = false;
+      // Wait a bit more before marking as done — better late than falsely-early
+      setTimeout(()=>{
+        countEl.textContent = '';
+        markDownloaded(i, gameId, gameName);
+        btn.disabled = false;
+      }, 6000);
     }
   }, 1000);
 }
@@ -1491,7 +1506,9 @@ const AI_KB = [
   {keys:['aethersx2','ps2'], a:'🕹️ AETHERSX2 (kwa games za PS2):\n1. Download na sakinisha AetherSX2\n2. Fungua app, kwenye mipangilio ya kwanza elekeza kwenye faili la BIOS ya PS2 (linahitajika kabla ya kucheza)\n3. Bonyeza "+" au "Add Game", chagua faili la ISO ulilodownload\n4. Rekebisha "Renderer" (Vulkan kwa kawaida ni bora zaidi) kwenye Settings kama picha haziko sawa\n5. Bonyeza game kuianzisha\n\n📺 Video kamili: ' + YT_CHANNEL},
   {keys:['yuzu','skyline','suyu','switch','nintendo switch'], a:'🎮 EMULATOR ZA NINTENDO SWITCH (Yuzu / Skyline / Suyu):\n1. Download emulator uliyoichagua (Skyline ni rahisi zaidi kwa Android; Yuzu/Suyu zinahitaji simu yenye nguvu zaidi)\n2. Sakinisha, kisha ongeza "Keys" na "Firmware" za Switch kwenye mipangilio ya kwanza (zinahitajika kabla ya kucheza chochote — tazama video yetu kwa maelezo kamili ya wapi kuzipata)\n3. Bonyeza "+" kuongeza game, chagua faili la game (.xci au .nsp) ulilodownload\n4. Rekebisha graphics settings (resolution, backend) kama game halifanyi kazi vizuri\n5. Bonyeza game kuianzisha\n\n📺 Video kamili: ' + YT_CHANNEL},
   {keys:['dolphin','gamecube','wii '], a:'🎮 DOLPHIN EMULATOR (kwa games za GameCube na Wii):\n1. Download na sakinisha Dolphin Emulator\n2. Fungua app, bonyeza folder icon kuelekeza kwenye mahali ulipoweka faili la game (.iso/.rvz/.wbfs)\n3. Bonyeza game kwenye orodha kuianzisha\n4. Rekebisha "Graphics Backend" (Vulkan kwa kawaida) na "Internal Resolution" kwenye settings ukiona lag\n\n📺 Video kamili: ' + YT_CHANNEL},
-  {keys:['seti','setup','install','weka game','emulator'], a:'Tunatumia emulator tofauti kulingana na aina ya game: **Winlator** au **MoBox** kwa games za PC, **PPSSPP** kwa PSP, **AetherSX2** kwa PS2, **Yuzu/Skyline/Suyu** kwa Nintendo Switch, na **Dolphin** kwa GameCube/Wii. Niambie ni emulator gani unahitaji msaada nayo (mfano: "Winlator" au "PPSSPP") nikupe hatua kamili. Kila game kwenye app pia ina maelekezo yake maalum — fungua game, bonyeza download, kisha "Je unahitaji msaada wa kuseti?" → "Ndiyo, nisaidie".\n\n📺 Video zote za maelekezo: ' + YT_CHANNEL},
+  {keys:['seti','setup','install','weka game','emulator'], a:'Tunatumia emulator tofauti kulingana na aina ya game: **Winlator** au **MoBox** kwa games za PC, **PPSSPP** kwa PSP, **AetherSX2** kwa PS2, **Yuzu/Skyline/Suyu** kwa Nintendo Switch, na **Dolphin** kwa GameCube/Wii. Kuna pia games za muundo wa **APK+OBB** (Android halisi, hazihitaji emulator) na games zenye **Save Data/Textures** za ziada. Niambie muundo wa game unaotaka kuseti (mfano: "APK OBB", "Save data", au jina la emulator) nikupe hatua kamili.\n\n📺 Video zote za maelekezo: ' + YT_CHANNEL},
+  {keys:['obb','apk na obb','apk+obb','apk data'], a:'📦 GAMES ZA MUUNDO WA APK + OBB/DATA (Android halisi, hazihitaji emulator kabisa):\n1. Pakua faili la APK, lisakinishe kama app ya kawaida (ruhusu "install from unknown sources" kwenye mipangilio ya simu)\n2. Pakua faili la OBB au Data (kawaida ni .zip)\n3. Tumia app ya **ZArchiver** (au chochote cha kufungua zip) kutoa (extract) faili hilo\n4. Nakili folder iliyotoka kwenda: **Android/obb/[jina la game]** (kama ni OBB) au **Android/data/[jina la game]** (kama ni Data) — jina la folder linatakiwa lifanane kabisa na jina la package la game\n5. Fungua game moja kwa moja kutoka icon yake\n\n⚠️ Kama huna uhakika wa jina sahihi la folder: fungua game MARA MOJA kwanza bila OBB — litaunda folder lenyewe kwa jina sahihi — kisha weka faili za OBB/Data huko baadaye.\n\n📺 Video kamili: ' + YT_CHANNEL},
+  {keys:['save data','texture','textures','camera pack'], a:'📁 GAMES ZENYE FAILI ZA ZIADA (Game File, Save Data, Textures — mfano PPSSPP):\n\n🎮 **GAME FILE** — faili kuu la game (.iso/.cso), weka kwenye folder uliyochagua ndani ya emulator\n💾 **SAVE DATA** — maendeleo yaliyoshafanywa na mtu mwingine, nakili kwenye folder ya "SAVEDATA" ndani ya folder ya PSP ili uanze na maendeleo hayo badala ya mwanzo\n🎨 **TEXTURES** — huboresha ubora wa picha/graphics, weka kwenye folder ya "TEXTURES" ndani ya PSP, kisha washa "Texture Replacement" kwenye Settings za emulator\n📷 **CAMERA PACK** — mipangilio maalum ya kamera (ikiwepo) — fuata maelekezo yaliyoambatana nayo\n\nKila faili ina mahali pake maalum — usichanganye moja na nyingine.\n\n📺 Video kamili: ' + YT_CHANNEL},
 
   // --- Other features ---
   {keys:['duka','uza','nunua','bidhaa','marketplace'], a:'Duka la Wachezaji unalipata kwa kubonyeza button ya "Duka" katikati ya menu ya chini (icon ya mfuko wa ununuzi 🛍️). Humo unaweza kutazama vifaa vya games vinavyouzwa na wachezaji wengine (vilivyothibitishwa na admin), au kuweka bidhaa yako mwenyewe kwa kujaza fomu — admin ataithibitisha kabla haijaonekana kwa umma. Malipo yote ya dukani pia hupitia utaratibu wa uthibitisho kama games za kulipia, ili kukukinga na matapeli.'},
@@ -2000,6 +2017,8 @@ try{
         const points = data.points || 0;
         document.getElementById('pointsCount').textContent = points;
         document.getElementById('referralCount').textContent = data.referrals || 0;
+        const profRefEl = document.getElementById('profileReferralCount');
+        if(profRefEl) profRefEl.textContent = data.referrals || 0;
         // Accounts created before the short-code system need a code generated now
         let refCode = data.refCode;
         if(!refCode){
@@ -2134,16 +2153,9 @@ function loadMyGames(uid){
   db.collection('purchases').where('uid','==',uid).onSnapshot(snap=>{
     const items = snap.docs.map(d=>d.data());
     const seen = new Set();
-    const unique = items.filter(it=>{
-      if(seen.has(it.gameId)) return false;
-      seen.add(it.gameId);
-      return true;
-    });
-    document.getElementById('myGamesList').innerHTML = unique.length ? unique.map(it=>`
-      <div class="dl-item" style="cursor:default;">
-        <span class="dl-icon">🎮</span>
-        <span class="dl-name">${escapeHtml(it.gameName)}</span>
-      </div>`).join('') : '<div class="empty">Bado hujadownload game yoyote.</div>';
+    items.forEach(it=>seen.add(it.gameId));
+    const el = document.getElementById('profileDownloadsCount');
+    if(el) el.textContent = seen.size;
   }, err=>console.error(err));
 }
 </script>

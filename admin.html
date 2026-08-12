@@ -210,21 +210,14 @@
         <div class="stat" style="background:linear-gradient(135deg,#132a1c,#0d1a12);border:1px solid #1e7d3a;">
           <div class="num" id="statDownloadsToday" style="color:#3ddc71;">0</div>
           <div class="lbl">Downloads Leo</div>
-          <div id="statDownloadsTodayPct" style="font-size:10.5px;color:#3ddc71;margin-top:2px;opacity:0.85;"></div>
         </div>
         <div class="stat"><div class="num" id="statAccounts">0</div><div class="lbl">Akaunti zilizofunguliwa</div></div>
       </div>
       <div class="stat-row">
         <div class="stat"><div class="num" id="statVisits">0</div><div class="lbl">Watembeleaji (jumla)</div></div>
-        <div class="stat">
-          <div class="num" id="statUnique">0</div>
-          <div class="lbl">Wageni wapya</div>
-          <div id="statUniquePct" style="font-size:10.5px;color:var(--sub);margin-top:2px;"></div>
-        </div>
+        <div class="stat"><div class="num" id="statUnique">0</div><div class="lbl">Wageni wapya</div></div>
         <div class="stat"></div>
       </div>
-      <div class="section-title"><h2>📥 Downloads za Leo (kwa game)</h2></div>
-      <div id="todayDownloadsList"><div class="empty">Bado hakuna downloads leo.</div></div>
       <div class="section-title"><h2>Trending sasa</h2></div>
       <div id="trendingList"></div>
       <div class="section-title"><h2>Zilizoongezwa hivi karibuni</h2></div>
@@ -488,11 +481,8 @@ function announceSocial(type){
 function loadSiteStats(){
   db.collection('meta').doc('siteStats').onSnapshot(function(doc){
     const d = doc.exists ? doc.data() : {};
-    const visits = d.totalVisits || 0;
-    const unique = d.uniqueVisitors || 0;
-    document.getElementById('statVisits').textContent = visits;
-    document.getElementById('statUnique').textContent = unique;
-    document.getElementById('statUniquePct').textContent = visits > 0 ? Math.round((unique/visits)*100) + '% ya watembeleaji' : '';
+    document.getElementById('statVisits').textContent = d.totalVisits || 0;
+    document.getElementById('statUnique').textContent = d.uniqueVisitors || 0;
   }, function(err){ console.error(err); });
   db.collection('users').onSnapshot(function(snap){
     document.getElementById('statAccounts').textContent = snap.size;
@@ -501,47 +491,16 @@ function loadSiteStats(){
 }
 
 function loadDownloadStats(){
-  let totalDownloadsCached = 0;
   db.collection('games').onSnapshot(function(snap){
     let total = 0;
     snap.forEach(function(d){ total += (d.data().downloadCount || 0); });
-    totalDownloadsCached = total;
     document.getElementById('statDownloadsTotal').textContent = total;
-    updateTodayPct();
   }, function(err){ console.error(err); });
-
-  let todayCountCached = 0;
-  function updateTodayPct(){
-    const pctEl = document.getElementById('statDownloadsTodayPct');
-    if(totalDownloadsCached > 0){
-      pctEl.textContent = Math.round((todayCountCached/totalDownloadsCached)*100) + '% ya jumla';
-    } else {
-      pctEl.textContent = '';
-    }
-  }
 
   const startOfToday = new Date();
   startOfToday.setHours(0,0,0,0);
   db.collection('downloadLogs').where('time','>=', startOfToday.getTime()).onSnapshot(function(snap){
-    todayCountCached = snap.size;
     document.getElementById('statDownloadsToday').textContent = snap.size;
-    updateTodayPct();
-    const counts = {};
-    snap.forEach(function(d){
-      const name = d.data().gameName || 'Isiyojulikana';
-      counts[name] = (counts[name] || 0) + 1;
-    });
-    const entries = Object.entries(counts).sort(function(a,b){ return b[1]-a[1]; });
-    const listEl = document.getElementById('todayDownloadsList');
-    if(entries.length === 0){
-      listEl.innerHTML = '<div class="empty">Bado hakuna downloads leo.</div>';
-      return;
-    }
-    listEl.innerHTML = entries.map(function(e){
-      return '<div style="display:flex;align-items:center;gap:10px;background:var(--panel-2,#12161f);border:1px solid var(--line,#232838);border-radius:10px;padding:10px 14px;margin-bottom:8px;">'+
-        '<span>⬇️</span><span style="flex:1;font-size:13px;">'+e[0].replace(/</g,'&lt;')+'</span>'+
-        '<span style="color:#3ddc71;font-weight:700;">'+e[1]+'</span></div>';
-    }).join('');
   }, function(err){ console.error(err); });
 }
 function logout(){
