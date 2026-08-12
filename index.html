@@ -430,18 +430,25 @@
       <div id="lImgPreviewWrap" style="display:none;margin-bottom:8px;">
         <img id="lImgPreview" src="" style="width:100%;max-height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line);">
       </div>
-      <input type="file" id="lImageFile" accept="image/*" onchange="handleListingImageSelect()">
-      <div id="lImgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
+      <label for="lImageFile" id="lImagePickLabel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--panel-2);border:2px dashed var(--line);border-radius:14px;padding:28px 16px;cursor:pointer;text-align:center;">
+        <div style="font-size:34px;line-height:1;">📷</div>
+        <div style="font-size:14px;font-weight:700;">Bonyeza hapa kuweka picha</div>
+        <div style="font-size:11.5px;color:var(--sub);">Kama unavyotuma picha WhatsApp — chagua tu, itapakia yenyewe</div>
+      </label>
+      <input type="file" id="lImageFile" accept="image/*" onchange="handleListingImageSelect()" style="display:none;">
+      <div id="lImgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;text-align:center;"></div>
 
-      <div style="display:flex;align-items:center;gap:8px;margin:12px 0;color:var(--sub);font-size:12px;">
-        <div style="flex:1;height:1px;background:var(--line);"></div>
-        AU weka link ya picha
-        <div style="flex:1;height:1px;background:var(--line);"></div>
-      </div>
-      <p style="font-size:11.5px;color:var(--sub);margin:0 0 8px;line-height:1.5;">Kama kupakia picha hapo juu hakufanyi kazi: fungua <b>imgbb.com</b> kwenye kivinjari chako, pakia picha yako pale (bure, hauitaji akaunti), kisha nakili link ya "Direct link" (huanza na <b>i.ibb.co</b>) na ubandike hapa chini.</p>
-      <div class="comment-input-row">
-        <input type="text" id="lImageUrlInput" placeholder="https://i.ibb.co/...">
-        <button type="button" onclick="useListingImageUrl()">Tumia</button>
+      <div id="lImgUrlFallback" style="display:none;">
+        <div style="display:flex;align-items:center;gap:8px;margin:12px 0;color:var(--sub);font-size:12px;">
+          <div style="flex:1;height:1px;background:var(--line);"></div>
+          AU weka link ya picha
+          <div style="flex:1;height:1px;background:var(--line);"></div>
+        </div>
+        <p style="font-size:11.5px;color:var(--sub);margin:0 0 8px;line-height:1.5;">Fungua <b>imgbb.com</b> kwenye kivinjari chako, pakia picha yako pale (bure, hauitaji akaunti), kisha nakili link ya "Direct link" (huanza na <b>i.ibb.co</b>) na ubandike hapa chini.</p>
+        <div class="comment-input-row">
+          <input type="text" id="lImageUrlInput" placeholder="https://i.ibb.co/...">
+          <button type="button" onclick="useListingImageUrl()">Tumia</button>
+        </div>
       </div>
 
       <input type="hidden" id="lImage" value="">
@@ -647,6 +654,10 @@
   <div class="comments-modal">
     <h3>💬 Maoni — <span id="commentsGameName"></span></h3>
     <div class="comments-list" id="commentsList"></div>
+    <div id="replyBanner" style="display:none;align-items:center;justify-content:space-between;background:var(--panel-2);border-radius:8px;padding:6px 10px;margin-bottom:6px;font-size:12px;">
+      <span style="color:var(--lime);"></span>
+      <span style="cursor:pointer;color:var(--sub);" onclick="cancelReply()">✕</span>
+    </div>
     <div class="comment-input-row">
       <input type="text" id="commentInput" placeholder="Andika maoni yako..." onkeydown="if(event.key==='Enter') submitComment()">
       <button onclick="submitComment()">Tuma</button>
@@ -1191,15 +1202,20 @@ function recordDownload(gameId, gameName){
   }).catch(()=>{});
 }
 
-// ---- Maoni (comments) ----
+// ---- Maoni (comments) with TikTok-style replies ----
 let currentCommentsGame = null;
 let commentsUnsub = null;
+let replyingToId = null;
+let replyingToName = null;
 
 function openComments(g){
   currentCommentsGame = g;
+  replyingToId = null;
+  replyingToName = null;
   document.getElementById('commentsGameName').textContent = g.name;
   document.getElementById('commentsList').innerHTML = '<div class="empty">Inapakia maoni...</div>';
   document.getElementById('commentInput').value = '';
+  updateReplyBanner();
   document.getElementById('commentsOverlay').classList.add('show');
   if(commentsUnsub) commentsUnsub();
   commentsUnsub = db.collection('gameComments')
@@ -1211,14 +1227,26 @@ function openComments(g){
         list.innerHTML = '<div class="empty">Hakuna maoni bado. Kuwa wa kwanza kutoa maoni! 💬</div>';
         return;
       }
-      list.innerHTML = snap.docs.map(d=>{
-        const c = d.data();
+      const all = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      const topLevel = all.filter(c=>!c.parentId);
+      const repliesByParent = {};
+      all.filter(c=>c.parentId).forEach(c=>{
+        (repliesByParent[c.parentId] = repliesByParent[c.parentId] || []).push(c);
+      });
+      function renderComment(c, isReply){
         const time = c.createdAt ? new Date(c.createdAt).toLocaleDateString('sw-TZ',{day:'numeric',month:'short'}) : '';
-        return `<div class="comment-item">
+        return `<div class="comment-item"${isReply ? ' style="margin-left:26px;background:var(--panel);"' : ''}>
           <div class="c-name">${escapeHtml(c.authorName||'Mtumiaji')}</div>
           <div class="c-text">${escapeHtml(c.text)}</div>
-          <div class="c-time">${time}</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
+            <div class="c-time">${time}</div>
+            <div style="font-size:11px;color:var(--lime);cursor:pointer;font-weight:600;" onclick='startReply(${JSON.stringify(c.id)}, ${JSON.stringify(c.authorName||'Mtumiaji')})'>↩ Jibu</div>
+          </div>
         </div>`;
+      }
+      list.innerHTML = topLevel.map(c=>{
+        const replies = (repliesByParent[c.id] || []).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+        return renderComment(c, false) + replies.map(r=>renderComment(r, true)).join('');
       }).join('');
     }, err=>{
       console.error(err);
@@ -1226,10 +1254,38 @@ function openComments(g){
     });
 }
 
+function startReply(commentId, authorName){
+  replyingToId = commentId;
+  replyingToName = authorName;
+  updateReplyBanner();
+  const input = document.getElementById('commentInput');
+  if(input) input.focus();
+}
+function cancelReply(){
+  replyingToId = null;
+  replyingToName = null;
+  updateReplyBanner();
+}
+function updateReplyBanner(){
+  const el = document.getElementById('replyBanner');
+  const input = document.getElementById('commentInput');
+  if(!el) return;
+  if(replyingToId){
+    el.style.display = 'flex';
+    el.querySelector('span').textContent = 'Unamjibu ' + replyingToName;
+    if(input) input.placeholder = 'Andika jibu lako...';
+  } else {
+    el.style.display = 'none';
+    if(input) input.placeholder = 'Andika maoni yako...';
+  }
+}
+
 function closeComments(){
   document.getElementById('commentsOverlay').classList.remove('show');
   if(commentsUnsub){ commentsUnsub(); commentsUnsub = null; }
   currentCommentsGame = null;
+  replyingToId = null;
+  replyingToName = null;
 }
 document.getElementById('commentsOverlay').addEventListener('click', function(e){
   if(e.target === this) closeComments();
@@ -1247,12 +1303,14 @@ async function submitComment(){
       gameName: currentCommentsGame.name,
       text,
       authorName,
+      parentId: replyingToId || null,
       createdAt: Date.now()
     });
     await db.collection('games').doc(currentCommentsGame.id).set({
       commentCount: firebase.firestore.FieldValue.increment(1)
     }, {merge:true});
     input.value = '';
+    cancelReply();
   }catch(e){
     console.error(e);
     alert('Imeshindwa kutuma maoni. Jaribu tena.');
@@ -1675,6 +1733,7 @@ async function handleListingImageSelect(){
   const file = fileInput.files[0];
   if(!file) return;
   const statusEl = document.getElementById('lImgUploadStatus');
+  const pickLabel = document.getElementById('lImagePickLabel');
   statusEl.style.color = 'var(--sub)';
   statusEl.textContent = 'Inapakia picha...';
   try{
@@ -1682,11 +1741,14 @@ async function handleListingImageSelect(){
     document.getElementById('lImage').value = url;
     document.getElementById('lImgPreview').src = url;
     document.getElementById('lImgPreviewWrap').style.display = 'block';
+    if(pickLabel) pickLabel.style.display = 'none';
+    statusEl.style.color = 'var(--lime)';
     statusEl.textContent = 'Picha imepakiwa ✓';
   }catch(e){
     console.error(e);
     statusEl.style.color = '#ff6b6b';
-    statusEl.textContent = 'Imeshindwa kupakia picha. Tumia "weka link ya picha" chini badala yake.';
+    statusEl.textContent = 'Imeshindwa kupakia picha kiotomatiki. Tumia njia ya link hapa chini.';
+    document.getElementById('lImgUrlFallback').style.display = 'block';
   }
 }
 
@@ -1747,6 +1809,10 @@ async function submitListing(){
   document.getElementById('lImageUrlInput').value='';
   document.getElementById('lImgPreviewWrap').style.display='none';
   document.getElementById('lImgUploadStatus').textContent='';
+  const pickLabel = document.getElementById('lImagePickLabel');
+  if(pickLabel) pickLabel.style.display='flex';
+  const urlFallback = document.getElementById('lImgUrlFallback');
+  if(urlFallback) urlFallback.style.display='none';
   document.getElementById('lSellerName').value='';
   document.getElementById('lSellerPhone').value='';
   alert('Bidhaa yako imetumwa! Itaonekana baada ya admin kuithibitisha.');
