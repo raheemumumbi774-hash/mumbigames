@@ -27,6 +27,20 @@
   const auth = firebase.auth();
   const storage = firebase.storage();
 
+  // ---- Imgbb (free image hosting, no billing needed — replace with your own key) ----
+  const IMGBB_API_KEY = '4ba0b719dee411039527e4fca22b606c';
+  async function uploadToImgbb(file){
+    const formData = new FormData();
+    formData.append('image', file);
+    const res = await fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_API_KEY, {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if(!data || !data.success) throw new Error((data && data.error && data.error.message) || 'Imgbb upload failed');
+    return data.data.url;
+  }
+
   // ---- Simple visit tracking for admin stats ----
   (function trackVisit(){
     try{
@@ -327,7 +341,7 @@
 <div class="searchbar-wrap">
   <div class="searchbar">
     <span class="sic">⌕</span>
-    <input type="text" id="gameSearchInput" placeholder="Tafuta games..." data-i18n-placeholder="search_placeholder" oninput="render()">
+    <input type="text" id="gameSearchInput" data-i18n-placeholder="search_placeholder" placeholder="Tafuta games..." oninput="render()">
   </div>
 </div>
 
@@ -339,9 +353,9 @@
 </div>
 
 <div class="quick-actions">
-  <a class="qa-btn qa-tiktok" href="https://www.tiktok.com/@iam_mumbi7" target="_blank" onclick="markSocialSeen('tiktok')"><span class="qa-badge" id="qaBadgeTiktok"></span><div class="qa-ic">🎵</div><span>TikTok</span></a>
-  <div class="qa-btn qa-kura" onclick="showPolls()"><span class="qa-badge" id="qaBadgePoll"></span><div class="qa-ic">🗳️</div><span id="qaKuraLabel">Kura</span></div>
-  <a class="qa-btn qa-youtube" href="https://youtube.com/@mumbi_gaming" target="_blank" onclick="markSocialSeen('youtube')"><span class="qa-badge" id="qaBadgeYoutube"></span><div class="qa-ic">▶️</div><span>YouTube</span></a>
+  <a class="qa-btn qa-tiktok" href="https://www.tiktok.com/@iam_mumbi7" target="_blank" onclick="markSocialSeen('tiktok')"><span class="qa-badge" id="qaBadgeTiktok"></span><div class="qa-ic">🎵</div><span data-i18n="qa_tiktok">TikTok</span></a>
+  <div class="qa-btn qa-kura" onclick="showPolls()"><span class="qa-badge" id="qaBadgePoll"></span><div class="qa-ic">🗳️</div><span data-i18n="qa_kura">Kura</span></div>
+  <a class="qa-btn qa-youtube" href="https://youtube.com/@mumbi_gaming" target="_blank" onclick="markSocialSeen('youtube')"><span class="qa-badge" id="qaBadgeYoutube"></span><div class="qa-ic">▶️</div><span data-i18n="qa_youtube">YouTube</span></a>
 </div>
 
 <div class="chips" id="chips">
@@ -418,6 +432,18 @@
       </div>
       <input type="file" id="lImageFile" accept="image/*" onchange="handleListingImageSelect()">
       <div id="lImgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin:12px 0;color:var(--sub);font-size:12px;">
+        <div style="flex:1;height:1px;background:var(--line);"></div>
+        AU weka link ya picha
+        <div style="flex:1;height:1px;background:var(--line);"></div>
+      </div>
+      <p style="font-size:11.5px;color:var(--sub);margin:0 0 8px;line-height:1.5;">Kama kupakia picha hapo juu hakufanyi kazi: fungua <b>imgbb.com</b> kwenye kivinjari chako, pakia picha yako pale (bure, hauitaji akaunti), kisha nakili link ya "Direct link" (huanza na <b>i.ibb.co</b>) na ubandike hapa chini.</p>
+      <div class="comment-input-row">
+        <input type="text" id="lImageUrlInput" placeholder="https://i.ibb.co/...">
+        <button type="button" onclick="useListingImageUrl()">Tumia</button>
+      </div>
+
       <input type="hidden" id="lImage" value="">
       <label data-i18n="duka_f_name">Jina lako</label>
       <input type="text" id="lSellerName" placeholder="Jina lako">
@@ -433,8 +459,8 @@
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
-      <div class="title">Kura (Poll)</div>
-      <div class="sub">Piga kura, ona matokeo</div>
+      <div class="title" data-i18n="poll_title">Kura (Poll)</div>
+      <div class="sub" data-i18n="poll_sub">Piga kura, ona matokeo</div>
     </div>
   </div>
   <div class="poll-panel" id="pollPanel">
@@ -446,8 +472,8 @@
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
-      <div class="title">🤖 AI Msaidizi</div>
-      <div class="sub">Uliza kuhusu malipo, kuseti game, na zaidi</div>
+      <div class="title" data-i18n="ai_title">🤖 AI Msaidizi</div>
+      <div class="sub" data-i18n="ai_sub">Uliza kuhusu malipo, kuseti game, na zaidi</div>
     </div>
   </div>
   <div class="ai-quick" id="aiQuick"></div>
@@ -509,8 +535,8 @@
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
-      <div class="title">Profile Yangu</div>
-      <div class="sub" id="profileSub">Akaunti yako mumbigames</div>
+      <div class="title" data-i18n="profile_title">Profile Yangu</div>
+      <div class="sub" id="profileSub" data-i18n="profile_sub">Akaunti yako mumbigames</div>
     </div>
   </div>
 
@@ -620,8 +646,8 @@
 <div class="bottomnav">
   <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
   <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic">💬</div><span data-i18n="nav_chat">Chat</span></div>
-  <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic">🛍️</div><span>Duka</span></div>
-  <div class="nav-item" id="navAI" onclick="showAI()"><div class="ic">🤖</div><span>AI</span></div>
+  <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic">🛍️</div><span data-i18n="nav_duka">Duka</span></div>
+  <div class="nav-item" id="navAI" onclick="showAI()"><div class="ic">🤖</div><span data-i18n="nav_ai">AI</span></div>
   <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic">☺</div><span data-i18n="nav_me">Me</span></div>
 </div>
 
@@ -700,7 +726,7 @@ function render(){
   document.getElementById('gameList').innerHTML = list.length ? list.map(g=>`
     <div class="g-card" onclick='handleDownload(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
       <div class="g-thumb" style="${g.image?`background-image:url('${g.image.replace(/'/g,"")}')`:''}">
-        <span class="g-badge ${g.paid?'paid':''}">${g.paid?t('badge_paid'):t('badge_free')}</span>
+        <span class="g-badge ${g.paid?'paid':''}">${g.paid?'🔒 Kulipia':'Bure'}</span>
       </div>
       <div class="g-body">
         <div class="g-info">
@@ -708,18 +734,18 @@ function render(){
           <div class="g-date">${formatGameDate(g.createdAt)}</div>
           <div class="g-desc">${escapeHtml(g.desc||g.genre||'')}</div>
           <div class="g-tags">
-            <span class="tag ${g.paid?'paid':'free'}">${g.paid?'TZS '+escapeHtml(g.price):t('tag_free')}</span>
-            <span class="tag">${g.offline==='yes'?t('tag_offline'):t('tag_online')}</span>
+            <span class="tag ${g.paid?'paid':'free'}">${g.paid?'TZS '+escapeHtml(g.price):'Bure'}</span>
+            <span class="tag">${g.offline==='yes'?'Offline':'Online'}</span>
             ${g.genre?`<span class="tag">${escapeHtml(g.genre)}</span>`:''}
           </div>
         </div>
         <div class="g-footer">
           <div class="g-action">⬇️ ${g.downloadCount||0}</div>
           <div class="g-action" onclick='event.stopPropagation();openComments(${JSON.stringify(g).replace(/'/g,"&#39;")})'>💬 ${g.commentCount||0}</div>
-          <button class="g-action share" onclick='event.stopPropagation();shareGame(${JSON.stringify(g.name).replace(/'/g,"&#39;")})'>🔗 ${t('share_btn')}</button>
+          <button class="g-action share" onclick='event.stopPropagation();shareGame(${JSON.stringify(g.name).replace(/'/g,"&#39;")})'>🔗 Share</button>
         </div>
       </div>
-    </div>`).join('') : `<div class="empty">${t('empty_games')}</div>`;
+    </div>`).join('') : '<div class="empty">Hakuna games kwenye kundi hili bado</div>';
 }
 
 function formatGameDate(ts){
@@ -991,18 +1017,16 @@ async function handlePaymentProofSelect(input, slot){
   const file = input.files[0];
   if(!file) return;
   const statusEl = document.getElementById('proofStatus'+slot);
+  statusEl.style.color = 'var(--sub)';
   statusEl.textContent = 'Inapakia picha...';
-  const uid = auth.currentUser.uid;
-  const path = 'payment-proofs/' + uid + '_' + Date.now() + '_' + slot + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'');
   try{
-    const ref = storage.ref().child(path);
-    const snap = await ref.put(file);
-    const url = await snap.ref.getDownloadURL();
+    const url = await uploadToImgbb(file);
     paymentProofUrls[slot] = url;
     statusEl.textContent = 'Picha imepakiwa ✓';
   }catch(e){
     console.error(e);
-    statusEl.textContent = 'Imeshindwa kupakia. Jaribu tena.';
+    statusEl.style.color = '#ff6b6b';
+    statusEl.textContent = 'Imeshindwa kupakia. Angalia mtandao wako na jaribu tena.';
   }
 }
 
@@ -1082,6 +1106,8 @@ function showModalDownloads(g){
   const DL_COLORS = ['#2c3e50','#5b3a29','#1e7d3a','#2563eb','#7c3aed','#b45309'];
   const list = (g.downloads && g.downloads.length) ? g.downloads : (g.download ? [{label:'Download', url:g.download}] : []);
   document.getElementById('modalThanks').style.display = 'none';
+  totalDlItems = list.length;
+  downloadCounted = false;
   document.getElementById('modalDownloadsList').innerHTML = list.length ? list.map((d,i)=>`
     <button type="button" class="dl-btn" id="dlbtn-${i}" style="background:${DL_COLORS[i % DL_COLORS.length]};" onclick='startDownloadCountdown(${i}, ${JSON.stringify(d.url)}, ${JSON.stringify(g.id)}, ${JSON.stringify(g.name)})'>
       ${escapeHtml(d.label)}<span class="dl-count" id="dlcount-${i}"></span> <span class="dl-tick" id="dltick-${i}" style="display:none;">✓</span>
@@ -1089,6 +1115,8 @@ function showModalDownloads(g){
 }
 
 let downloadedSet = new Set();
+let totalDlItems = 0;
+let downloadCounted = false;
 function startDownloadCountdown(i, url, gameId, gameName){
   const btn = document.getElementById('dlbtn-' + i);
   const countEl = document.getElementById('dlcount-' + i);
@@ -1104,16 +1132,20 @@ function startDownloadCountdown(i, url, gameId, gameName){
       clearInterval(timer);
       countEl.textContent = '';
       window.open(url, '_blank', 'noopener,noreferrer');
-      recordDownload(gameId, gameName);
-      markDownloaded(i);
+      markDownloaded(i, gameId, gameName);
       btn.disabled = false;
     }
   }, 1000);
 }
-function markDownloaded(i){
+function markDownloaded(i, gameId, gameName){
   downloadedSet.add(i);
   const tick = document.getElementById('dltick-' + i);
   if(tick) tick.style.display = 'inline';
+  // Count as ONE download for this game only once ALL required files are done
+  if(!downloadCounted && downloadedSet.size >= totalDlItems && totalDlItems > 0){
+    downloadCounted = true;
+    recordDownload(gameId, gameName);
+  }
   if(downloadedSet.size >= 2){
     const thanks = document.getElementById('modalThanks');
     if(thanks) thanks.style.display = 'block';
@@ -1129,36 +1161,13 @@ function showSetupSteps(steps){
   box.innerHTML = `<div class="sh-q">📋 Fuata hatua hizi:</div><div class="setup-steps">${escapeHtml(steps)}</div>`;
 }
 
-// A game can have multiple labeled download links (Game File, Emulator, Data).
-// We only want the download counter/log to count ONE download per game per device,
-// no matter how many of those links someone clicks — each game still counts on its
-// own since it has its own gameId (so a standalone "emulator" game still counts fine).
-function hasCountedGameDownload(gameId){
-  try{
-    const set = JSON.parse(localStorage.getItem('mg_counted_downloads') || '[]');
-    return set.includes(gameId);
-  }catch(e){ return false; }
-}
-function markGameDownloadCounted(gameId){
-  try{
-    const set = JSON.parse(localStorage.getItem('mg_counted_downloads') || '[]');
-    if(!set.includes(gameId)){
-      set.push(gameId);
-      localStorage.setItem('mg_counted_downloads', JSON.stringify(set));
-    }
-  }catch(e){}
-}
-
 function recordDownload(gameId, gameName){
-  if(!hasCountedGameDownload(gameId)){
-    db.collection('games').doc(gameId).set({
-      downloadCount: firebase.firestore.FieldValue.increment(1)
-    }, {merge:true}).catch(()=>{});
-    db.collection('downloadLogs').add({
-      gameId, gameName, time: Date.now()
-    }).catch(()=>{});
-    markGameDownloadCounted(gameId);
-  }
+  db.collection('games').doc(gameId).set({
+    downloadCount: firebase.firestore.FieldValue.increment(1)
+  }, {merge:true}).catch(()=>{});
+  db.collection('downloadLogs').add({
+    gameId, gameName, time: Date.now()
+  }).catch(()=>{});
   if(!auth.currentUser) return;
   db.collection('purchases').add({
     uid: auth.currentUser.uid,
@@ -1460,23 +1469,35 @@ async function votePoll(pollId, option){
   }
 }
 
-// ---- AI Msaidizi (smart FAQ assistant) ----
+// ---- AI Msaidizi (smart FAQ + friendly chat assistant) ----
 const YT_CHANNEL = 'https://youtube.com/@mumbi_gaming';
 const AI_KB = [
+  // --- Small talk / greetings / mood — make the AI feel warm and human ---
+  {keys:['habari','mambo','vipi','hujambo','hodi','shikamoo','salama'], a:'Habari yako! 😊 Nipo poa, tayari kukusaidia. Unahitaji nini leo — malipo, kuseti game, duka, au kitu kingine?'},
+  {keys:['asante','shukrani','thanks','umenisaidia'], a:'Karibu sana! Nimefurahi kukusaidia 🙏 Kama kuna kitu kingine chochote, niko hapa tu.'},
+  {keys:['poa','sawa','ok','safi','vizuri','nzuri'], a:'Poa kabisa! 👍 Kuna kitu kingine unachotaka kujua?'},
+  {keys:['nimechoka','stress','msongo','nimekasirika','naumia','pole'], a:'Pole sana kwa hisia hizo 🤍 Naelewa vitu vya teknolojia vinaweza kukera mtu unapotaka tu kucheza game. Tuende hatua kwa hatua pamoja — niambie hasa kinachokusumbua na nitakusaidia kukitatua.'},
+  {keys:['wewe ni nani','jina lako','ni nani wewe'], a:'Mimi ni msaidizi wa mumbigames 🤖 — nipo hapa kukusaidia na chochote kuhusu app hii: malipo, kuseti games, duka, kura, points, na zaidi. Niulize chochote!'},
+
+  // --- Payments ---
   {keys:['lipa','malipo','pay','pesa','tigo','kulipia'], a:'Kulipia game: fungua game, tuma pesa Tigo Pesa 0703504270 (jina: Josh Abdallahman), jaza namba uliyotumia, pakia picha MBILI za screenshot ya muamala, kisha bonyeza "Nimelipa ✓". Ombi lako litasubiri admin (binadamu) athibitishe kwa kuangalia picha zako — download itafunguka moja kwa moja mara tu atakapothibitisha. Ukisubiri zaidi ya dakika 5, mimi (AI) ninaweza kuanza kukusaidia moja kwa moja kwenye ukurasa huo huo. Kwa bidhaa za dukani, malipo pia hupitia admin ili kukukinga na matapeli — usiwahi kutuma pesa moja kwa moja kwa muuzaji.'},
   {keys:['bure','free','za bure'], a:'Games za "Bure" unaweza kuzidownload moja kwa moja bila malipo — bonyeza game, kisha "DOWNLOAD GAME FILE" (na "DOWNLOAD EMULATOR" kama linahitaji). Chuja kwa kubonyeza kichupo "Bure" juu ya orodha ya games kuona zote za bure tu.'},
   {keys:['za kulipia','paid','bei','price'], a:'Games za "Kulipia" zina bei iliyoonyeshwa. Baada ya kulipa na kuthibitishwa (ona swali la "malipo"), download inafunguka. Unaweza pia kupata game la kulipia BURE kwa kutumia point 500 ulizokusanya kwa kualika marafiki — angalia Profile → "Alika Marafiki".'},
-  {keys:['seti','setup','install','weka game','emulator','emulators','emulata'], a:'Naweza kukusaidia kuseti karibu emulator yoyote maarufu — niambie jina lake (Winlator, PPSSPP, Mobox, AetherSX2, Yuzu, Skyline, Suyu, au Dolphin) nitakupa hatua zake, au niulize tu "emulator ni gani ya game X" nikuelekeze. Kila game kwenye app pia ina maelekezo yake maalum: fungua game, bonyeza download, kisha chini utaona "Je unahitaji msaada wa kuseti?" — bonyeza Ndiyo kuona hatua za game hilo mahususi. Na kama bado umekwama, niko hapa, tuendelee kuongea mpaka lifanye kazi 🙂'},
-  {keys:['winlator'], a:'🔧 WINLATOR (kwa games za PC zinazochezwa kwenye Android):\n1. Download Winlator na uisakinishe (allow "install from unknown sources" kwenye mipangilio ya simu)\n2. Fungua Winlator, unda "Container" mpya (bonyeza +), chagua Windows version (kawaida Windows 10)\n3. Ndani ya container, bonyeza "Install" kisha chagua faili la game (.exe) ulilodownload\n4. Subiri isakinishwe, kisha bonyeza icon ya game kuianzisha\n5. Rekebisha graphics driver (Box86/Box64, DXVK) kwenye container settings kama game halifanyi kazi vizuri au inakwama\n\nUkikwama sehemu fulani hasa, niambie inakwama wapi na nitakusaidia hatua kwa hatua.'},
-  {keys:['ppsspp'], a:'🎮 PPSSPP (kwa games za PSP):\n1. Download na sakinisha PPSSPP kutoka Play Store au link tuliyokupa\n2. Fungua PPSSPP, bonyeza "Games" tab\n3. Elekeza kwenye folder uliyoweka faili la game (.iso au .cso)\n4. Bonyeza game kuianzisha — mipangilio ya graphics (rendering mode, resolution) iko kwenye Settings ndani ya PPSSPP\n5. Kama inasota (lag), punguza resolution au zima baadhi ya efeti kwenye Settings → Graphics'},
-  {keys:['mobox'], a:'📦 MOBOX (kwa games za Windows/PC, mbadala wa Winlator):\n1. Download Mobox na uisakinishe (ruhusu "install from unknown sources")\n2. Fungua Mobox, unda profile/container mpya\n3. Weka faili la game (.exe) ndani ya container hiyo kisha "Install"\n4. Subiri isakinishwe kisha fungua game kutoka ndani ya Mobox\n5. Kama graphics haziko sawa, angalia mipangilio ya DXVK/renderer ndani ya Mobox settings\n\nNiambie kama unakwama hatua fulani, tutapitia pamoja.'},
-  {keys:['aethersx2','aether sx2','ps2'], a:'🕹️ AetherSX2 (kwa games za PS2):\n1. Download AetherSX2 kutoka Play Store au link tuliyokupa, isakinishe\n2. Fungua app, bonyeza "BIOS" mara ya kwanza uweke faili la BIOS ya PS2 (linakuja pamoja na game au tunakupa link)\n3. Elekeza kwenye folder yenye faili za games za PS2 (.iso)\n4. Bonyeza game kuianzisha — mipangilio ya graphics/renderer iko kwenye Settings\n5. Simu zenye RAM ya chini zinaweza kuwa na lag kwenye baadhi ya games nzito'},
-  {keys:['yuzu','skyline','suyu','switch','nintendo switch'], a:'🎮 Nintendo Switch emulators (Yuzu / Skyline / Suyu):\n1. Download emulator uliyochagua (Yuzu, Skyline, au Suyu) na uisakinishe\n2. Fungua app, ongeza "keys" na "firmware" ya Switch zinazohitajika mara ya kwanza (link tunakupa pamoja na game)\n3. Elekeza kwenye folder yenye faili la game (.nsp/.xci)\n4. Bonyeza game kuianzisha\n\nGames za Switch zinahitaji simu yenye nguvu (RAM/processor nzuri) — kama inasota sana, ni kawaida kwa baadhi ya simu, si hitilafu ya app.'},
-  {keys:['dolphin'], a:'🎮 DOLPHIN (kwa games za GameCube na Wii):\n1. Download Dolphin Emulator kutoka Play Store au link tuliyokupa, isakinishe\n2. Fungua app, elekeza kwenye folder yenye faili za games (.iso/.rvz/.wbfs)\n3. Bonyeza game kuianzisha — mipangilio ya graphics iko kwenye Settings ndani ya Dolphin\n4. Kwa udhibiti bora, unaweza kuunganisha controller ya Bluetooth kwenye simu yako'},
+
+  // --- Emulators, one entry each so specific questions get specific answers ---
+  {keys:['winlator'], a:'🔧 WINLATOR (kwa games za PC zinazochezwa kwenye Android):\n1. Download Winlator na uisakinishe (ruhusu "install from unknown sources" kwenye mipangilio ya simu)\n2. Fungua Winlator, unda "Container" mpya (bonyeza +), chagua Windows version (kawaida Windows 10)\n3. Ndani ya container, bonyeza "Install" kisha chagua faili la game (.exe) ulilodownload\n4. Subiri isakinishwe, kisha bonyeza icon ya game kuianzisha\n5. Kama halifanyi kazi vizuri, rekebisha graphics driver (Box86/Box64, DXVK) kwenye container settings\n\n📺 Video kamili: ' + YT_CHANNEL},
+  {keys:['ppsspp'], a:'🎮 PPSSPP (kwa games za PSP):\n1. Download na sakinisha PPSSPP kutoka Play Store au link tuliyokupa\n2. Fungua PPSSPP, bonyeza "Games" tab\n3. Elekeza kwenye folder uliyoweka faili la game (.iso au .cso)\n4. Bonyeza game kuianzisha — mipangilio ya graphics (Rendering, Frame skipping) iko kwenye Settings ndani ya PPSSPP\n\n📺 Video kamili: ' + YT_CHANNEL},
+  {keys:['mobox'], a:'📦 MOBOX (kwa games za PC ndogo/za kati kwenye Android):\n1. Download na sakinisha MoBox\n2. Fungua MoBox, bonyeza "+" kuongeza game mpya\n3. Elekeza kwenye faili la game (.exe) ulilodownload, subiri ijisakinishe\n4. Chagua "Graphics driver" (Turnip/Zink) inayofaa simu yako kwenye settings ukiona shida za graphics\n5. Bonyeza game kuianzisha\n\n📺 Video kamili: ' + YT_CHANNEL},
+  {keys:['aethersx2','ps2'], a:'🕹️ AETHERSX2 (kwa games za PS2):\n1. Download na sakinisha AetherSX2\n2. Fungua app, kwenye mipangilio ya kwanza elekeza kwenye faili la BIOS ya PS2 (linahitajika kabla ya kucheza)\n3. Bonyeza "+" au "Add Game", chagua faili la ISO ulilodownload\n4. Rekebisha "Renderer" (Vulkan kwa kawaida ni bora zaidi) kwenye Settings kama picha haziko sawa\n5. Bonyeza game kuianzisha\n\n📺 Video kamili: ' + YT_CHANNEL},
+  {keys:['yuzu','skyline','suyu','switch','nintendo switch'], a:'🎮 EMULATOR ZA NINTENDO SWITCH (Yuzu / Skyline / Suyu):\n1. Download emulator uliyoichagua (Skyline ni rahisi zaidi kwa Android; Yuzu/Suyu zinahitaji simu yenye nguvu zaidi)\n2. Sakinisha, kisha ongeza "Keys" na "Firmware" za Switch kwenye mipangilio ya kwanza (zinahitajika kabla ya kucheza chochote — tazama video yetu kwa maelezo kamili ya wapi kuzipata)\n3. Bonyeza "+" kuongeza game, chagua faili la game (.xci au .nsp) ulilodownload\n4. Rekebisha graphics settings (resolution, backend) kama game halifanyi kazi vizuri\n5. Bonyeza game kuianzisha\n\n📺 Video kamili: ' + YT_CHANNEL},
+  {keys:['dolphin','gamecube','wii '], a:'🎮 DOLPHIN EMULATOR (kwa games za GameCube na Wii):\n1. Download na sakinisha Dolphin Emulator\n2. Fungua app, bonyeza folder icon kuelekeza kwenye mahali ulipoweka faili la game (.iso/.rvz/.wbfs)\n3. Bonyeza game kwenye orodha kuianzisha\n4. Rekebisha "Graphics Backend" (Vulkan kwa kawaida) na "Internal Resolution" kwenye settings ukiona lag\n\n📺 Video kamili: ' + YT_CHANNEL},
+  {keys:['seti','setup','install','weka game','emulator'], a:'Tunatumia emulator tofauti kulingana na aina ya game: **Winlator** au **MoBox** kwa games za PC, **PPSSPP** kwa PSP, **AetherSX2** kwa PS2, **Yuzu/Skyline/Suyu** kwa Nintendo Switch, na **Dolphin** kwa GameCube/Wii. Niambie ni emulator gani unahitaji msaada nayo (mfano: "Winlator" au "PPSSPP") nikupe hatua kamili. Kila game kwenye app pia ina maelekezo yake maalum — fungua game, bonyeza download, kisha "Je unahitaji msaada wa kuseti?" → "Ndiyo, nisaidie".\n\n📺 Video zote za maelekezo: ' + YT_CHANNEL},
+
+  // --- Other features ---
   {keys:['duka','uza','nunua','bidhaa','marketplace'], a:'Duka la Wachezaji unalipata kwa kubonyeza button ya "Duka" katikati ya menu ya chini (icon ya mfuko wa ununuzi 🛍️). Humo unaweza kutazama vifaa vya games vinavyouzwa na wachezaji wengine (vilivyothibitishwa na admin), au kuweka bidhaa yako mwenyewe kwa kujaza fomu — admin ataithibitisha kabla haijaonekana kwa umma. Malipo yote ya dukani pia hupitia utaratibu wa uthibitisho kama games za kulipia, ili kukukinga na matapeli.'},
   {keys:['kura','vote','poll'], a:'Bonyeza kitufe cha "Kura" (icon ya 🗳️) kwenye Home kuona kura zilizopo na kupiga kura yako. Kila mtumiaji anaweza kupiga kura mara moja kwa kila swali. Ukiona kitone (dot) chekundu juu ya button ya Kura, maana yake kuna kura mpya iliyowekwa na admin — fungua uione.'},
-  {keys:['tiktok'], a:'Bonyeza button ya "TikTok" (icon ya 🎵, rangi nyeusi/bluu/pink) kwenye Home kufungua channel yetu ya TikTok moja kwa moja, kuona video za hivi karibuni za games. Ukiona kitone chekundu juu ya button hiyo, maana yake kuna video mpya.'},
-  {keys:['youtube'], a:'Bonyeza button ya "YouTube" (icon nyekundu ▶️) kwenye Home kufungua channel yetu ya YouTube: ' + YT_CHANNEL + ' — humo kuna video za maelekezo ya jinsi ya kuseti games kwa Winlator na PPSSPP, pamoja na maudhui mengine ya games.'},
+  {keys:['tiktok'], a:'Bonyeza button ya "TikTok" (icon ya 🎵) kwenye Home kufungua channel yetu ya TikTok moja kwa moja, kuona video za hivi karibuni za games. Ukiona kitone chekundu juu ya button hiyo, maana yake kuna video mpya.'},
+  {keys:['youtube'], a:'Bonyeza button ya "YouTube" (icon nyekundu ▶️) kwenye Home kufungua channel yetu ya YouTube: ' + YT_CHANNEL + ' — humo kuna video za maelekezo ya jinsi ya kuseti games kwa emulator mbalimbali, pamoja na maudhui mengine ya games.'},
   {keys:['chat','ujumbe','mazungumzo'], a:'Ukurasa wa "Chat" (icon ya 💬 kwenye menu ya chini) ni sehemu ya mazungumzo ya jamii ya mumbigames na channel ya WhatsApp ya admin kwa msaada wa moja kwa moja.'},
   {keys:['point','pointi','alika','referral','mwaliko','msimbo'], a:'Mfumo wa Points: kila ukimwalika rafiki kwa kutumia msimbo wako wa kipekee (unaupata Profile → "Alika Marafiki"), akijisajili na kuweka msimbo wako, unapata point 50. Ukifikisha point 500, unaweza kupata game LOLOTE la kulipia BURE kabisa (Profile → "Chagua Game la Kupata Bure"). Msimbo wako unaonekana kwenye Profile, na kuna button ya "Shea APK + Msimbo Wangu" ya kutuma kwa rafiki yako moja kwa moja.'},
   {keys:['download','pakua','haifunguki','tatizo'], a:'Kama download haifanyi kazi, hakikisha una mtandao mzuri na jaribu tena. Kumbuka: baada ya kubonyeza download, subiri hesabu ya sekunde ipite kabla faili halijafunguka — hii ni ya kawaida. Kama tatizo linaendelea, wasiliana na admin kupitia WhatsApp kwenye ukurasa wa Chat.'},
@@ -1489,17 +1510,16 @@ function initAI(){
   const quick = document.getElementById('aiQuick');
   if(quick.dataset.init) return;
   quick.dataset.init = '1';
-  const topics = ['Jinsi ya kulipia','Kuseti Winlator','Kuseti Mobox','Kuseti PPSSPP','Kuseti AetherSX2','Kuseti Yuzu/Skyline','Kuseti Dolphin','Duka linafanyaje kazi','Jinsi ya kupiga kura','Mfumo wa Points'];
+  const topics = ['Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Kuseti MoBox','Kuseti AetherSX2','Kuseti Yuzu/Skyline','Kuseti Dolphin','Duka linafanyaje kazi','Mfumo wa Points'];
   quick.innerHTML = topics.map(t=>`<div class="ai-chip" onclick="aiAsk(${JSON.stringify(t)})">${t}</div>`).join('');
   const box = document.getElementById('aiMessages');
-  box.innerHTML = `<div class="ai-msg bot">Habari yako! 👋 Mimi ni msaidizi wa mumbigames. Nipo hapa kukusaidia — kama umekwama kuseti game, una swali la malipo, au unahitaji tu mtu wa kuongea naye kuhusu app hii, niambie tu kwa maneno yako mwenyewe, si lazima uwe rasmi. Tuanze na nini?</div>`;
+  box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni msaidizi wa mumbigames 🤖 Niulize chochote — malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, points, au hata ukitaka tu kuongea, niko hapa kwa ajili yako.</div>`;
 }
 
 function aiRespond(text){
   const lower = text.toLowerCase();
   const hit = AI_KB.find(k=>k.keys.some(w=>lower.includes(w)));
-  if(hit) return hit.a;
-  return 'Samahani, sijaelewa vizuri swali lako — lakini si tatizo, tujaribu kwa njia nyingine. Unaweza kuniambia zaidi, au tumia maneno kama "malipo", "kuseti [jina la emulator]", "duka" au "kura". Nikishindwa kukusaidia mimi mwenyewe, ongea na admin (binadamu) kupitia WhatsApp kwenye ukurasa wa Chat — hatutakuacha ukiwa umekwama.';
+  return hit ? hit.a : 'Naelewa unachouliza, lakini sijapata jibu kamili kwenye maarifa yangu 🤔 Jaribu kuniambia kwa namna nyingine, au tumia maneno kama "malipo", "Winlator", "PPSSPP", "duka", "kura" au "points". Kama bado imekwama, admin yupo tayari kukusaidia moja kwa moja kupitia WhatsApp kwenye ukurasa wa Chat.';
 }
 
 function aiAddMsg(text, who){
@@ -1638,21 +1658,40 @@ async function handleListingImageSelect(){
   const file = fileInput.files[0];
   if(!file) return;
   const statusEl = document.getElementById('lImgUploadStatus');
+  statusEl.style.color = 'var(--sub)';
   statusEl.textContent = 'Inapakia picha...';
-  const path = 'listing-images/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'');
   try{
-    const ref = storage.ref().child(path);
-    const snap = await ref.put(file);
-    const url = await snap.ref.getDownloadURL();
+    const url = await uploadToImgbb(file);
     document.getElementById('lImage').value = url;
     document.getElementById('lImgPreview').src = url;
     document.getElementById('lImgPreviewWrap').style.display = 'block';
     statusEl.textContent = 'Picha imepakiwa ✓';
   }catch(e){
     console.error(e);
-    statusEl.textContent = 'Imeshindwa kupakia picha. Jaribu tena.';
-    alert('Imeshindwa kupakia picha. Hakikisha una mtandao mzuri kisha jaribu tena. Kama tatizo linaendelea, jaribu picha nyingine au ukubwa mdogo zaidi.');
+    statusEl.style.color = '#ff6b6b';
+    statusEl.textContent = 'Imeshindwa kupakia picha. Tumia "weka link ya picha" chini badala yake.';
   }
+}
+
+function useListingImageUrl(){
+  const input = document.getElementById('lImageUrlInput');
+  const url = input.value.trim();
+  const statusEl = document.getElementById('lImgUploadStatus');
+  if(!url){ alert('Weka link ya picha kwanza.'); return; }
+  if(!/^https?:\/\//i.test(url)){ alert('Link lazima lianze na http:// au https://'); return; }
+  if(/^https?:\/\/ibb\.co\//i.test(url)){
+    alert('Hii ni link ya ukurasa, si picha moja kwa moja. Tafuta "Direct link" (huanza na i.ibb.co).');
+    return;
+  }
+  document.getElementById('lImage').value = url;
+  const previewImg = document.getElementById('lImgPreview');
+  previewImg.onerror = function(){ alert('Link hii haionekani kuwa picha halali. Angalia tena.'); };
+  previewImg.onload = function(){
+    statusEl.style.color = 'var(--sub)';
+    statusEl.textContent = 'Picha imewekwa kutoka link ✓';
+  };
+  previewImg.src = url;
+  document.getElementById('lImgPreviewWrap').style.display = 'block';
 }
 
 async function submitListing(){
@@ -1669,10 +1708,6 @@ async function submitListing(){
   const sellerPhone = document.getElementById('lSellerPhone').value.trim();
   if(!title || !price || !sellerName || !sellerPhone){
     alert('Jaza jina la bidhaa, bei, jina lako na namba yako kabla ya kutuma.');
-    return;
-  }
-  if(!image){
-    alert('Tafadhali pakia picha ya bidhaa kwanza (bonyeza "Choose File" hapo juu na subiri iandike "Picha imepakiwa ✓") kabla ya kutuma.');
     return;
   }
   try{
@@ -1692,6 +1727,7 @@ async function submitListing(){
   document.getElementById('lPrice').value='';
   document.getElementById('lImage').value='';
   document.getElementById('lImageFile').value='';
+  document.getElementById('lImageUrlInput').value='';
   document.getElementById('lImgPreviewWrap').style.display='none';
   document.getElementById('lImgUploadStatus').textContent='';
   document.getElementById('lSellerName').value='';
@@ -1761,7 +1797,13 @@ const TRANSLATIONS = {
     settings_lang:'Lugha ya App', settings_lang_sub:'Chagua lugha unayoipenda',
     settings_clear:'Futa Cache ya App', settings_clear_sub:'Rudisha mipangilio kwenye hali ya awali',
     settings_share:'Shea na Marafiki', settings_share_sub:'Waambie wenzako kuhusu mumbigames',
-    nav_home:'Home', nav_chat:'Chat', nav_me:'Me',
+    nav_home:'Home', nav_chat:'Chat', nav_me:'Me', nav_duka:'Duka', nav_ai:'AI',
+    search_placeholder:'Tafuta games...',
+    qa_tiktok:'TikTok', qa_kura:'Kura', qa_youtube:'YouTube',
+    chip_all:'Zote', chip_free:'Bure', chip_paid:'Kulipia', chip_offline:'Offline',
+    poll_title:'Kura (Poll)', poll_sub:'Piga kura, ona matokeo',
+    ai_title:'🤖 AI Msaidizi', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi',
+    profile_title:'Profile Yangu', profile_sub:'Akaunti yako mumbigames',
     duka_title:'Duka la Wachezaji', duka_sub:'Vifaa vya games — vilivyothibitishwa na admin',
     duka_sub_home:'Nunua/uza vifaa vya games — vilivyothibitishwa na admin',
     duka_browse:'Tazama Bidhaa', duka_post_tab:'Weka Bidhaa',
@@ -1772,12 +1814,7 @@ const TRANSLATIONS = {
     duka_note:'Bidhaa yako haitaonekana kwa umma mpaka admin aithibitishe kuwa ni ya kweli. Kuweka taarifa za uongo kunaweza kukufanya uzuiliwe.',
     chat_title:'Jumuiya ya mumbigames', chat_sub:'Chati ya wachezaji wote',
     chat_join_title:'Jiunge na Chati', chat_join_sub:'Weka jina utakalotumia kuchati na wachezaji wengine',
-    chat_join_btn:'Ingia Chatini',
-    search_placeholder:'Tafuta games...',
-    chip_all:'Zote', chip_free:'Bure', chip_paid:'Kulipia', chip_offline:'Offline',
-    badge_paid:'🔒 Kulipia', badge_free:'Bure', tag_free:'Bure', tag_offline:'Offline', tag_online:'Online',
-    share_btn:'Share', empty_games:'Hakuna games kwenye kundi hili bado', trend_label:'🔥 Trending',
-    qa_kura:'Kura', mygames_empty:'Bado hujadownload game yoyote.'
+    chat_join_btn:'Ingia Chatini'
   },
   en: {
     settings_title:'Settings', settings_sub:'App preferences',
@@ -1785,7 +1822,13 @@ const TRANSLATIONS = {
     settings_lang:'App Language', settings_lang_sub:'Choose your preferred language',
     settings_clear:'Clear App Cache', settings_clear_sub:'Reset settings to default',
     settings_share:'Share with Friends', settings_share_sub:'Tell your friends about mumbigames',
-    nav_home:'Home', nav_chat:'Chat', nav_me:'Me',
+    nav_home:'Home', nav_chat:'Chat', nav_me:'Me', nav_duka:'Shop', nav_ai:'AI',
+    search_placeholder:'Search games...',
+    qa_tiktok:'TikTok', qa_kura:'Poll', qa_youtube:'YouTube',
+    chip_all:'All', chip_free:'Free', chip_paid:'Paid', chip_offline:'Offline',
+    poll_title:'Poll', poll_sub:'Vote and see results',
+    ai_title:'🤖 AI Assistant', ai_sub:'Ask about payments, game setup, and more',
+    profile_title:'My Profile', profile_sub:'Your mumbigames account',
     duka_title:'Player Marketplace', duka_sub:'Gaming gear — verified by admin',
     duka_sub_home:'Buy/sell gaming gear — verified by admin',
     duka_browse:'Browse Items', duka_post_tab:'Post Item',
@@ -1796,20 +1839,9 @@ const TRANSLATIONS = {
     duka_note:'Your item won\'t be public until admin confirms it\'s genuine. False listings may get you blocked.',
     chat_title:'mumbigames Community', chat_sub:'Chat with all players',
     chat_join_title:'Join Chat', chat_join_sub:'Enter the name you\'ll use to chat with other players',
-    chat_join_btn:'Enter Chat',
-    search_placeholder:'Search games...',
-    chip_all:'All', chip_free:'Free', chip_paid:'Paid', chip_offline:'Offline',
-    badge_paid:'🔒 Paid', badge_free:'Free', tag_free:'Free', tag_offline:'Offline', tag_online:'Online',
-    share_btn:'Share', empty_games:'No games in this category yet', trend_label:'🔥 Trending',
-    qa_kura:'Poll', mygames_empty:'You haven\'t downloaded any games yet.'
+    chat_join_btn:'Enter Chat'
   }
 };
-
-function t(key){
-  const lang = localStorage.getItem('mg-lang') || 'sw';
-  const dict = TRANSLATIONS[lang] || TRANSLATIONS.sw;
-  return dict[key] || TRANSLATIONS.sw[key] || key;
-}
 
 function applyLang(lang){
   const dict = TRANSLATIONS[lang] || TRANSLATIONS.sw;
@@ -1821,12 +1853,6 @@ function applyLang(lang){
     const key = el.getAttribute('data-i18n-placeholder');
     if(dict[key]) el.placeholder = dict[key];
   });
-  // Re-render dynamic content that isn't plain data-i18n elements
-  if(typeof render === 'function') render();
-  const qaKura = document.getElementById('qaKuraLabel');
-  if(qaKura) qaKura.textContent = t('qa_kura');
-  const myGamesEmpty = document.querySelector('#myGamesList .empty');
-  if(myGamesEmpty) myGamesEmpty.textContent = t('mygames_empty');
 }
 
 function setLang(lang){
@@ -2117,7 +2143,7 @@ function loadMyGames(uid){
       <div class="dl-item" style="cursor:default;">
         <span class="dl-icon">🎮</span>
         <span class="dl-name">${escapeHtml(it.gameName)}</span>
-      </div>`).join('') : `<div class="empty">${t('mygames_empty')}</div>`;
+      </div>`).join('') : '<div class="empty">Bado hujadownload game yoyote.</div>';
   }, err=>console.error(err));
 }
 </script>

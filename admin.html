@@ -21,6 +21,20 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
   const storage = firebase.storage();
+
+  // ---- Imgbb (free image hosting, no billing needed — replace with your own key) ----
+  const IMGBB_API_KEY = '4ba0b719dee411039527e4fca22b606c';
+  async function uploadToImgbb(file){
+    const formData = new FormData();
+    formData.append('image', file);
+    const res = await fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_API_KEY, {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if(!data || !data.success) throw new Error((data && data.error && data.error.message) || 'Imgbb upload failed');
+    return data.data.url;
+  }
 </script>
 <style>
   :root{
@@ -189,13 +203,24 @@
         <div class="stat"><div class="num" id="statPaid">0</div><div class="lbl">Za kulipia</div></div>
       </div>
       <div class="stat-row">
-        <div class="stat" style="background:linear-gradient(135deg,#132a1c,#0d1a12);border:1px solid #1e7d3a;"><div class="num" id="statDownloadsTotal" style="color:#3ddc71;">0</div><div class="lbl">Downloads Yote</div></div>
-        <div class="stat" style="background:linear-gradient(135deg,#132a1c,#0d1a12);border:1px solid #1e7d3a;"><div class="num" id="statDownloadsToday" style="color:#3ddc71;">0</div><div class="lbl">Downloads Leo</div></div>
+        <div class="stat" style="background:linear-gradient(135deg,#132a1c,#0d1a12);border:1px solid #1e7d3a;">
+          <div class="num" id="statDownloadsTotal" style="color:#3ddc71;">0</div>
+          <div class="lbl">Downloads Yote</div>
+        </div>
+        <div class="stat" style="background:linear-gradient(135deg,#132a1c,#0d1a12);border:1px solid #1e7d3a;">
+          <div class="num" id="statDownloadsToday" style="color:#3ddc71;">0</div>
+          <div class="lbl">Downloads Leo</div>
+          <div id="statDownloadsTodayPct" style="font-size:10.5px;color:#3ddc71;margin-top:2px;opacity:0.85;"></div>
+        </div>
         <div class="stat"><div class="num" id="statAccounts">0</div><div class="lbl">Akaunti zilizofunguliwa</div></div>
       </div>
       <div class="stat-row">
         <div class="stat"><div class="num" id="statVisits">0</div><div class="lbl">Watembeleaji (jumla)</div></div>
-        <div class="stat"><div class="num" id="statUnique">0</div><div class="lbl">Wageni wapya</div></div>
+        <div class="stat">
+          <div class="num" id="statUnique">0</div>
+          <div class="lbl">Wageni wapya</div>
+          <div id="statUniquePct" style="font-size:10.5px;color:var(--sub);margin-top:2px;"></div>
+        </div>
         <div class="stat"></div>
       </div>
       <div class="section-title"><h2>📥 Downloads za Leo (kwa game)</h2></div>
@@ -460,49 +485,47 @@ function announceSocial(type){
     .catch(e=>{ console.error(e); showToast('Imeshindwa. Jaribu tena.'); });
 }
 
-let lastTotalVisits = 0;
 function loadSiteStats(){
   db.collection('meta').doc('siteStats').onSnapshot(function(doc){
     const d = doc.exists ? doc.data() : {};
-    const totalVisits = d.totalVisits || 0;
-    const uniqueVisitors = d.uniqueVisitors || 0;
-    lastTotalVisits = totalVisits;
-    document.getElementById('statVisits').textContent = totalVisits;
-    document.getElementById('statUnique').textContent = pct(uniqueVisitors, totalVisits);
-    document.getElementById('statUnique').nextElementSibling.innerHTML = 'Wageni wapya <span style="opacity:.65;font-size:9px;">('+uniqueVisitors+')</span>';
-    updateAccountsPct();
+    const visits = d.totalVisits || 0;
+    const unique = d.uniqueVisitors || 0;
+    document.getElementById('statVisits').textContent = visits;
+    document.getElementById('statUnique').textContent = unique;
+    document.getElementById('statUniquePct').textContent = visits > 0 ? Math.round((unique/visits)*100) + '% ya watembeleaji' : '';
   }, function(err){ console.error(err); });
   db.collection('users').onSnapshot(function(snap){
-    lastAccountsCount = snap.size;
-    updateAccountsPct();
+    document.getElementById('statAccounts').textContent = snap.size;
   }, function(err){ console.error(err); });
   loadDownloadStats();
 }
-let lastAccountsCount = 0;
-function updateAccountsPct(){
-  const el = document.getElementById('statAccounts');
-  if(!el) return;
-  el.textContent = pct(lastAccountsCount, lastTotalVisits);
-  el.nextElementSibling.innerHTML = 'Akaunti zilizofunguliwa <span style="opacity:.65;font-size:9px;">('+lastAccountsCount+')</span>';
-}
 
 function loadDownloadStats(){
+  let totalDownloadsCached = 0;
   db.collection('games').onSnapshot(function(snap){
-    let totalDownloads = 0, gamesWithDownloads = 0;
-    const totalGames = snap.size;
-    snap.forEach(function(d){
-      const c = d.data().downloadCount || 0;
-      totalDownloads += c;
-      if(c > 0) gamesWithDownloads++;
-    });
-    document.getElementById('statDownloadsTotal').textContent = pct(gamesWithDownloads, totalGames);
-    document.getElementById('statDownloadsTotal').nextElementSibling.innerHTML = 'Games Zilizopakuliwa <span style="opacity:.65;font-size:9px;">('+gamesWithDownloads+'/'+totalGames+' games · '+totalDownloads+' downloads jumla)</span>';
+    let total = 0;
+    snap.forEach(function(d){ total += (d.data().downloadCount || 0); });
+    totalDownloadsCached = total;
+    document.getElementById('statDownloadsTotal').textContent = total;
+    updateTodayPct();
   }, function(err){ console.error(err); });
+
+  let todayCountCached = 0;
+  function updateTodayPct(){
+    const pctEl = document.getElementById('statDownloadsTodayPct');
+    if(totalDownloadsCached > 0){
+      pctEl.textContent = Math.round((todayCountCached/totalDownloadsCached)*100) + '% ya jumla';
+    } else {
+      pctEl.textContent = '';
+    }
+  }
 
   const startOfToday = new Date();
   startOfToday.setHours(0,0,0,0);
   db.collection('downloadLogs').where('time','>=', startOfToday.getTime()).onSnapshot(function(snap){
+    todayCountCached = snap.size;
     document.getElementById('statDownloadsToday').textContent = snap.size;
+    updateTodayPct();
     const counts = {};
     snap.forEach(function(d){
       const name = d.data().gameName || 'Isiyojulikana';
@@ -634,14 +657,8 @@ async function handleImageSelect(){
   statusEl.style.color = 'var(--sub)';
   statusEl.textContent = 'Inapakia picha... (usibonyeze Hifadhi mpaka imalize)';
   if(saveBtn){ saveBtn.disabled = true; saveBtn.style.opacity = '0.5'; }
-  const path = 'game-images/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'');
   try{
-    const ref = storage.ref().child(path);
-    const uploadPromise = ref.put(file).then(function(snap){ return snap.ref.getDownloadURL(); });
-    const timeoutPromise = new Promise(function(_, reject){
-      setTimeout(function(){ reject(new Error('timeout')); }, 25000);
-    });
-    const url = await Promise.race([uploadPromise, timeoutPromise]);
+    const url = await uploadToImgbb(file);
     document.getElementById('gImage').value = url;
     document.getElementById('imgPreview').src = url;
     document.getElementById('imgPreviewWrap').style.display = 'block';
@@ -702,11 +719,8 @@ async function handleBannerImageSelect(){
   if(!file) return;
   const statusEl = document.getElementById('bImgUploadStatus');
   statusEl.textContent = 'Inapakia picha...';
-  const path = 'banner-images/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'');
   try{
-    const ref = storage.ref().child(path);
-    const snap = await ref.put(file);
-    const url = await snap.ref.getDownloadURL();
+    const url = await uploadToImgbb(file);
     document.getElementById('bImage').value = url;
     document.getElementById('bImgPreview').src = url;
     document.getElementById('bImgPreviewWrap').style.display = 'block';
@@ -934,20 +948,10 @@ function escapeHtml(s){
   return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-function pct(part, whole){
-  if(!whole) return '0%';
-  return Math.round((part/whole)*100) + '%';
-}
-
 function renderAll(){
-  const total = games.length;
-  const freeCount = games.filter(g=>!g.paid).length;
-  const paidCount = games.filter(g=>g.paid).length;
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statFree').textContent = pct(freeCount, total);
-  document.getElementById('statFree').nextElementSibling.innerHTML = 'Bure <span style="opacity:.65;font-size:9px;">('+freeCount+')</span>';
-  document.getElementById('statPaid').textContent = pct(paidCount, total);
-  document.getElementById('statPaid').nextElementSibling.innerHTML = 'Za kulipia <span style="opacity:.65;font-size:9px;">('+paidCount+')</span>';
+  document.getElementById('statTotal').textContent = games.length;
+  document.getElementById('statFree').textContent = games.filter(g=>!g.paid).length;
+  document.getElementById('statPaid').textContent = games.filter(g=>g.paid).length;
 
   const trending = games.filter(g=>g.trending);
   document.getElementById('trendingList').innerHTML = trending.length
