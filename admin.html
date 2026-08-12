@@ -460,23 +460,43 @@ function announceSocial(type){
     .catch(e=>{ console.error(e); showToast('Imeshindwa. Jaribu tena.'); });
 }
 
+let lastTotalVisits = 0;
 function loadSiteStats(){
   db.collection('meta').doc('siteStats').onSnapshot(function(doc){
     const d = doc.exists ? doc.data() : {};
-    document.getElementById('statVisits').textContent = d.totalVisits || 0;
-    document.getElementById('statUnique').textContent = d.uniqueVisitors || 0;
+    const totalVisits = d.totalVisits || 0;
+    const uniqueVisitors = d.uniqueVisitors || 0;
+    lastTotalVisits = totalVisits;
+    document.getElementById('statVisits').textContent = totalVisits;
+    document.getElementById('statUnique').textContent = pct(uniqueVisitors, totalVisits);
+    document.getElementById('statUnique').nextElementSibling.innerHTML = 'Wageni wapya <span style="opacity:.65;font-size:9px;">('+uniqueVisitors+')</span>';
+    updateAccountsPct();
   }, function(err){ console.error(err); });
   db.collection('users').onSnapshot(function(snap){
-    document.getElementById('statAccounts').textContent = snap.size;
+    lastAccountsCount = snap.size;
+    updateAccountsPct();
   }, function(err){ console.error(err); });
   loadDownloadStats();
+}
+let lastAccountsCount = 0;
+function updateAccountsPct(){
+  const el = document.getElementById('statAccounts');
+  if(!el) return;
+  el.textContent = pct(lastAccountsCount, lastTotalVisits);
+  el.nextElementSibling.innerHTML = 'Akaunti zilizofunguliwa <span style="opacity:.65;font-size:9px;">('+lastAccountsCount+')</span>';
 }
 
 function loadDownloadStats(){
   db.collection('games').onSnapshot(function(snap){
-    let total = 0;
-    snap.forEach(function(d){ total += (d.data().downloadCount || 0); });
-    document.getElementById('statDownloadsTotal').textContent = total;
+    let totalDownloads = 0, gamesWithDownloads = 0;
+    const totalGames = snap.size;
+    snap.forEach(function(d){
+      const c = d.data().downloadCount || 0;
+      totalDownloads += c;
+      if(c > 0) gamesWithDownloads++;
+    });
+    document.getElementById('statDownloadsTotal').textContent = pct(gamesWithDownloads, totalGames);
+    document.getElementById('statDownloadsTotal').nextElementSibling.innerHTML = 'Games Zilizopakuliwa <span style="opacity:.65;font-size:9px;">('+gamesWithDownloads+'/'+totalGames+' games · '+totalDownloads+' downloads jumla)</span>';
   }, function(err){ console.error(err); });
 
   const startOfToday = new Date();
@@ -914,10 +934,20 @@ function escapeHtml(s){
   return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
+function pct(part, whole){
+  if(!whole) return '0%';
+  return Math.round((part/whole)*100) + '%';
+}
+
 function renderAll(){
-  document.getElementById('statTotal').textContent = games.length;
-  document.getElementById('statFree').textContent = games.filter(g=>!g.paid).length;
-  document.getElementById('statPaid').textContent = games.filter(g=>g.paid).length;
+  const total = games.length;
+  const freeCount = games.filter(g=>!g.paid).length;
+  const paidCount = games.filter(g=>g.paid).length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statFree').textContent = pct(freeCount, total);
+  document.getElementById('statFree').nextElementSibling.innerHTML = 'Bure <span style="opacity:.65;font-size:9px;">('+freeCount+')</span>';
+  document.getElementById('statPaid').textContent = pct(paidCount, total);
+  document.getElementById('statPaid').nextElementSibling.innerHTML = 'Za kulipia <span style="opacity:.65;font-size:9px;">('+paidCount+')</span>';
 
   const trending = games.filter(g=>g.trending);
   document.getElementById('trendingList').innerHTML = trending.length
