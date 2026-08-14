@@ -53,12 +53,14 @@
     }catch(e){ console.error(e); }
   })();
 
-  // ---- Capture referral code from URL, used at signup time ----
+  // ---- Capture referral code and deep-linked game id from URL ----
   (function captureReferral(){
     try{
       const params = new URLSearchParams(window.location.search);
       const ref = params.get('ref');
       if(ref) localStorage.setItem('mg_ref', ref);
+      const gameId = params.get('game');
+      if(gameId) window.__mgDeepLinkGameId = gameId;
     }catch(e){ console.error(e); }
   })();
 </script>
@@ -683,6 +685,8 @@ const DEMO_GAMES = [
   {id:'d3', name:'Puzzle Master', desc:'Michezo ya akili', genre:'Puzzle', offline:'no', paid:false, price:'0', trending:false, image:''},
 ];
 
+let deepLinkGameId = window.__mgDeepLinkGameId || null;
+let deepLinkOpened = false;
 function loadGames(){
   db.collection('games').onSnapshot(snap=>{
     games = snap.docs.map(d=>d.data());
@@ -690,6 +694,13 @@ function loadGames(){
     checkNewGameNotification();
     render();
     try{ refreshBanners(); }catch(e){ console.error(e); }
+    if(deepLinkGameId && !deepLinkOpened){
+      const g = games.find(x=>x.id === deepLinkGameId);
+      if(g){
+        deepLinkOpened = true;
+        openGameModal(g);
+      }
+    }
   }, err=>{
     console.error(err);
     games = DEMO_GAMES;
@@ -764,7 +775,7 @@ function render(){
         <div class="g-footer">
           <div class="g-action">⬇️ ${g.downloadCount||0}</div>
           <div class="g-action" onclick='event.stopPropagation();openComments(${JSON.stringify(g).replace(/'/g,"&#39;")})'>💬 ${g.commentCount||0}</div>
-          <button class="g-action share" onclick='event.stopPropagation();shareGame(${JSON.stringify(g.name).replace(/'/g,"&#39;")})'>🔗 Share</button>
+          <button class="g-action share" onclick='event.stopPropagation();shareGame(${JSON.stringify(g.name).replace(/'/g,"&#39;")}, ${JSON.stringify(g.id).replace(/'/g,"&#39;")}, ${JSON.stringify(g.image||'').replace(/'/g,"&#39;")})'>🔗 Share</button>
         </div>
       </div>
     </div>`).join('') : '<div class="empty">Hakuna games kwenye kundi hili bado</div>';
@@ -777,8 +788,27 @@ function formatGameDate(ts){
   return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
 }
 
-function shareGame(name){
-  const text = 'Angalia game "' + name + '" kwenye mumbigames: ' + window.location.href;
+async function shareGame(name, gameId, imageUrl){
+  const base = window.location.origin + window.location.pathname;
+  const link = gameId ? (base + '?game=' + encodeURIComponent(gameId)) : window.location.href;
+  const text = gameId
+    ? ('Angalia game "' + name + '" kwenye mumbigames: ' + link)
+    : ('Angalia mumbigames: ' + link);
+
+  // Try to attach the actual game image as a shareable file (e.g. WhatsApp shows it inline)
+  if(navigator.share && imageUrl){
+    try{
+      const res = await fetch(imageUrl);
+      const blob = await res.blob();
+      const ext = (blob.type && blob.type.split('/')[1]) || 'jpg';
+      const file = new File([blob], 'game.' + ext, {type: blob.type || 'image/jpeg'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({title: name, text: text, files:[file]});
+        return;
+      }
+    }catch(e){ console.error('image share failed, falling back to text', e); }
+  }
+
   if(navigator.share){
     navigator.share({title: name, text: text}).catch(()=>{});
   } else if(navigator.clipboard){
@@ -1144,7 +1174,7 @@ function startDownloadCountdown(i, url, gameId, gameName){
   const countEl = document.getElementById('dlcount-' + i);
   if(!btn || btn.disabled) return;
   btn.disabled = true;
-  let secs = 5;
+  let secs = 10;
   countEl.textContent = ' (' + secs + ')';
   const timer = setInterval(()=>{
     secs--;
