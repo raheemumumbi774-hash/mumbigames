@@ -192,6 +192,7 @@
     <div class="tab" data-view="banners">Banner</div>
     <div class="tab" data-view="polls">Kura</div>
     <div class="tab" data-view="social">Social</div>
+    <div class="tab" data-view="ads">Tangazo</div>
   </div>
 
   <main>
@@ -431,6 +432,41 @@
       </div>
       <p style="color:var(--sub);font-size:12px;margin-top:10px;">Hizi ndizo link zitakazowekwa kwenye nembo za bottom nav ya website/app kuu.</p>
     </div>
+
+    <div class="view" id="view-ads">
+      <div class="section-title"><h2>📢 Tangazo (Sponsored)</h2></div>
+      <p style="color:var(--sub);font-size:12px;margin-bottom:14px;">Weka tangazo la mteja hapa — litaonekana chini ya download za kila game. Mteja akikubali kulipia nafasi hii, jaza taarifa zake hapa chini kisha bonyeza "Hifadhi Tangazo".</p>
+
+      <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-weight:700;font-size:14px;">Onyesha Tangazo?</div>
+          <div style="font-size:11.5px;color:var(--sub);margin-top:2px;">Ukizima, tangazo halitaonekana kwa watumiaji.</div>
+        </div>
+        <div class="switch" id="adEnabledSwitch" onclick="toggleAdEnabled()"><div class="knob"></div></div>
+      </div>
+
+      <label>Jina la mteja/kampuni</label>
+      <input type="text" id="adTitle" placeholder="mfano: TANGAZA NA SISI HAPA">
+
+      <label>Maelezo mafupi</label>
+      <textarea id="adSubtitle" placeholder="mfano: Tangaza bidhaa yako ionekane kwa kila download ya games" style="min-height:70px;"></textarea>
+
+      <label>Link ya tangazo (mtu akibonyeza "Endelea", anaenda wapi)</label>
+      <input type="text" id="adLinkUrl" placeholder="https://...">
+
+      <label>Maandishi ya button</label>
+      <input type="text" id="adButtonText" placeholder="mfano: Bofya Uendelee" value="Bofya Uendelee">
+
+      <label>Picha ya tangazo</label>
+      <div id="adImgPreviewWrap" style="display:none;margin-bottom:8px;">
+        <img id="adImgPreview" src="" style="width:100%;max-height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line);">
+      </div>
+      <input type="file" id="adImageFile" accept="image/*" onchange="handleAdImageSelect()">
+      <div id="adImgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
+      <input type="hidden" id="adImage" value="">
+
+      <button class="btn btn-primary" style="width:100%;margin-top:16px;" onclick="saveSponsoredAd()">Hifadhi Tangazo</button>
+    </div>
   </main>
 </div>
 
@@ -521,6 +557,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
     if(tab.dataset.view==='banners') loadBannersAdmin();
     if(tab.dataset.view==='polls') loadPollsAdmin();
     if(tab.dataset.view==='payment') loadPaymentRequests();
+    if(tab.dataset.view==='ads') loadSponsoredAd();
   });
 });
 
@@ -1141,6 +1178,68 @@ function renderPaymentRequests(){
   document.getElementById('payPendingList').innerHTML = pending.length ? pending.map(paymentCard).join('') : '<div class="empty">Hakuna yanayosubiri uthibitisho</div>';
   document.getElementById('payApprovedList').innerHTML = approved.length ? approved.map(paymentCard).join('') : '<div class="empty">Bado hakuna yaliyothibitishwa</div>';
   document.getElementById('payRejectedList').innerHTML = rejected.length ? rejected.map(paymentCard).join('') : '<div class="empty">Hakuna yaliyokataliwa</div>';
+}
+
+// ---- Tangazo (Sponsored Ad) ----
+let adEnabled = false;
+async function handleAdImageSelect(){
+  const fileInput = document.getElementById('adImageFile');
+  const file = fileInput.files[0];
+  if(!file) return;
+  const statusEl = document.getElementById('adImgUploadStatus');
+  statusEl.style.color = 'var(--sub)';
+  statusEl.textContent = 'Inapakia picha...';
+  try{
+    const url = await uploadToImgbb(file);
+    document.getElementById('adImage').value = url;
+    document.getElementById('adImgPreview').src = url;
+    document.getElementById('adImgPreviewWrap').style.display = 'block';
+    statusEl.textContent = 'Picha imepakiwa ✓';
+  }catch(e){
+    console.error(e);
+    statusEl.textContent = 'Imeshindwa kupakia picha. Jaribu tena.';
+  }
+}
+
+function toggleAdEnabled(){
+  adEnabled = !adEnabled;
+  document.getElementById('adEnabledSwitch').classList.toggle('on', adEnabled);
+}
+
+function loadSponsoredAd(){
+  db.collection('meta').doc('sponsoredAd').get().then(doc=>{
+    const d = doc.exists ? doc.data() : {};
+    adEnabled = !!d.enabled;
+    document.getElementById('adEnabledSwitch').classList.toggle('on', adEnabled);
+    document.getElementById('adTitle').value = d.title || '';
+    document.getElementById('adSubtitle').value = d.subtitle || '';
+    document.getElementById('adLinkUrl').value = d.linkUrl || '';
+    document.getElementById('adButtonText').value = d.buttonText || 'Bofya Uendelee';
+    document.getElementById('adImage').value = d.image || '';
+    if(d.image){
+      document.getElementById('adImgPreview').src = d.image;
+      document.getElementById('adImgPreviewWrap').style.display = 'block';
+    }
+  }).catch(e=>console.error(e));
+}
+
+async function saveSponsoredAd(){
+  const data = {
+    enabled: adEnabled,
+    title: document.getElementById('adTitle').value.trim(),
+    subtitle: document.getElementById('adSubtitle').value.trim(),
+    linkUrl: document.getElementById('adLinkUrl').value.trim(),
+    buttonText: document.getElementById('adButtonText').value.trim() || 'Bofya Uendelee',
+    image: document.getElementById('adImage').value.trim(),
+    updatedAt: Date.now()
+  };
+  try{
+    await db.collection('meta').doc('sponsoredAd').set(data, {merge:true});
+    showToast('Tangazo limehifadhiwa!');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kuhifadhi. Jaribu tena.');
+  }
 }
 
 // initialize form with one empty download row
