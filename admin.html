@@ -91,6 +91,37 @@
   .stat .num{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--lime);}
   .stat .lbl{font-size:11px;color:var(--sub);margin-top:2px;}
 
+  /* ---- Dashboard header + glow stat cards ---- */
+  .dash-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+  .dash-header .dh-icon{width:54px;height:54px;border-radius:16px;flex:none;background:rgba(56,189,248,0.14);border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 22px rgba(56,189,248,0.3);}
+  .dash-header h1{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:800;background:linear-gradient(90deg,#5fd4ff,#9c8bff,#5be3a0);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .dash-header p{font-size:12px;color:var(--sub);margin-top:3px;}
+  .stat-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  .gcard{border-radius:18px;padding:16px 14px;border:1px solid var(--line);position:relative;overflow:hidden;}
+  .gcard .gc-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:12px;}
+  .gcard .gc-num{font-family:'Space Grotesk',sans-serif;font-size:25px;font-weight:800;line-height:1;}
+  .gcard .gc-lbl{font-size:11.5px;color:var(--sub);margin-top:4px;}
+  .gcard.span2{grid-column:span 2;}
+  .gcard.c-blue{background:linear-gradient(160deg,rgba(56,189,248,0.14),rgba(15,23,32,0.35));border-color:rgba(56,189,248,0.35);}
+  .gcard.c-blue .gc-icon{background:rgba(56,189,248,0.18);color:#38bdf8;}
+  .gcard.c-blue .gc-num{color:#7fdcff;}
+  .gcard.c-green{background:linear-gradient(160deg,rgba(52,211,153,0.14),rgba(15,23,32,0.35));border-color:rgba(52,211,153,0.35);}
+  .gcard.c-green .gc-icon{background:rgba(52,211,153,0.18);color:#34d399;}
+  .gcard.c-green .gc-num{color:#5be3a0;}
+  .gcard.c-purple{background:linear-gradient(160deg,rgba(167,139,250,0.16),rgba(15,23,32,0.35));border-color:rgba(167,139,250,0.4);}
+  .gcard.c-purple .gc-icon{background:rgba(167,139,250,0.2);color:#a78bfa;}
+  .gcard.c-purple .gc-num{color:#c1b3ff;}
+  .gcard.c-amber{background:linear-gradient(160deg,rgba(251,191,36,0.16),rgba(15,23,32,0.35));border-color:rgba(251,191,36,0.4);}
+  .gcard.c-amber .gc-icon{background:rgba(251,191,36,0.2);color:#fbbf24;}
+  .gcard.c-amber .gc-num{color:#ffd772;}
+  .gcard.c-teal{background:linear-gradient(160deg,rgba(45,212,191,0.16),rgba(15,23,32,0.35));border-color:rgba(45,212,191,0.4);}
+  .gcard.c-teal .gc-icon{background:rgba(45,212,191,0.2);color:#2dd4bf;}
+  .gcard.c-teal .gc-num{color:#67e8d3;}
+  .mini-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+  .mini-stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px;text-align:center;}
+  .mini-stat .num{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text);}
+  .mini-stat .lbl{font-size:10px;color:var(--sub);margin-top:2px;}
+
   .section-title{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px;}
   .section-title h2{font-size:15px;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;}
 
@@ -198,27 +229,26 @@
   <main>
     <!-- OVERVIEW -->
     <div class="view active" id="view-overview">
-      <div class="stat-row">
-        <div class="stat"><div class="num" id="statTotal">0</div><div class="lbl">Games zote</div></div>
-        <div class="stat"><div class="num" id="statFree">0</div><div class="lbl">Bure</div></div>
-        <div class="stat"><div class="num" id="statPaid">0</div><div class="lbl">Za kulipia</div></div>
-      </div>
-      <div class="stat-row">
-        <div class="stat" style="background:linear-gradient(135deg,#132a1c,#0d1a12);border:1px solid #1e7d3a;">
-          <div class="num" id="statDownloadsTotal" style="color:#3ddc71;">0</div>
-          <div class="lbl">Downloads Yote</div>
+      <div class="dash-header">
+        <div class="dh-icon">🛡️</div>
+        <div>
+          <h1>Admin Dashboard</h1>
+          <p>Karibu Admin, dhibiti games na maombi hapa</p>
         </div>
-        <div class="stat" style="background:linear-gradient(135deg,#132a1c,#0d1a12);border:1px solid #1e7d3a;">
-          <div class="num" id="statDownloadsToday" style="color:#3ddc71;">0</div>
-          <div class="lbl">Downloads Leo</div>
-        </div>
-        <div class="stat"><div class="num" id="statAccounts">0</div><div class="lbl">Akaunti zilizofunguliwa</div></div>
       </div>
-      <div class="stat-row">
-        <div class="stat"><div class="num" id="statVisits">0</div><div class="lbl">Watembeleaji (jumla)</div></div>
-        <div class="stat"><div class="num" id="statUnique">0</div><div class="lbl">Wageni wapya</div></div>
-        <div class="stat"></div>
+      <div class="stat-grid2">
+        <div class="gcard c-blue"><div class="gc-icon">🎮</div><div class="gc-num" id="statTotal">0</div><div class="gc-lbl">Games</div></div>
+        <div class="gcard c-green"><div class="gc-icon">📈</div><div class="gc-num" id="statDownloadsTotal">0</div><div class="gc-lbl">Downloads</div></div>
+        <div class="gcard c-purple"><div class="gc-icon">👑</div><div class="gc-num" id="statPaid">0</div><div class="gc-lbl">Premium Games</div></div>
+        <div class="gcard c-amber"><div class="gc-icon">👥</div><div class="gc-num" id="statRequests">0</div><div class="gc-lbl">Requests</div></div>
+        <div class="gcard c-teal span2"><div class="gc-icon">👤</div><div class="gc-num" id="statAccounts">0</div><div class="gc-lbl">Members</div></div>
       </div>
+      <div class="mini-stat-row">
+        <div class="mini-stat"><div class="num" id="statFree">0</div><div class="lbl">Bure</div></div>
+        <div class="mini-stat"><div class="num" id="statDownloadsToday">0</div><div class="lbl">Downloads Leo</div></div>
+        <div class="mini-stat"><div class="num" id="statVisits">0</div><div class="lbl">Watembeleaji</div></div>
+      </div>
+      <div style="display:none;"><span id="statUnique">0</span></div>
       <div class="section-title"><h2>Trending sasa</h2></div>
       <div id="trendingList"></div>
       <div class="section-title"><h2>Zilizoongezwa hivi karibuni</h2></div>
@@ -457,13 +487,29 @@
       <label>Maandishi ya button</label>
       <input type="text" id="adButtonText" placeholder="mfano: Bofya Uendelee" value="Bofya Uendelee">
 
-      <label>Picha ya tangazo</label>
-      <div id="adImgPreviewWrap" style="display:none;margin-bottom:8px;">
-        <img id="adImgPreview" src="" style="width:100%;max-height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line);">
+      <label>Aina ya tangazo</label>
+      <div style="display:flex;gap:10px;margin-bottom:14px;">
+        <button type="button" class="btn btn-ghost" id="adTypeBtnImage" style="flex:1;" onclick="setAdType('image')">🖼️ Picha</button>
+        <button type="button" class="btn btn-ghost" id="adTypeBtnVideo" style="flex:1;" onclick="setAdType('video')">🎬 Video</button>
       </div>
-      <input type="file" id="adImageFile" accept="image/*" onchange="handleAdImageSelect()">
-      <div id="adImgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
-      <input type="hidden" id="adImage" value="">
+
+      <div id="adImageFields">
+        <label>Picha ya tangazo</label>
+        <div id="adImgPreviewWrap" style="display:none;margin-bottom:8px;">
+          <img id="adImgPreview" src="" style="width:100%;max-height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line);">
+        </div>
+        <input type="file" id="adImageFile" accept="image/*" onchange="handleAdImageSelect()">
+        <div id="adImgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
+        <input type="hidden" id="adImage" value="">
+      </div>
+
+      <div id="adVideoFields" style="display:none;">
+        <label>Link ya video ya tangazo (dakika 1.5–2)</label>
+        <input type="text" id="adVideoUrl" placeholder="Link ya YouTube (unlisted) au link ya moja kwa moja ya .mp4">
+        <div style="font-size:11.5px;color:var(--sub);margin-top:6px;line-height:1.5;">
+          Unaweza kutumia: (1) link ya video ya YouTube isiyoorodheshwa (unlisted), au (2) link ya moja kwa moja ya faili la .mp4 lililopakiwa mahali (mfano Google Drive, Firebase Storage). Video itaonekana chini ya download za kila game, ikiwa na vidhibiti vya kucheza/kusimamisha.
+        </div>
+      </div>
 
       <button class="btn btn-primary" style="width:100%;margin-top:16px;" onclick="saveSponsoredAd()">Hifadhi Tangazo</button>
     </div>
@@ -1178,10 +1224,20 @@ function renderPaymentRequests(){
   document.getElementById('payPendingList').innerHTML = pending.length ? pending.map(paymentCard).join('') : '<div class="empty">Hakuna yanayosubiri uthibitisho</div>';
   document.getElementById('payApprovedList').innerHTML = approved.length ? approved.map(paymentCard).join('') : '<div class="empty">Bado hakuna yaliyothibitishwa</div>';
   document.getElementById('payRejectedList').innerHTML = rejected.length ? rejected.map(paymentCard).join('') : '<div class="empty">Hakuna yaliyokataliwa</div>';
+  const reqEl = document.getElementById('statRequests');
+  if(reqEl) reqEl.textContent = pending.length;
 }
 
 // ---- Tangazo (Sponsored Ad) ----
 let adEnabled = false;
+let adType = 'image';
+function setAdType(type){
+  adType = type;
+  document.getElementById('adTypeBtnImage').classList.toggle('btn-primary', type==='image');
+  document.getElementById('adTypeBtnVideo').classList.toggle('btn-primary', type==='video');
+  document.getElementById('adImageFields').style.display = type==='image' ? 'block' : 'none';
+  document.getElementById('adVideoFields').style.display = type==='video' ? 'block' : 'none';
+}
 async function handleAdImageSelect(){
   const fileInput = document.getElementById('adImageFile');
   const file = fileInput.files[0];
@@ -1216,21 +1272,25 @@ function loadSponsoredAd(){
     document.getElementById('adLinkUrl').value = d.linkUrl || '';
     document.getElementById('adButtonText').value = d.buttonText || 'Bofya Uendelee';
     document.getElementById('adImage').value = d.image || '';
+    document.getElementById('adVideoUrl').value = d.videoUrl || '';
     if(d.image){
       document.getElementById('adImgPreview').src = d.image;
       document.getElementById('adImgPreviewWrap').style.display = 'block';
     }
+    setAdType(d.adType === 'video' ? 'video' : 'image');
   }).catch(e=>console.error(e));
 }
 
 async function saveSponsoredAd(){
   const data = {
     enabled: adEnabled,
+    adType: adType,
     title: document.getElementById('adTitle').value.trim(),
     subtitle: document.getElementById('adSubtitle').value.trim(),
     linkUrl: document.getElementById('adLinkUrl').value.trim(),
     buttonText: document.getElementById('adButtonText').value.trim() || 'Bofya Uendelee',
     image: document.getElementById('adImage').value.trim(),
+    videoUrl: document.getElementById('adVideoUrl').value.trim(),
     updatedAt: Date.now()
   };
   try{
