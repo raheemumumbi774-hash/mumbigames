@@ -504,10 +504,15 @@
       </div>
 
       <div id="adVideoFields" style="display:none;">
-        <label>Link ya video ya tangazo (dakika 1.5–2)</label>
-        <input type="text" id="adVideoUrl" placeholder="Link ya YouTube (unlisted) au link ya moja kwa moja ya .mp4">
+        <label>Video ya tangazo (dakika 1.5–2)</label>
+        <div id="adVideoPreviewWrap" style="display:none;margin-bottom:8px;">
+          <video id="adVideoPreview" src="" controls playsinline style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#000;"></video>
+        </div>
+        <input type="file" id="adVideoFile" accept="video/mp4,video/*" onchange="handleAdVideoSelect()">
+        <div id="adVideoUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
+        <input type="hidden" id="adVideoUrl" value="">
         <div style="font-size:11.5px;color:var(--sub);margin-top:6px;line-height:1.5;">
-          Unaweza kutumia: (1) link ya video ya YouTube isiyoorodheshwa (unlisted), au (2) link ya moja kwa moja ya faili la .mp4 lililopakiwa mahali (mfano Google Drive, Firebase Storage). Video itaonekana chini ya download za kila game, ikiwa na vidhibiti vya kucheza/kusimamisha.
+          Chagua faili la video (.mp4) moja kwa moja kutoka kwenye simu au kompyuta yako. Litapakiwa kwenye mfumo na kucheza moja kwa moja chini ya download za kila game, likiwa na vidhibiti vya kucheza/kusimamisha.
         </div>
       </div>
 
@@ -1239,6 +1244,50 @@ function setAdType(type){
   document.getElementById('adImageFields').style.display = type==='image' ? 'block' : 'none';
   document.getElementById('adVideoFields').style.display = type==='video' ? 'block' : 'none';
 }
+function uploadAdVideoToStorage(file){
+  return new Promise((resolve, reject)=>{
+    const statusEl = document.getElementById('adVideoUploadStatus');
+    const ext = (file.name.split('.').pop() || 'mp4').toLowerCase();
+    const path = 'ads/video_' + Date.now() + '.' + ext;
+    const ref = storage.ref().child(path);
+    const task = ref.put(file);
+    task.on('state_changed', function(snap){
+      const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+      statusEl.style.color = 'var(--sub)';
+      statusEl.textContent = 'Inapakia video... ' + pct + '%';
+    }, function(err){
+      reject(err);
+    }, async function(){
+      try{
+        const url = await task.snapshot.ref.getDownloadURL();
+        resolve(url);
+      }catch(e){ reject(e); }
+    });
+  });
+}
+
+async function handleAdVideoSelect(){
+  const fileInput = document.getElementById('adVideoFile');
+  const file = fileInput.files[0];
+  if(!file) return;
+  const statusEl = document.getElementById('adVideoUploadStatus');
+  statusEl.style.color = 'var(--sub)';
+  statusEl.textContent = 'Inapakia video...';
+  try{
+    const url = await uploadAdVideoToStorage(file);
+    document.getElementById('adVideoUrl').value = url;
+    const prev = document.getElementById('adVideoPreview');
+    prev.src = url;
+    document.getElementById('adVideoPreviewWrap').style.display = 'block';
+    statusEl.style.color = 'var(--lime)';
+    statusEl.textContent = 'Video imepakiwa ✓';
+  }catch(e){
+    console.error(e);
+    statusEl.style.color = '#ff6b6b';
+    statusEl.textContent = 'Imeshindwa kupakia video. Jaribu tena.';
+  }
+}
+
 async function handleAdImageSelect(){
   const fileInput = document.getElementById('adImageFile');
   const file = fileInput.files[0];
@@ -1277,6 +1326,10 @@ function loadSponsoredAd(){
     if(d.image){
       document.getElementById('adImgPreview').src = d.image;
       document.getElementById('adImgPreviewWrap').style.display = 'block';
+    }
+    if(d.videoUrl){
+      document.getElementById('adVideoPreview').src = d.videoUrl;
+      document.getElementById('adVideoPreviewWrap').style.display = 'block';
     }
     setAdType(d.adType === 'video' ? 'video' : 'image');
   }).catch(e=>console.error(e));
