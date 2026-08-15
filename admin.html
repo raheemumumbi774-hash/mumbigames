@@ -508,11 +508,19 @@
         <div id="adVideoPreviewWrap" style="display:none;margin-bottom:8px;">
           <video id="adVideoPreview" src="" controls playsinline style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#000;"></video>
         </div>
+
+        <label style="font-size:12px;color:var(--sub);margin-bottom:4px;">Njia ya 1 (ya uhakika): bandika link ya video</label>
+        <input type="text" id="adVideoUrlInput" placeholder="https://github.com/.../releases/download/.../ad.mp4" onchange="useAdVideoUrl()">
+        <div style="font-size:11px;color:var(--sub);margin:6px 0 14px;line-height:1.5;">
+          Pakia video lako (.mp4) kwenye <b>GitHub Releases</b> — njia ile ile uliyotumia kupakia APK yako — kisha bandika hapa link ya moja kwa moja utakayoipata. Hii ndiyo njia ya uhakika zaidi kwa sasa.
+        </div>
+
+        <label style="font-size:12px;color:var(--sub);margin-bottom:4px;">Njia ya 2 (bado haifanyi kazi): pakia moja kwa moja</label>
         <input type="file" id="adVideoFile" accept="video/mp4,video/*" onchange="handleAdVideoSelect()">
         <div id="adVideoUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
         <input type="hidden" id="adVideoUrl" value="">
-        <div style="font-size:11.5px;color:var(--sub);margin-top:6px;line-height:1.5;">
-          Chagua faili la video (.mp4) moja kwa moja kutoka kwenye simu au kompyuta yako. Litapakiwa kwenye mfumo na kucheza moja kwa moja chini ya download za kila game, likiwa na vidhibiti vya kucheza/kusimamisha.
+        <div style="font-size:11px;color:#ff9e6b;margin-top:6px;line-height:1.5;">
+          ⚠️ Njia hii bado haijawezeshwa (inahitaji Firebase Storage billing). Tumia Njia ya 1 kwa sasa.
         </div>
       </div>
 
@@ -1244,6 +1252,19 @@ function setAdType(type){
   document.getElementById('adImageFields').style.display = type==='image' ? 'block' : 'none';
   document.getElementById('adVideoFields').style.display = type==='video' ? 'block' : 'none';
 }
+function useAdVideoUrl(){
+  const input = document.getElementById('adVideoUrlInput');
+  const url = input.value.trim();
+  if(!url) return;
+  if(!/^https?:\/\//i.test(url)){ alert('Link lazima lianze na http:// au https://'); return; }
+  document.getElementById('adVideoUrl').value = url;
+  const prev = document.getElementById('adVideoPreview');
+  prev.src = url;
+  document.getElementById('adVideoPreviewWrap').style.display = 'block';
+  document.getElementById('adVideoUploadStatus').style.color = 'var(--lime)';
+  document.getElementById('adVideoUploadStatus').textContent = 'Video imewekwa kutoka link ✓';
+}
+
 function uploadAdVideoToStorage(file){
   return new Promise((resolve, reject)=>{
     const statusEl = document.getElementById('adVideoUploadStatus');
@@ -1251,13 +1272,18 @@ function uploadAdVideoToStorage(file){
     const path = 'ads/video_' + Date.now() + '.' + ext;
     const ref = storage.ref().child(path);
     const task = ref.put(file);
+    const timeout = setTimeout(()=>{
+      reject(new Error('timeout'));
+    }, 15000);
     task.on('state_changed', function(snap){
       const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
       statusEl.style.color = 'var(--sub)';
       statusEl.textContent = 'Inapakia video... ' + pct + '%';
     }, function(err){
+      clearTimeout(timeout);
       reject(err);
     }, async function(){
+      clearTimeout(timeout);
       try{
         const url = await task.snapshot.ref.getDownloadURL();
         resolve(url);
@@ -1284,7 +1310,7 @@ async function handleAdVideoSelect(){
   }catch(e){
     console.error(e);
     statusEl.style.color = '#ff6b6b';
-    statusEl.textContent = 'Imeshindwa kupakia video. Jaribu tena.';
+    statusEl.textContent = 'Imeshindwa kupakia video (Storage haijawezeshwa). Tumia "Njia ya 1" hapo juu badala yake.';
   }
 }
 
@@ -1323,6 +1349,8 @@ function loadSponsoredAd(){
     document.getElementById('adButtonText').value = d.buttonText || 'Bofya Uendelee';
     document.getElementById('adImage').value = d.image || '';
     document.getElementById('adVideoUrl').value = d.videoUrl || '';
+    const urlInputEl = document.getElementById('adVideoUrlInput');
+    if(urlInputEl) urlInputEl.value = d.videoUrl || '';
     if(d.image){
       document.getElementById('adImgPreview').src = d.image;
       document.getElementById('adImgPreviewWrap').style.display = 'block';
