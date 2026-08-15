@@ -611,6 +611,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
 function loadGames(){
   db.collection('games').onSnapshot(snap=>{
     games = snap.docs.map(d=>d.data());
+    games.sort((a,b) => (a.name||'').localeCompare(b.name||'', 'sw', {sensitivity:'base', numeric:true}));
     renderAll();
   }, err=>{
     console.error(err);

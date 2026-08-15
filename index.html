@@ -702,6 +702,7 @@ function loadGames(){
   db.collection('games').onSnapshot(snap=>{
     games = snap.docs.map(d=>d.data());
     if(games.length===0) games = DEMO_GAMES;
+    sortGamesAlphabetically();
     checkNewGameNotification();
     render();
     try{ refreshBanners(); }catch(e){ console.error(e); }
@@ -715,8 +716,12 @@ function loadGames(){
   }, err=>{
     console.error(err);
     games = DEMO_GAMES;
+    sortGamesAlphabetically();
     render();
   });
+}
+function sortGamesAlphabetically(){
+  games.sort((a,b) => (a.name||'').localeCompare(b.name||'', 'sw', {sensitivity:'base', numeric:true}));
 }
 
 // ---- In-app notification banner (slides down, like a system notification) ----
@@ -1322,12 +1327,13 @@ function startDownloadCountdown(i, url, gameId, gameName){
     } else {
       clearInterval(timer);
       countEl.textContent = ' (1) — Inatoka kwenda kwenye browser...';
+      // Hesabu download SASA HIVI, kabla ya kutoka nje ya app — app
+      // ikienda "background" kuelekea Chrome, hesabu ya muda (setTimeout)
+      // ya baadaye huenda isifanye kazi, kwa hiyo tunahesabu papo hapo.
+      markDownloaded(i, gameId, gameName);
       escapeToExternalBrowser(url);
-      setTimeout(()=>{
-        countEl.textContent = '';
-        markDownloaded(i, gameId, gameName);
-        btn.disabled = false;
-      }, 3000);
+      countEl.textContent = '';
+      btn.disabled = false;
     }
   }, 1000);
 }
