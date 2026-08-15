@@ -1272,14 +1272,29 @@ function applySponsoredAd(d){
 let downloadedSet = new Set();
 let totalDlItems = 0;
 let downloadCounted = false;
-function startDownloadCountdown(i, url, gameId, gameName){
-  const btn = document.getElementById('dlbtn-' + i);
-  const countEl = document.getElementById('dlcount-' + i);
-  if(!btn || btn.disabled) return;
-  btn.disabled = true;
-  // Fungua kiungo MARA MOJA, ndani ya tap ya mtumiaji — hii inazuia
-  // kivinjari (Chrome/n.k) kuzuia dirisha jipya, na kuondoa kuchelewa
-  // kwa kusubiri sekunde 10 kabla ya kufungua.
+
+// ---- Escape the mumbigames APK's in-app WebView so downloads run in the
+// phone's real browser (Chrome/etc) via Android's system Download Manager —
+// this way the download keeps going even if the user leaves the app. ----
+function isInAppWebView(){
+  const ua = navigator.userAgent || '';
+  return /; ?wv\)/.test(ua) || /\bwv\b/.test(ua);
+}
+function buildIntentUrl(url){
+  try{
+    const u = new URL(url);
+    const scheme = u.protocol.replace(':', '');
+    return 'intent://' + u.host + u.pathname + u.search + '#Intent;scheme=' + scheme + ';end';
+  }catch(e){ return null; }
+}
+function escapeToExternalBrowser(url){
+  if(isInAppWebView()){
+    const intentUrl = buildIntentUrl(url);
+    if(intentUrl){
+      window.location.href = intentUrl;
+      return;
+    }
+  }
   try{
     const a = document.createElement('a');
     a.href = url;
@@ -1291,12 +1306,30 @@ function startDownloadCountdown(i, url, gameId, gameName){
   }catch(e){
     window.open(url, '_blank', 'noopener,noreferrer');
   }
-  countEl.textContent = ' — Inapakua...';
-  setTimeout(()=>{
-    countEl.textContent = '';
-    markDownloaded(i, gameId, gameName);
-    btn.disabled = false;
-  }, 2000);
+}
+
+function startDownloadCountdown(i, url, gameId, gameName){
+  const btn = document.getElementById('dlbtn-' + i);
+  const countEl = document.getElementById('dlcount-' + i);
+  if(!btn || btn.disabled) return;
+  btn.disabled = true;
+  let secs = 10;
+  countEl.textContent = ' (' + secs + ')';
+  const timer = setInterval(()=>{
+    secs--;
+    if(secs > 1){
+      countEl.textContent = ' (' + secs + ')';
+    } else {
+      clearInterval(timer);
+      countEl.textContent = ' (1) — Inatoka kwenda kwenye browser...';
+      escapeToExternalBrowser(url);
+      setTimeout(()=>{
+        countEl.textContent = '';
+        markDownloaded(i, gameId, gameName);
+        btn.disabled = false;
+      }, 3000);
+    }
+  }, 1000);
 }
 function markDownloaded(i, gameId, gameName){
   downloadedSet.add(i);
