@@ -564,6 +564,7 @@ function enterApp(){
   document.getElementById('app').style.display='block';
   loadGames();
   loadSiteStats();
+  loadPaymentRequests();
 }
 // ---- Visitor + account stats ----
 function announceSocial(type){
@@ -1185,20 +1186,51 @@ async function saveAiConfig(){
 }
 loadAiConfig();
 
+// Angalia kama picha za muamala za ombi hili tayari zimeshatumika
+// kuthibitisha ombi lingine (jina tofauti la game) — dalili ya udanganyifu.
+// Inaangalia zote mbili: picha zinazofanana 100% (hash sawa kabisa) NA
+// picha zinazofanana KIMWONEKANO tu (mfano ile ile imetumwa upya WhatsApp
+// na kubanwa/kubadilika kidogo) kwa kutumia "perceptual hash".
+function hammingDistanceHex(a, b){
+  if(!a || !b || a.length !== b.length) return 999;
+  let dist = 0;
+  for(let i=0; i<a.length; i++){
+    let x = parseInt(a[i],16) ^ parseInt(b[i],16);
+    while(x){ dist += x & 1; x >>= 1; }
+  }
+  return dist;
+}
+const PHASH_DUP_THRESHOLD = 10;
+function findDuplicateProof(p){
+  const hasExact = p.proofHashes && p.proofHashes.length;
+  const hasPerceptual = p.proofPHashes && p.proofPHashes.length;
+  if(!hasExact && !hasPerceptual) return null;
+  return paymentRequests.find(o=>{
+    if(o.id === p.id || o.status !== 'approved') return false;
+    const exactMatch = hasExact && (o.proofHashes||[]).some(h=>p.proofHashes.includes(h));
+    if(exactMatch) return true;
+    if(!hasPerceptual) return false;
+    return (o.proofPHashes||[]).some(oh=>p.proofPHashes.some(ph=>hammingDistanceHex(oh,ph) <= PHASH_DUP_THRESHOLD));
+  }) || null;
+}
 function paymentCard(p){
+  const delBtn = `<button class="btn-sm btn-remove" onclick="deletePaymentRequest('${p.id}')">🗑️ Futa Kabisa</button>`;
   let actions = '';
   if(p.status==='pending'){
     actions = `<div class="listing-actions">
       <button class="btn-sm btn-approve" onclick="setPaymentStatus('${p.id}','approved')">Thibitisha</button>
-      <button class="btn-sm btn-reject" onclick="setPaymentStatus('${p.id}','rejected')">Kataa</button>
+      <button class="btn-sm btn-reject" onclick="rejectPaymentRequest('${p.id}')">Kataa</button>
+      ${delBtn}
     </div>`;
   } else if(p.status==='approved'){
     actions = `<div class="listing-actions">
-      <button class="btn-sm btn-remove" onclick="setPaymentStatus('${p.id}','rejected')">Bandua (si sahihi)</button>
+      <button class="btn-sm btn-remove" onclick="rejectPaymentRequest('${p.id}')">Bandua (si sahihi)</button>
+      ${delBtn}
     </div>`;
   } else {
     actions = `<div class="listing-actions">
       <button class="btn-sm btn-approve" onclick="setPaymentStatus('${p.id}','approved')">Thibitisha</button>
+      ${delBtn}
     </div>`;
   }
   const proofs = (p.proof1 || p.proof2) ? `<div class="proof-row">
@@ -1208,6 +1240,8 @@ function paymentCard(p){
   const aiNote = p.decidedBy === 'ai'
     ? `<div class="lmeta" style="color:var(--lime);">🤖 Imethibitishwa na AI (uhakika ${Math.round((p.aiConfidence||0)*100)}%) — angalia picha kuhakikisha.</div>`
     : (p.aiFlag ? `<div class="lmeta" style="color:var(--danger);">🤖 AI ilikagua lakini haikuwa na uhakika: ${escapeHtml2(p.aiReason||'')}</div>` : '');
+  const dup = findDuplicateProof(p);
+  const dupWarning = dup ? `<div class="lmeta" style="color:var(--danger);font-weight:700;">🚨 ONYO: Picha hii ya muamala tayari ilitumika kuthibitisha ombi la "${escapeHtml2(dup.gameName)}" (${new Date(dup.updatedAt||dup.createdAt||0).toLocaleString()}). Huenda ni jaribio la kudanganya — usithibitishe bila kuangalia kwa makini!</div>` : '';
   return `<div class="listing-card">
     <div class="linfo">
       <div class="lname">🎮 ${escapeHtml2(p.gameName)}</div>
@@ -1217,19 +1251,41 @@ function paymentCard(p){
       <div class="lmeta">${new Date(p.createdAt||Date.now()).toLocaleString()}</div>
       ${proofs}
       ${aiNote}
+      ${dupWarning}
       ${actions}
     </div>
   </div>`;
 }
 async function setPaymentStatus(id, status){
   try{
-    await db.collection('paymentRequests').doc(id).update({status, updatedAt: Date.now()});
+    await db.collection('paymentRequests').doc(id).update({status, updatedAt: Date.now(), aiAutoBlocked: false});
   }catch(e){
     console.error(e);
     showToast('Imeshindwa kusasisha.');
     return;
   }
   showToast(status==='approved' ? 'Malipo yamethibitishwa — mtumiaji ataona download sasa.' : 'Ombi limekataliwa.');
+}
+async function rejectPaymentRequest(id){
+  // "Kataa" haiachi ombi likikaa kwenye orodha — linafutwa papo hapo kabisa,
+  // kama alivyoomba admin, badala ya kuendelea kujaza tab ya "Yamekataliwa".
+  try{
+    await db.collection('paymentRequests').doc(id).delete();
+    showToast('Ombi limekataliwa na kufutwa kabisa.');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kufuta.');
+  }
+}
+async function deletePaymentRequest(id){
+  if(!confirm('Una uhakika unataka kufuta ombi hili KABISA? Halitaonekana tena popote.')) return;
+  try{
+    await db.collection('paymentRequests').doc(id).delete();
+    showToast('Ombi limefutwa kabisa.');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kufuta.');
+  }
 }
 function renderPaymentRequests(){
   const pending = paymentRequests.filter(p=>p.status==='pending');

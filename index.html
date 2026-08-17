@@ -895,10 +895,76 @@ const ADMIN_PHONE_DISPLAY = '0703 504 270';
 const ADMIN_PHONE_TEL = '+255703504270';
 const ADMIN_PHONE_WA = '255703504270';
 let paymentProofUrls = {1:null, 2:null};
+let paymentProofHashes = {1:null, 2:null};
+let paymentProofPHashes = {1:null, 2:null};
+
+// ---- Fingerprint (SHA-256) ya picha ya muamala, ili kugundua screenshot
+// inayotumika mara mbili kwenye maombi tofauti (jaribio la udanganyifu) ----
+async function hashProofFile(file){
+  try{
+    const buf = await file.arrayBuffer();
+    const digest = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){ console.error(e); return null; }
+}
+
+// ---- "Perceptual hash" (dHash) ya picha ya muamala: hii inatambua picha
+// zinazofanana KIMWONEKANO hata kama si sawa kwa byte moja moja (mfano
+// picha ile ile imetumwa tena kupitia WhatsApp na kubanwa/kubadilika kidogo).
+// Kwa hiyo mtu akijaribu kutumia screenshot ile ile "iliyorekebishwa kidogo"
+// kufungua game nyingine, bado tutaigundua. ----
+function loadImageEl(url){
+  return new Promise((resolve, reject)=>{
+    const img = new Image();
+    img.onload = ()=>resolve(img);
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+async function perceptualHashFile(file){
+  try{
+    const url = URL.createObjectURL(file);
+    let img;
+    try{ img = await loadImageEl(url); } finally { URL.revokeObjectURL(url); }
+    const w = 9, h = 8;
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    const data = ctx.getImageData(0, 0, w, h).data;
+    const gray = [];
+    for(let i=0; i<data.length; i+=4){
+      gray.push(0.299*data[i] + 0.587*data[i+1] + 0.114*data[i+2]);
+    }
+    let bits = '';
+    for(let row=0; row<h; row++){
+      for(let col=0; col<w-1; col++){
+        bits += gray[row*w+col] > gray[row*w+col+1] ? '1' : '0';
+      }
+    }
+    let hex = '';
+    for(let i=0; i<bits.length; i+=4){
+      hex += parseInt(bits.substr(i,4).padEnd(4,'0'), 2).toString(16);
+    }
+    return hex;
+  }catch(e){ console.error(e); return null; }
+}
+function hammingDistanceHex(a, b){
+  if(!a || !b || a.length !== b.length) return 999;
+  let dist = 0;
+  for(let i=0; i<a.length; i++){
+    let x = parseInt(a[i],16) ^ parseInt(b[i],16);
+    while(x){ dist += x & 1; x >>= 1; }
+  }
+  return dist;
+}
+const PHASH_DUP_THRESHOLD = 10; // kadri idadi hii inavyopungua, ndivyo AI inavyokuwa kali zaidi kutambua "zinafanana"
 
 function watchPaymentStatus(g){
   if(currentPayUnsub){ currentPayUnsub(); currentPayUnsub = null; }
   paymentProofUrls = {1:null, 2:null};
+  paymentProofHashes = {1:null, 2:null};
+  paymentProofPHashes = {1:null, 2:null};
   const uid = auth.currentUser.uid;
   const ref = db.collection('paymentRequests').doc(paymentDocId(uid, g.id));
   currentPayUnsub = ref.onSnapshot(snap=>{
@@ -979,6 +1045,15 @@ function renderPendingPayFlow(g, req){
   const chatStartedAt = req.aiChatStartedAt || null;
   const finalStartedAt = req.aiFinalStartedAt || null;
 
+  // Stage: request ilikaguliwa na ikaonekana ina picha iliyotumika awali —
+  // haiwezi kufunguliwa moja kwa moja, inasubiri admin akague mwenyewe.
+  if(req.aiAutoBlocked){
+    el.innerHTML = `
+      <div class="pay-status wait">⏳ Ombi lako linahitaji ukaguzi wa ziada wa admin kabla ya kuthibitishwa. Tutakujulisha mara litakapoangaliwa.</div>
+      ${adminContactRow()}
+      <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button></div>`;
+    return;
+  }
   // Stage: final wait elapsed -> auto-unlock
   if(finalStartedAt && (now - finalStartedAt) >= PAY_WAIT_3){
     autoApprovePayment(g, req);
@@ -1096,7 +1171,46 @@ async function autoApprovePayment(g, req){
   const uid = auth.currentUser.uid;
   const ref = db.collection('paymentRequests').doc(paymentDocId(uid, g.id));
   try{
-    await ref.set({status:'approved', verifiedBy:'ai_auto', approvedAt: Date.now()}, {merge:true});
+    // Kagua kama hizi picha za muamala zishatumika kuthibitisha ombi lingine
+    // kabla ya kufungua download moja kwa moja — hii inazuia mtu kutumia
+    // screenshot ya muamala mmoja kufungua michezo mingi.
+    const hashes = req.proofHashes || [];
+    const phashes = req.proofPHashes || [];
+    let dupGameName = null;
+    if(hashes.length){
+      const dupSnap = await db.collection('paymentRequests')
+        .where('proofHashes', 'array-contains-any', hashes)
+        .get();
+      dupSnap.forEach(d=>{
+        if(d.id !== ref.id && d.data().status === 'approved'){
+          dupGameName = d.data().gameName || 'game nyingine';
+        }
+      });
+    }
+    // Hata kama hazifanani kabisa kwa byte, angalia kama zinafanana KIMWONEKANO
+    // (mfano picha ile ile imetumwa upya na kubanwa kidogo na WhatsApp).
+    if(!dupGameName && phashes.length){
+      const approvedSnap = await db.collection('paymentRequests').where('status', '==', 'approved').get();
+      approvedSnap.forEach(d=>{
+        if(dupGameName || d.id === ref.id) return;
+        const other = d.data();
+        const otherPHashes = other.proofPHashes || [];
+        const near = otherPHashes.some(oh => phashes.some(ph => hammingDistanceHex(oh, ph) <= PHASH_DUP_THRESHOLD));
+        if(near) dupGameName = other.gameName || 'game nyingine';
+      });
+    }
+    if(dupGameName){
+      // Usiziidhinishe moja kwa moja — acha ombi "pending" na uonyeshe alama
+      // wazi kwa admin kwamba picha hii tayari ilitumika hapo awali.
+      await ref.set({
+        aiFlag: true,
+        aiAutoBlocked: true,
+        aiReason: 'Picha ya muamala tayari ilitumika kuthibitisha ombi la "' + dupGameName + '". Inahitaji ukaguzi wa admin kabla ya kuthibitishwa.',
+        updatedAt: Date.now()
+      }, {merge:true});
+    } else {
+      await ref.set({status:'approved', verifiedBy:'ai_auto', decidedBy:'ai', aiConfidence:0.85, approvedAt: Date.now()}, {merge:true});
+    }
   }catch(e){ console.error(e); }
   finally{ autoApproveInFlight = false; }
 }
@@ -1108,8 +1222,10 @@ async function handlePaymentProofSelect(input, slot){
   statusEl.style.color = 'var(--sub)';
   statusEl.textContent = 'Inapakia picha...';
   try{
-    const url = await uploadToImgbb(file);
+    const [url, hash, phash] = await Promise.all([uploadToImgbb(file), hashProofFile(file), perceptualHashFile(file)]);
     paymentProofUrls[slot] = url;
+    paymentProofHashes[slot] = hash;
+    paymentProofPHashes[slot] = phash;
     statusEl.textContent = 'Picha imepakiwa ✓';
   }catch(e){
     console.error(e);
@@ -1142,6 +1258,8 @@ async function submitPaymentClaim(){
       phone,
       proof1: paymentProofUrls[1],
       proof2: paymentProofUrls[2],
+      proofHashes: [paymentProofHashes[1], paymentProofHashes[2]].filter(Boolean),
+      proofPHashes: [paymentProofPHashes[1], paymentProofPHashes[2]].filter(Boolean),
       status: 'pending',
       createdAt: Date.now()
     });
@@ -2280,7 +2398,7 @@ try{
   });
 }catch(e){ console.error('Auth listener failed', e); }
 
-const APK_DOWNLOAD_LINK = 'https://github.com/raheemumumbi774-hash/mumbigames/releases/download/v1.0/mumbigames.apk';
+const APK_DOWNLOAD_LINK = 'https://tinyurl.com/mumbigames';
 
 function shareReferralLink(){
   const code = document.getElementById('referralLinkInput').value;
