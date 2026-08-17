@@ -1052,6 +1052,7 @@ function escapeHtml2(s){
 }
 function listingCard(l){
   const thumbStyle = l.image ? `style="background-image:url('${l.image.replace(/'/g,"")}')"` : '';
+  const delBtn = `<button class="btn-sm btn-remove" onclick="deleteListing('${l.id}')">🗑️ Futa Kabisa</button>`;
   let actions = '';
   if(l.status==='pending'){
     actions = `<div class="listing-actions">
@@ -1065,6 +1066,7 @@ function listingCard(l){
   } else {
     actions = `<div class="listing-actions">
       <button class="btn-sm btn-approve" onclick="setListingStatus('${l.id}','approved')">Rejesha/Thibitisha</button>
+      ${delBtn}
     </div>`;
   }
   return `<div class="listing-card">
@@ -1088,6 +1090,16 @@ async function setListingStatus(id, status){
     return;
   }
   showToast(status==='approved' ? 'Bidhaa imethibitishwa!' : 'Imekataliwa/imeondolewa.');
+}
+async function deleteListing(id){
+  if(!confirm('Una uhakika unataka kufuta tangazo hili KABISA? Halitaonekana tena popote.')) return;
+  try{
+    await db.collection('listings').doc(id).delete();
+    showToast('Tangazo limefutwa kabisa.');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kufuta.');
+  }
 }
 function renderListings(){
   const pending = listings.filter(l=>l.status==='pending');
