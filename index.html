@@ -648,8 +648,8 @@
       <div id="sponsoredAdBox" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
         <div style="font-size:10.5px;letter-spacing:1px;color:var(--sub);font-weight:700;margin-bottom:8px;">SPONSORED</div>
         <img id="adBoxImage" src="" style="width:100%;border-radius:12px;margin-bottom:10px;display:block;">
-        <div id="adBoxVideoWrap" style="width:100%;border-radius:12px;margin-bottom:10px;overflow:hidden;display:none;position:relative;background:#000;">
-          <video id="adBoxVideo" style="width:100%;display:block;border-radius:12px;" controls playsinline preload="metadata"></video>
+        <div id="adBoxVideoWrap" style="width:100%;max-height:340px;border-radius:12px;margin-bottom:10px;overflow:hidden;display:none;position:relative;background:#000;justify-content:center;">
+          <video id="adBoxVideo" style="max-width:100%;max-height:340px;display:block;border-radius:12px;object-fit:contain;margin:0 auto;" controls playsinline preload="metadata"></video>
           <iframe id="adBoxVideoFrame" style="width:100%;aspect-ratio:16/9;border:0;display:none;" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
         <div id="adBoxTitle" style="font-weight:700;font-size:14px;margin-bottom:4px;"></div>
@@ -1366,7 +1366,7 @@ function applySponsoredAd(d){
 
   if(isVideo){
     const ytEmbed = youtubeEmbedUrl(d.videoUrl);
-    videoWrap.style.display = 'block';
+    videoWrap.style.display = 'flex';
     if(ytEmbed){
       frameEl.src = ytEmbed;
       frameEl.style.display = 'block';
