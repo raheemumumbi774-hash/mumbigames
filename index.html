@@ -410,7 +410,7 @@
       <div class="title" data-i18n="chat_title">Jumuiya ya mumbigames</div>
       <div class="sub" id="chatOnlineLabel" data-i18n="chat_sub">Chati ya wachezaji wote</div>
     </div>
-    <a class="wa-btn" href="https://whatsapp.com/channel/0029VbDMJP384Om5hO18hq0B" target="_blank">WhatsApp</a>
+    <a class="wa-btn" href="https://whatsapp.com/channel/0029VbDjDDrCnA7s1aPmcR3b" target="_blank">WhatsApp</a>
   </div>
 
   <div id="nameGate" class="name-gate">
@@ -864,7 +864,7 @@
       <div id="modalPerfBoxes"></div>
       <div id="modalSetupHelper"></div>
       <div id="modalDownloadsList"></div>
-      <div id="modalThanks" style="display:none;font-size:11px;color:var(--lime);font-weight:600;text-align:center;margin:6px 0 4px;">Asante kwa kuchagua mumbigames! 🙏</div>
+      <div id="modalThanks" style="display:none;font-size:11px;color:var(--lime);font-weight:600;text-align:center;margin:6px 0 4px;">Asante kwa kuchagua mumbigames🥰</div>
       <div id="sponsoredAdBox" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
         <div style="font-size:9.5px;letter-spacing:1px;color:var(--sub);font-weight:700;margin-bottom:8px;">SPONSORED</div>
         <img id="adBoxImage" src="" style="width:100%;border-radius:12px;margin-bottom:10px;display:block;">
@@ -1540,11 +1540,15 @@ function showModalDownloads(g){
   const list = (g.downloads && g.downloads.length) ? g.downloads : (g.download ? [{label:'Download', url:g.download}] : []);
   document.getElementById('modalThanks').style.display = 'none';
   totalDlItems = list.length;
-  downloadCounted = false;
+  downloadCounted = loadDownloadCounted(g.id);
+  downloadedSet = loadDownloadProgress(g.id);
   document.getElementById('modalDownloadsList').innerHTML = list.length ? list.map((d,i)=>`
     <button type="button" class="dl-btn" id="dlbtn-${i}" style="background:${DL_COLORS[i % DL_COLORS.length]};" onclick='startDownloadCountdown(${i}, ${JSON.stringify(d.url)}, ${JSON.stringify(g.id)}, ${JSON.stringify(g.name)})'>
-      ${escapeHtml(d.label)}<span class="dl-count" id="dlcount-${i}"></span> <span class="dl-tick" id="dltick-${i}" style="display:none;">✓</span>
+      ${escapeHtml(d.label)}<span class="dl-count" id="dlcount-${i}"></span> <span class="dl-tick" id="dltick-${i}" style="display:${downloadedSet.has(i)?'inline':'none'};">✓</span>
     </button>`).join('') : '<div class="empty">Link ya kudownload bado haijawekwa na admin.</div>';
+  if(downloadedSet.size >= totalDlItems && totalDlItems > 0){
+    document.getElementById('modalThanks').style.display = 'block';
+  }
 
   renderSponsoredAd();
 }
@@ -1619,6 +1623,28 @@ function applySponsoredAd(d){
   box.style.display = 'block';
 }
 
+function loadDownloadProgress(gameId){
+  try{
+    const raw = localStorage.getItem('mg-dl-progress-' + gameId);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  }catch(e){ return new Set(); }
+}
+function saveDownloadProgress(gameId, set){
+  try{
+    localStorage.setItem('mg-dl-progress-' + gameId, JSON.stringify(Array.from(set)));
+  }catch(e){}
+}
+function loadDownloadCounted(gameId){
+  try{
+    return localStorage.getItem('mg-dl-counted-' + gameId) === '1';
+  }catch(e){ return false; }
+}
+function saveDownloadCounted(gameId){
+  try{
+    localStorage.setItem('mg-dl-counted-' + gameId, '1');
+  }catch(e){}
+}
+
 let downloadedSet = new Set();
 let totalDlItems = 0;
 let downloadCounted = false;
@@ -1641,6 +1667,14 @@ function escapeToExternalBrowser(url){
   }
 }
 
+function rememberGameInUrl(gameId){
+  try{
+    const url = new URL(window.location.href);
+    url.searchParams.set('game', gameId);
+    history.replaceState(null, '', url.toString());
+  }catch(e){}
+}
+
 function startDownloadCountdown(i, url, gameId, gameName){
   const btn = document.getElementById('dlbtn-' + i);
   const countEl = document.getElementById('dlcount-' + i);
@@ -1659,6 +1693,7 @@ function startDownloadCountdown(i, url, gameId, gameName){
       // ikienda "background" kuelekea Chrome, hesabu ya muda (setTimeout)
       // ya baadaye huenda isifanye kazi, kwa hiyo tunahesabu papo hapo.
       markDownloaded(i, gameId, gameName);
+      rememberGameInUrl(gameId);
       escapeToExternalBrowser(url);
       countEl.textContent = '';
       btn.disabled = false;
@@ -1667,14 +1702,16 @@ function startDownloadCountdown(i, url, gameId, gameName){
 }
 function markDownloaded(i, gameId, gameName){
   downloadedSet.add(i);
+  saveDownloadProgress(gameId, downloadedSet);
   const tick = document.getElementById('dltick-' + i);
   if(tick) tick.style.display = 'inline';
   // Count as ONE download for this game only once ALL required files are done
   if(!downloadCounted && downloadedSet.size >= totalDlItems && totalDlItems > 0){
     downloadCounted = true;
+    saveDownloadCounted(gameId);
     recordDownload(gameId, gameName);
   }
-  if(downloadedSet.size >= 2){
+  if(downloadedSet.size >= totalDlItems && totalDlItems > 0){
     const thanks = document.getElementById('modalThanks');
     if(thanks) thanks.style.display = 'block';
   }
