@@ -1626,25 +1626,7 @@ let downloadCounted = false;
 // ---- Escape the mumbigames APK's in-app WebView so downloads run in the
 // phone's real browser (Chrome/etc) via Android's system Download Manager —
 // this way the download keeps going even if the user leaves the app. ----
-function isInAppWebView(){
-  const ua = navigator.userAgent || '';
-  return /; ?wv\)/.test(ua) || /\bwv\b/.test(ua);
-}
-function buildIntentUrl(url){
-  try{
-    const u = new URL(url);
-    const scheme = u.protocol.replace(':', '');
-    return 'intent://' + u.host + u.pathname + u.search + '#Intent;scheme=' + scheme + ';end';
-  }catch(e){ return null; }
-}
 function escapeToExternalBrowser(url){
-  if(isInAppWebView()){
-    const intentUrl = buildIntentUrl(url);
-    if(intentUrl){
-      window.location.href = intentUrl;
-      return;
-    }
-  }
   try{
     const a = document.createElement('a');
     a.href = url;
