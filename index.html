@@ -1627,16 +1627,17 @@ let downloadCounted = false;
 // phone's real browser (Chrome/etc) via Android's system Download Manager —
 // this way the download keeps going even if the user leaves the app. ----
 function escapeToExternalBrowser(url){
+  let newWin = null;
   try{
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    newWin = window.open(url, '_blank', 'noopener,noreferrer');
   }catch(e){
-    window.open(url, '_blank', 'noopener,noreferrer');
+    newWin = null;
+  }
+  if(!newWin){
+    // window.open was blocked/unsupported (typical inside app WebViews) —
+    // fall back to a direct top-level navigation, which app WebViews and
+    // Play Store links can intercept correctly.
+    window.location.href = url;
   }
 }
 
