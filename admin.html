@@ -38,14 +38,14 @@
 </script>
 <style>
   :root{
-    --bg:#0a0e1a;
-    --panel:#121a2c;
-    --panel-2:#182238;
-    --line:#26314a;
-    --lime:#3b82f6;
-    --lime-dim:#2563eb;
+    --bg:#0a0a16;
+    --panel:#14152a;
+    --panel-2:#1c1e3a;
+    --line:#2c2f52;
+    --lime:#f5a623;
+    --lime-dim:#d98c1a;
     --text:#eaf0fb;
-    --sub:#8291ab;
+    --sub:#9095b8;
     --danger:#ff5c5c;
     --radius:14px;
   }
@@ -220,6 +220,7 @@
     <div class="tab" data-view="add">+ Weka Game</div>
     <div class="tab" data-view="payment">Malipo</div>
     <div class="tab" data-view="duka">Duka</div>
+    <div class="tab" data-view="tournaments">Tournaments</div>
     <div class="tab" data-view="banners">Banner</div>
     <div class="tab" data-view="polls">Kura</div>
     <div class="tab" data-view="social">Social</div>
@@ -275,8 +276,11 @@
       <label>Jina la Game</label>
       <input type="text" id="gName" placeholder="mfano: Subway Rush">
 
-      <label>Maelezo mafupi</label>
+      <label>Maelezo mafupi (Kiswahili)</label>
       <textarea id="gDesc" placeholder="Maelezo mafupi ya game..."></textarea>
+
+      <label>Maelezo (English - hiari)</label>
+      <textarea id="gDescEn" placeholder="Optional: English description shown when a user switches the app to English. If left blank, the Swahili description is shown instead."></textarea>
 
       <div class="row2">
         <div>
@@ -406,6 +410,12 @@
       <div id="approvedList"></div>
       <div class="section-title"><h2>Zilizokataliwa</h2></div>
       <div id="rejectedList"></div>
+    </div>
+
+    <!-- TOURNAMENTS -->
+    <div class="view" id="view-tournaments">
+      <div class="section-title"><h2>🏆 Tournaments Zote</h2></div>
+      <div id="tournamentsAdminList"></div>
     </div>
 
     <!-- BANNERS -->
@@ -614,6 +624,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
     document.getElementById('view-'+tab.dataset.view).classList.add('active');
     if(tab.dataset.view==='overview' || tab.dataset.view==='games') renderAll();
     if(tab.dataset.view==='duka'){ loadListings(); loadListingReports(); }
+    if(tab.dataset.view==='tournaments'){ loadTournamentsAdmin(); }
     if(tab.dataset.view==='banners') loadBannersAdmin();
     if(tab.dataset.view==='polls') loadPollsAdmin();
     if(tab.dataset.view==='payment') loadPaymentRequests();
@@ -655,6 +666,7 @@ function resetForm(){
   document.getElementById('formTitle').textContent='Weka Game Mpya';
   document.getElementById('gName').value='';
   document.getElementById('gDesc').value='';
+  document.getElementById('gDescEn').value='';
   document.getElementById('gGenre').value='';
   document.getElementById('gOffline').value='yes';
   document.getElementById('gImage').value='';
@@ -908,6 +920,7 @@ async function saveGame(){
     id: editingId || ('g_'+Date.now()),
     name,
     desc: document.getElementById('gDesc').value.trim(),
+    descEn: document.getElementById('gDescEn').value.trim(),
     genre: document.getElementById('gGenre').value.trim(),
     offline: document.getElementById('gOffline').value,
     image: document.getElementById('gImage').value.trim(),
@@ -940,6 +953,7 @@ function editGame(id){
   document.getElementById('formTitle').textContent='Hariri: '+g.name;
   document.getElementById('gName').value=g.name;
   document.getElementById('gDesc').value=g.desc||'';
+  document.getElementById('gDescEn').value=g.descEn||'';
   document.getElementById('gGenre').value=g.genre||'';
   document.getElementById('gOffline').value=g.offline||'yes';
   document.getElementById('gImage').value=g.image||'';
@@ -1074,7 +1088,10 @@ function listingCard(l){
     <div class="linfo">
       <div class="lname">${escapeHtml2(l.title)}</div>
       <div class="ldesc">${escapeHtml2(l.desc)}</div>
-      <div class="lmeta">Bei: <b>TZS ${escapeHtml2(l.price)}</b></div>
+      <div class="lmeta">Bei: <b>TZS ${escapeHtml2(l.price)}</b>${l.wasPrice?` <span style="text-decoration:line-through;color:var(--sub);">TZS ${escapeHtml2(l.wasPrice)}</span>`:''}</div>
+      ${(l.brand || l.category) ? `<div class="lmeta">${l.brand?`Brand: ${escapeHtml2(l.brand)}`:''}${l.brand && l.category?' · ':''}${l.category?`Category: ${escapeHtml2(l.category)}`:''}</div>` : ''}
+      ${(l.condition || l.stock !== undefined) ? `<div class="lmeta">${l.condition?`Hali: ${escapeHtml2(l.condition)}`:''}${l.condition && l.stock?' · ':''}${l.stock?`Stock: ${escapeHtml2(l.stock)}`:''}${l.sku?` · SKU: ${escapeHtml2(l.sku)}`:''}</div>` : ''}
+      ${l.tags && l.tags.length ? `<div class="lmeta">Tags: ${l.tags.map(t=>escapeHtml2(t)).join(', ')}</div>` : ''}
       <div class="lseller">Muuzaji: ${escapeHtml2(l.sellerName)} · ${escapeHtml2(l.sellerPhone)}</div>
       ${l.ownerEmail ? `<div class="lseller">Akaunti: ${escapeHtml2(l.ownerEmail)}</div>` : ''}
       ${actions}
@@ -1150,6 +1167,49 @@ async function removeReportedListing(listingId, reportId){
   }catch(e){
     console.error(e);
     showToast('Imeshindwa. Jaribu tena.');
+  }
+}
+
+// ---- Tournaments: admin can view and delete any tournament ----
+let tournamentsAdminListening = false;
+let tournamentsAdmin = [];
+function loadTournamentsAdmin(){
+  if(tournamentsAdminListening) return;
+  tournamentsAdminListening = true;
+  db.collection('tournaments').orderBy('createdAt','desc').onSnapshot(snap=>{
+    tournamentsAdmin = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    renderTournamentsAdmin();
+  }, err=>{
+    console.error(err);
+    const el = document.getElementById('tournamentsAdminList');
+    if(el) el.innerHTML = '<div class="empty">Imeshindwa kupakia tournaments.</div>';
+  });
+}
+function renderTournamentsAdmin(){
+  const el = document.getElementById('tournamentsAdminList');
+  if(!el) return;
+  if(!tournamentsAdmin.length){ el.innerHTML = '<div class="empty">Bado hakuna tournament yoyote.</div>'; return; }
+  el.innerHTML = tournamentsAdmin.map(t=>`
+    <div class="listing-card">
+      <div class="linfo">
+        <div class="lname">🏆 ${escapeHtml2(t.name)}</div>
+        <div class="lmeta">${escapeHtml2(t.sport||'')} · ${escapeHtml2(t.format||'')} · ${(t.teams||[]).length} teams · ${t.public?'Public':'Private'}</div>
+        <div class="lseller">Muundaji: ${escapeHtml2(t.ownerName||'')} ${t.ownerEmail?`(${escapeHtml2(t.ownerEmail)})`:''}</div>
+        <div class="lmeta">${t.createdAt ? new Date(t.createdAt).toLocaleString() : ''}</div>
+        <div class="listing-actions">
+          <button class="btn-sm btn-remove" onclick="deleteTournamentAdmin('${t.id}','${escapeHtml2(t.name).replace(/'/g,"")}')">🗑️ Futa Tournament</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+async function deleteTournamentAdmin(id, name){
+  if(!confirm('Una uhakika unataka kufuta tournament "'+name+'"? Hatua hii haiwezi kurudishwa.')) return;
+  try{
+    await db.collection('tournaments').doc(id).delete();
+    showToast('Tournament imefutwa.');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kufuta. Jaribu tena.');
   }
 }
 

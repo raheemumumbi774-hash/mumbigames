@@ -3,17 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0a0e1a">
+<meta name="theme-color" content="#0a0a16">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MumbiGames">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>mumbigames</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage-compat.js"></script>
-<script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage-compat.js" defer></script>
+<script defer>
   const firebaseConfig = {
     apiKey: "AIzaSyA09lEWruy67jcU9EbG_t5hhcr4OSWAAXI",
     authDomain: "mumbigames.firebaseapp.com",
@@ -61,20 +68,22 @@
       if(ref) localStorage.setItem('mg_ref', ref);
       const gameId = params.get('game');
       if(gameId) window.__mgDeepLinkGameId = gameId;
+      const tournId = params.get('tournament');
+      if(tournId) window.__mgDeepLinkTournId = tournId;
     }catch(e){ console.error(e); }
   })();
 </script>
 <style>
   :root{
-    --bg:#0a0e1a;
-    --panel:#121a2c;
-    --panel-2:#182238;
-    --line:#26314a;
-    --lime:#3b82f6;
-    --lime-dim:#2563eb;
+    --bg:#0a0a16;
+    --panel:#14152a;
+    --panel-2:#1c1e3a;
+    --line:#2c2f52;
+    --lime:#f5a623;
+    --lime-dim:#d98c1a;
     --text:#eaf0fb;
-    --sub:#8291ab;
-    --accent2:#ff9d3d;
+    --sub:#9095b8;
+    --accent2:#6d5efc;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;padding-bottom:78px;}
@@ -148,7 +157,7 @@
 
   /* Game list */
   .list{padding:14px 16px 20px;}
-  .g-card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:16px;margin-bottom:16px;overflow:hidden;cursor:pointer;}
+  .g-card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:16px;margin-bottom:16px;overflow:hidden;cursor:pointer;content-visibility:auto;contain-intrinsic-size:0 280px;}
   .g-thumb{width:100%;height:220px;background:var(--panel-2);background-size:cover;background-position:center;background-repeat:no-repeat;position:relative;}
   .g-thumb .g-badge{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--lime);color:var(--bg);}
   .g-thumb .g-badge.paid{background:#0a0d0a;color:var(--lime);border:1px solid var(--lime-dim);}
@@ -245,6 +254,10 @@
   .db-arrow{font-size:22px;color:var(--lime);}
 
   #dukaView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
+  #tournamentView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
+  #tournDetailView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
+  .td-tab.active{background:var(--lime);color:var(--bg);}
+  .td-tab:not(.active){color:var(--sub);}
 
   /* Settings */
   #settingsView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
@@ -286,9 +299,25 @@
   .d-desc{font-size:11.5px;color:var(--sub);margin-top:3px;}
   .d-price{font-size:13px;color:var(--lime);font-weight:700;margin-top:6px;}
   .d-seller{font-size:10.5px;color:var(--sub);margin-top:3px;}
+  /* Grid product cards */
+  .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .d-gcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;content-visibility:auto;contain-intrinsic-size:0 220px;}
+  .d-gthumb{width:100%;aspect-ratio:1/1;background:var(--bg);background-size:cover;background-position:center;background-repeat:no-repeat;position:relative;}
+  .d-gbadge{position:absolute;top:8px;left:8px;background:var(--lime);color:var(--bg);font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:capitalize;}
+  .d-gstock{position:absolute;top:8px;right:8px;background:rgba(10,10,22,0.75);color:#fff;font-size:9px;font-weight:600;padding:3px 7px;border-radius:20px;}
+  .d-gbody{padding:10px 11px 12px;}
+  .d-gname{font-size:12.5px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .d-gbrand{font-size:10px;color:var(--sub);margin-top:2px;}
+  .d-gprice-row{display:flex;align-items:baseline;gap:6px;margin-top:6px;flex-wrap:wrap;}
+  .d-gprice{font-size:13.5px;color:var(--lime);font-weight:800;}
+  .d-gwas{font-size:10.5px;color:var(--sub);text-decoration:line-through;}
+  .d-greport{width:100%;margin-top:8px;font-size:10px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:5px 0;cursor:pointer;}
   #dukaPost label{display:block;font-size:12px;color:var(--sub);margin:12px 0 6px;font-weight:600;}
   #dukaPost input, #dukaPost textarea{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14px;font-family:'Inter',sans-serif;}
   #dukaPost textarea{min-height:70px;resize:vertical;}
+  #lFreeShipping:checked ~ #lFreeShippingTrack{background:var(--lime);}
+  #lFreeShipping:checked ~ #lFreeShippingKnob{transform:translateX(20px);}
+  .cond-opt.active{border-color:var(--lime) !important;background:var(--panel-2) !important;color:var(--lime);}
   .d-verified{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;color:var(--lime);margin-top:4px;}
   .d-report{font-size:10px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:4px 9px;margin-top:6px;cursor:pointer;}
   .duka-login-gate{text-align:center;color:var(--sub);font-size:12.5px;padding:26px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;line-height:1.6;}
@@ -356,7 +385,7 @@
 
 <div class="quick-actions">
   <a class="qa-btn qa-tiktok" href="https://www.tiktok.com/@iam_mumbi7" target="_blank" onclick="markSocialSeen('tiktok')"><span class="qa-badge" id="qaBadgeTiktok"></span><div class="qa-ic">🎵</div><span data-i18n="qa_tiktok">TikTok</span></a>
-  <div class="qa-btn qa-kura" onclick="showPolls()"><span class="qa-badge" id="qaBadgePoll"></span><div class="qa-ic">🗳️</div><span data-i18n="qa_kura">Kura</span></div>
+  <div class="qa-btn qa-kura" onclick="showTournaments()"><div class="qa-ic">🏆</div><span data-i18n="qa_tourn">Tournament</span></div>
   <a class="qa-btn qa-youtube" href="https://youtube.com/@mumbi_gaming" target="_blank" onclick="markSocialSeen('youtube')"><span class="qa-badge" id="qaBadgeYoutube"></span><div class="qa-ic">▶️</div><span data-i18n="qa_youtube">YouTube</span></a>
 </div>
 
@@ -413,7 +442,7 @@
 
   <div id="dukaBrowse" class="duka-panel">
     <div class="duka-warning" data-i18n="duka_warning">🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani, na kila muuzaji lazima awe na akaunti iliyosajiliwa (si mtu wa ghafla asiyejulikana). Malipo YOTE yafanyike kwa namba ya admin pekee (Tigo Pesa 0703504270) — admin ndiye anayemuunganisha mnunuzi na muuzaji. USITUME PESA moja kwa moja kwa muuzaji wala kwa namba nyingine yoyote — hilo ni ishara ya matapeli. Ukiona bidhaa/tabia ya utapeli, bonyeza "Ripoti" chini ya bidhaa.</div>
-    <div id="dukaList"></div>
+    <div id="dukaList" class="d-grid"></div>
   </div>
 
   <div id="dukaPost" class="duka-panel" style="display:none;">
@@ -426,8 +455,76 @@
       <input type="text" id="lTitle" placeholder="mfano: Padi ya PS4">
       <label data-i18n="duka_f_desc">Maelezo</label>
       <textarea id="lDesc" placeholder="Maelezo ya bidhaa, hali yake..."></textarea>
-      <label data-i18n="duka_f_price">Bei (TZS)</label>
-      <input type="number" id="lPrice" placeholder="mfano: 20000">
+
+      <label data-i18n="duka_f_brand">Brand (hiari)</label>
+      <input type="text" id="lBrand" placeholder="mfano: Sony, Nintendo, n.k.">
+
+      <label data-i18n="duka_f_category">Category</label>
+      <select id="lCategory" style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14px;font-family:'Inter',sans-serif;">
+        <option value="" data-i18n="duka_cat_select">-- Chagua category --</option>
+        <option value="controllers" data-i18n="duka_cat_controllers">Vidhibiti (Controllers)</option>
+        <option value="consoles" data-i18n="duka_cat_consoles">Console</option>
+        <option value="accessories" data-i18n="duka_cat_accessories">Vifaa vingine (Accessories)</option>
+        <option value="cds_games" data-i18n="duka_cat_cds">CDs / Games</option>
+        <option value="chargers_cables" data-i18n="duka_cat_cables">Chaja / Cable</option>
+        <option value="other" data-i18n="duka_cat_other">Nyingine</option>
+      </select>
+
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <label data-i18n="duka_f_price">Bei (TZS)</label>
+          <input type="number" id="lPrice" placeholder="mfano: 20000">
+        </div>
+        <div style="flex:1;">
+          <label data-i18n="duka_f_wasprice">Bei ya Awali (hiari)</label>
+          <input type="number" id="lWasPrice" placeholder="mfano: 30000">
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--sub);margin:-6px 0 0;line-height:1.5;" data-i18n="duka_f_wasprice_hint">"Bei ya Awali" inaonesha punguzo — mfano Ilikuwa TZS 30,000 → Sasa TZS 20,000.</p>
+
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <label data-i18n="duka_f_stock">Idadi Zilizopo</label>
+          <input type="number" id="lStock" placeholder="1" value="1">
+        </div>
+        <div style="flex:1;">
+          <label data-i18n="duka_f_sku">Namba ya Bidhaa (hiari)</label>
+          <input type="text" id="lSku" placeholder="mfano: PS4-001">
+        </div>
+      </div>
+
+      <label data-i18n="duka_f_condition">Hali ya Bidhaa</label>
+      <div style="display:flex;gap:8px;">
+        <div class="cond-opt active" data-cond="new" onclick="selectCondition('new')" style="flex:1;text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--lime);background:var(--panel-2);cursor:pointer;font-size:12.5px;font-weight:600;">✨ <span data-i18n="duka_cond_new">Mpya</span></div>
+        <div class="cond-opt" data-cond="used" onclick="selectCondition('used')" style="flex:1;text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--line);background:var(--panel);cursor:pointer;font-size:12.5px;font-weight:600;">♻️ <span data-i18n="duka_cond_used">Imetumika</span></div>
+        <div class="cond-opt" data-cond="refurbished" onclick="selectCondition('refurbished')" style="flex:1;text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--line);background:var(--panel);cursor:pointer;font-size:12.5px;font-weight:600;">🔧 <span data-i18n="duka_cond_refurb">Imekarabatiwa</span></div>
+      </div>
+      <input type="hidden" id="lCondition" value="new">
+
+      <label data-i18n="duka_f_weight">Uzito (kg) - hiari</label>
+      <input type="number" step="0.1" id="lWeight" placeholder="0.0">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;">
+        <div>
+          <div style="font-weight:700;font-size:13px;" data-i18n="duka_f_freeship">Usafirishaji Bure</div>
+          <div style="font-size:11px;color:var(--sub);" data-i18n="duka_f_freeship_sub">Toa usafirishaji bure kwa bidhaa hii</div>
+        </div>
+        <label style="position:relative;display:inline-block;width:44px;height:24px;flex:none;">
+          <input type="checkbox" id="lFreeShipping" onchange="toggleDeliveryFeeField()" style="opacity:0;width:0;height:0;">
+          <span id="lFreeShippingTrack" style="position:absolute;cursor:pointer;inset:0;background:var(--line);border-radius:24px;transition:.2s;"></span>
+          <span id="lFreeShippingKnob" style="position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;"></span>
+        </label>
+      </div>
+
+      <div id="lDeliveryFeeWrap">
+        <label data-i18n="duka_f_deliveryfee">Gharama ya Usafirishaji (TZS)</label>
+        <input type="number" id="lDeliveryFee" placeholder="mfano: 5000">
+      </div>
+
+      <label data-i18n="duka_f_tags">Tags (hiari)</label>
+      <input type="text" id="lTags" placeholder="mfano: mpya, punguzo, mauzo (tenganisha kwa koma)">
+      <p style="font-size:11px;color:var(--sub);margin:-6px 0 0;line-height:1.5;" data-i18n="duka_f_tags_hint">Tags husaidia wanunuzi kuipata bidhaa yako haraka.</p>
+
       <label data-i18n="duka_f_image">Picha ya bidhaa</label>
       <div id="lImgPreviewWrap" style="display:none;margin-bottom:8px;">
         <img id="lImgPreview" src="" style="width:100%;max-height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line);">
@@ -461,6 +558,120 @@
       <button class="post-btn" onclick="submitListing()" data-i18n="duka_submit">Tuma kwa Ukaguzi wa Admin</button>
       <p class="duka-note" data-i18n="duka_note">Bidhaa yako haitaonekana kwa umma mpaka admin aithibitishe kuwa ni ya kweli. Kuweka taarifa za uongo kunaweza kukufanya uzuiliwe kutumia Duka.</p>
     </div>
+  </div>
+</div>
+
+<div id="tournamentView">
+  <div class="chat-header">
+    <div class="back" onclick="showHome()">←</div>
+    <div style="flex:1;">
+      <div class="title" data-i18n="tourn_title">Tournaments</div>
+      <div class="sub" data-i18n="tourn_sub">Unda ligi yako, alika marafiki</div>
+    </div>
+  </div>
+
+  <div class="settings-body" id="tournListPanel">
+    <div style="position:relative;margin-bottom:14px;">
+      <input type="text" id="tournSearchInput" oninput="renderTournamentList()" data-i18n-placeholder="tourn_search" placeholder="Search tournaments..." style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;">
+    </div>
+    <button class="post-btn" onclick="openCreateTournament()" style="margin-bottom:16px;" data-i18n="tourn_create_btn">+ Create New Tournament</button>
+    <div id="tournList"></div>
+  </div>
+
+  <!-- CREATE WIZARD -->
+  <div class="settings-body" id="tournWizard" style="display:none;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <div class="back" onclick="closeTournamentWizard()" style="position:static;">←</div>
+      <div class="settings-label" style="margin:0;" data-i18n="tourn_create_title">Create Tournament</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--sub);margin:10px 0 6px;">
+      <span id="tournStepLabel">Step 1 of 3</span><span id="tournStepPct">33%</span>
+    </div>
+    <div style="height:5px;background:var(--panel-2);border-radius:6px;overflow:hidden;margin-bottom:18px;">
+      <div id="tournProgressBar" style="height:100%;width:33%;background:var(--lime);transition:width .25s;"></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div id="tournStep1">
+      <label data-i18n="tourn_f_name">Tournament Name</label>
+      <input type="text" id="tName" placeholder="mfano: Ligi ya Mtaani 2026">
+
+      <label data-i18n="tourn_f_photo">Picha ya Tournament (hiari)</label>
+      <div id="tImgPreviewWrap" style="display:none;margin-bottom:8px;">
+        <img id="tImgPreview" src="" style="width:100%;max-height:140px;object-fit:cover;border-radius:12px;border:1px solid var(--line);">
+      </div>
+      <label id="tImagePickLabel" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:16px;cursor:pointer;font-size:12.5px;color:var(--sub);">
+        📷 <span data-i18n="tourn_f_photo_pick">Chagua picha kutoka simu yako</span>
+        <input type="file" id="tImageFile" accept="image/*" style="display:none;" onchange="handleTournamentImageSelect(this.files[0])">
+      </label>
+      <div id="tImgUploadStatus" style="font-size:11px;color:var(--sub);margin-top:4px;"></div>
+      <input type="hidden" id="tImage" value="">
+
+      <label data-i18n="tourn_f_sport">Select Game</label>
+      <div id="tSportGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;"></div>
+      <input type="hidden" id="tSport" value="">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:16px;">
+        <div>
+          <div style="font-weight:700;font-size:13px;" data-i18n="tourn_f_public">Public</div>
+          <div style="font-size:11px;color:var(--sub);" data-i18n="tourn_f_public_sub">Anyone can discover this tournament</div>
+        </div>
+        <label style="position:relative;display:inline-block;width:44px;height:24px;flex:none;">
+          <input type="checkbox" id="tPublic" style="opacity:0;width:0;height:0;">
+          <span id="tPublicTrack" style="position:absolute;cursor:pointer;inset:0;background:var(--line);border-radius:24px;transition:.2s;"></span>
+          <span id="tPublicKnob" style="position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;"></span>
+        </label>
+      </div>
+
+      <button class="post-btn" onclick="tournamentNext()" style="margin-top:18px;" data-i18n="tourn_next">Next →</button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="tournStep2" style="display:none;">
+      <label data-i18n="tourn_f_format">Tournament Format</label>
+      <div id="tFormatList" style="display:flex;flex-direction:column;gap:10px;margin-top:6px;"></div>
+      <input type="hidden" id="tFormat" value="">
+      <div style="display:flex;gap:10px;margin-top:18px;">
+        <button class="post-btn" style="background:var(--panel);color:var(--text);border:1px solid var(--line);" onclick="tournamentBack()" data-i18n="tourn_back">← Back</button>
+        <button class="post-btn" onclick="tournamentNext()" data-i18n="tourn_next">Next →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="tournStep3" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <label style="margin:0;" data-i18n="tourn_f_teams">Teams / Players</label>
+        <button type="button" onclick="addTeamRow()" style="background:none;border:1px solid var(--lime);color:var(--lime);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;" data-i18n="tourn_add">+ Add</button>
+      </div>
+      <div id="teamRows" style="margin-top:10px;"></div>
+      <p style="font-size:11px;color:var(--sub);margin-top:8px;" data-i18n="tourn_min_teams">Min 4 teams required.</p>
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <button class="post-btn" style="background:var(--panel);color:var(--text);border:1px solid var(--line);" onclick="tournamentBack()" data-i18n="tourn_back">← Back</button>
+        <button class="post-btn" onclick="submitTournament()" data-i18n="tourn_finish">Create Tournament</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tournDetailView">
+  <div class="chat-header">
+    <div class="back" onclick="showTournaments()">←</div>
+    <div style="flex:1;">
+      <div class="title" id="tdName">—</div>
+      <div class="sub" id="tdMeta">—</div>
+    </div>
+    <div onclick="exportTournamentResults()" style="font-size:18px;cursor:pointer;padding:6px;">⬇️</div>
+    <div onclick="shareTournamentDetail()" style="font-size:20px;cursor:pointer;padding:6px;">🔗</div>
+  </div>
+  <div id="tdCover" style="display:none;width:100%;height:120px;background-size:cover;background-position:center;"></div>
+  <div style="display:flex;gap:0;margin:14px 16px 0;background:var(--panel);border-radius:12px;padding:4px;">
+    <div class="td-tab active" data-tab="matches" onclick="setTournDetailTab('matches')" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;">Matches</div>
+    <div class="td-tab" data-tab="standings" onclick="setTournDetailTab('standings')" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;">Standings</div>
+  </div>
+  <div class="settings-body">
+    <div id="tdNote" style="font-size:11px;color:var(--sub);margin-bottom:10px;display:none;"></div>
+    <div id="tdMatchesPanel"></div>
+    <div id="tdStandingsPanel" style="display:none;"></div>
   </div>
 </div>
 
@@ -572,7 +783,12 @@
 
     <div id="profileLoggedIn" style="display:none;">
       <div class="settings-section" style="text-align:center;">
-        <div style="width:56px;height:56px;border-radius:50%;background:var(--lime);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;margin:0 auto 10px;" id="avatarInitial">U</div>
+        <div style="position:relative;width:56px;height:56px;margin:0 auto 10px;">
+          <div style="width:56px;height:56px;border-radius:50%;background:var(--lime);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;background-size:cover;background-position:center;overflow:hidden;" id="avatarInitial">U</div>
+          <div onclick="document.getElementById('avatarFileInput').click()" style="position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--panel-2);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;">📷</div>
+          <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="uploadProfilePhoto(this.files[0])">
+        </div>
+        <div id="avatarUploadStatus" style="font-size:10.5px;color:var(--sub);margin-bottom:6px;"></div>
         <div style="font-weight:700;font-size:15px;" id="profileUsername">—</div>
         <div style="font-size:11.5px;color:var(--sub);margin-top:4px;" id="profileEmail">—</div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px;" id="profileMeta">—</div>
@@ -681,13 +897,17 @@
 <div class="bottomnav">
   <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
   <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic">💬</div><span data-i18n="nav_chat">Chat</span></div>
-  <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic">🛍️</div><span data-i18n="nav_duka">Duka</span></div>
+  <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5c0-1.2.4-2.3 1-3.3l.6-1c.2-.3.5-.5.9-.5h10c.4 0 .7.2.9.5l.6 1c.6 1 1 2.1 1 3.3"/><path d="M4.5 9.5c1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0"/><path d="M5.5 9.5V18a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.5"/><path d="M9.5 14c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5"/></svg></div><span data-i18n="nav_duka">Duka</span></div>
   <div class="nav-item" id="navAI" onclick="showAI()"><div class="ic">🤖</div><span data-i18n="nav_ai">AI</span></div>
   <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic">☺</div><span data-i18n="nav_me">Me</span></div>
 </div>
 
-<script>
+<script defer>
 let games = [];
+let currentLang = 'sw';
+let tournDetailUnsub = null;
+let tournDetailData = null;
+let tournDetailTab = 'matches';
 let activeFilter = 'all';
 
 const DEMO_GAMES = [
@@ -699,6 +919,13 @@ const DEMO_GAMES = [
 let deepLinkGameId = window.__mgDeepLinkGameId || null;
 let deepLinkOpened = false;
 function loadGames(){
+  // Instant first paint: show something immediately instead of a blank/loading screen,
+  // then swap in real data the moment Firestore responds.
+  if(games.length===0){
+    games = DEMO_GAMES;
+    sortGamesAlphabetically();
+    render();
+  }
   db.collection('games').onSnapshot(snap=>{
     games = snap.docs.map(d=>d.data());
     if(games.length===0) games = DEMO_GAMES;
@@ -781,7 +1008,7 @@ function render(){
         <div class="g-info">
           <div class="g-name">${escapeHtml(g.name)}</div>
           <div class="g-date">${formatGameDate(g.createdAt)}</div>
-          <div class="g-desc">${escapeHtml(g.desc||g.genre||'')}</div>
+          <div class="g-desc">${escapeHtml((currentLang==='en' && g.descEn) ? g.descEn : (g.desc||g.genre||''))}</div>
           <div class="g-tags">
             <span class="tag ${g.paid?'paid':'free'}">${g.paid?'TZS '+escapeHtml(g.price):'Bure'}</span>
             <span class="tag">${g.offline==='yes'?'Offline':'Online'}</span>
@@ -862,7 +1089,7 @@ function openGameModal(g){
   currentModalGame = g;
   downloadedSet = new Set();
   document.getElementById('modalGameName').textContent = g.name;
-  document.getElementById('modalDesc').textContent = g.desc || g.genre || '';
+  document.getElementById('modalDesc').textContent = (currentLang==='en' && g.descEn) ? g.descEn : (g.desc || g.genre || '');
   const thumb = document.getElementById('modalThumb');
   thumb.style.backgroundImage = g.image ? `url('${g.image.replace(/'/g,"")}')` : '';
 
@@ -1912,13 +2139,14 @@ function aiSend(){
 }
 
 // ---- Community chat ----
-let chatName = '';
+let chatName = localStorage.getItem('mg-chat-name') || '';
 let chatUnsub = null;
 
-const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','pollView','aiView'];
+const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','pollView','aiView','tournamentView','tournDetailView'];
 const ALL_NAVS = ['navHome','navChat','navGames','navAI','navMe'];
 function hideAllViews(){
   pollViewOpen = false;
+  if(tournDetailUnsub){ tournDetailUnsub(); tournDetailUnsub = null; }
   ALL_VIEWS.forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.style.display = 'none';
@@ -1938,6 +2166,8 @@ function showChat(){
   document.getElementById('chatView').style.display = 'flex';
   document.getElementById('navChat').classList.add('active');
   if(chatName){
+    document.getElementById('nameGate').style.display = 'none';
+    document.getElementById('chatBody').style.display = 'flex';
     subscribeMessages();
   }
 }
@@ -1962,6 +2192,788 @@ function showPolls(){
   document.getElementById('pollView').style.display = 'flex';
   loadPolls();
 }
+
+// ---- Tournaments ----
+const SPORTS = [
+  {key:'football', label:'Football', icon:'⚽'},
+  {key:'efootball', label:'eFootball', icon:'🎮'},
+  {key:'fc26', label:'FC 26', icon:'🎮'},
+  {key:'dls', label:'DLS', icon:'🎮'},
+  {key:'pes', label:'PES', icon:'🎮'},
+  {key:'basketball', label:'Basketball', icon:'🏀'},
+  {key:'esports', label:'Esports (Nyingine)', icon:'🕹️'},
+  {key:'other', label:'Nyingine', icon:'🏆'}
+];
+const FORMATS = [
+  {key:'single', title:'Single Elimination', sub:'Lose once and you\'re out. Fast and decisive.'},
+  {key:'double', title:'Double Elimination', sub:'Teams must lose twice to be eliminated. More forgiving.'},
+  {key:'round_robin', title:'Round Robin', sub:'Every team plays every other team. Most fair ranking.'},
+  {key:'group_knockout', title:'Group Stage + Knockout', sub:'Groups first, then top teams advance to elimination rounds.'}
+];
+let tournStep = 1;
+let tournTeamCount = 0;
+let allTournaments = [];
+
+function showTournaments(){
+  hideAllViews();
+  document.getElementById('tournamentView').style.display = 'flex';
+  document.getElementById('tournListPanel').style.display = 'block';
+  document.getElementById('tournWizard').style.display = 'none';
+  loadTournaments();
+}
+
+function loadTournaments(){
+  db.collection('tournaments').where('public','==',true).onSnapshot(snap=>{
+    const pub = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    mergeTournaments(pub);
+  }, err=>console.error(err));
+  if(auth.currentUser){
+    db.collection('tournaments').where('ownerUid','==',auth.currentUser.uid).onSnapshot(snap=>{
+      const mine = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      mergeTournaments(mine);
+    }, err=>console.error(err));
+  }
+}
+
+function mergeTournaments(list){
+  const map = new Map(allTournaments.map(t=>[t.id, t]));
+  list.forEach(t=>map.set(t.id, t));
+  allTournaments = Array.from(map.values()).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  renderTournamentList();
+}
+
+function renderTournamentList(){
+  const q = (document.getElementById('tournSearchInput')?.value || '').trim().toLowerCase();
+  let list = allTournaments;
+  if(q) list = list.filter(t=>(t.name||'').toLowerCase().includes(q));
+  const el = document.getElementById('tournList');
+  if(!el) return;
+  el.innerHTML = list.length ? list.map(t=>{
+    const isOwner = auth.currentUser && t.ownerUid === auth.currentUser.uid;
+    const sportInfo = SPORTS.find(s=>s.key===t.sport);
+    const formatInfo = FORMATS.find(f=>f.key===t.format);
+    const doneCount = (t.matches||[]).filter(m=>m.status==='done').length;
+    const seenCount = parseInt(localStorage.getItem('mg-tourn-seen-'+t.id) || '0', 10);
+    const hasNew = doneCount > seenCount;
+    return `
+    <div class="d-card" style="align-items:flex-start;position:relative;">
+      ${hasNew ? '<div style="position:absolute;top:10px;right:10px;width:9px;height:9px;border-radius:50%;background:#ff4d4d;"></div>' : ''}
+      <div class="d-thumb" style="background:var(--panel-2);display:flex;align-items:center;justify-content:center;font-size:26px;${t.image?`background-image:url('${t.image.replace(/'/g,"")}');`:''}">${t.image?'':(sportInfo?sportInfo.icon:'🏆')}</div>
+      <div class="d-info">
+        <div class="d-name">${escapeHtml(t.name)}</div>
+        <div class="d-seller">${sportInfo?escapeHtml(sportInfo.label):''} · ${formatInfo?escapeHtml(formatInfo.title):''} · ${(t.teams||[]).length} teams</div>
+        <div class="d-seller">${t.public?'🌍 Public':'🔒 Private'} · na ${escapeHtml(t.ownerName||'Mtumiaji')}</div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="d-report" style="color:var(--lime);border-color:var(--lime);" onclick='openTournamentDetail(${JSON.stringify(t.id)})'>▶ Fungua</button>
+          <button class="d-report" onclick='shareTournament(${JSON.stringify(t.id)},${JSON.stringify(t.name)})'>🔗 Share</button>
+          ${isOwner ? `<button class="d-report" style="color:#ff6b6b;border-color:#ff6b6b;" onclick='deleteTournament(${JSON.stringify(t.id)})'>🗑️ Futa</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty">Bado hakuna tournament. Bonyeza "Create New Tournament" kuanza! 🏆</div>';
+}
+
+async function handleTournamentImageSelect(file){
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ alert('Chagua picha halali (jpg/png).'); return; }
+  const statusEl = document.getElementById('tImgUploadStatus');
+  statusEl.textContent = 'Inapakia picha...';
+  try{
+    const url = await uploadToImgbb(file);
+    document.getElementById('tImage').value = url;
+    document.getElementById('tImgPreview').src = url;
+    document.getElementById('tImgPreviewWrap').style.display = 'block';
+    document.getElementById('tImagePickLabel').style.display = 'none';
+    statusEl.textContent = '';
+  }catch(e){
+    console.error(e);
+    statusEl.textContent = '';
+    alert('Imeshindwa kupakia picha. Jaribu tena.');
+  }
+}
+
+function openCreateTournament(){
+  if(!auth.currentUser){
+    alert('Lazima uingie kwenye akaunti yako kwanza ndipo uweze kuunda tournament.');
+    showProfile();
+    return;
+  }
+  document.getElementById('tName').value = '';
+  document.getElementById('tImage').value = '';
+  document.getElementById('tImgPreviewWrap').style.display = 'none';
+  document.getElementById('tImagePickLabel').style.display = 'flex';
+  document.getElementById('tImageFile').value = '';
+  document.getElementById('tImgUploadStatus').textContent = '';
+  document.getElementById('tSport').value = '';
+  document.getElementById('tFormat').value = '';
+  document.getElementById('tPublic').checked = false;
+  document.getElementById('teamRows').innerHTML = '';
+  tournTeamCount = 0;
+  addTeamRow(); addTeamRow(); addTeamRow(); addTeamRow();
+  renderSportGrid();
+  renderFormatList();
+  tournStep = 1;
+  updateTournamentStepUI();
+  document.getElementById('tournListPanel').style.display = 'none';
+  document.getElementById('tournWizard').style.display = 'block';
+}
+
+function closeTournamentWizard(){
+  document.getElementById('tournListPanel').style.display = 'block';
+  document.getElementById('tournWizard').style.display = 'none';
+}
+
+function renderSportGrid(){
+  const wrap = document.getElementById('tSportGrid');
+  wrap.innerHTML = SPORTS.map(s => `
+    <div class="cond-opt" data-sport="${s.key}" onclick="selectSport('${s.key}')" style="text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--line);background:var(--panel);cursor:pointer;font-size:11.5px;font-weight:600;">
+      <div style="font-size:20px;">${s.icon}</div>${s.label}
+    </div>`).join('');
+}
+function selectSport(key){
+  document.getElementById('tSport').value = key;
+  document.querySelectorAll('#tSportGrid [data-sport]').forEach(el=>{
+    const active = el.dataset.sport === key;
+    el.style.borderColor = active ? 'var(--lime)' : 'var(--line)';
+    el.style.background = active ? 'var(--panel-2)' : 'var(--panel)';
+  });
+}
+
+function renderFormatList(){
+  const wrap = document.getElementById('tFormatList');
+  wrap.innerHTML = FORMATS.map(f => `
+    <div class="cond-opt" data-format="${f.key}" onclick="selectFormat('${f.key}')" style="padding:14px;border-radius:12px;border:2px solid var(--line);background:var(--panel);cursor:pointer;">
+      <div style="font-weight:700;font-size:13.5px;">${f.title}</div>
+      <div style="font-size:11.5px;color:var(--sub);margin-top:3px;">${f.sub}</div>
+    </div>`).join('');
+}
+function selectFormat(key){
+  document.getElementById('tFormat').value = key;
+  document.querySelectorAll('#tFormatList [data-format]').forEach(el=>{
+    const active = el.dataset.format === key;
+    el.style.borderColor = active ? 'var(--lime)' : 'var(--line)';
+    el.style.background = active ? 'var(--panel-2)' : 'var(--panel)';
+  });
+}
+
+function addTeamRow(){
+  tournTeamCount++;
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:10px;';
+  row.innerHTML = `
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--sub);flex:none;">${tournTeamCount}</div>
+    <input type="text" class="team-name-input" placeholder="Team ${tournTeamCount}" style="flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 13px;border-radius:9px;font-size:13.5px;font-family:'Inter',sans-serif;">
+    <div onclick="this.parentElement.remove()" style="color:var(--sub);cursor:pointer;font-size:16px;padding:4px 8px;">✕</div>`;
+  document.getElementById('teamRows').appendChild(row);
+}
+
+function updateTournamentStepUI(){
+  document.getElementById('tournStep1').style.display = tournStep===1 ? 'block' : 'none';
+  document.getElementById('tournStep2').style.display = tournStep===2 ? 'block' : 'none';
+  document.getElementById('tournStep3').style.display = tournStep===3 ? 'block' : 'none';
+  document.getElementById('tournStepLabel').textContent = 'Step ' + tournStep + ' of 3';
+  document.getElementById('tournStepPct').textContent = Math.round(tournStep/3*100) + '%';
+  document.getElementById('tournProgressBar').style.width = Math.round(tournStep/3*100) + '%';
+}
+
+function tournamentNext(){
+  if(tournStep===1){
+    if(!document.getElementById('tName').value.trim()){ alert('Weka jina la tournament kwanza.'); return; }
+    if(!document.getElementById('tSport').value){ alert('Chagua mchezo kwanza.'); return; }
+  }
+  if(tournStep===2){
+    if(!document.getElementById('tFormat').value){ alert('Chagua muundo wa tournament kwanza.'); return; }
+  }
+  tournStep = Math.min(3, tournStep+1);
+  updateTournamentStepUI();
+}
+function tournamentBack(){
+  tournStep = Math.max(1, tournStep-1);
+  updateTournamentStepUI();
+}
+
+// ---- Tournament fixtures engine ----
+function generateRoundRobinFixtures(teamNames, bracketTag, groupLabel, startId){
+  let arr = teamNames.slice();
+  if(arr.length % 2 !== 0) arr.push('BYE');
+  const n = arr.length;
+  const rounds = n - 1;
+  const half = n / 2;
+  let matches = [];
+  let mid = startId || 1;
+  for(let r=0;r<rounds;r++){
+    for(let i=0;i<half;i++){
+      const a = arr[i], b = arr[n-1-i];
+      if(a!=='BYE' && b!=='BYE'){
+        const m = {id:mid++, round:r+1, teamA:a, teamB:b, scoreA:null, scoreB:null, status:'pending'};
+        if(bracketTag) m.bracket = bracketTag;
+        if(groupLabel) m.group = groupLabel;
+        matches.push(m);
+      }
+    }
+    const fixed = arr[0];
+    const rest = arr.slice(1);
+    rest.unshift(rest.pop());
+    arr = [fixed, ...rest];
+  }
+  return matches;
+}
+
+function generateSingleElimFixtures(teamNames, bracketTag, startId){
+  let size = 1;
+  while(size < teamNames.length) size *= 2;
+  const padded = teamNames.slice();
+  while(padded.length < size) padded.push('BYE');
+  let matches = [];
+  let mid = startId || 1;
+  for(let i=0;i<size/2;i++){
+    const a = padded[i*2], b = padded[i*2+1];
+    const m = {id:mid++, round:1, teamA:a, teamB:b, scoreA:null, scoreB:null, status:'pending', bracket:bracketTag||'winners'};
+    if(a==='BYE' && b!=='BYE'){ m.status='bye'; m.winner=b; }
+    else if(b==='BYE' && a!=='BYE'){ m.status='bye'; m.winner=a; }
+    else if(a==='BYE' && b==='BYE'){ m.status='bye'; m.winner='BYE'; }
+    matches.push(m);
+  }
+  return matches;
+}
+
+// Split teams into groups of ~4 for Group Stage + Knockout
+function makeGroups(teamNames){
+  const groupSize = 4;
+  const numGroups = Math.max(1, Math.ceil(teamNames.length / groupSize));
+  const groups = {};
+  for(let i=0;i<numGroups;i++) groups[String.fromCharCode(65+i)] = [];
+  teamNames.forEach((name,i)=>{ groups[String.fromCharCode(65 + (i % numGroups))].push(name); });
+  return groups;
+}
+
+function generateFixtures(format, teamNames){
+  if(format === 'single' || format === 'double'){
+    return {matches: generateSingleElimFixtures(teamNames, 'winners'), groups:null};
+  }
+  if(format === 'group_knockout'){
+    const groups = makeGroups(teamNames);
+    let matches = [];
+    let mid = 1;
+    Object.keys(groups).forEach(g=>{
+      const rr = generateRoundRobinFixtures(groups[g], 'group', g, mid);
+      mid += rr.length;
+      matches = matches.concat(rr);
+    });
+    return {matches, groups};
+  }
+  return {matches: generateRoundRobinFixtures(teamNames), groups:null}; // round_robin
+}
+
+function isKnockoutMatch(m){
+  return m.bracket==='winners' || m.bracket==='losers' || m.bracket==='final';
+}
+
+function nextMatchId(matches){
+  return matches.length ? Math.max(...matches.map(m=>m.id))+1 : 1;
+}
+
+// Generic: once a bracket's current round is fully done, generate the next round from winners.
+function advanceBracketRound(matches, bracketTag){
+  const scoped = matches.filter(m=>m.bracket===bracketTag);
+  if(!scoped.length) return matches;
+  const maxRound = Math.max(...scoped.map(m=>m.round));
+  const roundMatches = scoped.filter(m=>m.round===maxRound);
+  const allDone = roundMatches.every(m=>m.status==='done' || m.status==='bye');
+  if(!allDone || roundMatches.length<=1) return matches;
+  const winners = roundMatches.map(m=>m.winner).filter(w=>w && w!=='BYE');
+  if(winners.length<2) return matches;
+  let mid = nextMatchId(matches);
+  const nextRound = maxRound+1;
+  for(let i=0;i<winners.length;i+=2){
+    const a=winners[i], b=winners[i+1];
+    if(b===undefined){
+      matches.push({id:mid++, round:nextRound, teamA:a, teamB:'BYE', scoreA:null, scoreB:null, status:'bye', winner:a, bracket:bracketTag});
+    } else {
+      matches.push({id:mid++, round:nextRound, teamA:a, teamB:b, scoreA:null, scoreB:null, status:'pending', bracket:bracketTag});
+    }
+  }
+  return matches;
+}
+
+// Simplified (single Grand Final, no bracket-reset) Double Elimination pool engine.
+function processDoubleElimAfterSave(t, matches){
+  let losersPool = (t.losersPool || []).slice();
+  let wbChampion = t.wbChampion || null;
+  let lbChampion = t.lbChampion || null;
+  let grandFinalDone = t.grandFinalDone || false;
+
+  const wbMatches = matches.filter(m=>m.bracket==='winners');
+  wbMatches.filter(m=>(m.status==='done'||m.status==='bye') && !m.loserPooled).forEach(m=>{
+    if(m.status==='done'){
+      const loser = m.winner===m.teamA ? m.teamB : m.teamA;
+      losersPool.push(loser);
+    }
+    m.loserPooled = true;
+  });
+
+  matches = advanceBracketRound(matches, 'winners');
+
+  const wbRounds2 = matches.filter(m=>m.bracket==='winners').map(m=>m.round);
+  if(wbRounds2.length){
+    const maxWbRound = Math.max(...wbRounds2);
+    const finalRoundMatches = matches.filter(m=>m.bracket==='winners' && m.round===maxWbRound);
+    if(finalRoundMatches.length===1 && (finalRoundMatches[0].status==='done'||finalRoundMatches[0].status==='bye')){
+      wbChampion = finalRoundMatches[0].winner;
+    }
+  }
+
+  const lbMatches = matches.filter(m=>m.bracket==='losers');
+  lbMatches.filter(m=>m.status==='done' && !m.lbResolved).forEach(m=>{
+    losersPool.push(m.winner);
+    m.lbResolved = true;
+  });
+
+  let mid = nextMatchId(matches);
+  const lbRoundsSoFar = lbMatches.map(m=>m.round);
+  let nextLbRound = lbRoundsSoFar.length ? Math.max(...lbRoundsSoFar)+1 : 1;
+  while(losersPool.length >= 2){
+    const a = losersPool.shift();
+    const b = losersPool.shift();
+    matches.push({id:mid++, round:nextLbRound, teamA:a, teamB:b, scoreA:null, scoreB:null, status:'pending', bracket:'losers'});
+  }
+
+  const wbAllDone = wbMatches.length>0 && matches.filter(m=>m.bracket==='winners').every(m=>m.status==='done'||m.status==='bye') && wbChampion;
+  if(losersPool.length===1 && wbAllDone){
+    lbChampion = losersPool[0];
+  }
+
+  const hasGrandFinal = matches.some(m=>m.bracket==='final');
+  if(wbChampion && lbChampion && !hasGrandFinal){
+    matches.push({id:mid++, round:1, teamA:wbChampion, teamB:lbChampion, scoreA:null, scoreB:null, status:'pending', bracket:'final'});
+  }
+  const gf = matches.find(m=>m.bracket==='final');
+  if(gf && gf.status==='done') grandFinalDone = true;
+
+  return {matches, losersPool, wbChampion, lbChampion, grandFinalDone};
+}
+
+// Group Stage + Knockout: once every group match is done, seed top-2-per-group into a knockout bracket.
+function maybeGenerateKnockoutFromGroups(t, matches){
+  const groupMatches = matches.filter(m=>m.bracket==='group');
+  const alreadyGenerated = matches.some(m=>m.bracket==='winners');
+  if(alreadyGenerated || !groupMatches.length) return matches;
+  const allGroupsDone = groupMatches.every(m=>m.status==='done');
+  if(!allGroupsDone) return matches;
+  const groups = t.groups || {};
+  let qualifiers = [];
+  Object.keys(groups).sort().forEach(g=>{
+    const standings = computeStandings(groupMatches.filter(m=>m.group===g), groups[g]);
+    qualifiers = qualifiers.concat(standings.slice(0,2).map(s=>s.name));
+  });
+  if(qualifiers.length < 2) return matches;
+  const mid = nextMatchId(matches);
+  const knockoutMatches = generateSingleElimFixtures(qualifiers, 'winners', mid);
+  return matches.concat(knockoutMatches);
+}
+
+function computeStandings(matches, allTeamNames){
+  const table = {};
+  (allTeamNames||[]).forEach(name=>{
+    if(name==='BYE') return;
+    table[name] = {name, P:0, W:0, D:0, L:0, GF:0, GA:0, GD:0, Pts:0};
+  });
+  matches.filter(m=>m.status==='done').forEach(m=>{
+    if(m.teamA==='BYE' || m.teamB==='BYE') return;
+    if(!table[m.teamA]) table[m.teamA] = {name:m.teamA,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0};
+    if(!table[m.teamB]) table[m.teamB] = {name:m.teamB,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0};
+    const a = table[m.teamA], b = table[m.teamB];
+    a.P++; b.P++;
+    a.GF += m.scoreA; a.GA += m.scoreB;
+    b.GF += m.scoreB; b.GA += m.scoreA;
+    if(m.scoreA > m.scoreB){ a.W++; a.Pts+=3; b.L++; }
+    else if(m.scoreA < m.scoreB){ b.W++; b.Pts+=3; a.L++; }
+    else { a.D++; b.D++; a.Pts++; b.Pts++; }
+  });
+  Object.values(table).forEach(t=>{ t.GD = t.GF - t.GA; });
+  return Object.values(table).sort((x,y)=> y.Pts-x.Pts || y.GD-x.GD || y.GF-x.GF);
+}
+
+async function submitTournament(){
+  const name = document.getElementById('tName').value.trim();
+  const image = document.getElementById('tImage').value.trim();
+  const sport = document.getElementById('tSport').value;
+  const format = document.getElementById('tFormat').value;
+  const isPublic = document.getElementById('tPublic').checked;
+  const teamNames = Array.from(document.querySelectorAll('.team-name-input')).map(i=>i.value.trim()).filter(Boolean);
+  if(teamNames.length < 4){
+    alert('Weka angalau timu/wachezaji 4 kabla ya kuunda tournament.');
+    return;
+  }
+  if(!auth.currentUser){
+    alert('Lazima uingie kwenye akaunti yako kwanza.');
+    showProfile();
+    return;
+  }
+  try{
+    const {matches, groups} = generateFixtures(format, teamNames);
+    const docData = {
+      name, image, sport, format, public: isPublic,
+      teams: teamNames.map(n=>({name:n})),
+      matches,
+      ownerUid: auth.currentUser.uid,
+      ownerName: (auth.currentUser.email||'').split('@')[0],
+      ownerEmail: auth.currentUser.email || '',
+      createdAt: Date.now()
+    };
+    if(groups) docData.groups = groups;
+    if(format === 'double'){
+      docData.losersPool = [];
+      docData.wbChampion = null;
+      docData.lbChampion = null;
+      docData.grandFinalDone = false;
+    }
+    const docRef = await db.collection('tournaments').add(docData);
+    alert('Tournament "'+name+'" imeundwa! Alika marafiki zako kupitia "Share".');
+    closeTournamentWizard();
+    shareTournament(docRef.id, name);
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kuunda tournament. Angalia mtandao wako na jaribu tena.');
+  }
+}
+
+async function deleteTournament(id){
+  if(!auth.currentUser) return;
+  const t = allTournaments.find(x=>x.id===id);
+  if(!t || t.ownerUid !== auth.currentUser.uid){
+    alert('Unaweza kufuta tournament zako mwenyewe tu.');
+    return;
+  }
+  if(!confirm('Una uhakika unataka kufuta tournament "'+t.name+'"? Hatua hii haiwezi kurudishwa.')) return;
+  try{
+    await db.collection('tournaments').doc(id).delete();
+    allTournaments = allTournaments.filter(x=>x.id!==id);
+    renderTournamentList();
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kufuta. Jaribu tena.');
+  }
+}
+
+function openTournamentDetail(id){
+  hideAllViews();
+  document.getElementById('tournDetailView').style.display = 'flex';
+  if(tournDetailUnsub){ tournDetailUnsub(); tournDetailUnsub = null; }
+  tournDetailTab = 'matches';
+  tournDetailUnsub = db.collection('tournaments').doc(id).onSnapshot(doc=>{
+    if(!doc.exists){
+      document.getElementById('tdName').textContent = 'Tournament imefutwa';
+      document.getElementById('tdMatchesPanel').innerHTML = '';
+      return;
+    }
+    tournDetailData = {id: doc.id, ...doc.data()};
+    renderTournamentDetail();
+    const doneCount = (tournDetailData.matches||[]).filter(m=>m.status==='done').length;
+    localStorage.setItem('mg-tourn-seen-'+id, String(doneCount));
+  }, err=>console.error(err));
+}
+
+function shareTournamentDetail(){
+  if(tournDetailData) shareTournament(tournDetailData.id, tournDetailData.name);
+}
+
+function setTournDetailTab(tab){
+  tournDetailTab = tab;
+  document.querySelectorAll('.td-tab').forEach(el=>el.classList.toggle('active', el.dataset.tab===tab));
+  document.getElementById('tdMatchesPanel').style.display = tab==='matches' ? 'block' : 'none';
+  document.getElementById('tdStandingsPanel').style.display = tab==='standings' ? 'block' : 'none';
+}
+
+function scoreLabel(m){
+  let s = m.scoreA + ' - ' + m.scoreB;
+  if(m.pkA !== undefined && m.pkA !== null) s += ' (PK ' + m.pkA + '-' + m.pkB + ')';
+  return s;
+}
+
+function renderStandingsTable(matches, teamNames){
+  const standings = computeStandings(matches, teamNames);
+  return `<div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="color:var(--sub);text-align:left;">
+        <th style="padding:8px 4px;">#</th><th style="padding:8px 4px;">Team</th>
+        <th style="padding:8px 4px;text-align:center;">P</th><th style="padding:8px 4px;text-align:center;">W</th>
+        <th style="padding:8px 4px;text-align:center;">D</th><th style="padding:8px 4px;text-align:center;">L</th>
+        <th style="padding:8px 4px;text-align:center;">GD</th><th style="padding:8px 4px;text-align:center;">Pts</th>
+      </tr></thead>
+      <tbody>
+      ${standings.map((s,i)=>`
+        <tr style="border-top:1px solid var(--line);">
+          <td style="padding:9px 4px;color:var(--sub);">${i+1}</td>
+          <td style="padding:9px 4px;font-weight:600;">${escapeHtml(s.name)}</td>
+          <td style="padding:9px 4px;text-align:center;">${s.P}</td>
+          <td style="padding:9px 4px;text-align:center;">${s.W}</td>
+          <td style="padding:9px 4px;text-align:center;">${s.D}</td>
+          <td style="padding:9px 4px;text-align:center;">${s.L}</td>
+          <td style="padding:9px 4px;text-align:center;">${s.GD}</td>
+          <td style="padding:9px 4px;text-align:center;font-weight:700;color:var(--lime);">${s.Pts}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderTournamentDetail(){
+  const t = tournDetailData;
+  if(!t) return;
+  const sportInfo = SPORTS.find(s=>s.key===t.sport);
+  const formatInfo = FORMATS.find(f=>f.key===t.format);
+  document.getElementById('tdName').textContent = t.name;
+  document.getElementById('tdMeta').textContent = (sportInfo?sportInfo.label:'') + ' · ' + (formatInfo?formatInfo.title:'') + ' · ' + (t.teams||[]).length + ' teams';
+
+  const coverEl = document.getElementById('tdCover');
+  if(t.image){
+    coverEl.style.backgroundImage = `url('${t.image.replace(/'/g,"")}')`;
+    coverEl.style.display = 'block';
+  } else {
+    coverEl.style.display = 'none';
+  }
+
+  const noteEl = document.getElementById('tdNote');
+  if(t.format==='double'){
+    noteEl.style.display = 'block';
+    noteEl.textContent = 'Double Elimination: kila timu inapata nafasi ya pili kwenye Losers Bracket. Grand Final moja ndiyo huamua mshindi wa mwisho (hakuna "bracket reset").';
+  } else if(t.format==='group_knockout'){
+    noteEl.style.display = 'block';
+    noteEl.textContent = 'Timu zimegawanywa makundi ya ~4. Bora 2 wa kila kundi wanaingia Knockout moja kwa moja baada ya michezo yote ya makundi kukamilika.';
+  } else {
+    noteEl.style.display = 'none';
+  }
+
+  const matches = t.matches || [];
+  const isOwner = auth.currentUser && t.ownerUid === auth.currentUser.uid;
+  const teamNames = (t.teams||[]).map(x=>x.name);
+
+  // ---- MATCHES TAB ----
+  let matchesHtml = '';
+  if(t.format==='group_knockout'){
+    const groupKeys = Object.keys(t.groups||{}).sort();
+    matchesHtml += groupKeys.map(g=>{
+      const gMatches = matches.filter(m=>m.bracket==='group' && m.group===g);
+      return `<div style="margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--lime);margin-bottom:8px;text-transform:uppercase;">Group ${g}</div>
+        ${gMatches.map(m=>renderMatchRow(t.id, m, isOwner)).join('')}
+      </div>`;
+    }).join('');
+    const koMatches = matches.filter(m=>isKnockoutMatch(m));
+    if(koMatches.length){
+      matchesHtml += `<div style="font-size:12px;font-weight:700;color:var(--sub);margin:18px 0 10px;text-transform:uppercase;">🏆 Knockout Stage</div>`;
+      matchesHtml += renderBracketColumns(koMatches.filter(m=>m.bracket==='winners'), t.id, isOwner);
+    } else {
+      matchesHtml += `<div class="empty" style="margin-top:10px;">Knockout stage itaanza automatiki baada ya michezo yote ya makundi kukamilika.</div>`;
+    }
+  } else if(t.format==='single'){
+    matchesHtml = renderBracketColumns(matches.filter(m=>m.bracket==='winners'), t.id, isOwner);
+  } else if(t.format==='double'){
+    matchesHtml += `<div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:8px;text-transform:uppercase;">🏆 Winners Bracket</div>`;
+    matchesHtml += renderBracketColumns(matches.filter(m=>m.bracket==='winners'), t.id, isOwner);
+    const lb = matches.filter(m=>m.bracket==='losers');
+    if(lb.length){
+      matchesHtml += `<div style="font-size:12px;font-weight:700;color:var(--sub);margin:18px 0 8px;text-transform:uppercase;">🔁 Losers Bracket</div>`;
+      matchesHtml += renderBracketColumns(lb, t.id, isOwner);
+    }
+    const gf = matches.filter(m=>m.bracket==='final');
+    if(gf.length){
+      matchesHtml += `<div style="font-size:12px;font-weight:700;color:var(--lime);margin:18px 0 8px;text-transform:uppercase;">⭐ Grand Final</div>`;
+      matchesHtml += gf.map(m=>renderMatchRow(t.id, m, isOwner)).join('');
+    }
+  } else {
+    // round_robin
+    const rounds = [...new Set(matches.map(m=>m.round))].sort((a,b)=>a-b);
+    matchesHtml = rounds.map(r=>{
+      const roundMatches = matches.filter(m=>m.round===r);
+      return `<div style="margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Round ${r}</div>
+        ${roundMatches.map(m=>renderMatchRow(t.id, m, isOwner)).join('')}
+      </div>`;
+    }).join('') || '<div class="empty">Hakuna michezo bado.</div>';
+  }
+  document.getElementById('tdMatchesPanel').innerHTML = matchesHtml;
+
+  // ---- STANDINGS TAB ----
+  let standingsHtml = '';
+  if(t.format==='group_knockout'){
+    const groupKeys = Object.keys(t.groups||{}).sort();
+    standingsHtml = groupKeys.map(g=>`
+      <div style="margin-bottom:18px;">
+        <div style="font-size:12px;font-weight:700;color:var(--lime);margin-bottom:8px;">Group ${g}</div>
+        ${renderStandingsTable(matches.filter(m=>m.group===g), t.groups[g])}
+      </div>`).join('');
+  } else if(t.format==='single' || t.format==='double'){
+    standingsHtml = '<div class="empty">Standings hazitumiki kwa Knockout. Angalia matokeo kwenye tab ya Matches.</div>';
+  } else {
+    standingsHtml = renderStandingsTable(matches, teamNames);
+  }
+  document.getElementById('tdStandingsPanel').innerHTML = standingsHtml;
+
+  setTournDetailTab(tournDetailTab);
+}
+
+function knockoutRoundLabel(r, totalRounds){
+  const fromEnd = totalRounds - r;
+  if(fromEnd===0) return 'Final';
+  if(fromEnd===1) return 'Semi Final';
+  if(fromEnd===2) return 'Quarter Final';
+  return 'Round ' + r;
+}
+
+// Visual bracket: horizontal-scrolling columns, one per round, matches vertically spaced.
+function renderBracketColumns(koMatches, tournId, isOwner){
+  if(!koMatches.length) return '<div class="empty">Hakuna michezo bado.</div>';
+  const rounds = [...new Set(koMatches.map(m=>m.round))].sort((a,b)=>a-b);
+  const totalRounds = rounds.length;
+  return `<div style="display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;">
+    ${rounds.map(r=>{
+      const roundMatches = koMatches.filter(m=>m.round===r);
+      const gapPx = Math.pow(2, r-1) * 14;
+      return `<div style="min-width:210px;display:flex;flex-direction:column;justify-content:center;gap:${gapPx}px;">
+        <div style="font-size:10.5px;font-weight:700;color:var(--sub);text-transform:uppercase;text-align:center;margin-bottom:4px;">${knockoutRoundLabel(r, totalRounds)}</div>
+        ${roundMatches.map(m=>renderMatchRow(tournId, m, isOwner)).join('')}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderMatchRow(tournId, m, isOwner){
+  const isBye = m.status==='bye';
+  const isDone = m.status==='done';
+  return `
+  <div style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="flex:1;font-size:13px;font-weight:600;text-align:right;">${escapeHtml(m.teamA)}</div>
+      ${isBye ? `<div style="font-size:11px;color:var(--sub);padding:0 8px;">BYE</div>` :
+        (isOwner && !isDone) ? `
+        <input type="number" min="0" id="ms_${tournId}_${m.id}_a" value="${m.scoreA ?? ''}" style="width:38px;text-align:center;background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:5px 2px;font-size:13px;">
+        <span style="color:var(--sub);">-</span>
+        <input type="number" min="0" id="ms_${tournId}_${m.id}_b" value="${m.scoreB ?? ''}" style="width:38px;text-align:center;background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:5px 2px;font-size:13px;">
+        ` : `<div style="font-size:12.5px;font-weight:700;color:${isDone?'var(--lime)':'var(--sub)'};padding:0 8px;text-align:center;">${isDone ? scoreLabel(m) : 'vs'}</div>`}
+      <div style="flex:1;font-size:13px;font-weight:600;">${escapeHtml(m.teamB)}</div>
+    </div>
+    ${(isOwner && !isDone && !isBye) ? `<button onclick="saveMatchResult('${tournId}',${m.id})" style="width:100%;margin-top:9px;background:none;border:1px solid var(--lime);color:var(--lime);border-radius:20px;padding:6px 0;font-size:11.5px;font-weight:700;cursor:pointer;">Hifadhi Matokeo</button>` : ''}
+  </div>`;
+}
+
+async function saveMatchResult(tournId, matchId){
+  const aInput = document.getElementById(`ms_${tournId}_${matchId}_a`);
+  const bInput = document.getElementById(`ms_${tournId}_${matchId}_b`);
+  const scoreA = parseInt(aInput.value, 10);
+  const scoreB = parseInt(bInput.value, 10);
+  if(isNaN(scoreA) || isNaN(scoreB) || scoreA<0 || scoreB<0){
+    alert('Weka matokeo sahihi ya mechi (namba, si hasi).');
+    return;
+  }
+  const t = tournDetailData;
+  if(!t) return;
+  let matches = (t.matches || []).map(m=>({...m}));
+  const idx = matches.findIndex(m=>m.id===matchId);
+  if(idx===-1) return;
+  const m = matches[idx];
+  const knockout = isKnockoutMatch(m);
+
+  m.scoreA = scoreA;
+  m.scoreB = scoreB;
+  m.status = 'done';
+
+  if(knockout){
+    if(scoreA === scoreB){
+      const pkAStr = prompt('Sare '+scoreA+'-'+scoreB+'! Kwenye Knockout lazima kuwe na mshindi.\nWeka bao za penati kwa ' + m.teamA + ':');
+      if(pkAStr===null) return;
+      const pkBStr = prompt('Bao za penati kwa ' + m.teamB + ':');
+      if(pkBStr===null) return;
+      const pkA = parseInt(pkAStr,10), pkB = parseInt(pkBStr,10);
+      if(isNaN(pkA) || isNaN(pkB) || pkA===pkB || pkA<0 || pkB<0){
+        alert('Penati lazima ziwe namba halali na ziwe na mshindi (si sare).');
+        return;
+      }
+      m.pkA = pkA; m.pkB = pkB;
+      m.winner = pkA > pkB ? m.teamA : m.teamB;
+    } else {
+      m.winner = scoreA > scoreB ? m.teamA : m.teamB;
+    }
+  }
+
+  let updateData = {};
+  if(t.format === 'double'){
+    const result = processDoubleElimAfterSave(t, matches);
+    matches = result.matches;
+    updateData = {matches, losersPool: result.losersPool, wbChampion: result.wbChampion, lbChampion: result.lbChampion, grandFinalDone: result.grandFinalDone};
+  } else if(t.format === 'single'){
+    matches = advanceBracketRound(matches, 'winners');
+    updateData = {matches};
+  } else if(t.format === 'group_knockout'){
+    if(m.bracket === 'group'){
+      matches = maybeGenerateKnockoutFromGroups(t, matches);
+    } else if(m.bracket === 'winners'){
+      matches = advanceBracketRound(matches, 'winners');
+    }
+    updateData = {matches};
+  } else {
+    updateData = {matches};
+  }
+
+  try{
+    await db.collection('tournaments').doc(tournId).update(updateData);
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kuhifadhi matokeo. Jaribu tena.');
+  }
+}
+
+function exportTournamentResults(){
+  const t = tournDetailData;
+  if(!t) return;
+  const matches = t.matches || [];
+  let lines = [];
+  lines.push('MUMBIGAMES — ' + t.name);
+  lines.push('Mchezo: ' + (SPORTS.find(s=>s.key===t.sport)?.label || t.sport));
+  lines.push('Muundo: ' + (FORMATS.find(f=>f.key===t.format)?.title || t.format));
+  lines.push('Tarehe: ' + new Date(t.createdAt||Date.now()).toLocaleDateString());
+  lines.push('');
+  lines.push('=== MATOKEO YA MICHEZO ===');
+  matches.forEach(m=>{
+    if(m.status==='bye') return;
+    const line = (m.group ? '['+m.group+'] ' : '') + m.teamA + ' vs ' + m.teamB + ': ' +
+      (m.status==='done' ? scoreLabel(m) : 'Bado');
+    lines.push(line);
+  });
+  if(t.format!=='single' && t.format!=='double'){
+    lines.push('');
+    lines.push('=== STANDINGS ===');
+    const teamNames = t.format==='group_knockout' ? Object.values(t.groups||{}).flat() : (t.teams||[]).map(x=>x.name);
+    const standings = computeStandings(matches, teamNames);
+    standings.forEach((s,i)=>{
+      lines.push((i+1)+'. '+s.name+' — P:'+s.P+' W:'+s.W+' D:'+s.D+' L:'+s.L+' GD:'+s.GD+' Pts:'+s.Pts);
+    });
+  }
+  const blob = new Blob([lines.join('\n')], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = t.name.replace(/[^a-z0-9]+/gi,'_') + '_matokeo.txt';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function shareTournament(id, name){
+  const base = window.location.origin + window.location.pathname;
+  const link = base + '?tournament=' + encodeURIComponent(id);
+  const text = 'Jiunge na tournament yangu "' + name + '" kwenye mumbigames: ' + link;
+  if(navigator.share){
+    navigator.share({title:name, text}).catch(()=>{});
+  } else if(navigator.clipboard){
+    navigator.clipboard.writeText(text);
+    alert('Link ya mwaliko imenakiliwa! Bandika kwa rafiki yako.');
+  } else {
+    alert(text);
+  }
+}
 function showAI(){
   hideAllViews();
   document.getElementById('aiView').style.display = 'flex';
@@ -1981,21 +2993,31 @@ function setDukaTab(t){
   }
 }
 
+const CONDITION_LABELS = {new:'✨ Mpya', used:'♻️ Imetumika', refurbished:'🔧 Imekarabatiwa'};
+
 function loadListings(){
   db.collection('listings').where('status','==','approved').onSnapshot(snap=>{
     const approved = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    document.getElementById('dukaList').innerHTML = approved.length ? approved.map(l=>`
-      <div class="d-card">
-        <div class="d-thumb" style="${l.image?`background-image:url('${l.image.replace(/'/g,"")}')`:''}"></div>
-        <div class="d-info">
-          <div class="d-name">${escapeHtml(l.title)}</div>
-          <div class="d-verified">✅ Imethibitishwa na Admin</div>
-          <div class="d-desc">${escapeHtml(l.desc)}</div>
-          <div class="d-price">TZS ${escapeHtml(l.price)}</div>
-          <div class="d-seller">Muuzaji: ${escapeHtml(l.sellerName)}</div>
-          <button class="d-report" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title)})'>🚩 Ripoti bidhaa hii</button>
+    document.getElementById('dukaList').innerHTML = approved.length ? approved.map(l=>{
+      const stockNum = (l.stock===undefined || l.stock===null || l.stock==='') ? null : parseInt(l.stock,10);
+      const outOfStock = stockNum !== null && stockNum <= 0;
+      return `
+      <div class="d-gcard">
+        <div class="d-gthumb" style="${l.image?`background-image:url('${l.image.replace(/'/g,"")}')`:''}">
+          ${l.condition ? `<div class="d-gbadge">${CONDITION_LABELS[l.condition]||l.condition}</div>` : ''}
+          ${stockNum !== null ? `<div class="d-gstock">${outOfStock ? 'Imeisha' : stockNum + ' zilizopo'}</div>` : ''}
         </div>
-      </div>`).join('') : '<div class="empty">Bado hakuna bidhaa iliyothibitishwa. Kuwa wa kwanza kuweka! 🛍️</div>';
+        <div class="d-gbody">
+          <div class="d-gname">${escapeHtml(l.title)}</div>
+          ${l.brand ? `<div class="d-gbrand">${escapeHtml(l.brand)}</div>` : ''}
+          <div class="d-gprice-row">
+            <span class="d-gprice">TZS ${escapeHtml(l.price)}</span>
+            ${l.wasPrice ? `<span class="d-gwas">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}
+          </div>
+          <button class="d-greport" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title)})'>🚩 Ripoti</button>
+        </div>
+      </div>`;
+    }).join('') : '<div class="empty">Bado hakuna bidhaa iliyothibitishwa. Kuwa wa kwanza kuweka! 🛍️</div>';
   }, err=>{
     console.error(err);
     document.getElementById('dukaList').innerHTML = '<div class="empty">Imeshindwa kupakia. Jaribu tena.</div>';
@@ -2065,6 +3087,21 @@ function useListingImageUrl(){
   document.getElementById('lImgPreviewWrap').style.display = 'block';
 }
 
+function selectCondition(val){
+  document.getElementById('lCondition').value = val;
+  document.querySelectorAll('.cond-opt').forEach(el=>{
+    const active = el.dataset.cond === val;
+    el.classList.toggle('active', active);
+    el.style.borderColor = active ? 'var(--lime)' : 'var(--line)';
+    el.style.background = active ? 'var(--panel-2)' : 'var(--panel)';
+  });
+}
+
+function toggleDeliveryFeeField(){
+  const free = document.getElementById('lFreeShipping').checked;
+  document.getElementById('lDeliveryFeeWrap').style.display = free ? 'none' : 'block';
+}
+
 async function submitListing(){
   if(!auth.currentUser){
     alert('Lazima uingie kwenye akaunti yako kwanza ndipo uweze kuweka bidhaa.');
@@ -2073,7 +3110,17 @@ async function submitListing(){
   }
   const title = document.getElementById('lTitle').value.trim();
   const desc = document.getElementById('lDesc').value.trim();
+  const brand = document.getElementById('lBrand').value.trim();
+  const category = document.getElementById('lCategory').value;
   const price = document.getElementById('lPrice').value.trim();
+  const wasPrice = document.getElementById('lWasPrice').value.trim();
+  const stock = document.getElementById('lStock').value.trim();
+  const sku = document.getElementById('lSku').value.trim();
+  const condition = document.getElementById('lCondition').value;
+  const weight = document.getElementById('lWeight').value.trim();
+  const freeShipping = document.getElementById('lFreeShipping').checked;
+  const deliveryFee = freeShipping ? '' : document.getElementById('lDeliveryFee').value.trim();
+  const tags = document.getElementById('lTags').value.trim().split(',').map(t=>t.trim()).filter(Boolean);
   const image = document.getElementById('lImage').value.trim();
   const sellerName = document.getElementById('lSellerName').value.trim();
   const sellerPhone = document.getElementById('lSellerPhone').value.trim();
@@ -2083,7 +3130,8 @@ async function submitListing(){
   }
   try{
     await db.collection('listings').add({
-      title, desc, price, image, sellerName, sellerPhone,
+      title, desc, brand, category, price, wasPrice, stock, sku, condition,
+      weight, freeShipping, deliveryFee, tags, image, sellerName, sellerPhone,
       ownerUid: auth.currentUser.uid,
       ownerEmail: auth.currentUser.email || '',
       status: 'pending',
@@ -2095,7 +3143,18 @@ async function submitListing(){
   }
   document.getElementById('lTitle').value='';
   document.getElementById('lDesc').value='';
+  document.getElementById('lBrand').value='';
+  document.getElementById('lCategory').value='';
   document.getElementById('lPrice').value='';
+  document.getElementById('lWasPrice').value='';
+  document.getElementById('lStock').value='1';
+  document.getElementById('lSku').value='';
+  selectCondition('new');
+  document.getElementById('lWeight').value='';
+  document.getElementById('lFreeShipping').checked=false;
+  toggleDeliveryFeeField();
+  document.getElementById('lDeliveryFee').value='';
+  document.getElementById('lTags').value='';
   document.getElementById('lImage').value='';
   document.getElementById('lImageFile').value='';
   document.getElementById('lImageUrlInput').value='';
@@ -2115,6 +3174,7 @@ function joinChat(){
   const val = document.getElementById('chatNameInput').value.trim();
   if(!val){ return; }
   chatName = val;
+  localStorage.setItem('mg-chat-name', val);
   document.getElementById('nameGate').style.display = 'none';
   document.getElementById('chatBody').style.display = 'flex';
   subscribeMessages();
@@ -2174,7 +3234,15 @@ const TRANSLATIONS = {
     settings_share:'Shea na Marafiki', settings_share_sub:'Waambie wenzako kuhusu mumbigames',
     nav_home:'Home', nav_chat:'Chat', nav_me:'Me', nav_duka:'Duka', nav_ai:'AI',
     search_placeholder:'Tafuta games...',
-    qa_tiktok:'TikTok', qa_kura:'Kura', qa_youtube:'YouTube',
+    qa_tiktok:'TikTok', qa_kura:'Kura', qa_youtube:'YouTube', qa_tourn:'Tournament',
+    tourn_title:'Tournaments', tourn_sub:'Unda ligi yako, alika marafiki',
+    tourn_search:'Tafuta tournaments...', tourn_create_btn:'+ Unda Tournament Mpya',
+    tourn_create_title:'Unda Tournament', tourn_f_name:'Jina la Tournament',
+    tourn_f_sport:'Chagua Mchezo', tourn_f_public:'Public',
+    tourn_f_public_sub:'Kila mtu ataweza kuiona tournament hii', tourn_next:'Endelea →',
+    tourn_f_format:'Muundo wa Tournament', tourn_back:'← Rudi',
+    tourn_f_teams:'Timu / Wachezaji', tourn_add:'+ Ongeza',
+    tourn_min_teams:'Angalau timu 4 zinahitajika.', tourn_finish:'Unda Tournament',
     chip_all:'Zote', chip_free:'Bure', chip_paid:'Kulipia', chip_offline:'Offline',
     poll_title:'Kura (Poll)', poll_sub:'Piga kura, ona matokeo',
     ai_title:'🤖 AI Msaidizi', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi',
@@ -2187,6 +3255,17 @@ const TRANSLATIONS = {
     duka_f_image:'Picha ya bidhaa', duka_f_name:'Jina lako', duka_f_phone:'Namba yako ya simu',
     duka_submit:'Tuma kwa Ukaguzi wa Admin',
     duka_note:'Bidhaa yako haitaonekana kwa umma mpaka admin aithibitishe kuwa ni ya kweli. Kuweka taarifa za uongo kunaweza kukufanya uzuiliwe.',
+    duka_f_brand:'Brand (hiari)', duka_f_category:'Category',
+    duka_cat_select:'-- Chagua category --', duka_cat_controllers:'Vidhibiti (Controllers)',
+    duka_cat_consoles:'Console', duka_cat_accessories:'Vifaa vingine (Accessories)',
+    duka_cat_cds:'CDs / Games', duka_cat_cables:'Chaja / Cable', duka_cat_other:'Nyingine',
+    duka_f_wasprice:'Bei ya Awali (hiari)',
+    duka_f_wasprice_hint:'"Bei ya Awali" inaonesha punguzo — mfano Ilikuwa TZS 30,000 → Sasa TZS 20,000.',
+    duka_f_stock:'Idadi Zilizopo', duka_f_sku:'Namba ya Bidhaa (hiari)',
+    duka_f_condition:'Hali ya Bidhaa', duka_cond_new:'Mpya', duka_cond_used:'Imetumika', duka_cond_refurb:'Imekarabatiwa',
+    duka_f_weight:'Uzito (kg) - hiari', duka_f_freeship:'Usafirishaji Bure',
+    duka_f_freeship_sub:'Toa usafirishaji bure kwa bidhaa hii', duka_f_deliveryfee:'Gharama ya Usafirishaji (TZS)',
+    duka_f_tags:'Tags (hiari)', duka_f_tags_hint:'Tags husaidia wanunuzi kuipata bidhaa yako haraka.',
     chat_title:'Jumuiya ya mumbigames', chat_sub:'Chati ya wachezaji wote',
     chat_join_title:'Jiunge na Chati', chat_join_sub:'Weka jina utakalotumia kuchati na wachezaji wengine',
     chat_join_btn:'Ingia Chatini'
@@ -2199,7 +3278,15 @@ const TRANSLATIONS = {
     settings_share:'Share with Friends', settings_share_sub:'Tell your friends about mumbigames',
     nav_home:'Home', nav_chat:'Chat', nav_me:'Me', nav_duka:'Shop', nav_ai:'AI',
     search_placeholder:'Search games...',
-    qa_tiktok:'TikTok', qa_kura:'Poll', qa_youtube:'YouTube',
+    qa_tiktok:'TikTok', qa_kura:'Poll', qa_youtube:'YouTube', qa_tourn:'Tournament',
+    tourn_title:'Tournaments', tourn_sub:'Create your league, invite friends',
+    tourn_search:'Search tournaments...', tourn_create_btn:'+ Create New Tournament',
+    tourn_create_title:'Create Tournament', tourn_f_name:'Tournament Name',
+    tourn_f_sport:'Select Game', tourn_f_public:'Public',
+    tourn_f_public_sub:'Anyone can discover this tournament', tourn_next:'Next →',
+    tourn_f_format:'Tournament Format', tourn_back:'← Back',
+    tourn_f_teams:'Teams / Players', tourn_add:'+ Add',
+    tourn_min_teams:'Min 4 teams required.', tourn_finish:'Create Tournament',
     chip_all:'All', chip_free:'Free', chip_paid:'Paid', chip_offline:'Offline',
     poll_title:'Poll', poll_sub:'Vote and see results',
     ai_title:'🤖 AI Assistant', ai_sub:'Ask about payments, game setup, and more',
@@ -2212,6 +3299,17 @@ const TRANSLATIONS = {
     duka_f_image:'Item photo', duka_f_name:'Your name', duka_f_phone:'Your phone number',
     duka_submit:'Submit for Admin Review',
     duka_note:'Your item won\'t be public until admin confirms it\'s genuine. False listings may get you blocked.',
+    duka_f_brand:'Brand (Optional)', duka_f_category:'Category',
+    duka_cat_select:'-- Select category --', duka_cat_controllers:'Controllers',
+    duka_cat_consoles:'Consoles', duka_cat_accessories:'Accessories',
+    duka_cat_cds:'CDs / Games', duka_cat_cables:'Chargers / Cables', duka_cat_other:'Other',
+    duka_f_wasprice:'Was Price (Optional)',
+    duka_f_wasprice_hint:'"Was Price" shows original price before discount (e.g., Was TZS 30,000 → Now TZS 20,000).',
+    duka_f_stock:'Stock Quantity', duka_f_sku:'SKU (Optional)',
+    duka_f_condition:'Product Condition', duka_cond_new:'New', duka_cond_used:'Used', duka_cond_refurb:'Refurbished',
+    duka_f_weight:'Weight (kg) - Optional', duka_f_freeship:'Free Shipping',
+    duka_f_freeship_sub:'Offer free delivery for this item', duka_f_deliveryfee:'Delivery Fee (TZS)',
+    duka_f_tags:'Tags (Optional)', duka_f_tags_hint:'Tags help buyers find your item faster.',
     chat_title:'mumbigames Community', chat_sub:'Chat with all players',
     chat_join_title:'Join Chat', chat_join_sub:'Enter the name you\'ll use to chat with other players',
     chat_join_btn:'Enter Chat'
@@ -2231,11 +3329,13 @@ function applyLang(lang){
 }
 
 function setLang(lang){
+  currentLang = lang;
   localStorage.setItem('mg-lang', lang);
   document.querySelectorAll('.seg-btn[data-lang]').forEach(b=>{
     b.classList.toggle('active', b.dataset.lang === lang);
   });
   applyLang(lang);
+  if(typeof render === 'function' && games && games.length) render();
 }
 
 function setTheme(theme){
@@ -2261,6 +3361,12 @@ function initSettings(){
   setLang(savedLang);
 }
 initSettings();
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => console.error('SW register failed', err));
+  });
+}
+if(window.__mgDeepLinkTournId){ showTournaments(); }
 
 // ---- Profile: Firebase Auth (email/password + extra profile fields) ----
 let authMode = 'signup'; // or 'login'
@@ -2372,6 +3478,7 @@ try{
         document.getElementById('profileEmail').textContent = user.email;
         document.getElementById('profileMeta').textContent = [data.nationality, data.phone].filter(Boolean).join(' • ');
         if(data.username) document.getElementById('avatarInitial').textContent = data.username.charAt(0).toUpperCase();
+        if(data.photoURL) setAvatarPhoto(data.photoURL);
         const points = data.points || 0;
         document.getElementById('pointsCount').textContent = points;
         document.getElementById('referralCount').textContent = data.referrals || 0;
@@ -2399,6 +3506,32 @@ try{
 }catch(e){ console.error('Auth listener failed', e); }
 
 const APK_DOWNLOAD_LINK = 'https://tinyurl.com/mumbigames';
+
+function setAvatarPhoto(url){
+  const el = document.getElementById('avatarInitial');
+  if(!el) return;
+  el.style.backgroundImage = "url('" + url + "')";
+  el.textContent = '';
+}
+
+async function uploadProfilePhoto(file){
+  if(!file || !auth.currentUser) return;
+  if(!file.type.startsWith('image/')){ alert('Chagua picha halali (jpg/png).'); return; }
+  if(file.size > 5*1024*1024){ alert('Picha ni kubwa mno. Chagua picha chini ya 5MB.'); return; }
+  const statusEl = document.getElementById('avatarUploadStatus');
+  if(statusEl) statusEl.textContent = 'Inapakia picha...';
+  try{
+    const url = await uploadToImgbb(file);
+    await db.collection('users').doc(auth.currentUser.uid).set({photoURL: url}, {merge:true});
+    setAvatarPhoto(url);
+    if(statusEl) statusEl.textContent = 'Picha imewekwa ✓';
+    setTimeout(()=>{ if(statusEl) statusEl.textContent = ''; }, 2500);
+  }catch(e){
+    console.error('uploadProfilePhoto failed', e);
+    if(statusEl) statusEl.textContent = '';
+    alert('Imeshindwa kupakia picha. Jaribu tena.');
+  }
+}
 
 function shareReferralLink(){
   const code = document.getElementById('referralLinkInput').value;
