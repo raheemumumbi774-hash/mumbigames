@@ -923,16 +923,13 @@ const DEMO_GAMES = [
 let deepLinkGameId = window.__mgDeepLinkGameId || null;
 let deepLinkOpened = false;
 function loadGames(){
-  // Instant first paint: show something immediately instead of a blank/loading screen,
-  // then swap in real data the moment Firestore responds.
-  if(games.length===0){
-    games = DEMO_GAMES;
-    sortGamesAlphabetically();
-    render();
+  // Show a lightweight loading state instead of fake demo games while we wait for real data.
+  const listEl = document.getElementById('gameList');
+  if(listEl && games.length===0){
+    listEl.innerHTML = '<div class="empty">Inapakia games...</div>';
   }
   db.collection('games').onSnapshot(snap=>{
     games = snap.docs.map(d=>d.data());
-    if(games.length===0) games = DEMO_GAMES;
     sortGamesAlphabetically();
     checkNewGameNotification();
     render();
@@ -946,9 +943,7 @@ function loadGames(){
     }
   }, err=>{
     console.error(err);
-    games = DEMO_GAMES;
-    sortGamesAlphabetically();
-    render();
+    if(listEl) listEl.innerHTML = '<div class="empty">Imeshindwa kupakia games. Angalia mtandao wako na ujaribu tena.</div>';
   });
 }
 function sortGamesAlphabetically(){
