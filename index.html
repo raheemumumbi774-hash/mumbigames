@@ -94,31 +94,33 @@
   header{position:sticky;top:0;z-index:10;background:rgba(10,13,10,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;gap:10px;}
   .mark{width:30px;height:30px;background:var(--lime);border-radius:8px;position:relative;flex:none;}
   .mark::after{content:'';position:absolute;top:5px;left:5px;right:5px;bottom:11px;background:var(--bg);border-radius:4px;}
-  header span{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;}
+  header span{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15.5px;}
   .search{margin-left:auto;width:34px;height:34px;border-radius:9px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--sub);}
 
   /* Search bar */
   .searchbar-wrap{padding:12px 16px 4px;}
   .searchbar{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;}
-  .searchbar .sic{color:var(--sub);font-size:15px;}
-  .searchbar input{flex:1;background:none;border:none;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;}
+  .searchbar .sic{color:var(--sub);font-size:13.5px;}
+  .searchbar input{flex:1;background:none;border:none;color:var(--text);font-size:12.5px;font-family:'Inter',sans-serif;}
   .searchbar input:focus{outline:none;}
 
   /* Big banner carousel */
   .banner-wrap{position:relative;margin:14px 16px 4px;border-radius:18px;overflow:hidden;height:190px;background:var(--panel);}
   .mg-notif{position:fixed;top:10px;left:10px;right:10px;z-index:9999;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 10px 28px rgba(0,0,0,0.45);transform:translateY(-140%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);cursor:pointer;}
   .mg-notif.show{transform:translateY(0);}
-  .mg-notif .n-icon{width:38px;height:38px;border-radius:11px;background:var(--lime);display:flex;align-items:center;justify-content:center;font-size:19px;flex:none;}
+  .mg-notif .n-icon{width:38px;height:38px;border-radius:11px;background:var(--lime);display:flex;align-items:center;justify-content:center;font-size:17px;flex:none;}
   .mg-notif .n-text{flex:1;min-width:0;}
-  .mg-notif .n-title{font-size:13px;font-weight:700;color:var(--text);}
-  .mg-notif .n-sub{font-size:11.5px;color:var(--sub);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mg-notif .n-title{font-size:11.5px;font-weight:700;color:var(--text);}
+  .mg-notif .n-sub{font-size:10.5px;color:var(--sub);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .banner-track{display:flex;height:100%;transition:transform .35s ease;}
-  .b-slide{flex:none;width:100%;height:100%;background:var(--panel-2);background-size:cover;background-position:center;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;cursor:pointer;}
+  .b-slide{flex:none;width:100%;height:100%;background:var(--panel-2);position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;cursor:pointer;overflow:hidden;}
+  .b-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  .b-slide > *:not(img){position:relative;z-index:1;}
   .b-slide::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,14,26,0.05), rgba(10,14,26,0.85));}
-  .b-slide .b-badge{position:relative;z-index:1;align-self:flex-start;background:var(--accent2);color:#241300;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:8px;}
-  .b-slide .b-title{position:relative;z-index:1;font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;color:#fff;}
-  .b-slide .b-sub{position:relative;z-index:1;font-size:11.5px;color:#cbd6ee;margin-top:2px;}
-  .banner-arrow{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:rgba(10,14,26,0.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;z-index:2;}
+  .b-slide .b-badge{position:relative;z-index:1;align-self:flex-start;background:var(--accent2);color:#241300;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:8px;}
+  .b-slide .b-title{position:relative;z-index:1;font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;}
+  .b-slide .b-sub{position:relative;z-index:1;font-size:10.5px;color:#cbd6ee;margin-top:2px;}
+  .banner-arrow{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:rgba(10,14,26,0.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15.5px;cursor:pointer;z-index:2;}
   .banner-arrow.left{left:10px;}
   .banner-arrow.right{right:10px;}
   .banner-dots{position:absolute;bottom:10px;right:14px;display:flex;gap:5px;z-index:2;}
@@ -127,8 +129,8 @@
 
   /* Quick action row */
   .quick-actions{display:flex;gap:10px;padding:16px 16px 4px;}
-  .qa-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--lime);color:#fff;border:none;border-radius:14px;padding:12px 6px;font-size:11.5px;font-weight:700;cursor:pointer;position:relative;}
-  .qa-btn .qa-ic{font-size:20px;}
+  .qa-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--lime);color:#fff;border:none;border-radius:14px;padding:12px 6px;font-size:10.5px;font-weight:700;cursor:pointer;position:relative;}
+  .qa-btn .qa-ic{font-size:18px;}
   .qa-btn.alt{background:var(--panel);color:var(--text);border:1px solid var(--line);}
   .qa-btn.qa-tiktok{background:linear-gradient(135deg,#25f4ee,#000000 55%,#fe2c55);color:#fff;}
   .qa-btn.qa-kura{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;}
@@ -138,120 +140,121 @@
   /* Trending carousel */
   .trend-wrap{padding:18px 0 6px;}
   .trend-head{display:flex;align-items:baseline;justify-content:space-between;padding:0 16px 12px;}
-  .trend-head h2{font-size:13px;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;}
+  .trend-head h2{font-size:11.5px;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;}
   .trend-head .flame{color:var(--lime);}
   .carousel{display:flex;gap:12px;overflow-x:auto;padding:0 16px 6px;scroll-snap-type:x mandatory;scrollbar-width:none;}
   .carousel::-webkit-scrollbar{display:none;}
   .t-card{flex:none;width:150px;scroll-snap-align:start;}
   .t-thumb{width:150px;height:190px;border-radius:14px;background:var(--panel);border:1px solid var(--line);background-size:cover;background-position:center;position:relative;overflow:hidden;}
-  .t-thumb .badge{position:absolute;top:8px;left:8px;background:var(--lime);color:var(--bg);font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;}
+  .t-thumb .badge{position:absolute;top:8px;left:8px;background:var(--lime);color:var(--bg);font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;}
   .t-thumb .grad{position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,rgba(0,0,0,0.75));}
-  .t-name{font-size:13px;font-weight:600;margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .t-sub{font-size:11px;color:var(--sub);margin-top:2px;}
+  .t-name{font-size:11.5px;font-weight:600;margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .t-sub{font-size:10px;color:var(--sub);margin-top:2px;}
 
   /* Filter chips */
   .chips{display:flex;gap:8px;overflow-x:auto;padding:16px 16px 4px;scrollbar-width:none;}
   .chips::-webkit-scrollbar{display:none;}
-  .chip{flex:none;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;background:var(--panel);border:1px solid var(--line);color:var(--sub);cursor:pointer;}
+  .chip{flex:none;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:600;background:var(--panel);border:1px solid var(--line);color:var(--sub);cursor:pointer;}
   .chip.active{background:var(--lime);color:var(--bg);border-color:var(--lime);}
 
   /* Game list */
   .list{padding:14px 16px 20px;}
-  .g-card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:16px;margin-bottom:16px;overflow:hidden;cursor:pointer;content-visibility:auto;contain-intrinsic-size:0 280px;}
-  .g-thumb{width:100%;height:220px;background:var(--panel-2);background-size:cover;background-position:center;background-repeat:no-repeat;position:relative;}
-  .g-thumb .g-badge{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--lime);color:var(--bg);}
+  .g-card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:16px;margin-bottom:16px;overflow:hidden;cursor:pointer;}
+  .g-thumb{width:100%;height:220px;background:var(--panel-2);position:relative;overflow:hidden;}
+  .g-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .g-thumb .g-badge{position:absolute;top:10px;left:10px;font-size:9px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--lime);color:var(--bg);}
   .g-thumb .g-badge.paid{background:#0a0d0a;color:var(--lime);border:1px solid var(--lime-dim);}
   .g-body{padding:14px 16px 12px;}
   .g-info{min-width:0;}
-  .g-name{font-size:16px;font-weight:700;font-family:'Space Grotesk',sans-serif;}
-  .g-date{font-size:12px;color:var(--sub);font-style:italic;margin-top:3px;}
-  .g-desc{font-size:12px;color:var(--sub);margin-top:6px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .g-name{font-size:14.5px;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+  .g-date{font-size:11px;color:var(--sub);font-style:italic;margin-top:3px;}
+  .g-desc{font-size:11px;color:var(--sub);margin-top:6px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   .g-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-  .tag{font-size:10px;padding:3px 8px;border-radius:20px;background:var(--panel-2);color:var(--sub);border:1px solid var(--line);}
+  .tag{font-size:9px;padding:3px 8px;border-radius:20px;background:var(--panel-2);color:var(--sub);border:1px solid var(--line);}
   .tag.free{color:#9fd6ff;}
   .tag.paid{color:var(--lime);border-color:var(--lime-dim);}
   .g-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);}
-  .g-action{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:12px;background:none;border:none;padding:0;}
+  .g-action{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:11px;background:none;border:none;padding:0;}
   .g-action.share{color:var(--lime);}
 
-  .empty{text-align:center;color:var(--sub);font-size:13px;padding:30px 10px;}
+  .empty{text-align:center;color:var(--sub);font-size:11.5px;padding:30px 10px;}
 
   /* Modal for paid game */
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:flex-end;z-index:30;}
   .overlay.show{display:flex;}
   .modal{background:var(--panel);border-top:1px solid var(--line);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;margin:0 auto;}
-  .modal h3{font-size:16px;margin-bottom:4px;}
-  .modal p{color:var(--sub);font-size:12.5px;margin:4px 0 14px;line-height:1.5;}
+  .modal h3{font-size:14.5px;margin-bottom:4px;}
+  .modal p{color:var(--sub);font-size:11px;margin:4px 0 14px;line-height:1.5;}
   .modal-thumb{width:100%;height:150px;border-radius:12px;background:var(--panel-2);background-size:cover;background-position:center;background-repeat:no-repeat;margin-bottom:12px;}
-  .modal-desc{color:var(--sub);font-size:12.5px;margin:0 0 10px;line-height:1.5;}
-  .perf-box{display:flex;gap:10px;padding:12px 14px;border-radius:10px;margin-bottom:10px;font-size:12.5px;line-height:1.4;border-left:4px solid;}
+  .modal-desc{color:var(--sub);font-size:11px;margin:0 0 10px;line-height:1.5;}
+  .perf-box{display:flex;gap:10px;padding:12px 14px;border-radius:10px;margin-bottom:10px;font-size:11px;line-height:1.4;border-left:4px solid;}
   .perf-box.good{background:rgba(59,130,246,0.1);border-color:var(--lime);color:#bcd8ff;}
   .perf-box.mid{background:rgba(255,193,7,0.1);border-color:#ffc107;color:#ffe6a3;}
   .perf-box.low{background:rgba(255,92,92,0.1);border-color:var(--danger);color:#ffc9c9;}
   .setup-helper{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px;}
-  .setup-helper .sh-q{font-size:13px;font-weight:600;margin-bottom:10px;}
+  .setup-helper .sh-q{font-size:11.5px;font-weight:600;margin-bottom:10px;}
   .setup-helper .sh-actions{display:flex;gap:8px;}
-  .setup-helper .sh-btn{flex:1;padding:10px;border-radius:9px;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer;}
+  .setup-helper .sh-btn{flex:1;padding:10px;border-radius:9px;font-size:11px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer;}
   .setup-helper .sh-btn.yes{background:var(--lime);color:var(--bg);border-color:var(--lime);}
-  .setup-steps{font-size:12.5px;line-height:1.6;color:var(--sub);margin-top:10px;white-space:pre-wrap;}
+  .setup-steps{font-size:11px;line-height:1.6;color:var(--sub);margin-top:10px;white-space:pre-wrap;}
   .dl-item{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
-  .dl-item .dl-icon{color:var(--lime);font-size:16px;}
-  .dl-item .dl-name{flex:1;font-size:13.5px;font-weight:600;}
-  .dl-btn{display:block;width:100%;text-align:center;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:14px;border-radius:12px;margin-bottom:10px;border:none;font-family:inherit;cursor:pointer;}
+  .dl-item .dl-icon{color:var(--lime);font-size:14.5px;}
+  .dl-item .dl-name{flex:1;font-size:12px;font-weight:600;}
+  .dl-btn{display:block;width:100%;text-align:center;color:#fff;text-decoration:none;font-weight:700;font-size:12.5px;padding:14px;border-radius:12px;margin-bottom:10px;border:none;font-family:inherit;cursor:pointer;}
   .dl-btn:disabled{opacity:0.75;cursor:default;}
   .dl-tick{color:#22c55e;font-weight:900;}
   .pay-card{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px;}
-  .pay-line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .pay-line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:11.5px;}
   .pay-line:last-child{border-bottom:none;}
   .pay-line b{color:var(--lime);font-family:'JetBrains Mono',monospace;}
   .modal-actions{display:flex;gap:10px;margin-top:16px;}
   .comments-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:flex-end;z-index:35;}
   .comments-overlay.show{display:flex;}
   .comments-modal{background:var(--panel);border-top:1px solid var(--line);border-radius:20px 20px 0 0;padding:18px;width:100%;max-width:480px;margin:0 auto;max-height:80vh;display:flex;flex-direction:column;}
-  .comments-modal h3{font-size:15px;margin-bottom:12px;}
+  .comments-modal h3{font-size:13.5px;margin-bottom:12px;}
   .comments-list{overflow-y:auto;flex:1;margin-bottom:12px;}
   .comment-item{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;}
-  .comment-item .c-name{font-size:12px;font-weight:700;color:var(--lime);}
-  .comment-item .c-text{font-size:13px;margin-top:3px;line-height:1.4;}
-  .comment-item .c-time{font-size:10px;color:var(--sub);margin-top:4px;}
+  .comment-item .c-name{font-size:11px;font-weight:700;color:var(--lime);}
+  .comment-item .c-text{font-size:11.5px;margin-top:3px;line-height:1.4;}
+  .comment-item .c-time{font-size:9px;color:var(--sub);margin-top:4px;}
   .comment-input-row{display:flex;gap:8px;}
-  .comment-input-row input{flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:13px;}
+  .comment-input-row input{flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:11.5px;}
   .comment-input-row button{background:var(--lime);color:var(--bg);border:none;border-radius:9px;padding:0 16px;font-weight:700;cursor:pointer;}
-  .btn{flex:1;padding:12px;border-radius:10px;border:none;font-weight:600;font-size:13px;cursor:pointer;}
+  .btn{flex:1;padding:12px;border-radius:10px;border:none;font-weight:600;font-size:11.5px;cursor:pointer;}
   .btn-primary{background:var(--lime);color:var(--bg);}
   .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text);}
 
   /* Community chat */
   #chatView{display:none;flex-direction:column;height:calc(100vh - 78px);}
   .chat-header{position:sticky;top:0;z-index:10;background:rgba(10,13,10,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;gap:10px;}
-  .chat-header .back{width:30px;height:30px;border-radius:8px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--sub);}
-  .chat-header .title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;}
-  .chat-header .sub{font-size:11px;color:var(--sub);}
-  .wa-btn{flex:none;background:var(--panel);border:1px solid var(--line);color:var(--lime);font-size:11px;font-weight:600;padding:8px 12px;border-radius:20px;}
+  .chat-header .back{width:30px;height:30px;border-radius:8px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14.5px;color:var(--sub);}
+  .chat-header .title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13.5px;}
+  .chat-header .sub{font-size:10px;color:var(--sub);}
+  .wa-btn{flex:none;background:var(--panel);border:1px solid var(--line);color:var(--lime);font-size:10px;font-weight:600;padding:8px 12px;border-radius:20px;}
   .name-gate{padding:40px 20px;text-align:center;}
   .name-gate .mark{margin:0 auto 14px;}
-  .name-gate p{color:var(--sub);font-size:13px;margin:6px 0 16px;}
-  .name-gate input{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:9px;font-size:14px;margin-bottom:10px;}
-  .name-gate button{width:100%;background:var(--lime);color:var(--bg);border:none;padding:12px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;}
+  .name-gate p{color:var(--sub);font-size:11.5px;margin:6px 0 16px;}
+  .name-gate input{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:9px;font-size:12.5px;margin-bottom:10px;}
+  .name-gate button{width:100%;background:var(--lime);color:var(--bg);border:none;padding:12px;border-radius:9px;font-weight:600;font-size:12.5px;cursor:pointer;}
   .chat-messages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
   .msg{max-width:78%;padding:10px 13px;border-radius:14px;background:var(--panel);border:1px solid var(--line);}
   .msg.me{align-self:flex-end;background:rgba(166,255,0,0.12);border-color:var(--lime-dim);}
-  .msg .who{font-size:11px;font-weight:700;color:var(--lime);margin-bottom:3px;}
+  .msg .who{font-size:10px;font-weight:700;color:var(--lime);margin-bottom:3px;}
   .msg.me .who{color:var(--lime);}
-  .msg .txt{font-size:13.5px;line-height:1.4;word-break:break-word;}
-  .msg .time{font-size:9.5px;color:var(--sub);margin-top:4px;text-align:right;}
+  .msg .txt{font-size:12px;line-height:1.4;word-break:break-word;}
+  .msg .time{font-size:9px;color:var(--sub);margin-top:4px;text-align:right;}
   .chat-input-row{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg);}
-  .chat-input-row input{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 14px;border-radius:20px;font-size:14px;}
-  .send-btn{width:42px;height:42px;border-radius:50%;background:var(--lime);border:none;color:var(--bg);font-size:16px;cursor:pointer;flex:none;}
-  .chat-empty{text-align:center;color:var(--sub);font-size:12.5px;padding:30px 10px;}
+  .chat-input-row input{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 14px;border-radius:20px;font-size:12.5px;}
+  .send-btn{width:42px;height:42px;border-radius:50%;background:var(--lime);border:none;color:var(--bg);font-size:14.5px;cursor:pointer;flex:none;}
+  .chat-empty{text-align:center;color:var(--sub);font-size:11px;padding:30px 10px;}
 
   /* Duka banner + view */
   .duka-banner{margin:0 16px 4px;padding:14px;background:linear-gradient(135deg, rgba(166,255,0,0.14), rgba(166,255,0,0.03));border:1px solid var(--lime-dim);border-radius:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
   .db-left{display:flex;align-items:center;gap:12px;}
-  .db-icon{font-size:22px;}
-  .db-title{font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;}
-  .db-sub{font-size:11px;color:var(--sub);margin-top:2px;}
-  .db-arrow{font-size:22px;color:var(--lime);}
+  .db-icon{font-size:20px;}
+  .db-title{font-size:12.5px;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+  .db-sub{font-size:10px;color:var(--sub);margin-top:2px;}
+  .db-arrow{font-size:20px;color:var(--lime);}
 
   #dukaView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   #tournamentView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
@@ -264,18 +267,18 @@
   #profileView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   .settings-body{padding:16px;padding-bottom:90px;}
   .settings-section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;}
-  .settings-label{font-size:13px;font-weight:600;margin-bottom:2px;}
-  .settings-sub{font-size:11px;color:var(--sub);margin-bottom:10px;}
+  .settings-label{font-size:11.5px;font-weight:600;margin-bottom:2px;}
+  .settings-sub{font-size:10px;color:var(--sub);margin-bottom:10px;}
   .seg-control{display:flex;gap:8px;margin-top:10px;}
-  .seg-btn{flex:1;text-align:center;padding:10px;border-radius:9px;font-size:12.5px;font-weight:600;background:var(--panel-2);border:1px solid var(--line);color:var(--sub);cursor:pointer;}
+  .seg-btn{flex:1;text-align:center;padding:10px;border-radius:9px;font-size:11px;font-weight:600;background:var(--panel-2);border:1px solid var(--line);color:var(--sub);cursor:pointer;}
   .seg-btn.active{background:var(--lime);color:var(--bg);border-color:var(--lime);}
   .settings-item{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;}
-  .si-icon{font-size:20px;}
+  .si-icon{font-size:18px;}
   .si-text{flex:1;}
-  .si-title{font-size:13.5px;font-weight:600;}
-  .si-sub{font-size:11px;color:var(--sub);margin-top:2px;}
-  .si-arrow{color:var(--sub);font-size:20px;}
-  .auth-input{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14px;margin-top:10px;font-family:'Inter',sans-serif;}
+  .si-title{font-size:12px;font-weight:600;}
+  .si-sub{font-size:10px;color:var(--sub);margin-top:2px;}
+  .si-arrow{color:var(--sub);font-size:18px;}
+  .auth-input{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;margin-top:10px;font-family:'Inter',sans-serif;}
 
   body.theme-light{
     --bg:#f2f5fb;
@@ -286,56 +289,57 @@
     --sub:#5c6b85;
   }
   .duka-tabs{display:flex;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);}
-  .dtab{flex:1;text-align:center;padding:9px;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--sub);background:var(--panel);border:1px solid var(--line);cursor:pointer;}
+  .dtab{flex:1;text-align:center;padding:9px;border-radius:9px;font-size:11px;font-weight:600;color:var(--sub);background:var(--panel);border:1px solid var(--line);cursor:pointer;}
   .dtab.active{background:var(--lime);color:var(--bg);border-color:var(--lime);}
   .duka-panel{padding:14px 16px 90px;}
-  .duka-warning{font-size:11.5px;color:var(--sub);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:14px;line-height:1.5;}
-  .duka-note{font-size:11px;color:var(--sub);text-align:center;margin-top:10px;line-height:1.5;}
-  .post-btn{width:100%;background:var(--lime);color:var(--bg);border:none;padding:13px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;margin-top:18px;}
+  .duka-warning{font-size:10.5px;color:var(--sub);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:14px;line-height:1.5;}
+  .duka-note{font-size:10px;color:var(--sub);text-align:center;margin-top:10px;line-height:1.5;}
+  .post-btn{width:100%;background:var(--lime);color:var(--bg);border:none;padding:13px;border-radius:10px;font-weight:600;font-size:12.5px;cursor:pointer;margin-top:18px;}
   .d-card{display:flex;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;}
   .d-thumb{width:64px;height:64px;min-width:64px;max-width:64px;border-radius:10px;background:var(--bg);border:1px solid var(--line);flex:none;background-size:cover;background-position:center;background-repeat:no-repeat;overflow:hidden;}
   .d-info{flex:1;min-width:0;}
-  .d-name{font-size:14px;font-weight:600;}
-  .d-desc{font-size:11.5px;color:var(--sub);margin-top:3px;}
-  .d-price{font-size:13px;color:var(--lime);font-weight:700;margin-top:6px;}
-  .d-seller{font-size:10.5px;color:var(--sub);margin-top:3px;}
+  .d-name{font-size:12.5px;font-weight:600;}
+  .d-desc{font-size:10.5px;color:var(--sub);margin-top:3px;}
+  .d-price{font-size:11.5px;color:var(--lime);font-weight:700;margin-top:6px;}
+  .d-seller{font-size:9.5px;color:var(--sub);margin-top:3px;}
   /* Grid product cards */
   .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .d-gcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;content-visibility:auto;contain-intrinsic-size:0 220px;}
-  .d-gthumb{width:100%;aspect-ratio:1/1;background:var(--bg);background-size:cover;background-position:center;background-repeat:no-repeat;position:relative;}
-  .d-gbadge{position:absolute;top:8px;left:8px;background:var(--lime);color:var(--bg);font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:capitalize;}
+  .d-gcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;}
+  .d-gthumb{width:100%;aspect-ratio:1/1;background:var(--bg);position:relative;overflow:hidden;}
+  .d-gthumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .d-gbadge{position:absolute;top:8px;left:8px;background:var(--lime);color:var(--bg);font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:capitalize;}
   .d-gstock{position:absolute;top:8px;right:8px;background:rgba(10,10,22,0.75);color:#fff;font-size:9px;font-weight:600;padding:3px 7px;border-radius:20px;}
   .d-gbody{padding:10px 11px 12px;}
-  .d-gname{font-size:12.5px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-  .d-gbrand{font-size:10px;color:var(--sub);margin-top:2px;}
+  .d-gname{font-size:11px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .d-gbrand{font-size:9px;color:var(--sub);margin-top:2px;}
   .d-gprice-row{display:flex;align-items:baseline;gap:6px;margin-top:6px;flex-wrap:wrap;}
-  .d-gprice{font-size:13.5px;color:var(--lime);font-weight:800;}
-  .d-gwas{font-size:10.5px;color:var(--sub);text-decoration:line-through;}
-  .d-greport{width:100%;margin-top:8px;font-size:10px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:5px 0;cursor:pointer;}
-  #dukaPost label{display:block;font-size:12px;color:var(--sub);margin:12px 0 6px;font-weight:600;}
-  #dukaPost input, #dukaPost textarea{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14px;font-family:'Inter',sans-serif;}
+  .d-gprice{font-size:12px;color:var(--lime);font-weight:800;}
+  .d-gwas{font-size:9.5px;color:var(--sub);text-decoration:line-through;}
+  .d-greport{width:100%;margin-top:8px;font-size:9px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:5px 0;cursor:pointer;}
+  #dukaPost label{display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;}
+  #dukaPost input, #dukaPost textarea{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;font-family:'Inter',sans-serif;}
   #dukaPost textarea{min-height:70px;resize:vertical;}
   #lFreeShipping:checked ~ #lFreeShippingTrack{background:var(--lime);}
   #lFreeShipping:checked ~ #lFreeShippingKnob{transform:translateX(20px);}
   .cond-opt.active{border-color:var(--lime) !important;background:var(--panel-2) !important;color:var(--lime);}
-  .d-verified{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;color:var(--lime);margin-top:4px;}
-  .d-report{font-size:10px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:4px 9px;margin-top:6px;cursor:pointer;}
-  .duka-login-gate{text-align:center;color:var(--sub);font-size:12.5px;padding:26px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;line-height:1.6;}
-  .duka-login-gate button{margin-top:12px;background:var(--lime);color:var(--bg);border:none;padding:11px 18px;border-radius:9px;font-weight:600;font-size:13px;cursor:pointer;}
-  .pay-status{border-radius:12px;padding:14px;font-size:12.5px;line-height:1.6;margin-bottom:10px;border-left:4px solid;}
+  .d-verified{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;color:var(--lime);margin-top:4px;}
+  .d-report{font-size:9px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:4px 9px;margin-top:6px;cursor:pointer;}
+  .duka-login-gate{text-align:center;color:var(--sub);font-size:11px;padding:26px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;line-height:1.6;}
+  .duka-login-gate button{margin-top:12px;background:var(--lime);color:var(--bg);border:none;padding:11px 18px;border-radius:9px;font-weight:600;font-size:11.5px;cursor:pointer;}
+  .pay-status{border-radius:12px;padding:14px;font-size:11px;line-height:1.6;margin-bottom:10px;border-left:4px solid;}
   .pay-status.wait{background:rgba(255,193,7,0.1);border-color:#ffc107;color:#ffe6a3;}
   .pay-status.rejected{background:rgba(255,92,92,0.1);border-color:var(--danger,#ff5c5c);color:#ffc9c9;}
-  .admin-contact{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:11px;color:var(--sub);flex-wrap:wrap;}
+  .admin-contact{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:10px;color:var(--sub);flex-wrap:wrap;}
   .admin-contact-btns{display:flex;gap:6px;}
-  .admin-contact-btns a{background:var(--panel);border:1px solid var(--line);color:var(--lime);font-size:11px;font-weight:600;padding:6px 10px;border-radius:20px;}
+  .admin-contact-btns a{background:var(--panel);border:1px solid var(--line);color:var(--lime);font-size:10px;font-weight:600;padding:6px 10px;border-radius:20px;}
 
   /* Bottom nav */
   .bottomnav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,14,26,0.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 6px calc(10px + env(safe-area-inset-bottom));z-index:15;}
-  .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--sub);font-size:10px;flex:1;cursor:pointer;}
-  .nav-item .ic{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--sub);font-size:9px;flex:1;cursor:pointer;}
+  .nav-item .ic{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:15.5px;}
   .nav-item.active{color:var(--lime);}
   .nav-center{margin-top:-26px;}
-  .nav-center .ic{width:48px;height:48px;border-radius:50%;background:var(--lime);color:#fff;font-size:20px;border:4px solid var(--bg);}
+  .nav-center .ic{width:48px;height:48px;border-radius:50%;background:var(--lime);color:#fff;font-size:18px;border:4px solid var(--bg);}
   .nav-center span{color:var(--sub);}
   .nav-center.active span{color:var(--lime);}
 
@@ -343,19 +347,19 @@
   #pollView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   .poll-panel{padding:14px 16px 90px;}
   .poll-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;}
-  .poll-q{font-size:14.5px;font-weight:700;margin-bottom:10px;font-family:'Space Grotesk',sans-serif;}
-  .poll-opt{position:relative;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:8px;cursor:pointer;font-size:13px;overflow:hidden;}
+  .poll-q{font-size:13px;font-weight:700;margin-bottom:10px;font-family:'Space Grotesk',sans-serif;}
+  .poll-opt{position:relative;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:8px;cursor:pointer;font-size:11.5px;overflow:hidden;}
   .poll-opt .po-fill{position:absolute;left:0;top:0;bottom:0;background:rgba(59,130,246,0.18);z-index:0;transition:width .3s;}
   .poll-opt .po-label{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px;}
   .poll-opt.voted{cursor:default;}
-  .poll-closed{font-size:10.5px;color:var(--accent2);font-weight:700;margin-bottom:8px;}
-  .poll-meta{font-size:11px;color:var(--sub);margin-top:8px;}
+  .poll-closed{font-size:9.5px;color:var(--accent2);font-weight:700;margin-bottom:8px;}
+  .poll-meta{font-size:10px;color:var(--sub);margin-top:8px;}
 
   /* AI assistant view */
   #aiView{display:none;flex-direction:column;height:calc(100vh - 78px);}
   .ai-quick{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap;}
-  .ai-chip{background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:11.5px;padding:8px 12px;border-radius:20px;cursor:pointer;}
-  .ai-msg{max-width:82%;padding:10px 13px;border-radius:14px;background:var(--panel);border:1px solid var(--line);font-size:13.5px;line-height:1.5;white-space:pre-line;}
+  .ai-chip{background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:10.5px;padding:8px 12px;border-radius:20px;cursor:pointer;}
+  .ai-msg{max-width:82%;padding:10px 13px;border-radius:14px;background:var(--panel);border:1px solid var(--line);font-size:12px;line-height:1.5;white-space:pre-line;}
   .ai-msg.bot{align-self:flex-start;}
   .ai-msg.user{align-self:flex-end;background:rgba(59,130,246,0.16);border-color:var(--lime-dim);}
 </style>
@@ -460,7 +464,7 @@
       <input type="text" id="lBrand" placeholder="mfano: Sony, Nintendo, n.k.">
 
       <label data-i18n="duka_f_category">Category</label>
-      <select id="lCategory" style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14px;font-family:'Inter',sans-serif;">
+      <select id="lCategory" style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;font-family:'Inter',sans-serif;">
         <option value="" data-i18n="duka_cat_select">-- Chagua category --</option>
         <option value="controllers" data-i18n="duka_cat_controllers">Vidhibiti (Controllers)</option>
         <option value="consoles" data-i18n="duka_cat_consoles">Console</option>
@@ -480,7 +484,7 @@
           <input type="number" id="lWasPrice" placeholder="mfano: 30000">
         </div>
       </div>
-      <p style="font-size:11px;color:var(--sub);margin:-6px 0 0;line-height:1.5;" data-i18n="duka_f_wasprice_hint">"Bei ya Awali" inaonesha punguzo — mfano Ilikuwa TZS 30,000 → Sasa TZS 20,000.</p>
+      <p style="font-size:10px;color:var(--sub);margin:-6px 0 0;line-height:1.5;" data-i18n="duka_f_wasprice_hint">"Bei ya Awali" inaonesha punguzo — mfano Ilikuwa TZS 30,000 → Sasa TZS 20,000.</p>
 
       <div style="display:flex;gap:10px;">
         <div style="flex:1;">
@@ -495,9 +499,9 @@
 
       <label data-i18n="duka_f_condition">Hali ya Bidhaa</label>
       <div style="display:flex;gap:8px;">
-        <div class="cond-opt active" data-cond="new" onclick="selectCondition('new')" style="flex:1;text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--lime);background:var(--panel-2);cursor:pointer;font-size:12.5px;font-weight:600;">✨ <span data-i18n="duka_cond_new">Mpya</span></div>
-        <div class="cond-opt" data-cond="used" onclick="selectCondition('used')" style="flex:1;text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--line);background:var(--panel);cursor:pointer;font-size:12.5px;font-weight:600;">♻️ <span data-i18n="duka_cond_used">Imetumika</span></div>
-        <div class="cond-opt" data-cond="refurbished" onclick="selectCondition('refurbished')" style="flex:1;text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--line);background:var(--panel);cursor:pointer;font-size:12.5px;font-weight:600;">🔧 <span data-i18n="duka_cond_refurb">Imekarabatiwa</span></div>
+        <div class="cond-opt active" data-cond="new" onclick="selectCondition('new')" style="flex:1;text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--lime);background:var(--panel-2);cursor:pointer;font-size:11px;font-weight:600;">✨ <span data-i18n="duka_cond_new">Mpya</span></div>
+        <div class="cond-opt" data-cond="used" onclick="selectCondition('used')" style="flex:1;text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--line);background:var(--panel);cursor:pointer;font-size:11px;font-weight:600;">♻️ <span data-i18n="duka_cond_used">Imetumika</span></div>
+        <div class="cond-opt" data-cond="refurbished" onclick="selectCondition('refurbished')" style="flex:1;text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--line);background:var(--panel);cursor:pointer;font-size:11px;font-weight:600;">🔧 <span data-i18n="duka_cond_refurb">Imekarabatiwa</span></div>
       </div>
       <input type="hidden" id="lCondition" value="new">
 
@@ -506,8 +510,8 @@
 
       <div style="display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;">
         <div>
-          <div style="font-weight:700;font-size:13px;" data-i18n="duka_f_freeship">Usafirishaji Bure</div>
-          <div style="font-size:11px;color:var(--sub);" data-i18n="duka_f_freeship_sub">Toa usafirishaji bure kwa bidhaa hii</div>
+          <div style="font-weight:700;font-size:11.5px;" data-i18n="duka_f_freeship">Usafirishaji Bure</div>
+          <div style="font-size:10px;color:var(--sub);" data-i18n="duka_f_freeship_sub">Toa usafirishaji bure kwa bidhaa hii</div>
         </div>
         <label style="position:relative;display:inline-block;width:44px;height:24px;flex:none;">
           <input type="checkbox" id="lFreeShipping" onchange="toggleDeliveryFeeField()" style="opacity:0;width:0;height:0;">
@@ -523,27 +527,27 @@
 
       <label data-i18n="duka_f_tags">Tags (hiari)</label>
       <input type="text" id="lTags" placeholder="mfano: mpya, punguzo, mauzo (tenganisha kwa koma)">
-      <p style="font-size:11px;color:var(--sub);margin:-6px 0 0;line-height:1.5;" data-i18n="duka_f_tags_hint">Tags husaidia wanunuzi kuipata bidhaa yako haraka.</p>
+      <p style="font-size:10px;color:var(--sub);margin:-6px 0 0;line-height:1.5;" data-i18n="duka_f_tags_hint">Tags husaidia wanunuzi kuipata bidhaa yako haraka.</p>
 
       <label data-i18n="duka_f_image">Picha ya bidhaa</label>
       <div id="lImgPreviewWrap" style="display:none;margin-bottom:8px;">
         <img id="lImgPreview" src="" style="width:100%;max-height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line);">
       </div>
       <label for="lImageFile" id="lImagePickLabel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--panel-2);border:2px dashed var(--line);border-radius:14px;padding:28px 16px;cursor:pointer;text-align:center;">
-        <div style="font-size:34px;line-height:1;">📷</div>
-        <div style="font-size:14px;font-weight:700;">Bonyeza hapa kuweka picha</div>
-        <div style="font-size:11.5px;color:var(--sub);">Kama unavyotuma picha WhatsApp — chagua tu, itapakia yenyewe</div>
+        <div style="font-size:30.5px;line-height:1;">📷</div>
+        <div style="font-size:12.5px;font-weight:700;">Bonyeza hapa kuweka picha</div>
+        <div style="font-size:10.5px;color:var(--sub);">Kama unavyotuma picha WhatsApp — chagua tu, itapakia yenyewe</div>
       </label>
       <input type="file" id="lImageFile" accept="image/*" onchange="handleListingImageSelect()" style="display:none;">
-      <div id="lImgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;text-align:center;"></div>
+      <div id="lImgUploadStatus" style="font-size:11px;color:var(--sub);margin-top:6px;text-align:center;"></div>
 
       <div id="lImgUrlFallback" style="display:none;">
-        <div style="display:flex;align-items:center;gap:8px;margin:12px 0;color:var(--sub);font-size:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin:12px 0;color:var(--sub);font-size:11px;">
           <div style="flex:1;height:1px;background:var(--line);"></div>
           AU weka link ya picha
           <div style="flex:1;height:1px;background:var(--line);"></div>
         </div>
-        <p style="font-size:11.5px;color:var(--sub);margin:0 0 8px;line-height:1.5;">Fungua <b>imgbb.com</b> kwenye kivinjari chako, pakia picha yako pale (bure, hauitaji akaunti), kisha nakili link ya "Direct link" (huanza na <b>i.ibb.co</b>) na ubandike hapa chini.</p>
+        <p style="font-size:10.5px;color:var(--sub);margin:0 0 8px;line-height:1.5;">Fungua <b>imgbb.com</b> kwenye kivinjari chako, pakia picha yako pale (bure, hauitaji akaunti), kisha nakili link ya "Direct link" (huanza na <b>i.ibb.co</b>) na ubandike hapa chini.</p>
         <div class="comment-input-row">
           <input type="text" id="lImageUrlInput" placeholder="https://i.ibb.co/...">
           <button type="button" onclick="useListingImageUrl()">Tumia</button>
@@ -572,7 +576,7 @@
 
   <div class="settings-body" id="tournListPanel">
     <div style="position:relative;margin-bottom:14px;">
-      <input type="text" id="tournSearchInput" oninput="renderTournamentList()" data-i18n-placeholder="tourn_search" placeholder="Search tournaments..." style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;">
+      <input type="text" id="tournSearchInput" oninput="renderTournamentList()" data-i18n-placeholder="tourn_search" placeholder="Search tournaments..." style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:12px;font-size:12.5px;font-family:'Inter',sans-serif;">
     </div>
     <button class="post-btn" onclick="openCreateTournament()" style="margin-bottom:16px;" data-i18n="tourn_create_btn">+ Create New Tournament</button>
     <div id="tournList"></div>
@@ -584,7 +588,7 @@
       <div class="back" onclick="closeTournamentWizard()" style="position:static;">←</div>
       <div class="settings-label" style="margin:0;" data-i18n="tourn_create_title">Create Tournament</div>
     </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--sub);margin:10px 0 6px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;font-size:10.5px;color:var(--sub);margin:10px 0 6px;">
       <span id="tournStepLabel">Step 1 of 3</span><span id="tournStepPct">33%</span>
     </div>
     <div style="height:5px;background:var(--panel-2);border-radius:6px;overflow:hidden;margin-bottom:18px;">
@@ -600,11 +604,11 @@
       <div id="tImgPreviewWrap" style="display:none;margin-bottom:8px;">
         <img id="tImgPreview" src="" style="width:100%;max-height:140px;object-fit:cover;border-radius:12px;border:1px solid var(--line);">
       </div>
-      <label id="tImagePickLabel" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:16px;cursor:pointer;font-size:12.5px;color:var(--sub);">
+      <label id="tImagePickLabel" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:16px;cursor:pointer;font-size:11px;color:var(--sub);">
         📷 <span data-i18n="tourn_f_photo_pick">Chagua picha kutoka simu yako</span>
         <input type="file" id="tImageFile" accept="image/*" style="display:none;" onchange="handleTournamentImageSelect(this.files[0])">
       </label>
-      <div id="tImgUploadStatus" style="font-size:11px;color:var(--sub);margin-top:4px;"></div>
+      <div id="tImgUploadStatus" style="font-size:10px;color:var(--sub);margin-top:4px;"></div>
       <input type="hidden" id="tImage" value="">
 
       <label data-i18n="tourn_f_sport">Select Game</label>
@@ -613,8 +617,8 @@
 
       <div style="display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:16px;">
         <div>
-          <div style="font-weight:700;font-size:13px;" data-i18n="tourn_f_public">Public</div>
-          <div style="font-size:11px;color:var(--sub);" data-i18n="tourn_f_public_sub">Anyone can discover this tournament</div>
+          <div style="font-weight:700;font-size:11.5px;" data-i18n="tourn_f_public">Public</div>
+          <div style="font-size:10px;color:var(--sub);" data-i18n="tourn_f_public_sub">Anyone can discover this tournament</div>
         </div>
         <label style="position:relative;display:inline-block;width:44px;height:24px;flex:none;">
           <input type="checkbox" id="tPublic" style="opacity:0;width:0;height:0;">
@@ -641,10 +645,10 @@
     <div id="tournStep3" style="display:none;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <label style="margin:0;" data-i18n="tourn_f_teams">Teams / Players</label>
-        <button type="button" onclick="addTeamRow()" style="background:none;border:1px solid var(--lime);color:var(--lime);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;" data-i18n="tourn_add">+ Add</button>
+        <button type="button" onclick="addTeamRow()" style="background:none;border:1px solid var(--lime);color:var(--lime);border-radius:20px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;" data-i18n="tourn_add">+ Add</button>
       </div>
       <div id="teamRows" style="margin-top:10px;"></div>
-      <p style="font-size:11px;color:var(--sub);margin-top:8px;" data-i18n="tourn_min_teams">Min 4 teams required.</p>
+      <p style="font-size:10px;color:var(--sub);margin-top:8px;" data-i18n="tourn_min_teams">Min 4 teams required.</p>
       <div style="display:flex;gap:10px;margin-top:14px;">
         <button class="post-btn" style="background:var(--panel);color:var(--text);border:1px solid var(--line);" onclick="tournamentBack()" data-i18n="tourn_back">← Back</button>
         <button class="post-btn" onclick="submitTournament()" data-i18n="tourn_finish">Create Tournament</button>
@@ -660,16 +664,16 @@
       <div class="title" id="tdName">—</div>
       <div class="sub" id="tdMeta">—</div>
     </div>
-    <div onclick="exportTournamentResults()" style="font-size:18px;cursor:pointer;padding:6px;">⬇️</div>
-    <div onclick="shareTournamentDetail()" style="font-size:20px;cursor:pointer;padding:6px;">🔗</div>
+    <div onclick="exportTournamentResults()" style="font-size:16px;cursor:pointer;padding:6px;">⬇️</div>
+    <div onclick="shareTournamentDetail()" style="font-size:18px;cursor:pointer;padding:6px;">🔗</div>
   </div>
   <div id="tdCover" style="display:none;width:100%;height:120px;background-size:cover;background-position:center;"></div>
   <div style="display:flex;gap:0;margin:14px 16px 0;background:var(--panel);border-radius:12px;padding:4px;">
-    <div class="td-tab active" data-tab="matches" onclick="setTournDetailTab('matches')" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;">Matches</div>
-    <div class="td-tab" data-tab="standings" onclick="setTournDetailTab('standings')" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;">Standings</div>
+    <div class="td-tab active" data-tab="matches" onclick="setTournDetailTab('matches')" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;">Matches</div>
+    <div class="td-tab" data-tab="standings" onclick="setTournDetailTab('standings')" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;">Standings</div>
   </div>
   <div class="settings-body">
-    <div id="tdNote" style="font-size:11px;color:var(--sub);margin-bottom:10px;display:none;"></div>
+    <div id="tdNote" style="font-size:10px;color:var(--sub);margin-bottom:10px;display:none;"></div>
     <div id="tdMatchesPanel"></div>
     <div id="tdStandingsPanel" style="display:none;"></div>
   </div>
@@ -773,9 +777,9 @@
         </div>
         <input type="email" id="authEmail" placeholder="Email yako" class="auth-input">
         <input type="password" id="authPass" placeholder="Password" class="auth-input">
-        <div id="authError" style="color:#ff5c5c;font-size:11.5px;margin-top:8px;"></div>
+        <div id="authError" style="color:#ff5c5c;font-size:10.5px;margin-top:8px;"></div>
         <button class="post-btn" id="authSubmitBtn" onclick="submitAuth()" style="margin-top:14px;">Unda Akaunti</button>
-        <p style="text-align:center;font-size:12px;color:var(--sub);margin-top:12px;">
+        <p style="text-align:center;font-size:11px;color:var(--sub);margin-top:12px;">
           Tayari una akaunti? <span style="color:var(--lime);cursor:pointer;" onclick="toggleAuthMode()" id="authToggleText">Ingia hapa</span>
         </p>
       </div>
@@ -784,27 +788,27 @@
     <div id="profileLoggedIn" style="display:none;">
       <div class="settings-section" style="text-align:center;">
         <div style="position:relative;width:56px;height:56px;margin:0 auto 10px;">
-          <div style="width:56px;height:56px;border-radius:50%;background:var(--lime);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;background-size:cover;background-position:center;overflow:hidden;" id="avatarInitial">U</div>
-          <div onclick="document.getElementById('avatarFileInput').click()" style="position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--panel-2);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;">📷</div>
+          <div style="width:56px;height:56px;border-radius:50%;background:var(--lime);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;background-size:cover;background-position:center;overflow:hidden;" id="avatarInitial">U</div>
+          <div onclick="document.getElementById('avatarFileInput').click()" style="position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--panel-2);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;">📷</div>
           <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="uploadProfilePhoto(this.files[0])">
         </div>
-        <div id="avatarUploadStatus" style="font-size:10.5px;color:var(--sub);margin-bottom:6px;"></div>
-        <div style="font-weight:700;font-size:15px;" id="profileUsername">—</div>
-        <div style="font-size:11.5px;color:var(--sub);margin-top:4px;" id="profileEmail">—</div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px;" id="profileMeta">—</div>
+        <div id="avatarUploadStatus" style="font-size:9.5px;color:var(--sub);margin-bottom:6px;"></div>
+        <div style="font-weight:700;font-size:13.5px;" id="profileUsername">—</div>
+        <div style="font-size:10.5px;color:var(--sub);margin-top:4px;" id="profileEmail">—</div>
+        <div style="font-size:10px;color:var(--sub);margin-top:2px;" id="profileMeta">—</div>
       </div>
       <div class="settings-section">
         <div class="settings-label">📊 Takwimu Zangu</div>
         <div style="display:flex;gap:10px;margin-top:10px;">
           <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
-            <div style="font-size:22px;">👥</div>
-            <div style="font-size:20px;font-weight:800;margin-top:4px;" id="profileReferralCount">0</div>
-            <div style="font-size:11px;color:var(--sub);margin-top:2px;">Marafiki walioalikwa</div>
+            <div style="font-size:20px;">👥</div>
+            <div style="font-size:18px;font-weight:800;margin-top:4px;" id="profileReferralCount">0</div>
+            <div style="font-size:10px;color:var(--sub);margin-top:2px;">Marafiki walioalikwa</div>
           </div>
           <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
-            <div style="font-size:22px;">⬇️</div>
-            <div style="font-size:20px;font-weight:800;margin-top:4px;" id="profileDownloadsCount">0</div>
-            <div style="font-size:11px;color:var(--sub);margin-top:2px;">Downloads zako</div>
+            <div style="font-size:20px;">⬇️</div>
+            <div style="font-size:18px;font-weight:800;margin-top:4px;" id="profileDownloadsCount">0</div>
+            <div style="font-size:10px;color:var(--sub);margin-top:2px;">Downloads zako</div>
           </div>
         </div>
       </div>
@@ -813,20 +817,20 @@
         <div class="settings-sub">Mtumie rafiki yako APK ya mumbigames pamoja na msimbo wako wa mwaliko. Akijisajili na kuweka msimbo huo, unapata point 50. Ukifikisha point 500, unaweza kupata game moja la kulipia BURE.</div>
         <div style="background:linear-gradient(135deg,#2a2210,#1a1a1a);border:1px solid #a8791a;border-radius:10px;padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;">
           <div>
-            <div style="font-size:11px;color:#e0c473;">🪙 Point zako</div>
-            <div style="font-size:22px;font-weight:800;color:#ffd347;font-family:'Space Grotesk',sans-serif;" id="pointsCount">0</div>
+            <div style="font-size:10px;color:#e0c473;">🪙 Point zako</div>
+            <div style="font-size:20px;font-weight:800;color:#ffd347;font-family:'Space Grotesk',sans-serif;" id="pointsCount">0</div>
           </div>
-          <div style="text-align:right;font-size:11px;color:var(--sub);">
-            Marafiki walioalikwa<br><span id="referralCount" style="font-size:15px;font-weight:700;color:var(--text);">0</span>
+          <div style="text-align:right;font-size:10px;color:var(--sub);">
+            Marafiki walioalikwa<br><span id="referralCount" style="font-size:13.5px;font-weight:700;color:var(--text);">0</span>
           </div>
         </div>
-        <label style="display:block;font-size:12px;color:var(--sub);margin:12px 0 6px;font-weight:600;">Msimbo wako wa Mwaliko</label>
-        <input type="text" id="referralLinkInput" readonly style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:16px;font-weight:700;letter-spacing:2px;text-align:center;font-family:'JetBrains Mono',monospace;">
+        <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;">Msimbo wako wa Mwaliko</label>
+        <input type="text" id="referralLinkInput" readonly style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14.5px;font-weight:700;letter-spacing:2px;text-align:center;font-family:'JetBrains Mono',monospace;">
         <button class="post-btn" style="margin-top:10px;" onclick="shareReferralLink()">Shea APK + Msimbo Wangu</button>
         <div id="enterCodeSection" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);">
-          <label style="display:block;font-size:12px;color:var(--sub);margin-bottom:6px;font-weight:600;">Una msimbo wa rafiki? Weka hapa upate point kwake</label>
+          <label style="display:block;font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:600;">Una msimbo wa rafiki? Weka hapa upate point kwake</label>
           <div style="display:flex;gap:8px;">
-            <input type="text" id="enterCodeInput" placeholder="Mfano: JKV9WG" style="flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:14px;letter-spacing:1px;text-transform:uppercase;">
+            <input type="text" id="enterCodeInput" placeholder="Mfano: JKV9WG" style="flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:12.5px;letter-spacing:1px;text-transform:uppercase;">
             <button class="post-btn" style="width:auto;padding:0 16px;" onclick="redeemReferralCode()">Tumia</button>
           </div>
         </div>
@@ -860,16 +864,16 @@
       <div id="modalPerfBoxes"></div>
       <div id="modalSetupHelper"></div>
       <div id="modalDownloadsList"></div>
-      <div id="modalThanks" style="display:none;font-size:12.5px;color:var(--lime);font-weight:600;text-align:center;margin:6px 0 4px;">Asante kwa kuchagua mumbigames! 🙏</div>
+      <div id="modalThanks" style="display:none;font-size:11px;color:var(--lime);font-weight:600;text-align:center;margin:6px 0 4px;">Asante kwa kuchagua mumbigames! 🙏</div>
       <div id="sponsoredAdBox" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
-        <div style="font-size:10.5px;letter-spacing:1px;color:var(--sub);font-weight:700;margin-bottom:8px;">SPONSORED</div>
+        <div style="font-size:9.5px;letter-spacing:1px;color:var(--sub);font-weight:700;margin-bottom:8px;">SPONSORED</div>
         <img id="adBoxImage" src="" style="width:100%;border-radius:12px;margin-bottom:10px;display:block;">
         <div id="adBoxVideoWrap" style="width:100%;max-height:200px;border-radius:12px;margin-bottom:10px;overflow:hidden;display:none;position:relative;background:#000;justify-content:center;">
           <video id="adBoxVideo" style="max-width:100%;max-height:200px;display:block;border-radius:12px;object-fit:contain;margin:0 auto;" controls playsinline preload="metadata"></video>
           <iframe id="adBoxVideoFrame" style="width:100%;aspect-ratio:16/9;border:0;display:none;" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
-        <div id="adBoxTitle" style="font-weight:700;font-size:14px;margin-bottom:4px;"></div>
-        <div id="adBoxSubtitle" style="font-size:12.5px;color:var(--sub);margin-bottom:10px;line-height:1.4;"></div>
+        <div id="adBoxTitle" style="font-weight:700;font-size:12.5px;margin-bottom:4px;"></div>
+        <div id="adBoxSubtitle" style="font-size:11px;color:var(--sub);margin-bottom:10px;line-height:1.4;"></div>
         <a id="adBoxButton" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display:block;text-align:center;text-decoration:none;padding:12px;border-radius:10px;"></a>
       </div>
       <div class="modal-actions">
@@ -883,7 +887,7 @@
   <div class="comments-modal">
     <h3>💬 Maoni — <span id="commentsGameName"></span></h3>
     <div class="comments-list" id="commentsList"></div>
-    <div id="replyBanner" style="display:none;align-items:center;justify-content:space-between;background:var(--panel-2);border-radius:8px;padding:6px 10px;margin-bottom:6px;font-size:12px;">
+    <div id="replyBanner" style="display:none;align-items:center;justify-content:space-between;background:var(--panel-2);border-radius:8px;padding:6px 10px;margin-bottom:6px;font-size:11px;">
       <span style="color:var(--lime);"></span>
       <span style="cursor:pointer;color:var(--sub);" onclick="cancelReply()">✕</span>
     </div>
@@ -1001,7 +1005,8 @@ function render(){
 
   document.getElementById('gameList').innerHTML = list.length ? list.map(g=>`
     <div class="g-card" onclick='handleDownload(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
-      <div class="g-thumb" style="${g.image?`background-image:url('${g.image.replace(/'/g,"")}')`:''}">
+      <div class="g-thumb">
+        ${g.image ? `<img src="${g.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(g.name)}" loading="eager" fetchpriority="high" decoding="async">` : ''}
         <span class="g-badge ${g.paid?'paid':''}">${g.paid?'🔒 Kulipia':'Bure'}</span>
       </div>
       <div class="g-body">
@@ -1242,16 +1247,16 @@ function renderPaySection(g, req){
       <div class="pay-line"><span>Jina</span><b>Josh Abdallahman</b></div>
       <div class="pay-line"><span>Kiasi</span><b>TZS ${escapeHtml(g.price||'0')}</b></div>
     </div>
-    <label style="display:block;font-size:12px;color:var(--sub);margin:10px 0 6px;font-weight:600;">Namba uliyotumia kutuma pesa</label>
-    <input type="text" id="payPhoneInput" placeholder="07XXXXXXXX" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14px;font-family:'Inter',sans-serif;">
+    <label style="display:block;font-size:11px;color:var(--sub);margin:10px 0 6px;font-weight:600;">Namba uliyotumia kutuma pesa</label>
+    <input type="text" id="payPhoneInput" placeholder="07XXXXXXXX" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;font-family:'Inter',sans-serif;">
 
-    <label style="display:block;font-size:12px;color:var(--sub);margin:12px 0 6px;font-weight:600;">Picha ya 1 — screenshot ya muamala</label>
+    <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;">Picha ya 1 — screenshot ya muamala</label>
     <input type="file" accept="image/*" onchange="handlePaymentProofSelect(this,1)">
-    <div id="proofStatus1" style="font-size:11.5px;color:var(--sub);margin-top:5px;"></div>
+    <div id="proofStatus1" style="font-size:10.5px;color:var(--sub);margin-top:5px;"></div>
 
-    <label style="display:block;font-size:12px;color:var(--sub);margin:12px 0 6px;font-weight:600;">Picha ya 2 — screenshot ya muamala (thibitisho la pili)</label>
+    <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;">Picha ya 2 — screenshot ya muamala (thibitisho la pili)</label>
     <input type="file" accept="image/*" onchange="handlePaymentProofSelect(this,2)">
-    <div id="proofStatus2" style="font-size:11.5px;color:var(--sub);margin-top:5px;"></div>
+    <div id="proofStatus2" style="font-size:10.5px;color:var(--sub);margin-top:5px;"></div>
 
     ${adminContactRow()}
     <div class="modal-actions">
@@ -1759,7 +1764,7 @@ function openComments(g){
           <div class="c-text">${escapeHtml(c.text)}</div>
           <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
             <div class="c-time">${time}</div>
-            <div style="font-size:11px;color:var(--lime);cursor:pointer;font-weight:600;" onclick='startReply(${JSON.stringify(c.id)}, ${JSON.stringify(c.authorName||'Mtumiaji')})'>↩ Jibu</div>
+            <div style="font-size:10px;color:var(--lime);cursor:pointer;font-weight:600;" onclick='startReply(${JSON.stringify(c.id)}, ${JSON.stringify(c.authorName||'Mtumiaji')})'>↩ Jibu</div>
           </div>
         </div>`;
       }
@@ -1905,7 +1910,8 @@ function renderBanner(){
   const dots = document.getElementById('bannerDots');
   if(!track) return;
   track.innerHTML = banners.map(b=>`
-    <div class="b-slide" style="${b.image?`background-image:url('${b.image.replace(/'/g,"")}')`:''}"${b.gameRef?` onclick='handleDownload(${JSON.stringify(b.gameRef).replace(/'/g,"&#39;")})'`:''}>
+    <div class="b-slide"${b.gameRef?` onclick='handleDownload(${JSON.stringify(b.gameRef).replace(/'/g,"&#39;")})'`:''}>
+      ${b.image ? `<img src="${b.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(b.title||'')}" loading="eager" fetchpriority="high" decoding="async">` : ''}
       ${b.badge?`<span class="b-badge">${escapeHtml(b.badge)}</span>`:''}
       <div class="b-title">${escapeHtml(b.title||'')}</div>
       ${b.subtitle?`<div class="b-sub">${escapeHtml(b.subtitle)}</div>`:''}
@@ -2258,7 +2264,7 @@ function renderTournamentList(){
     return `
     <div class="d-card" style="align-items:flex-start;position:relative;">
       ${hasNew ? '<div style="position:absolute;top:10px;right:10px;width:9px;height:9px;border-radius:50%;background:#ff4d4d;"></div>' : ''}
-      <div class="d-thumb" style="background:var(--panel-2);display:flex;align-items:center;justify-content:center;font-size:26px;${t.image?`background-image:url('${t.image.replace(/'/g,"")}');`:''}">${t.image?'':(sportInfo?sportInfo.icon:'🏆')}</div>
+      <div class="d-thumb" style="background:var(--panel-2);display:flex;align-items:center;justify-content:center;font-size:23.5px;${t.image?`background-image:url('${t.image.replace(/'/g,"")}');`:''}">${t.image?'':(sportInfo?sportInfo.icon:'🏆')}</div>
       <div class="d-info">
         <div class="d-name">${escapeHtml(t.name)}</div>
         <div class="d-seller">${sportInfo?escapeHtml(sportInfo.label):''} · ${formatInfo?escapeHtml(formatInfo.title):''} · ${(t.teams||[]).length} teams</div>
@@ -2326,8 +2332,8 @@ function closeTournamentWizard(){
 function renderSportGrid(){
   const wrap = document.getElementById('tSportGrid');
   wrap.innerHTML = SPORTS.map(s => `
-    <div class="cond-opt" data-sport="${s.key}" onclick="selectSport('${s.key}')" style="text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--line);background:var(--panel);cursor:pointer;font-size:11.5px;font-weight:600;">
-      <div style="font-size:20px;">${s.icon}</div>${s.label}
+    <div class="cond-opt" data-sport="${s.key}" onclick="selectSport('${s.key}')" style="text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--line);background:var(--panel);cursor:pointer;font-size:10.5px;font-weight:600;">
+      <div style="font-size:18px;">${s.icon}</div>${s.label}
     </div>`).join('');
 }
 function selectSport(key){
@@ -2343,8 +2349,8 @@ function renderFormatList(){
   const wrap = document.getElementById('tFormatList');
   wrap.innerHTML = FORMATS.map(f => `
     <div class="cond-opt" data-format="${f.key}" onclick="selectFormat('${f.key}')" style="padding:14px;border-radius:12px;border:2px solid var(--line);background:var(--panel);cursor:pointer;">
-      <div style="font-weight:700;font-size:13.5px;">${f.title}</div>
-      <div style="font-size:11.5px;color:var(--sub);margin-top:3px;">${f.sub}</div>
+      <div style="font-weight:700;font-size:12px;">${f.title}</div>
+      <div style="font-size:10.5px;color:var(--sub);margin-top:3px;">${f.sub}</div>
     </div>`).join('');
 }
 function selectFormat(key){
@@ -2361,9 +2367,9 @@ function addTeamRow(){
   const row = document.createElement('div');
   row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:10px;';
   row.innerHTML = `
-    <div style="width:30px;height:30px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--sub);flex:none;">${tournTeamCount}</div>
-    <input type="text" class="team-name-input" placeholder="Team ${tournTeamCount}" style="flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 13px;border-radius:9px;font-size:13.5px;font-family:'Inter',sans-serif;">
-    <div onclick="this.parentElement.remove()" style="color:var(--sub);cursor:pointer;font-size:16px;padding:4px 8px;">✕</div>`;
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--sub);flex:none;">${tournTeamCount}</div>
+    <input type="text" class="team-name-input" placeholder="Team ${tournTeamCount}" style="flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 13px;border-radius:9px;font-size:12px;font-family:'Inter',sans-serif;">
+    <div onclick="this.parentElement.remove()" style="color:var(--sub);cursor:pointer;font-size:14.5px;padding:4px 8px;">✕</div>`;
   document.getElementById('teamRows').appendChild(row);
 }
 
@@ -2694,7 +2700,7 @@ function scoreLabel(m){
 function renderStandingsTable(matches, teamNames){
   const standings = computeStandings(matches, teamNames);
   return `<div style="overflow-x:auto;">
-    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+    <table style="width:100%;border-collapse:collapse;font-size:11px;">
       <thead><tr style="color:var(--sub);text-align:left;">
         <th style="padding:8px 4px;">#</th><th style="padding:8px 4px;">Team</th>
         <th style="padding:8px 4px;text-align:center;">P</th><th style="padding:8px 4px;text-align:center;">W</th>
@@ -2756,13 +2762,13 @@ function renderTournamentDetail(){
     matchesHtml += groupKeys.map(g=>{
       const gMatches = matches.filter(m=>m.bracket==='group' && m.group===g);
       return `<div style="margin-bottom:16px;">
-        <div style="font-size:12px;font-weight:700;color:var(--lime);margin-bottom:8px;text-transform:uppercase;">Group ${g}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--lime);margin-bottom:8px;text-transform:uppercase;">Group ${g}</div>
         ${gMatches.map(m=>renderMatchRow(t.id, m, isOwner)).join('')}
       </div>`;
     }).join('');
     const koMatches = matches.filter(m=>isKnockoutMatch(m));
     if(koMatches.length){
-      matchesHtml += `<div style="font-size:12px;font-weight:700;color:var(--sub);margin:18px 0 10px;text-transform:uppercase;">🏆 Knockout Stage</div>`;
+      matchesHtml += `<div style="font-size:11px;font-weight:700;color:var(--sub);margin:18px 0 10px;text-transform:uppercase;">🏆 Knockout Stage</div>`;
       matchesHtml += renderBracketColumns(koMatches.filter(m=>m.bracket==='winners'), t.id, isOwner);
     } else {
       matchesHtml += `<div class="empty" style="margin-top:10px;">Knockout stage itaanza automatiki baada ya michezo yote ya makundi kukamilika.</div>`;
@@ -2770,16 +2776,16 @@ function renderTournamentDetail(){
   } else if(t.format==='single'){
     matchesHtml = renderBracketColumns(matches.filter(m=>m.bracket==='winners'), t.id, isOwner);
   } else if(t.format==='double'){
-    matchesHtml += `<div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:8px;text-transform:uppercase;">🏆 Winners Bracket</div>`;
+    matchesHtml += `<div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;text-transform:uppercase;">🏆 Winners Bracket</div>`;
     matchesHtml += renderBracketColumns(matches.filter(m=>m.bracket==='winners'), t.id, isOwner);
     const lb = matches.filter(m=>m.bracket==='losers');
     if(lb.length){
-      matchesHtml += `<div style="font-size:12px;font-weight:700;color:var(--sub);margin:18px 0 8px;text-transform:uppercase;">🔁 Losers Bracket</div>`;
+      matchesHtml += `<div style="font-size:11px;font-weight:700;color:var(--sub);margin:18px 0 8px;text-transform:uppercase;">🔁 Losers Bracket</div>`;
       matchesHtml += renderBracketColumns(lb, t.id, isOwner);
     }
     const gf = matches.filter(m=>m.bracket==='final');
     if(gf.length){
-      matchesHtml += `<div style="font-size:12px;font-weight:700;color:var(--lime);margin:18px 0 8px;text-transform:uppercase;">⭐ Grand Final</div>`;
+      matchesHtml += `<div style="font-size:11px;font-weight:700;color:var(--lime);margin:18px 0 8px;text-transform:uppercase;">⭐ Grand Final</div>`;
       matchesHtml += gf.map(m=>renderMatchRow(t.id, m, isOwner)).join('');
     }
   } else {
@@ -2788,7 +2794,7 @@ function renderTournamentDetail(){
     matchesHtml = rounds.map(r=>{
       const roundMatches = matches.filter(m=>m.round===r);
       return `<div style="margin-bottom:16px;">
-        <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Round ${r}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Round ${r}</div>
         ${roundMatches.map(m=>renderMatchRow(t.id, m, isOwner)).join('')}
       </div>`;
     }).join('') || '<div class="empty">Hakuna michezo bado.</div>';
@@ -2801,7 +2807,7 @@ function renderTournamentDetail(){
     const groupKeys = Object.keys(t.groups||{}).sort();
     standingsHtml = groupKeys.map(g=>`
       <div style="margin-bottom:18px;">
-        <div style="font-size:12px;font-weight:700;color:var(--lime);margin-bottom:8px;">Group ${g}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--lime);margin-bottom:8px;">Group ${g}</div>
         ${renderStandingsTable(matches.filter(m=>m.group===g), t.groups[g])}
       </div>`).join('');
   } else if(t.format==='single' || t.format==='double'){
@@ -2832,7 +2838,7 @@ function renderBracketColumns(koMatches, tournId, isOwner){
       const roundMatches = koMatches.filter(m=>m.round===r);
       const gapPx = Math.pow(2, r-1) * 14;
       return `<div style="min-width:210px;display:flex;flex-direction:column;justify-content:center;gap:${gapPx}px;">
-        <div style="font-size:10.5px;font-weight:700;color:var(--sub);text-transform:uppercase;text-align:center;margin-bottom:4px;">${knockoutRoundLabel(r, totalRounds)}</div>
+        <div style="font-size:9.5px;font-weight:700;color:var(--sub);text-transform:uppercase;text-align:center;margin-bottom:4px;">${knockoutRoundLabel(r, totalRounds)}</div>
         ${roundMatches.map(m=>renderMatchRow(tournId, m, isOwner)).join('')}
       </div>`;
     }).join('')}
@@ -2845,16 +2851,16 @@ function renderMatchRow(tournId, m, isOwner){
   return `
   <div style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;">
     <div style="display:flex;align-items:center;gap:8px;">
-      <div style="flex:1;font-size:13px;font-weight:600;text-align:right;">${escapeHtml(m.teamA)}</div>
-      ${isBye ? `<div style="font-size:11px;color:var(--sub);padding:0 8px;">BYE</div>` :
+      <div style="flex:1;font-size:11.5px;font-weight:600;text-align:right;">${escapeHtml(m.teamA)}</div>
+      ${isBye ? `<div style="font-size:10px;color:var(--sub);padding:0 8px;">BYE</div>` :
         (isOwner && !isDone) ? `
-        <input type="number" min="0" id="ms_${tournId}_${m.id}_a" value="${m.scoreA ?? ''}" style="width:38px;text-align:center;background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:5px 2px;font-size:13px;">
+        <input type="number" min="0" id="ms_${tournId}_${m.id}_a" value="${m.scoreA ?? ''}" style="width:38px;text-align:center;background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:5px 2px;font-size:11.5px;">
         <span style="color:var(--sub);">-</span>
-        <input type="number" min="0" id="ms_${tournId}_${m.id}_b" value="${m.scoreB ?? ''}" style="width:38px;text-align:center;background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:5px 2px;font-size:13px;">
-        ` : `<div style="font-size:12.5px;font-weight:700;color:${isDone?'var(--lime)':'var(--sub)'};padding:0 8px;text-align:center;">${isDone ? scoreLabel(m) : 'vs'}</div>`}
-      <div style="flex:1;font-size:13px;font-weight:600;">${escapeHtml(m.teamB)}</div>
+        <input type="number" min="0" id="ms_${tournId}_${m.id}_b" value="${m.scoreB ?? ''}" style="width:38px;text-align:center;background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:5px 2px;font-size:11.5px;">
+        ` : `<div style="font-size:11px;font-weight:700;color:${isDone?'var(--lime)':'var(--sub)'};padding:0 8px;text-align:center;">${isDone ? scoreLabel(m) : 'vs'}</div>`}
+      <div style="flex:1;font-size:11.5px;font-weight:600;">${escapeHtml(m.teamB)}</div>
     </div>
-    ${(isOwner && !isDone && !isBye) ? `<button onclick="saveMatchResult('${tournId}',${m.id})" style="width:100%;margin-top:9px;background:none;border:1px solid var(--lime);color:var(--lime);border-radius:20px;padding:6px 0;font-size:11.5px;font-weight:700;cursor:pointer;">Hifadhi Matokeo</button>` : ''}
+    ${(isOwner && !isDone && !isBye) ? `<button onclick="saveMatchResult('${tournId}',${m.id})" style="width:100%;margin-top:9px;background:none;border:1px solid var(--lime);color:var(--lime);border-radius:20px;padding:6px 0;font-size:10.5px;font-weight:700;cursor:pointer;">Hifadhi Matokeo</button>` : ''}
   </div>`;
 }
 
@@ -3003,7 +3009,8 @@ function loadListings(){
       const outOfStock = stockNum !== null && stockNum <= 0;
       return `
       <div class="d-gcard">
-        <div class="d-gthumb" style="${l.image?`background-image:url('${l.image.replace(/'/g,"")}')`:''}">
+        <div class="d-gthumb">
+          ${l.image ? `<img src="${l.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(l.title)}" loading="eager" decoding="async">` : ''}
           ${l.condition ? `<div class="d-gbadge">${CONDITION_LABELS[l.condition]||l.condition}</div>` : ''}
           ${stockNum !== null ? `<div class="d-gstock">${outOfStock ? 'Imeisha' : stockNum + ' zilizopo'}</div>` : ''}
         </div>
