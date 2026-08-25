@@ -1718,7 +1718,7 @@ function startDownloadCountdown(i, url, gameId, gameName){
   const countEl = document.getElementById('dlcount-' + i);
   if(!btn || btn.disabled) return;
   btn.disabled = true;
-  let secs = 10;
+  let secs = 2;
   countEl.textContent = ' (' + secs + ')';
   const timer = setInterval(()=>{
     secs--;
@@ -1901,6 +1901,16 @@ function handleDownload(g){
 }
 function closeModal(){
   document.getElementById('overlay').classList.remove('show');
+  // Mtumiaji amefunga modal ya game kwa mkono (kitufe "Funga") — safisha
+  // "tiki" za muda za download (mg-dl-progress-<id>) ili akifungua game
+  // hili tena baadaye zisionekane tena. HII HAIGUSI kabisa idadi ya
+  // download iliyoshahesabiwa (mg-dl-counted-<id>) — hiyo inabaki milele
+  // ili mtu asihesabiwe download mpya kila akifungua/akidownload tena
+  // game lile lile mara nyingi.
+  if(currentModalGame){
+    try{ localStorage.removeItem('mg-dl-progress-' + currentModalGame.id); }catch(e){}
+    downloadedSet = new Set();
+  }
   currentModalGame = null;
   if(currentPayUnsub){ currentPayUnsub(); currentPayUnsub = null; }
 }
