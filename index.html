@@ -1941,14 +1941,31 @@ const DEMO_BANNERS = [
 ];
 
 function loadBanners(){
+  // Fast path: repaint instantly from the last known banners on disk while
+  // the live Firestore listener resolves, same approach used for games.
+  const cachedBanners = loadCachedBanners();
+  if(cachedBanners && cachedBanners.length){
+    customBanners = cachedBanners;
+    refreshBanners();
+  }
   db.collection('banners').orderBy('order','asc').onSnapshot(snap=>{
     customBanners = snap.docs.map(d=>d.data());
+    cacheBannersLocally(customBanners);
     refreshBanners();
   }, err=>{
     console.error(err);
-    customBanners = [];
+    if(!cachedBanners || !cachedBanners.length) customBanners = [];
     refreshBanners();
   });
+}
+function cacheBannersLocally(list){
+  try{ localStorage.setItem('mg-banners-cache', JSON.stringify(list)); }catch(e){}
+}
+function loadCachedBanners(){
+  try{
+    const raw = localStorage.getItem('mg-banners-cache');
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
 }
 
 function computeEffectiveBanners(){
