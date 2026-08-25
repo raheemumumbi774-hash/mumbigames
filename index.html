@@ -934,6 +934,24 @@ let deepLinkDl = window.__mgDeepLinkDl ? window.__mgDeepLinkDl.split(',').map(Nu
 let deepLinkCounted = window.__mgDeepLinkCounted === '1';
 let deepLinkOpened = false;
 
+// ---- Wait for Firebase Auth to confirm whether the user is logged in
+// before auto-opening a deep-linked game (e.g. returning from Chrome after
+// a download). auth.currentUser is null for a brief moment on every fresh
+// page load until Firebase finishes restoring the saved session, even for
+// a user who is already logged in — opening the game modal before that
+// resolves would wrongly show the "ingia kwanza" login prompt. This
+// listener is separate from (and fires before) the main profile-UI one
+// further below, purely to gate the deep-link auto-open. ----
+let authReady = false;
+try{
+  auth.onAuthStateChanged(function(){
+    if(!authReady){
+      authReady = true;
+      tryOpenDeepLinkGame();
+    }
+  });
+}catch(e){ console.error('early auth check failed', e); authReady = true; }
+
 // ---- Local cache of the games list, so that when the user comes back from
 // Chrome after downloading (deep link with ?game=...), we can repaint the
 // game instantly from disk instead of waiting on a fresh network round-trip
@@ -959,6 +977,7 @@ function clearDeepLinkUrlParams(){
 }
 function tryOpenDeepLinkGame(){
   if(!deepLinkGameId || deepLinkOpened) return;
+  if(!authReady) return; // wait — this will be called again once auth state resolves
   const g = games.find(x=>x.id === deepLinkGameId);
   if(g){
     deepLinkOpened = true;
@@ -1153,7 +1172,7 @@ function openGameModal(g, restoreState){
   } else if(g.paid){
     document.getElementById('modalPaySection').style.display = 'block';
     document.getElementById('modalDownloadsSection').style.display = 'none';
-    watchPaymentStatus(g);
+    watchPaymentStatus(g, restoreState);
   } else {
     showModalDownloads(g, restoreState);
   }
@@ -1235,7 +1254,7 @@ function hammingDistanceHex(a, b){
 }
 const PHASH_DUP_THRESHOLD = 10; // kadri idadi hii inavyopungua, ndivyo AI inavyokuwa kali zaidi kutambua "zinafanana"
 
-function watchPaymentStatus(g){
+function watchPaymentStatus(g, restoreState){
   if(currentPayUnsub){ currentPayUnsub(); currentPayUnsub = null; }
   paymentProofUrls = {1:null, 2:null};
   paymentProofHashes = {1:null, 2:null};
@@ -1245,10 +1264,10 @@ function watchPaymentStatus(g){
   currentPayUnsub = ref.onSnapshot(snap=>{
     if(currentModalGame !== g) return; // modal moved on to something else
     const data = snap.exists ? snap.data() : null;
-    renderPaySection(g, data);
+    renderPaySection(g, data, restoreState);
   }, err=>{
     console.error(err);
-    renderPaySection(g, null);
+    renderPaySection(g, null, restoreState);
   });
 }
 
@@ -1265,11 +1284,11 @@ function adminContactRow(){
 let payTimer = null;
 let autoApproveInFlight = false;
 
-function renderPaySection(g, req){
+function renderPaySection(g, req, restoreState){
   const el = document.getElementById('modalPaySection');
   if(payTimer){ clearTimeout(payTimer); payTimer = null; }
   if(req && req.status === 'approved'){
-    showModalDownloads(g);
+    showModalDownloads(g, restoreState);
     return;
   }
   document.getElementById('modalDownloadsSection').style.display = 'none';
@@ -1518,8 +1537,22 @@ async function submitPaymentClaim(){
     alert('Weka namba uliyotumia kutuma malipo, ili admin aweze kuthibitisha haraka.');
     return;
   }
+  // Namba ya simu ya Tanzania: 0XXXXXXXXX (tarakimu 10) au +255XXXXXXXXX —
+  // hii inazuia maombi ya kizembe/ya kughushi yenye namba isiyo halisi.
+  const cleanPhone = phone.replace(/[\s\-]/g, '');
+  const phonePattern = /^(0[67]\d{8}|\+255[67]\d{8}|255[67]\d{8})$/;
+  if(!phonePattern.test(cleanPhone)){
+    alert('Namba ya simu si sahihi. Andika kwa mfumo wa 07XXXXXXXX au +255XXXXXXXXX.');
+    return;
+  }
   if(!paymentProofUrls[1] || !paymentProofUrls[2]){
     alert('Pakia picha zote mbili za muamala (screenshot) kabla ya kutuma — hii inamsaidia admin kuthibitisha haraka hata akiwa mbali.');
+    return;
+  }
+  // Zuia mtu kupakia picha ile ile mara mbili (proof1 na proof2 zisiwe
+  // screenshot moja iliyorudiwa) — lazima ziwe picha mbili tofauti halisi.
+  if(paymentProofHashes[1] && paymentProofHashes[2] && paymentProofHashes[1] === paymentProofHashes[2]){
+    alert('Picha ulizopakia ni sawa (screenshot ile ile mara mbili). Pakia picha mbili tofauti za muamala wako.');
     return;
   }
   const uid = auth.currentUser.uid;
@@ -1530,7 +1563,7 @@ async function submitPaymentClaim(){
       gameId: g.id,
       gameName: g.name,
       price: g.price || '0',
-      phone,
+      phone: cleanPhone,
       proof1: paymentProofUrls[1],
       proof2: paymentProofUrls[2],
       proofHashes: [paymentProofHashes[1], paymentProofHashes[2]].filter(Boolean),
