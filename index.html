@@ -927,48 +927,10 @@ const DEMO_GAMES = [
 
 let deepLinkGameId = window.__mgDeepLinkGameId || null;
 let deepLinkOpened = false;
-
-// ---- Cache ya games kwenye kifaa (localStorage) — hii inatumika pale
-// mtumiaji anaporudi kwenye app kutoka Chrome (baada ya kudownload game
-// file au emulator): badala ya kusubiri Firestore ipakie tena kupitia
-// mtandao (jambo linaloweza kuchukua zaidi ya sekunde 3), tunaonesha
-// data iliyohifadhiwa mara moja papo hapo, kisha tunaendelea kusasisha
-// kimya kimya pale data mpya kutoka Firestore itakapofika. ----
-const GAMES_CACHE_KEY = 'mg_games_cache_v1';
-function loadCachedGames(){
-  try{
-    const raw = localStorage.getItem(GAMES_CACHE_KEY);
-    if(!raw) return null;
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length ? parsed : null;
-  }catch(e){ return null; }
-}
-function saveCachedGames(list){
-  try{ localStorage.setItem(GAMES_CACHE_KEY, JSON.stringify(list)); }catch(e){}
-}
-function tryOpenDeepLinkGame(){
-  if(!deepLinkGameId || deepLinkOpened) return;
-  const g = games.find(x=>x.id === deepLinkGameId);
-  if(g){
-    deepLinkOpened = true;
-    openGameModal(g);
-  }
-}
-
 function loadGames(){
+  // Show a lightweight loading state instead of fake demo games while we wait for real data.
   const listEl = document.getElementById('gameList');
-  // Chap: kama tuna cache ya awali, ionyeshe papo hapo (bila kusubiri
-  // mtandao) — hii ndio inayofanya kurudi kutoka Chrome kuwa haraka
-  // (~sekunde chache) na moja kwa moja kufungua ukurasa wa game
-  // (mfano GTA V) kama mtumiaji alikuwa nao kabla ya kutoka nje ya app.
-  const cached = loadCachedGames();
-  if(cached){
-    games = cached;
-    sortGamesAlphabetically();
-    render();
-    try{ refreshBanners(); }catch(e){ console.error(e); }
-    tryOpenDeepLinkGame();
-  } else if(listEl && games.length===0){
+  if(listEl && games.length===0){
     listEl.innerHTML = '<div class="empty">Inapakia games...</div>';
   }
   db.collection('games').onSnapshot(snap=>{
@@ -977,11 +939,16 @@ function loadGames(){
     checkNewGameNotification();
     render();
     try{ refreshBanners(); }catch(e){ console.error(e); }
-    saveCachedGames(games);
-    tryOpenDeepLinkGame();
+    if(deepLinkGameId && !deepLinkOpened){
+      const g = games.find(x=>x.id === deepLinkGameId);
+      if(g){
+        deepLinkOpened = true;
+        openGameModal(g);
+      }
+    }
   }, err=>{
     console.error(err);
-    if(!cached && listEl) listEl.innerHTML = '<div class="empty">Imeshindwa kupakia games. Angalia mtandao wako na ujaribu tena.</div>';
+    if(listEl) listEl.innerHTML = '<div class="empty">Imeshindwa kupakia games. Angalia mtandao wako na ujaribu tena.</div>';
   });
 }
 function sortGamesAlphabetically(){
@@ -1718,7 +1685,7 @@ function startDownloadCountdown(i, url, gameId, gameName){
   const countEl = document.getElementById('dlcount-' + i);
   if(!btn || btn.disabled) return;
   btn.disabled = true;
-  let secs = 2;
+  let secs = 10;
   countEl.textContent = ' (' + secs + ')';
   const timer = setInterval(()=>{
     secs--;
@@ -1901,16 +1868,6 @@ function handleDownload(g){
 }
 function closeModal(){
   document.getElementById('overlay').classList.remove('show');
-  // Mtumiaji amefunga modal ya game kwa mkono (kitufe "Funga") — safisha
-  // "tiki" za muda za download (mg-dl-progress-<id>) ili akifungua game
-  // hili tena baadaye zisionekane tena. HII HAIGUSI kabisa idadi ya
-  // download iliyoshahesabiwa (mg-dl-counted-<id>) — hiyo inabaki milele
-  // ili mtu asihesabiwe download mpya kila akifungua/akidownload tena
-  // game lile lile mara nyingi.
-  if(currentModalGame){
-    try{ localStorage.removeItem('mg-dl-progress-' + currentModalGame.id); }catch(e){}
-    downloadedSet = new Set();
-  }
   currentModalGame = null;
   if(currentPayUnsub){ currentPayUnsub(); currentPayUnsub = null; }
 }
