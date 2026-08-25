@@ -73,6 +73,10 @@
       if(ref) localStorage.setItem('mg_ref', ref);
       const gameId = params.get('game');
       if(gameId) window.__mgDeepLinkGameId = gameId;
+      const dlParam = params.get('dl');
+      if(dlParam) window.__mgDeepLinkDl = dlParam;
+      const cntParam = params.get('cnt');
+      if(cntParam) window.__mgDeepLinkCounted = cntParam;
       const tournId = params.get('tournament');
       if(tournId) window.__mgDeepLinkTournId = tournId;
     }catch(e){ console.error(e); }
@@ -926,61 +930,68 @@ const DEMO_GAMES = [
 ];
 
 let deepLinkGameId = window.__mgDeepLinkGameId || null;
+let deepLinkDl = window.__mgDeepLinkDl ? window.__mgDeepLinkDl.split(',').map(Number).filter(n=>!isNaN(n)) : [];
+let deepLinkCounted = window.__mgDeepLinkCounted === '1';
 let deepLinkOpened = false;
 
-// ---- Games cache (localStorage) — inatumika mtu anaporudi kutoka Chrome
-// baada ya kudownload, ili ukurasa ufunguke HARAKA badala ya kusubiri
-// Firestore ipakie upya games zote kila wakati. ----
-function loadGamesCache(){
+// ---- Local cache of the games list, so that when the user comes back from
+// Chrome after downloading (deep link with ?game=...), we can repaint the
+// game instantly from disk instead of waiting on a fresh network round-trip
+// to Firestore. The live listener below still runs and refreshes everything
+// as soon as it resolves, this is purely a fast first-paint. ----
+function cacheGamesLocally(list){
+  try{ localStorage.setItem('mg-games-cache', JSON.stringify(list)); }catch(e){}
+}
+function loadCachedGames(){
   try{
     const raw = localStorage.getItem('mg-games-cache');
     return raw ? JSON.parse(raw) : null;
   }catch(e){ return null; }
 }
-function saveGamesCache(list){
-  try{ localStorage.setItem('mg-games-cache', JSON.stringify(list)); }catch(e){}
+function clearDeepLinkUrlParams(){
+  try{
+    const url = new URL(window.location.href);
+    url.searchParams.delete('game');
+    url.searchParams.delete('dl');
+    url.searchParams.delete('cnt');
+    history.replaceState(null, '', url.toString());
+  }catch(e){}
 }
-function openDeepLinkIfNeeded(){
-  if(deepLinkGameId && !deepLinkOpened){
-    const g = games.find(x=>x.id === deepLinkGameId);
-    if(g){
-      deepLinkOpened = true;
-      openGameModal(g);
-    }
+function tryOpenDeepLinkGame(){
+  if(!deepLinkGameId || deepLinkOpened) return;
+  const g = games.find(x=>x.id === deepLinkGameId);
+  if(g){
+    deepLinkOpened = true;
+    openGameModal(g, {dl: deepLinkDl, counted: deepLinkCounted});
+    clearDeepLinkUrlParams();
   }
 }
 
 function loadGames(){
-  // Show a lightweight loading state instead of fake demo games while we wait for real data.
   const listEl = document.getElementById('gameList');
-
-  // 1) Onyesha cache mara moja (kama ipo) bila kusubiri mtandao — hii
-  //    ndiyo inayofanya kurudi kutoka Chrome kuwa chap.
-  const cached = loadGamesCache();
+  // Fast path: paint instantly from the last known list on disk (e.g. right
+  // after returning from Chrome mid-download) while live data loads.
+  const cached = loadCachedGames();
   if(cached && cached.length){
     games = cached;
     sortGamesAlphabetically();
     render();
     try{ refreshBanners(); }catch(e){ console.error(e); }
-    openDeepLinkIfNeeded();
-  }
-
-  if(listEl && games.length===0){
+    tryOpenDeepLinkGame();
+  } else if(listEl && games.length===0){
     listEl.innerHTML = '<div class="empty">Inapakia games...</div>';
   }
-  // 2) Data halisi kutoka Firestore — inasasisha kila kitu ukishaunganishwa,
-  //    bila kuvuruga modal iliyoshafunguliwa na cache hapo juu.
   db.collection('games').onSnapshot(snap=>{
     games = snap.docs.map(d=>d.data());
-    saveGamesCache(games);
     sortGamesAlphabetically();
     checkNewGameNotification();
     render();
     try{ refreshBanners(); }catch(e){ console.error(e); }
-    openDeepLinkIfNeeded();
+    cacheGamesLocally(games);
+    tryOpenDeepLinkGame();
   }, err=>{
     console.error(err);
-    if(listEl && games.length===0) listEl.innerHTML = '<div class="empty">Imeshindwa kupakia games. Angalia mtandao wako na ujaribu tena.</div>';
+    if(listEl && !games.length) listEl.innerHTML = '<div class="empty">Imeshindwa kupakia games. Angalia mtandao wako na ujaribu tena.</div>';
   });
 }
 function sortGamesAlphabetically(){
@@ -1122,9 +1133,9 @@ async function downloadGameImage(imageUrl, gameName){
 let currentModalGame = null;
 let currentPayUnsub = null;
 
-function openGameModal(g){
+function openGameModal(g, restoreState){
   currentModalGame = g;
-  downloadedSet = new Set();
+  downloadedSet = (restoreState && restoreState.dl && restoreState.dl.length) ? new Set(restoreState.dl) : new Set();
   document.getElementById('modalGameName').textContent = g.name;
   document.getElementById('modalDesc').textContent = (currentLang==='en' && g.descEn) ? g.descEn : (g.desc || g.genre || '');
   const thumb = document.getElementById('modalThumb');
@@ -1144,7 +1155,7 @@ function openGameModal(g){
     document.getElementById('modalDownloadsSection').style.display = 'none';
     watchPaymentStatus(g);
   } else {
-    showModalDownloads(g);
+    showModalDownloads(g, restoreState);
   }
   document.getElementById('overlay').classList.add('show');
 }
@@ -1532,7 +1543,7 @@ async function submitPaymentClaim(){
   }
 }
 
-function showModalDownloads(g){
+function showModalDownloads(g, restoreState){
   document.getElementById('modalPaySection').style.display = 'none';
   document.getElementById('modalDownloadsSection').style.display = 'block';
 
@@ -1577,11 +1588,19 @@ function showModalDownloads(g){
   const list = (g.downloads && g.downloads.length) ? g.downloads : (g.download ? [{label:'Download', url:g.download}] : []);
   document.getElementById('modalThanks').style.display = 'none';
   totalDlItems = list.length;
-  downloadCounted = loadDownloadCounted(g.id);
-  // Tiki (✓) zinasomwa kutoka localStorage — hivyo mtu akitoka kwenda
-  // Chrome kudownload kisha akarudi (back) kwenye game hii hii, tiki na
-  // ujumbe wa "Asante kwa kuchagua mumbigames" vinabaki vikionekana.
-  downloadedSet = loadDownloadedItems(g.id);
+  // Tiki (✓) hazitunzwi tena kudumu kwa ufunguzi wa kawaida — kila mtu
+  // akifungua game hii upya huanza upya bila tiki. Isipokuwa: mara tu
+  // baada ya kurudi kutoka Chrome alikodownload (restoreState), ambapo
+  // tiki na "Asante" hurejeshwa mara moja tu ili aone kilichokamilika.
+  // Kuhesabu download kwenye database (downloadCounted) daima kunazuia
+  // mtu asihesabiwe zaidi ya mara moja, bila kujali tiki za kuonyesha.
+  if(restoreState){
+    downloadCounted = !!restoreState.counted || loadDownloadCounted(g.id);
+    downloadedSet = (restoreState.dl && restoreState.dl.length) ? new Set(restoreState.dl) : new Set();
+  } else {
+    downloadCounted = loadDownloadCounted(g.id);
+    downloadedSet = new Set();
+  }
   document.getElementById('modalDownloadsList').innerHTML = list.length ? list.map((d,i)=>`
     <button type="button" class="dl-btn" id="dlbtn-${i}" style="background:${DL_COLORS[i % DL_COLORS.length]};" onclick='startDownloadCountdown(${i}, ${JSON.stringify(d.url)}, ${JSON.stringify(g.id)}, ${JSON.stringify(g.name)})'>
       ${escapeHtml(d.label)}<span class="dl-count" id="dlcount-${i}"></span> <span class="dl-tick" id="dltick-${i}" style="display:${downloadedSet.has(i)?'inline':'none'};">✓</span>
@@ -1674,21 +1693,6 @@ function saveDownloadCounted(gameId){
   }catch(e){}
 }
 
-// ---- Tiki (✓) za download — sasa zinatunzwa kwa kila game (localStorage),
-// ili mtu akitoka kwenda Chrome kudownload kisha akarudi (back), tiki na
-// ujumbe wa "Asante kwa kuchagua mumbigames" vibaki vikionekana. ----
-function loadDownloadedItems(gameId){
-  try{
-    const raw = localStorage.getItem('mg-dl-items-' + gameId);
-    return raw ? new Set(JSON.parse(raw)) : new Set();
-  }catch(e){ return new Set(); }
-}
-function saveDownloadedItems(gameId, set){
-  try{
-    localStorage.setItem('mg-dl-items-' + gameId, JSON.stringify(Array.from(set)));
-  }catch(e){}
-}
-
 let downloadedSet = new Set();
 let totalDlItems = 0;
 let downloadCounted = false;
@@ -1711,10 +1715,14 @@ function escapeToExternalBrowser(url){
   }
 }
 
-function rememberGameInUrl(gameId){
+function rememberGameInUrl(gameId, dlIndexes, counted){
   try{
     const url = new URL(window.location.href);
     url.searchParams.set('game', gameId);
+    if(dlIndexes && dlIndexes.length) url.searchParams.set('dl', dlIndexes.join(','));
+    else url.searchParams.delete('dl');
+    if(counted) url.searchParams.set('cnt', '1');
+    else url.searchParams.delete('cnt');
     history.replaceState(null, '', url.toString());
   }catch(e){}
 }
@@ -1737,7 +1745,7 @@ function startDownloadCountdown(i, url, gameId, gameName){
       // ikienda "background" kuelekea Chrome, hesabu ya muda (setTimeout)
       // ya baadaye huenda isifanye kazi, kwa hiyo tunahesabu papo hapo.
       markDownloaded(i, gameId, gameName);
-      rememberGameInUrl(gameId);
+      rememberGameInUrl(gameId, Array.from(downloadedSet), downloadCounted);
       escapeToExternalBrowser(url);
       countEl.textContent = '';
       btn.disabled = false;
@@ -1746,7 +1754,6 @@ function startDownloadCountdown(i, url, gameId, gameName){
 }
 function markDownloaded(i, gameId, gameName){
   downloadedSet.add(i);
-  saveDownloadedItems(gameId, downloadedSet);
   const tick = document.getElementById('dltick-' + i);
   if(tick) tick.style.display = 'inline';
   // Count as ONE download for this game only once ALL required files are done
@@ -1909,6 +1916,7 @@ function closeModal(){
   document.getElementById('overlay').classList.remove('show');
   currentModalGame = null;
   if(currentPayUnsub){ currentPayUnsub(); currentPayUnsub = null; }
+  clearDeepLinkUrlParams();
 }
 
 document.getElementById('chips').addEventListener('click', (e)=>{
