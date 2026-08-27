@@ -873,6 +873,7 @@
       <div id="modalPerfBoxes"></div>
       <div id="modalSetupHelper"></div>
       <div id="modalDownloadsList"></div>
+      <div style="font-size:10px;color:var(--sub);text-align:center;margin:4px 0 2px;line-height:1.5;">ℹ️ Ukiona "Could not preview the file" kwenye Chrome baada ya download, si tatizo — faili limeshahifadhiwa salama kwenye Downloads za simu yako. Bonyeza back kurudi mumbigames.</div>
       <div id="modalThanks" style="display:none;font-size:11px;color:var(--lime);font-weight:600;text-align:center;margin:6px 0 4px;">Asante kwa kuchagua mumbigames🥰</div>
       <div id="sponsoredAdBox" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
         <div style="font-size:9.5px;letter-spacing:1px;color:var(--sub);font-weight:700;margin-bottom:8px;">SPONSORED</div>
@@ -1635,7 +1636,7 @@ function showModalDownloads(g, restoreState){
     downloadedSet = new Set();
   }
   document.getElementById('modalDownloadsList').innerHTML = list.length ? list.map((d,i)=>`
-    <button type="button" class="dl-btn" id="dlbtn-${i}" style="background:${DL_COLORS[i % DL_COLORS.length]};" onclick='startDownloadCountdown(${i}, ${JSON.stringify(d.url)}, ${JSON.stringify(g.id)}, ${JSON.stringify(g.name)})'>
+    <button type="button" class="dl-btn" id="dlbtn-${i}" style="background:${DL_COLORS[i % DL_COLORS.length]};" data-dl-index="${i}" data-dl-url="${escapeHtml(d.url)}" data-dl-gameid="${escapeHtml(g.id)}" data-dl-gamename="${escapeHtml(g.name)}">
       ${escapeHtml(d.label)}<span class="dl-count" id="dlcount-${i}"></span> <span class="dl-tick" id="dltick-${i}" style="display:${downloadedSet.has(i)?'inline':'none'};">✓</span>
     </button>`).join('') : '<div class="empty">Link ya kudownload bado haijawekwa na admin.</div>';
   if(downloadedSet.size >= totalDlItems && totalDlItems > 0){
@@ -1734,6 +1735,27 @@ let downloadCounted = false;
 // phone's real browser (Chrome/etc) via Android's system Download Manager —
 // this way the download keeps going even if the user leaves the app. ----
 function escapeToExternalBrowser(url){
+  // Some download links get intercepted by the wrapping app's WebView
+  // itself (it silently starts the file download INSIDE the app instead
+  // of switching to the real Chrome browser) depending on how that link
+  // responds. To make this consistent for every game, on Android we first
+  // force an explicit Android Intent asking the phone's browser app to
+  // open the link — this bypasses the WebView's own download interception
+  // because it's a proper "launch this other app" request at the OS
+  // level, not a normal link navigation the WebView could quietly
+  // swallow. A fallback URL is included in case Intent resolution fails
+  // for any reason, so the download is never silently lost.
+  try{
+    const isAndroid = /Android/i.test(navigator.userAgent || '');
+    if(isAndroid && /^https?:\/\//i.test(url)){
+      const scheme = /^https:/i.test(url) ? 'https' : 'http';
+      const withoutScheme = url.replace(/^https?:\/\//i, '');
+      const intentUrl = 'intent://' + withoutScheme +
+        '#Intent;scheme=' + scheme + ';action=android.intent.action.VIEW;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+      window.location.href = intentUrl;
+      return;
+    }
+  }catch(e){ console.error(e); }
   let newWin = null;
   try{
     newWin = window.open(url, '_blank', 'noopener,noreferrer');
@@ -1863,7 +1885,7 @@ function openComments(g){
           <div class="c-text">${escapeHtml(c.text)}</div>
           <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
             <div class="c-time">${time}</div>
-            <div style="font-size:10px;color:var(--lime);cursor:pointer;font-weight:600;" onclick='startReply(${JSON.stringify(c.id)}, ${JSON.stringify(c.authorName||'Mtumiaji')})'>↩ Jibu</div>
+            <div style="font-size:10px;color:var(--lime);cursor:pointer;font-weight:600;" onclick='startReply(${JSON.stringify(c.id)}, ${JSON.stringify(c.authorName||'Mtumiaji').replace(/'/g,"&#39;")})'>↩ Jibu</div>
           </div>
         </div>`;
       }
@@ -1951,6 +1973,22 @@ function closeModal(){
   if(currentPayUnsub){ currentPayUnsub(); currentPayUnsub = null; }
   clearDeepLinkUrlParams();
 }
+
+// Delegated click handler for the download buttons (instead of inline
+// onclick with the URL/game-id/game-name spliced into the HTML string).
+// A game name or URL containing an apostrophe (e.g. "Assassin's Creed")
+// used to break the inline onclick attribute and silently disable the
+// button — reading the values back from data-* attributes avoids that
+// entirely, for any game name or link, no matter what characters it has.
+document.getElementById('modalDownloadsList').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.dl-btn');
+  if(!btn) return;
+  const i = parseInt(btn.dataset.dlIndex, 10);
+  const url = btn.dataset.dlUrl || '';
+  const gameId = btn.dataset.dlGameid || '';
+  const gameName = btn.dataset.dlGamename || '';
+  startDownloadCountdown(i, url, gameId, gameName);
+});
 
 document.getElementById('chips').addEventListener('click', (e)=>{
   const chip = e.target.closest('.chip');
@@ -2388,7 +2426,7 @@ function renderTournamentList(){
         <div class="d-seller">${t.public?'🌍 Public':'🔒 Private'} · na ${escapeHtml(t.ownerName||'Mtumiaji')}</div>
         <div style="display:flex;gap:8px;margin-top:8px;">
           <button class="d-report" style="color:var(--lime);border-color:var(--lime);" onclick='openTournamentDetail(${JSON.stringify(t.id)})'>▶ Fungua</button>
-          <button class="d-report" onclick='shareTournament(${JSON.stringify(t.id)},${JSON.stringify(t.name)})'>🔗 Share</button>
+          <button class="d-report" onclick='shareTournament(${JSON.stringify(t.id)},${JSON.stringify(t.name).replace(/'/g,"&#39;")})'>🔗 Share</button>
           ${isOwner ? `<button class="d-report" style="color:#ff6b6b;border-color:#ff6b6b;" onclick='deleteTournament(${JSON.stringify(t.id)})'>🗑️ Futa</button>` : ''}
         </div>
       </div>
@@ -3138,7 +3176,7 @@ function loadListings(){
             <span class="d-gprice">TZS ${escapeHtml(l.price)}</span>
             ${l.wasPrice ? `<span class="d-gwas">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}
           </div>
-          <button class="d-greport" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title)})'>🚩 Ripoti</button>
+          <button class="d-greport" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title).replace(/'/g,"&#39;")})'>🚩 Ripoti</button>
         </div>
       </div>`;
     }).join('') : '<div class="empty">Bado hakuna bidhaa iliyothibitishwa. Kuwa wa kwanza kuweka! 🛍️</div>';
