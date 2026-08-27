@@ -189,9 +189,9 @@
   .empty{text-align:center;color:var(--sub);font-size:11.5px;padding:30px 10px;}
 
   /* Modal for paid game */
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:flex-end;z-index:30;}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:flex-end;z-index:30;overflow-y:auto;}
   .overlay.show{display:flex;}
-  .modal{background:var(--panel);border-top:1px solid var(--line);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;margin:0 auto;}
+  .modal{background:var(--panel);border-top:1px solid var(--line);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;margin:0 auto;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   .modal h3{font-size:14.5px;margin-bottom:4px;}
   .modal p{color:var(--sub);font-size:11px;margin:4px 0 14px;line-height:1.5;}
   .modal-thumb{width:100%;height:150px;border-radius:12px;background:var(--panel-2);background-size:cover;background-position:center;background-repeat:no-repeat;margin-bottom:12px;}
