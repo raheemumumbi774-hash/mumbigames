@@ -246,14 +246,24 @@
   .name-gate input{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:9px;font-size:12.5px;margin-bottom:10px;}
   .name-gate button{width:100%;background:var(--lime);color:var(--bg);border:none;padding:12px;border-radius:9px;font-weight:600;font-size:12.5px;cursor:pointer;}
   .chat-messages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
-  .msg{max-width:78%;padding:10px 13px;border-radius:14px;background:var(--panel);border:1px solid var(--line);}
+  .msg{max-width:78%;padding:10px 13px;border-radius:14px;background:var(--panel);border:1px solid var(--line);cursor:pointer;}
   .msg.me{align-self:flex-end;background:rgba(166,255,0,0.12);border-color:var(--lime-dim);}
   .msg .who{font-size:10px;font-weight:700;color:var(--lime);margin-bottom:3px;}
   .msg.me .who{color:var(--lime);}
   .msg .txt{font-size:12px;line-height:1.4;word-break:break-word;}
   .msg .time{font-size:9px;color:var(--sub);margin-top:4px;text-align:right;}
-  .chat-input-row{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg);}
+  .msg .quote{border-left:2px solid var(--lime);background:rgba(255,255,255,0.05);padding:4px 8px;border-radius:6px;font-size:10.5px;color:var(--sub);margin-bottom:6px;}
+  .msg .quote b{color:var(--lime);}
+  .msg .voice-player{display:flex;align-items:center;gap:6px;}
+  .msg .voice-player audio{height:32px;max-width:180px;}
+  .chat-reply-banner{display:none;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:var(--panel);border-top:1px solid var(--line);font-size:11px;color:var(--sub);}
+  .chat-reply-banner b{color:var(--lime);}
+  .chat-reply-banner .x{cursor:pointer;color:var(--sub);font-size:15px;padding:0 4px;}
+  .chat-input-row{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg);align-items:center;}
   .chat-input-row input{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 14px;border-radius:20px;font-size:12.5px;}
+  .mic-btn{width:42px;height:42px;border-radius:50%;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:16px;cursor:pointer;flex:none;}
+  .mic-btn.recording{background:#e33;border-color:#e33;color:#fff;animation:mgPulse 1s infinite;}
+  @keyframes mgPulse{0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}}
   .send-btn{width:42px;height:42px;border-radius:50%;background:var(--lime);border:none;color:var(--bg);font-size:14.5px;cursor:pointer;flex:none;}
   .chat-empty{text-align:center;color:var(--sub);font-size:11px;padding:30px 10px;}
 
@@ -432,8 +442,13 @@
 
   <div id="chatBody" style="display:none;flex-direction:column;flex:1;min-height:0;">
     <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-reply-banner" id="chatReplyBanner">
+      <span id="chatReplyBannerText"></span>
+      <span class="x" onclick="cancelChatReply()">✕</span>
+    </div>
     <div class="chat-input-row">
       <input type="text" id="chatMsgInput" placeholder="Andika ujumbe..." maxlength="300" onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="mic-btn" id="chatMicBtn" onclick="toggleVoiceRecording()">🎤</button>
       <button class="send-btn" onclick="sendMsg()">➤</button>
     </div>
   </div>
@@ -3360,18 +3375,103 @@ function renderMessages(msgs){
     return;
   }
   const wasAtBottom = (box.scrollHeight - box.scrollTop - box.clientHeight) < 60;
-  box.innerHTML = msgs.map(m=>{
+  box.innerHTML = msgs.map((m,idx)=>{
     const mine = m.name === chatName;
     const t = new Date(m.time);
     const hh = String(t.getHours()).padStart(2,'0');
     const mm = String(t.getMinutes()).padStart(2,'0');
-    return `<div class="msg ${mine?'me':''}">
+    const quote = m.replyToName ? `<div class="quote"><b>${escapeHtml(m.replyToName)}</b><br>${escapeHtml(m.replyToText||'')}</div>` : '';
+    const body = m.type === 'voice'
+      ? `<div class="voice-player"><audio controls preload="none" src="${escapeHtml(m.audioUrl)}"></audio></div>`
+      : `<div class="txt">${escapeHtml(m.text)}</div>`;
+    return `<div class="msg ${mine?'me':''}" data-msg-idx="${idx}">
       <div class="who">${escapeHtml(m.name)}</div>
-      <div class="txt">${escapeHtml(m.text)}</div>
+      ${quote}
+      ${body}
       <div class="time">${hh}:${mm}</div>
     </div>`;
   }).join('');
+  currentChatMsgs = msgs;
   if(wasAtBottom) box.scrollTop = box.scrollHeight;
+}
+
+// ---- Kujibu ujumbe (reply/quote), kama WhatsApp: bonyeza ujumbe wowote
+// ili kuujibu — jina la mtu na sehemu ya ujumbe wake huonekana juu ya
+// jibu lako, ili yeye (na wengine) waone kajibiwa nini hasa. ----
+let currentChatMsgs = [];
+let chatReplyTo = null; // {name, text}
+document.getElementById('chatMessages').addEventListener('click', (e)=>{
+  const el = e.target.closest('.msg');
+  if(!el) return;
+  const idx = parseInt(el.dataset.msgIdx, 10);
+  const m = currentChatMsgs[idx];
+  if(!m) return;
+  chatReplyTo = { name: m.name, text: m.type === 'voice' ? '🎤 Ujumbe wa sauti' : (m.text||'').slice(0,80) };
+  const banner = document.getElementById('chatReplyBanner');
+  document.getElementById('chatReplyBannerText').innerHTML = 'Unamjibu <b>' + escapeHtml(chatReplyTo.name) + '</b>: ' + escapeHtml(chatReplyTo.text);
+  banner.style.display = 'flex';
+  document.getElementById('chatMsgInput').focus();
+});
+function cancelChatReply(){
+  chatReplyTo = null;
+  document.getElementById('chatReplyBanner').style.display = 'none';
+}
+
+// ---- Ujumbe wa sauti (voice message): rekodi kwa kutumia maikrofoni ya
+// simu, pakia Firebase Storage, kisha tuma link ya sauti kama ujumbe. ----
+let mediaRecorder = null;
+let recordedChunks = [];
+let isRecording = false;
+async function toggleVoiceRecording(){
+  if(!chatName) return;
+  if(isRecording){
+    if(mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    return;
+  }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    alert('Simu/kivinjari chako hakiruhusu kurekodi sauti hapa.');
+    return;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    recordedChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = (e)=>{ if(e.data && e.data.size>0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = async ()=>{
+      isRecording = false;
+      document.getElementById('chatMicBtn').classList.remove('recording');
+      stream.getTracks().forEach(tr=>tr.stop());
+      if(!recordedChunks.length) return;
+      const blob = new Blob(recordedChunks, {type: mediaRecorder.mimeType || 'audio/webm'});
+      if(blob.size < 500){ return; } // too short / accidental tap
+      await sendVoiceMessage(blob);
+    };
+    mediaRecorder.start();
+    isRecording = true;
+    document.getElementById('chatMicBtn').classList.add('recording');
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kufikia maikrofoni. Hakikisha umeruhusu app kutumia maikrofoni ya simu yako.');
+  }
+}
+async function sendVoiceMessage(blob){
+  const micBtn = document.getElementById('chatMicBtn');
+  micBtn.textContent = '⏳';
+  try{
+    const ext = (blob.type||'').includes('mp4') ? 'm4a' : 'webm';
+    const path = 'chat_voice/' + Date.now() + '_' + Math.random().toString(36).slice(2,8) + '.' + ext;
+    const ref = storage.ref().child(path);
+    await ref.put(blob);
+    const audioUrl = await ref.getDownloadURL();
+    const msg = {name: chatName, type: 'voice', audioUrl, time: Date.now()};
+    if(chatReplyTo){ msg.replyToName = chatReplyTo.name; msg.replyToText = chatReplyTo.text; cancelChatReply(); }
+    await db.collection('chat_messages').add(msg);
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kutuma ujumbe wa sauti. Angalia mtandao wako na ujaribu tena.');
+  }finally{
+    micBtn.textContent = '🎤';
+  }
 }
 
 async function sendMsg(){
@@ -3380,7 +3480,9 @@ async function sendMsg(){
   if(!text || !chatName) return;
   input.value = '';
   try{
-    await db.collection('chat_messages').add({name: chatName, text, time: Date.now()});
+    const msg = {name: chatName, text, time: Date.now()};
+    if(chatReplyTo){ msg.replyToName = chatReplyTo.name; msg.replyToText = chatReplyTo.text; cancelChatReply(); }
+    await db.collection('chat_messages').add(msg);
   }catch(e){
     console.error(e);
   }
