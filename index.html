@@ -146,21 +146,6 @@
   .qa-btn.qa-tiktok{background:linear-gradient(135deg,#25f4ee,#000000 55%,#fe2c55);color:#fff;}
   .qa-btn.qa-kura{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;}
   .qa-btn.qa-youtube{background:linear-gradient(135deg,#ff4d4d,#c1121f);color:#fff;border:none;}
-  .qa-btn.qa-spin{background:linear-gradient(135deg,#ff9d00,#ffd347);color:#241800;border:none;}
-
-  /* ---- Bahati Nasibu (Spin Wheel) ---- */
-  .wheel-wrap{position:relative;width:260px;height:260px;margin:20px auto 8px;}
-  .wheel-pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-size:26px;color:#ffb703;z-index:3;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.5));}
-  .wheel-disc{position:absolute;inset:0;border-radius:50%;border:6px solid #ffb703;box-shadow:0 0 0 3px #241800,0 6px 20px rgba(0,0,0,0.5);transition:transform 4.5s cubic-bezier(.17,.67,.16,1);}
-  .wheel-seg-label{font-size:9.5px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.6);pointer-events:none;line-height:1.15;}
-  .wheel-center{position:absolute;top:50%;left:50%;width:64px;height:64px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#241800,#000);border:4px solid #ffb703;color:#ffb703;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;}
-  .spin-main-btn{width:100%;margin-top:16px;padding:15px 0;border-radius:999px;border:none;background:linear-gradient(135deg,#ff9d00,#ffb703);color:#241800;font-weight:900;font-size:14px;cursor:pointer;font-family:'Baloo 2',sans-serif;}
-  .spin-main-btn:disabled{opacity:0.45;cursor:not-allowed;}
-  .spin-extra-btn{width:100%;margin-top:8px;padding:11px 0;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--text);font-weight:700;font-size:11.5px;cursor:pointer;font-family:'Baloo 2',sans-serif;}
-  .spin-extra-btn:disabled{opacity:0.4;cursor:not-allowed;}
-  .spin-hist-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:11px;}
-  .spin-hist-item .lbl{color:var(--text);font-weight:600;}
-  .spin-hist-item .tm{color:var(--sub);font-size:9.5px;}
   .qa-badge{display:none;position:absolute;top:6px;right:10px;width:10px;height:10px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
 
   /* Trending carousel */
@@ -295,7 +280,6 @@
   #dukaView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   #tournamentView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   #tournDetailView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
-  #spinView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   .td-tab.active{background:var(--lime);color:var(--bg);}
   .td-tab:not(.active){color:var(--sub);}
 
@@ -407,8 +391,8 @@
 <header>
   <div class="mark"></div>
   <span>mumbigames</span>
-  <div class="search" onclick="showSettings()" style="margin-left:auto;">☰</div>
-  <div class="token-pill" id="headerTokenPill" onclick="showProfile()" style="display:none;margin-left:8px;"><span class="coin">🪙</span><span id="headerTokenCount">0</span></div>
+  <div class="token-pill" id="headerTokenPill" onclick="showProfile()" style="display:none;margin-left:auto;"><span class="coin">🪙</span><span id="headerTokenCount">0</span></div>
+  <div class="search" onclick="showSettings()" style="margin-left:8px;">☰</div>
 </header>
 
 <div class="searchbar-wrap">
@@ -428,7 +412,6 @@
 <div class="quick-actions">
   <a class="qa-btn qa-tiktok" href="https://www.tiktok.com/@iam_mumbi7" target="_blank" onclick="markSocialSeen('tiktok')"><span class="qa-badge" id="qaBadgeTiktok"></span><div class="qa-ic">🎵</div><span data-i18n="qa_tiktok">TikTok</span></a>
   <div class="qa-btn qa-kura" onclick="showTournaments()"><div class="qa-ic">🏆</div><span data-i18n="qa_tourn">Tournament</span></div>
-  <div class="qa-btn qa-spin" onclick="showSpinWheel()"><div class="qa-ic">🎡</div><span>Spin</span></div>
   <a class="qa-btn qa-youtube" href="https://youtube.com/@mumbi_gaming" target="_blank" onclick="markSocialSeen('youtube')"><span class="qa-badge" id="qaBadgeYoutube"></span><div class="qa-ic">▶️</div><span data-i18n="qa_youtube">YouTube</span></a>
 </div>
 
@@ -720,31 +703,6 @@
     <div id="tdNote" style="font-size:10px;color:var(--sub);margin-bottom:10px;display:none;"></div>
     <div id="tdMatchesPanel"></div>
     <div id="tdStandingsPanel" style="display:none;"></div>
-  </div>
-</div>
-
-<div id="spinView">
-  <div class="chat-header">
-    <div class="back" onclick="showHome()">←</div>
-    <div style="flex:1;">
-      <div class="title">🎡 Bahati Nasibu</div>
-      <div class="sub" id="spinSubHeader">Spin moja bure kila siku</div>
-    </div>
-  </div>
-  <div class="settings-body" style="text-align:center;">
-    <div class="wheel-wrap">
-      <div class="wheel-pointer">▼</div>
-      <div class="wheel-disc" id="wheelDisc"></div>
-      <div class="wheel-center" id="wheelCenterBtn" onclick="doSpin(false)">SPIN</div>
-    </div>
-    <div id="spinStatusText" style="font-size:11px;color:var(--sub);margin:14px 0 2px;line-height:1.5;"></div>
-    <button class="spin-main-btn" id="spinMainBtn" onclick="doSpin(false)">SPIN NOW</button>
-    <button class="spin-extra-btn" id="spinExtraBtn" style="display:none;" onclick="doSpin(true)">Spin tena kwa 🪙 100 Token</button>
-    <div id="spinResultMsg" style="display:none;font-size:13px;font-weight:800;margin-top:16px;padding:13px;border-radius:12px;background:rgba(166,255,0,0.1);border:1px solid var(--lime-dim);color:var(--lime);line-height:1.5;"></div>
-    <div style="text-align:left;margin-top:24px;">
-      <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:8px;">Matokeo yako ya hivi karibuni</div>
-      <div id="spinHistoryList" style="font-size:11px;color:var(--sub);">Bado hujaspini.</div>
-    </div>
   </div>
 </div>
 
@@ -2316,8 +2274,7 @@ const AI_KB = [
   {keys:['tiktok'], a:'Bonyeza button ya "TikTok" (icon ya 🎵) kwenye Home kufungua channel yetu ya TikTok moja kwa moja, kuona video za hivi karibuni za games. Ukiona kitone chekundu juu ya button hiyo, maana yake kuna video mpya.'},
   {keys:['youtube'], a:'Bonyeza button ya "YouTube" (icon nyekundu ▶️) kwenye Home kufungua channel yetu ya YouTube: ' + YT_CHANNEL + ' — humo kuna video za maelekezo ya jinsi ya kuseti games kwa emulator mbalimbali, pamoja na maudhui mengine ya games.'},
   {keys:['chat','ujumbe','mazungumzo'], a:'Ukurasa wa "Chat" (icon ya 💬 kwenye menu ya chini) ni sehemu ya mazungumzo ya jamii ya mumbigames na channel ya WhatsApp ya admin kwa msaada wa moja kwa moja.'},
-  {keys:['token','pointi','point','alika','referral','mwaliko','msimbo'], a:'Mfumo wa Token: kila ukimwalika rafiki kwa kutumia msimbo wako wa kipekee (unaupata Profile → "Alika Marafiki"), akijisajili na kuweka msimbo wako, unapata token 50. Ukifikisha token 500, unaweza kupata game LOLOTE la kulipia BURE kabisa, mara moja tu kwa akaunti yako (Profile → "Chagua Game la Kupata Bure"). Msimbo wako unaonekana kwenye Profile, na kuna button ya "Shea APK + Msimbo Wangu" ya kutuma kwa rafiki yako moja kwa moja. Token zinaweza pia kutumika kuendelea ku-spin kwenye "Bahati Nasibu" (🎡 Spin) baada ya spin yako ya bure ya kila siku kuisha.'},
-  {keys:['spin','bahati nasibu','wheel','gurudumu'], a:'Bahati Nasibu (🎡 Spin) ipo kwenye ukurasa wa Home. Kila siku unapata spin moja BURE (baada ya masaa 24 unapata nyingine). Ukiitumia yote, unaweza kuendelea ku-spin kwa kutumia token 100 kila spin. Zawadi zinazopatikana: token, "Repeat Chance" (spin ya bonus papo hapo), na mara chache sana game kubwa (eFootball 2027 NBC au ETS2 MOD TZ) — hizi ni ngumu kupata kwa makusudi, ili kila mtu awe na nafasi.'},
+  {keys:['token','pointi','point','alika','referral','mwaliko','msimbo'], a:'Mfumo wa Token: kila ukimwalika rafiki kwa kutumia msimbo wako wa kipekee (unaupata Profile → "Alika Marafiki"), akijisajili na kuweka msimbo wako, unapata token 50. Ukifikisha token 500, unaweza kupata game LOLOTE la kulipia BURE kabisa, mara moja tu kwa akaunti yako (Profile → "Chagua Game la Kupata Bure"). Msimbo wako unaonekana kwenye Profile, na kuna button ya "Shea APK + Msimbo Wangu" ya kutuma kwa rafiki yako moja kwa moja.'},
   {keys:['download','pakua','haifunguki','tatizo'], a:'Kama download haifanyi kazi, hakikisha una mtandao mzuri na jaribu tena. Kumbuka: baada ya kubonyeza download, subiri hesabu ya sekunde ipite kabla faili halijafunguka — hii ni ya kawaida. Kama tatizo linaendelea, wasiliana na admin kupitia WhatsApp kwenye ukurasa wa Chat.'},
   {keys:['akaunti','login','ingia','jisajili','password'], a:'Nenda Profile (chini kulia, icon ya ☺), jaza email na password kuunda akaunti au kuingia. Akaunti inakusaidia kuona games ulizonunua hata ukibadili simu, kutumia mfumo wa points, na kutoa maoni kwenye games.'},
   {keys:['maoni','comment'], a:'Kila game ina sehemu ya "💬 Maoni" — bonyeza namba iliyo karibu na icon ya 💬 kwenye card ya game kuona maoni ya wengine na kutoa lako mwenyewe.'},
@@ -2366,7 +2323,7 @@ function aiSend(){
 let chatName = localStorage.getItem('mg-chat-name') || '';
 let chatUnsub = null;
 
-const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','pollView','aiView','tournamentView','tournDetailView','spinView'];
+const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','pollView','aiView','tournamentView','tournDetailView'];
 const ALL_NAVS = ['navHome','navChat','navGames','navAI','navMe'];
 function hideAllViews(){
   pollViewOpen = false;
@@ -2417,303 +2374,6 @@ function showPolls(){
   loadPolls();
 }
 
-// ============================================================
-// ---- Bahati Nasibu (Spin Wheel) ----
-// A fixed set of 7 prizes decided by the site owner — this list and the
-// odds below are intentionally NOT exposed on any admin dashboard, exactly
-// as requested. The wheel's 7 visual slices are drawn equal-sized for a
-// clean look; the actual outcome is chosen separately using the weighted
-// odds below (which do not match the visual slice sizes on purpose — the
-// owner wants winning real prizes to be rare), then the wheel is spun to
-// land on whichever slice corresponds to that outcome.
-// ============================================================
-const WHEEL_SEGMENTS = [
-  {id:'try_again',  label:'Try Again',      color:'#1e3a5f', kind:'none'},
-  {id:'token100',   label:'+100 Token',     color:'#c2410c', kind:'token', value:100},
-  {id:'repeat',     label:'Repeat Chance',  color:'#2563eb', kind:'repeat'},
-  {id:'goodluck',   label:'Good Luck',      color:'#7c3aed', kind:'none'},
-  {id:'ets2',       label:'ETS2 MOD TZ',    color:'#16a34a', kind:'game', match:['ets','mod']},
-  {id:'token50',    label:'+50 Token',      color:'#b45309', kind:'token', value:50},
-  {id:'efootball',  label:'eFootball NBC 2027 🇹🇿', color:'#dc2626', kind:'game', match:['efootball','2027']},
-];
-// Odds (%) for a normal spin — the daily free spin, or a paid 100-token spin.
-const WHEEL_ODDS_NORMAL = {try_again:35, goodluck:35, repeat:25, token50:1.875, token100:1.875, efootball:1, ets2:0.25};
-// Odds (%) for the automatic bonus re-spin triggered by landing on "Repeat
-// Chance" — deliberately much harder to win a real prize on, per request.
-const WHEEL_ODDS_BONUS = {try_again:47.5, goodluck:47.5, token50:1.875, token100:1.875, efootball:1, ets2:0.25};
-const SPIN_MESSAGES = {
-  try_again: 'Jaribu tena siku nyingine👏',
-  goodluck: 'Tunakutakia siku iliyo bora🙏',
-  repeat: 'Rudia tena🤗',
-  efootball: 'Umezawadiwa zawadi nenda sasa ukapakue game bure🥰',
-  ets2: 'Umezawadiwa zawadi nenda sasa ukapakue game bure🥰',
-  token50: 'Ongera kwa kupata token🤝',
-  token100: 'Ongera kwa kupata token🤝',
-};
-const SPIN_EXTRA_COST = 100;
-const SPIN_TOKEN_CAP = 2500;
-const SPIN_FREE_INTERVAL = 24*60*60*1000;
-// Mfumo wenyewe huchagua/hupanga washindi wa game kila wiki — kikomo cha
-// juu cha watu 3 wanaoshinda zawadi ya game (eFootball/ETS2) kwa wiki
-// moja, kote kwenye app. Ukifika kikomo hicho, mtu yeyote atakayeanguka
-// kwenye kipande cha "game" kwenye wheel wiki hiyo hiyo atapewa token 100
-// badala yake (bado anapata kitu, lakini game imeisha kwa wiki hiyo).
-const WEEKLY_GAME_WIN_CAP = 3;
-
-function getWeekId(){
-  const d = new Date();
-  const target = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  const dayNum = (target.getUTCDay() + 6) % 7;
-  target.setUTCDate(target.getUTCDate() - dayNum + 3);
-  const firstThursday = new Date(Date.UTC(target.getUTCFullYear(),0,4));
-  const week = 1 + Math.round(((target - firstThursday) / 86400000 - 3 + ((firstThursday.getUTCDay()+6)%7)) / 7);
-  return target.getUTCFullYear() + '-W' + String(week).padStart(2,'0');
-}
-// Atomically checks + reserves one of this week's 3 game-prize slots.
-// Returns true if a slot was available and is now taken by this win.
-async function tryReserveWeeklyGameSlot(){
-  const ref = db.collection('wheelStats').doc(getWeekId());
-  return await db.runTransaction(async (tx)=>{
-    const doc = await tx.get(ref);
-    const count = (doc.exists && doc.data().gameWins) || 0;
-    if(count >= WEEKLY_GAME_WIN_CAP) return false;
-    tx.set(ref, {gameWins: count + 1}, {merge:true});
-    return true;
-  });
-}
-
-let wheelSpinning = false;
-
-// Shared helper: credit points/tokens to any user, capped at SPIN_TOKEN_CAP.
-// Used by the spin wheel AND the existing referral-points system (so a
-// referral bonus can never push someone's stored tokens past the cap).
-async function creditPointsCapped(uid, amount){
-  const ref = db.collection('users').doc(uid);
-  await db.runTransaction(async (tx)=>{
-    const doc = await tx.get(ref);
-    const current = (doc.exists && doc.data().points) || 0;
-    tx.update(ref, {points: Math.min(SPIN_TOKEN_CAP, current + amount)});
-  });
-}
-
-function pickWeighted(oddsMap){
-  const entries = Object.entries(oddsMap);
-  const total = entries.reduce((s,[,w])=>s+w, 0);
-  let r = Math.random() * total;
-  for(const [id,w] of entries){
-    if(r < w) return id;
-    r -= w;
-  }
-  return entries[entries.length-1][0];
-}
-
-function buildWheelDisc(){
-  const disc = document.getElementById('wheelDisc');
-  if(!disc || disc.dataset.built) return;
-  const n = WHEEL_SEGMENTS.length;
-  const slice = 360/n;
-  const stops = WHEEL_SEGMENTS.map((s,i)=> s.color+' '+(i*slice)+'deg '+((i+1)*slice)+'deg').join(',');
-  disc.style.background = 'conic-gradient(from 0deg,'+stops+')';
-  WHEEL_SEGMENTS.forEach((s,i)=>{
-    const centerAngle = i*slice + slice/2;
-    const anchor = document.createElement('div');
-    anchor.style.cssText = 'position:absolute;top:50%;left:50%;width:0;height:0;transform:rotate('+centerAngle+'deg);';
-    const span = document.createElement('span');
-    span.className = 'wheel-seg-label';
-    span.textContent = s.label;
-    span.style.cssText = 'position:absolute;display:block;width:86px;left:-43px;top:-74px;text-align:center;';
-    anchor.appendChild(span);
-    disc.appendChild(anchor);
-  });
-  disc.dataset.built = '1';
-}
-
-function rotateWheelToSegment(segId){
-  const disc = document.getElementById('wheelDisc');
-  const idx = WHEEL_SEGMENTS.findIndex(s=>s.id===segId);
-  const slice = 360/WHEEL_SEGMENTS.length;
-  const centerAngle = idx*slice + slice/2;
-  disc.style.transition = 'none';
-  disc.style.transform = 'rotate(0deg)';
-  void disc.offsetWidth; // force reflow so the reset above actually applies
-  disc.style.transition = '';
-  const target = 5*360 + (360 - centerAngle);
-  requestAnimationFrame(()=>{ disc.style.transform = 'rotate('+target+'deg)'; });
-}
-function waitForSpinAnimation(){
-  return new Promise(resolve=>{
-    const disc = document.getElementById('wheelDisc');
-    const done = ()=>{ disc.removeEventListener('transitionend', done); resolve(); };
-    disc.addEventListener('transitionend', done);
-    setTimeout(resolve, 5000); // safety net in case transitionend doesn't fire
-  });
-}
-function showSpinTransientMessage(seg){
-  const el = document.getElementById('spinResultMsg');
-  el.style.display = 'block';
-  el.textContent = SPIN_MESSAGES[seg.id] || '';
-}
-async function animateWheelTo(chain){
-  for(let i=0;i<chain.length;i++){
-    rotateWheelToSegment(chain[i]);
-    await waitForSpinAnimation();
-    if(i < chain.length-1){
-      showSpinTransientMessage(WHEEL_SEGMENTS.find(s=>s.id===chain[i]));
-      await new Promise(r=>setTimeout(r, 1100));
-    }
-  }
-}
-
-async function applySpinResult(uid, seg){
-  const userRef = db.collection('users').doc(uid);
-  if(seg.kind === 'token'){
-    await db.runTransaction(async (tx)=>{
-      const doc = await tx.get(userRef);
-      const current = (doc.exists && doc.data().points) || 0;
-      tx.update(userRef, {points: Math.min(SPIN_TOKEN_CAP, current + seg.value)});
-    });
-  } else if(seg.kind === 'game'){
-    const slotAvailable = await tryReserveWeeklyGameSlot();
-    if(!slotAvailable){
-      // Kikomo cha washindi 3 wa game kwa wiki kimefikiwa — mpe token 100
-      // badala yake ili bado apate kitu, lakini game imeisha kwa wiki hii.
-      await db.runTransaction(async (tx)=>{
-        const doc = await tx.get(userRef);
-        const current = (doc.exists && doc.data().points) || 0;
-        tx.update(userRef, {points: Math.min(SPIN_TOKEN_CAP, current + 100)});
-      });
-      showSpinTransientMessage({id:'token100'});
-      return;
-    }
-    const target = games.find(g => g.paid && seg.match.every(w => (g.name||'').toLowerCase().includes(w)));
-    if(target){
-      await db.collection('paymentRequests').doc(paymentDocId(uid, target.id)).set({
-        uid, userEmail: (auth.currentUser && auth.currentUser.email) || '',
-        gameId: target.id, gameName: target.name, price: target.price || '0',
-        status: 'approved', wonFromWheel: true,
-        createdAt: Date.now(), updatedAt: Date.now()
-      });
-    } else {
-      // The prize game isn't live on the site right now — log it so the
-      // admin can fulfill the win manually instead of it silently failing.
-      await db.collection('wheelClaims').add({
-        uid, userEmail: (auth.currentUser && auth.currentUser.email) || '',
-        prize: seg.label, time: Date.now(), fulfilled: false
-      });
-    }
-  }
-  showSpinTransientMessage(seg);
-}
-function logSpinHistory(uid, seg){
-  db.collection('spinHistory').add({uid, segId: seg.id, label: seg.label, time: Date.now()}).catch(e=>console.error(e));
-}
-
-async function doSpin(isPaid){
-  if(!auth.currentUser){ alert('Ingia kwenye akaunti yako kwanza kuweza ku-spin.'); showProfile(); return; }
-  if(wheelSpinning) return;
-  wheelSpinning = true;
-  const uid = auth.currentUser.uid;
-  const userRef = db.collection('users').doc(uid);
-  const mainBtn = document.getElementById('spinMainBtn');
-  const extraBtn = document.getElementById('spinExtraBtn');
-  const centerBtn = document.getElementById('wheelCenterBtn');
-  mainBtn.disabled = true; extraBtn.disabled = true; centerBtn.style.pointerEvents = 'none';
-  document.getElementById('spinResultMsg').style.display = 'none';
-  try{
-    await db.runTransaction(async (tx)=>{
-      const doc = await tx.get(userRef);
-      const data = doc.exists ? doc.data() : {};
-      const points = data.points || 0;
-      const lastFree = data.lastFreeSpinAt || 0;
-      const now = Date.now();
-      const freeAvailable = (now - lastFree) >= SPIN_FREE_INTERVAL;
-      if(isPaid || !freeAvailable){
-        if(points < SPIN_EXTRA_COST) throw new Error('not-enough-tokens');
-        tx.update(userRef, {points: points - SPIN_EXTRA_COST});
-      } else {
-        tx.update(userRef, {lastFreeSpinAt: now});
-      }
-    });
-    const chain = [];
-    let odds = WHEEL_ODDS_NORMAL;
-    let picked, guard = 0;
-    do{
-      picked = pickWeighted(odds);
-      chain.push(picked);
-      odds = WHEEL_ODDS_BONUS;
-      guard++;
-    } while(picked === 'repeat' && guard < 8);
-    const seg = WHEEL_SEGMENTS.find(s=>s.id===chain[chain.length-1]);
-    await animateWheelTo(chain);
-    await applySpinResult(uid, seg);
-    logSpinHistory(uid, seg);
-    loadSpinHistory();
-  }catch(e){
-    console.error(e);
-    if(e.message === 'not-enough-tokens'){
-      alert('Token zako hazitoshi (unahitaji 🪙100) kuendelea ku-spin.');
-    } else {
-      alert('Imeshindwa. Jaribu tena.');
-    }
-  }finally{
-    wheelSpinning = false;
-    mainBtn.disabled = false; extraBtn.disabled = false; centerBtn.style.pointerEvents = 'auto';
-    refreshSpinAvailability();
-  }
-}
-
-function refreshSpinAvailability(){
-  if(!auth.currentUser) return;
-  db.collection('users').doc(auth.currentUser.uid).get().then(doc=>{
-    const data = doc.exists ? doc.data() : {};
-    const points = data.points || 0;
-    const lastFree = data.lastFreeSpinAt || 0;
-    const msLeft = SPIN_FREE_INTERVAL - (Date.now() - lastFree);
-    const mainBtn = document.getElementById('spinMainBtn');
-    const extraBtn = document.getElementById('spinExtraBtn');
-    const statusText = document.getElementById('spinStatusText');
-    if(msLeft <= 0){
-      mainBtn.style.display = 'block';
-      extraBtn.style.display = 'none';
-      statusText.textContent = 'Una spin moja ya bure leo 🎉';
-    } else {
-      mainBtn.style.display = 'none';
-      const h = Math.floor(msLeft/3600000), m = Math.floor((msLeft%3600000)/60000);
-      statusText.textContent = 'Spin yako ya bure ijayo baada ya ' + h + 'h ' + m + 'm.';
-      extraBtn.style.display = 'block';
-      extraBtn.disabled = points < SPIN_EXTRA_COST;
-      extraBtn.textContent = points < SPIN_EXTRA_COST ? 'Unahitaji 🪙100 Token kuendelea' : 'Spin tena kwa 🪙 100 Token';
-    }
-  }).catch(e=>console.error(e));
-}
-function loadSpinHistory(){
-  if(!auth.currentUser) return;
-  db.collection('spinHistory').where('uid','==',auth.currentUser.uid).orderBy('time','desc').limit(10).get().then(snap=>{
-    const list = document.getElementById('spinHistoryList');
-    if(snap.empty){ list.textContent = 'Bado hujaspini.'; return; }
-    list.innerHTML = snap.docs.map(d=>{
-      const m = d.data();
-      const t = new Date(m.time);
-      const dd = String(t.getDate()).padStart(2,'0'), mo = String(t.getMonth()+1).padStart(2,'0');
-      return '<div class="spin-hist-item"><span class="lbl">'+escapeHtml(m.label)+'</span><span class="tm">'+dd+'/'+mo+'</span></div>';
-    }).join('');
-  }).catch(e=>console.error(e));
-}
-
-function showSpinWheel(){
-  hideAllViews();
-  document.getElementById('spinView').style.display = 'flex';
-  buildWheelDisc();
-  document.getElementById('spinResultMsg').style.display = 'none';
-  if(!auth.currentUser){
-    document.getElementById('spinStatusText').textContent = 'Ingia kwenye akaunti yako kwanza ili uweze ku-spin.';
-    document.getElementById('spinMainBtn').style.display = 'none';
-    document.getElementById('spinExtraBtn').style.display = 'none';
-  } else {
-    refreshSpinAvailability();
-    loadSpinHistory();
-  }
-}
 
 // ---- Tournaments ----
 const SPORTS = [
