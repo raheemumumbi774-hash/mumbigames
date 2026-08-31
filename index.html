@@ -332,6 +332,11 @@
   .d-gthumb img{width:100%;height:100%;object-fit:cover;display:block;}
   .d-gbadge{position:absolute;top:8px;left:8px;background:var(--lime);color:var(--bg);font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:capitalize;}
   .d-gstock{position:absolute;top:8px;right:8px;background:rgba(10,10,22,0.75);color:#fff;font-size:9px;font-weight:600;padding:3px 7px;border-radius:20px;}
+  .d-gnew{position:absolute;bottom:8px;left:8px;background:linear-gradient(135deg,#ff9d00,#ffd347);color:#241800;font-size:9px;font-weight:800;padding:3px 8px;border-radius:20px;}
+  .d-gclosed-overlay{position:absolute;inset:0;background:rgba(10,10,10,0.72);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;letter-spacing:0.5px;}
+  .d-gowner-btn{flex:1.4;font-size:10px;font-weight:800;border-radius:20px;padding:7px 0;cursor:pointer;font-family:'Baloo 2',sans-serif;}
+  .d-gowner-btn.close{background:linear-gradient(135deg,#ff4d4d,#c1121f);color:#fff;border:none;}
+  .d-gowner-btn.reopen{background:var(--lime);color:var(--bg);border:none;}
   .d-gbody{padding:10px 11px 12px;}
   .d-gname{font-size:11px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   .d-gbrand{font-size:9px;color:var(--sub);margin-top:2px;}
@@ -921,6 +926,20 @@
         <button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="overlay" id="listingOverlay">
+  <div class="modal">
+    <div id="lmThumb" class="modal-thumb" style="height:220px;"></div>
+    <div id="lmBadges" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"></div>
+    <h3 id="lmTitle">Bidhaa</h3>
+    <div id="lmBrand" style="font-size:10px;color:var(--sub);margin:2px 0 8px;"></div>
+    <div id="lmPriceRow" style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;"></div>
+    <p id="lmDesc" class="modal-desc"></p>
+    <div id="lmMeta" style="font-size:10.5px;color:var(--sub);margin-bottom:16px;line-height:1.7;"></div>
+    <div id="lmActions" class="modal-actions" style="flex-direction:column;gap:8px;"></div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="closeListingModal()">Funga</button>
   </div>
 </div>
 
@@ -3248,15 +3267,20 @@ const CONDITION_LABELS = {new:'✨ Mpya', used:'♻️ Imetumika', refurbished:'
 function loadListings(){
   db.collection('listings').where('status','==','approved').onSnapshot(snap=>{
     const approved = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    window._dukaListings = approved;
     document.getElementById('dukaList').innerHTML = approved.length ? approved.map(l=>{
       const stockNum = (l.stock===undefined || l.stock===null || l.stock==='') ? null : parseInt(l.stock,10);
-      const outOfStock = stockNum !== null && stockNum <= 0;
+      const isNew = l.createdAt && (Date.now() - l.createdAt) < (3*24*60*60*1000);
+      const isOwner = auth.currentUser && l.ownerUid === auth.currentUser.uid;
+      const lJson = JSON.stringify(l).replace(/'/g,"&#39;");
       return `
-      <div class="d-gcard">
+      <div class="d-gcard" onclick='openListingDetail(${lJson})'>
         <div class="d-gthumb">
           ${l.image ? `<img src="${l.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(l.title)}" loading="eager" decoding="async">` : ''}
           ${l.condition ? `<div class="d-gbadge">${CONDITION_LABELS[l.condition]||l.condition}</div>` : ''}
-          ${stockNum !== null ? `<div class="d-gstock">${outOfStock ? 'Imeisha' : stockNum + ' zilizopo'}</div>` : ''}
+          ${stockNum !== null ? `<div class="d-gstock">${stockNum} zilizopo</div>` : ''}
+          ${isNew && !l.closed ? `<div class="d-gnew">🆕 Mpya</div>` : ''}
+          ${l.closed ? `<div class="d-gclosed-overlay">🔒 IMEUZWA</div>` : ''}
         </div>
         <div class="d-gbody">
           <div class="d-gname">${escapeHtml(l.title)}</div>
@@ -3266,10 +3290,12 @@ function loadListings(){
             ${l.wasPrice ? `<span class="d-gwas">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}
           </div>
           <div class="d-gactions">
-            ${outOfStock
-              ? `<button class="d-gbuy" disabled style="opacity:0.45;cursor:not-allowed;">Imeisha</button>`
-              : `<button class="d-gbuy" onclick='buyListingOnWhatsApp(${JSON.stringify(l).replace(/'/g,"&#39;")})'>💬 Nunua</button>`}
-            <button class="d-greport" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title).replace(/'/g,"&#39;")})'>🚩 Ripoti</button>
+            ${isOwner
+              ? `<button class="d-gowner-btn ${l.closed?'reopen':'close'}" onclick='event.stopPropagation();toggleListingClosed(${JSON.stringify(l.id)},${!!l.closed})'>${l.closed?'🔓 Fungua Tena':'🔒 Funga (Imeuzwa)'}</button>`
+              : l.closed
+                ? `<button class="d-gbuy" disabled style="opacity:0.45;cursor:not-allowed;">Imeuzwa</button>`
+                : `<button class="d-gbuy" onclick='event.stopPropagation();buyListingOnWhatsApp(${lJson})'>💬 Nunua</button>`}
+            ${!isOwner ? `<button class="d-greport" onclick='event.stopPropagation();reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title).replace(/'/g,"&#39;")})'>🚩 Ripoti</button>` : ''}
           </div>
         </div>
       </div>`;
@@ -3278,6 +3304,64 @@ function loadListings(){
     console.error(err);
     document.getElementById('dukaList').innerHTML = '<div class="empty">Imeshindwa kupakia. Jaribu tena.</div>';
   });
+}
+
+// A seller can lock (mark sold/unavailable) or reopen their own listing at
+// any time, on their own judgement — this is fully manual and has nothing
+// to do with the stock number, which is purely informational.
+async function toggleListingClosed(id, currentlyClosed){
+  if(!auth.currentUser){ alert('Ingia kwenye akaunti yako kwanza.'); return; }
+  try{
+    await db.collection('listings').doc(id).update({closed: !currentlyClosed});
+  }catch(e){
+    alert('Imeshindwa kubadilisha hali ya bidhaa. Jaribu tena.');
+  }
+}
+
+// Full-detail view for a listing, opened by tapping its card. Shows the
+// same info as the card plus description, condition/category/delivery
+// details, and the same buy/report (or owner close/reopen) actions.
+function openListingDetail(l){
+  const stockNum = (l.stock===undefined || l.stock===null || l.stock==='') ? null : parseInt(l.stock,10);
+  const isNew = l.createdAt && (Date.now() - l.createdAt) < (3*24*60*60*1000);
+  const isOwner = auth.currentUser && l.ownerUid === auth.currentUser.uid;
+  const lJson = JSON.stringify(l).replace(/'/g,"&#39;");
+
+  document.getElementById('lmThumb').style.backgroundImage = l.image ? `url('${l.image.replace(/'/g,"\\'")}')` : '';
+  document.getElementById('lmTitle').textContent = l.title || '';
+  document.getElementById('lmBrand').textContent = l.brand || '';
+
+  const badges = [];
+  if(l.condition) badges.push(`<span class="tag">${CONDITION_LABELS[l.condition]||l.condition}</span>`);
+  if(l.category) badges.push(`<span class="tag">${escapeHtml(l.category)}</span>`);
+  if(stockNum !== null) badges.push(`<span class="tag">📦 ${stockNum} zilizopo</span>`);
+  if(l.freeShipping) badges.push(`<span class="tag">🚚 Delivery Bure</span>`);
+  else if(l.deliveryFee) badges.push(`<span class="tag">🚚 Delivery TZS ${escapeHtml(l.deliveryFee)}</span>`);
+  if(isNew && !l.closed) badges.push(`<span class="tag" style="background:linear-gradient(135deg,#ff9d00,#ffd347);color:#241800;border:none;">🆕 Mpya</span>`);
+  if(l.closed) badges.push(`<span class="tag" style="background:#c1121f;color:#fff;border:none;">🔒 Imeuzwa</span>`);
+  document.getElementById('lmBadges').innerHTML = badges.join('');
+
+  document.getElementById('lmPriceRow').innerHTML = `<span class="d-gprice" style="font-size:16px;">TZS ${escapeHtml(l.price)}</span>${l.wasPrice ? `<span class="d-gwas">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}`;
+  document.getElementById('lmDesc').textContent = l.desc || '';
+  document.getElementById('lmMeta').innerHTML = l.sellerName ? `Muuzaji: ${escapeHtml(l.sellerName)}` : '';
+
+  let actionsHtml = '';
+  if(isOwner){
+    actionsHtml = `<button class="d-gowner-btn ${l.closed?'reopen':'close'}" style="width:100%;padding:12px 0;font-size:12px;" onclick='toggleListingClosed(${JSON.stringify(l.id)},${!!l.closed});closeListingModal();'>${l.closed?'🔓 Fungua Tena':'🔒 Funga (Imeuzwa)'}</button>`;
+  } else if(l.closed){
+    actionsHtml = `<button class="d-gbuy" disabled style="width:100%;padding:12px 0;font-size:12px;opacity:0.45;cursor:not-allowed;">Bidhaa Imeuzwa</button>`;
+  } else {
+    actionsHtml = `<button class="d-gbuy" style="width:100%;padding:12px 0;font-size:12px;" onclick='buyListingOnWhatsApp(${lJson})'>💬 Nunua kwa WhatsApp</button>`;
+  }
+  if(!isOwner){
+    actionsHtml += `<button class="d-greport" style="width:100%;padding:9px 0;" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title).replace(/'/g,"&#39;")});closeListingModal();'>🚩 Ripoti</button>`;
+  }
+  document.getElementById('lmActions').innerHTML = actionsHtml;
+
+  document.getElementById('listingOverlay').classList.add('show');
+}
+function closeListingModal(){
+  document.getElementById('listingOverlay').classList.remove('show');
 }
 
 async function reportListing(id, title){
@@ -3308,25 +3392,15 @@ function formatPhoneForWhatsApp(phone){
 
 // Opens a WhatsApp chat directly with the seller of a listing, with a
 // friendly pre-filled message so the seller instantly knows which item
-// the buyer is asking about. No payment happens inside the app — buyer
-// and seller arrange everything themselves on WhatsApp from here. If the
-// listing tracks stock, each tap counts as one unit bought and lowers the
-// "zilizopo" count in real time for everyone browsing Duka; once it hits
-// 0 the card automatically shows "Imeisha" instead (see loadListings).
+// the buyer is asking about. No payment happens inside the app, and stock
+// is purely informational — it never auto-locks the listing. Only the
+// seller themselves can mark a listing as sold/unavailable (see
+// toggleListingClosed), whenever they decide it's actually sold.
 function buyListingOnWhatsApp(l){
   const phone = formatPhoneForWhatsApp(l.sellerPhone);
   if(!phone){
     alert('Samahani, muuzaji hakuweka namba sahihi. Jaribu kuripoti tangazo hili.');
     return;
-  }
-  if(l.stock !== undefined && l.stock !== null && l.stock !== ''){
-    const listingRef = db.collection('listings').doc(l.id);
-    db.runTransaction(async (tx)=>{
-      const doc = await tx.get(listingRef);
-      if(!doc.exists) return;
-      const current = parseInt(doc.data().stock, 10) || 0;
-      if(current > 0) tx.update(listingRef, {stock: current - 1});
-    }).catch(e=>console.error(e));
   }
   const msg = 'Habari! 👋 Nilikuwa nahitaji bidhaa uliyopost kwenye mumbigames Duka — *' + l.title + '* (TZS ' + l.price + '). Bado ipo? Tuzungumze bei na delivery hapa 🙏';
   window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
@@ -3430,6 +3504,7 @@ async function submitListing(){
       ownerUid: auth.currentUser.uid,
       ownerEmail: auth.currentUser.email || '',
       status: 'pending',
+      closed: false,
       createdAt: Date.now()
     });
   }catch(e){
