@@ -241,6 +241,8 @@
   .chat-header .back{width:30px;height:30px;border-radius:8px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14.5px;color:var(--sub);}
   .chat-header .title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13.5px;}
   .chat-header .sub{font-size:10px;color:var(--sub);}
+  .ai-online-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:4px;box-shadow:0 0 4px #22c55e;animation:aiPulse 1.8s infinite;}
+  @keyframes aiPulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
   .wa-btn{flex:none;background:var(--panel);border:1px solid var(--line);color:var(--lime);font-size:10px;font-weight:600;padding:8px 12px;border-radius:20px;}
   .name-gate{padding:40px 20px;text-align:center;}
   .name-gate .mark{margin:0 auto 14px;}
@@ -336,9 +338,14 @@
   .d-gprice-row{display:flex;align-items:baseline;gap:6px;margin-top:6px;flex-wrap:wrap;}
   .d-gprice{font-size:12px;color:var(--lime);font-weight:800;}
   .d-gwas{font-size:9.5px;color:var(--sub);text-decoration:line-through;}
-  .d-greport{width:100%;margin-top:8px;font-size:9px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:5px 0;cursor:pointer;}
+  .d-gactions{display:flex;gap:6px;margin-top:8px;}
+  .d-gbuy{flex:1.4;font-size:10px;font-weight:800;color:#241800;background:linear-gradient(135deg,#25d366,#128c7e);border:none;border-radius:20px;padding:7px 0;cursor:pointer;color:#fff;}
+  .d-greport{flex:1;font-size:9px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:5px 0;cursor:pointer;}
   #dukaPost label{display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;}
   #dukaPost input, #dukaPost textarea{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;font-family:'Baloo 2',sans-serif;}
+  .wa-link-wrap{display:flex;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+  .wa-link-prefix{padding:11px 8px 11px 13px;font-size:11.5px;color:var(--sub);font-family:'Baloo 2',sans-serif;white-space:nowrap;background:rgba(37,211,102,0.08);border-right:1px solid var(--line);}
+  .wa-link-wrap input{border:none!important;background:none!important;padding:11px 13px 11px 6px!important;}
   #dukaPost textarea{min-height:70px;resize:vertical;}
   #lFreeShipping:checked ~ #lFreeShippingTrack{background:var(--lime);}
   #lFreeShipping:checked ~ #lFreeShippingKnob{transform:translateX(20px);}
@@ -472,7 +479,7 @@
   </div>
 
   <div id="dukaBrowse" class="duka-panel">
-    <div class="duka-warning" data-i18n="duka_warning">🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani, na kila muuzaji lazima awe na akaunti iliyosajiliwa (si mtu wa ghafla asiyejulikana). Malipo YOTE yafanyike kwa namba ya admin pekee (Tigo Pesa 0703504270) — admin ndiye anayemuunganisha mnunuzi na muuzaji. USITUME PESA moja kwa moja kwa muuzaji wala kwa namba nyingine yoyote — hilo ni ishara ya matapeli. Ukiona bidhaa/tabia ya utapeli, bonyeza "Ripoti" chini ya bidhaa.</div>
+    <div class="duka-warning" data-i18n="duka_warning">🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani, na kila muuzaji lazima awe na akaunti iliyosajiliwa (si mtu wa ghafla asiyejulikana). Ukibonyeza "Nunua", utapelekwa WhatsApp kuongea moja kwa moja na muuzaji — malipo na delivery mnapangana ninyi wenyewe kule. Kuwa makini: usilipe kabla ya kuridhika na muuzaji. Ukiona bidhaa/tabia ya utapeli, bonyeza "Ripoti" chini ya bidhaa.</div>
     <div id="dukaList" class="d-grid"></div>
   </div>
 
@@ -584,8 +591,12 @@
       <input type="hidden" id="lImage" value="">
       <label data-i18n="duka_f_name">Jina lako</label>
       <input type="text" id="lSellerName" placeholder="Jina lako">
-      <label data-i18n="duka_f_phone">Namba yako ya simu</label>
-      <input type="text" id="lSellerPhone" placeholder="07XXXXXXXX">
+      <label data-i18n="duka_f_phone">Namba yako ya WhatsApp (itakuwa link ya moja kwa moja)</label>
+      <div class="wa-link-wrap">
+        <span class="wa-link-prefix">wa.me/255</span>
+        <input type="text" id="lSellerPhone" placeholder="7XXXXXXXX" maxlength="9" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      </div>
+      <p class="duka-note" style="margin-top:4px;">Andika namba yako bila sifuri mwanzoni (mfano: 712345678). Mfumo utaunda link ya WhatsApp moja kwa moja kwa wanunuzi.</p>
       <button class="post-btn" onclick="submitListing()" data-i18n="duka_submit">Tuma kwa Ukaguzi wa Admin</button>
       <p class="duka-note" data-i18n="duka_note">Bidhaa yako haitaonekana kwa umma mpaka admin aithibitishe kuwa ni ya kweli. Kuweka taarifa za uongo kunaweza kukufanya uzuiliwe kutumia Duka.</p>
     </div>
@@ -723,8 +734,8 @@
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
-      <div class="title" data-i18n="ai_title">🤖 AI Msaidizi</div>
-      <div class="sub" data-i18n="ai_sub">Uliza kuhusu malipo, kuseti game, na zaidi</div>
+      <div class="title" data-i18n="ai_title">🤖 FunBot ✨</div>
+      <div class="sub"><span class="ai-online-dot"></span><span data-i18n="ai_sub">Msaidizi wako wa mumbigames • Online</span></div>
     </div>
   </div>
   <div class="ai-quick" id="aiQuick"></div>
@@ -2253,7 +2264,7 @@ const AI_KB = [
   {keys:['wewe ni nani','jina lako','ni nani wewe'], a:'Mimi ni msaidizi wa mumbigames 🤖 — nipo hapa kukusaidia na chochote kuhusu app hii: malipo, kuseti games, duka, kura, points, na zaidi. Niulize chochote!'},
 
   // --- Payments ---
-  {keys:['lipa','malipo','pay','pesa','tigo','kulipia'], a:'Kulipia game: fungua game, tuma pesa Tigo Pesa 0703504270 (jina: Josh Abdallahman), jaza namba uliyotumia, pakia picha MBILI za screenshot ya muamala, kisha bonyeza "Nimelipa ✓". Ombi lako litasubiri admin (binadamu) athibitishe kwa kuangalia picha zako — download itafunguka moja kwa moja mara tu atakapothibitisha. Ukisubiri zaidi ya dakika 5, mimi (AI) ninaweza kuanza kukusaidia moja kwa moja kwenye ukurasa huo huo. Kwa bidhaa za dukani, malipo pia hupitia admin ili kukukinga na matapeli — usiwahi kutuma pesa moja kwa moja kwa muuzaji.'},
+  {keys:['lipa','malipo','pay','pesa','tigo','kulipia'], a:'Kulipia game: fungua game, tuma pesa Tigo Pesa 0703504270 (jina: Josh Abdallahman), jaza namba uliyotumia, pakia picha MBILI za screenshot ya muamala, kisha bonyeza "Nimelipa ✓". Ombi lako litasubiri admin (binadamu) athibitishe kwa kuangalia picha zako — download itafunguka moja kwa moja mara tu atakapothibitisha. Ukisubiri zaidi ya dakika 5, mimi (AI) ninaweza kuanza kukusaidia moja kwa moja kwenye ukurasa huo huo. Kwa bidhaa za Duka (marketplace), ukibonyeza "Nunua" utapelekwa WhatsApp kuongea na muuzaji moja kwa moja — malipo na delivery mnapangana wenyewe kule, hii haihusiani na malipo ya games.'},
   {keys:['bure','free','za bure'], a:'Games za "Bure" unaweza kuzidownload moja kwa moja bila malipo — bonyeza game, kisha "DOWNLOAD GAME FILE" (na "DOWNLOAD EMULATOR" kama linahitaji). Chuja kwa kubonyeza kichupo "Bure" juu ya orodha ya games kuona zote za bure tu.'},
   {keys:['za kulipia','paid','bei','price'], a:'Games za "Kulipia" zina bei iliyoonyeshwa. Baada ya kulipa na kuthibitishwa (ona swali la "malipo"), download inafunguka. Unaweza pia kupata game la kulipia BURE kwa kutumia token 500 ulizokusanya kwa kualika marafiki — angalia Profile → "Alika Marafiki".'},
 
@@ -2278,23 +2289,80 @@ const AI_KB = [
   {keys:['download','pakua','haifunguki','tatizo'], a:'Kama download haifanyi kazi, hakikisha una mtandao mzuri na jaribu tena. Kumbuka: baada ya kubonyeza download, subiri hesabu ya sekunde ipite kabla faili halijafunguka — hii ni ya kawaida. Kama tatizo linaendelea, wasiliana na admin kupitia WhatsApp kwenye ukurasa wa Chat.'},
   {keys:['akaunti','login','ingia','jisajili','password'], a:'Nenda Profile (chini kulia, icon ya ☺), jaza email na password kuunda akaunti au kuingia. Akaunti inakusaidia kuona games ulizonunua hata ukibadili simu, kutumia mfumo wa points, na kutoa maoni kwenye games.'},
   {keys:['maoni','comment'], a:'Kila game ina sehemu ya "💬 Maoni" — bonyeza namba iliyo karibu na icon ya 💬 kwenye card ya game kuona maoni ya wengine na kutoa lako mwenyewe.'},
-  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'}
+  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'},
+  {keys:['kuhusu app','app hii inafanyaje','vipengele vya app','unaweza kunisaidiaje','unajua nini','app hii ni nini','mumbigames ni nini'], a:'mumbigames ni jukwaa la kupakua games za simu (bure na za kulipia) kwa ajili ya wachezaji Tanzania 🇹🇿. Vipengele vilivyopo: 🎮 Orodha ya games (chuja kwa Bure/Kulipia/Offline), 🛍️ Duka la Wachezaji (uza/nunua vifaa vya games — ukibonyeza "Nunua" unapelekwa WhatsApp kuongea moja kwa moja na muuzaji), 🏆 Tournament (mashindano ya games), 🗳️ Kura (piga kura kwenye maswali ya admin), 💬 Chat ya jamii, 🪙 Mfumo wa Token (kualika marafiki kupata token, token 500 = game bure), na akaunti binafsi (Profile) inayohifadhi historia ya ununuzi wako. Niulize chochote zaidi kuhusu chochote kati ya hivi, au niulize kuhusu game maalum kwa jina lake!'}
 ];
 
 function initAI(){
   const quick = document.getElementById('aiQuick');
   if(quick.dataset.init) return;
   quick.dataset.init = '1';
-  const topics = ['Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Kuseti MoBox','Kuseti AetherSX2','Kuseti Yuzu/Skyline','Kuseti Dolphin','Duka linafanyaje kazi','Mfumo wa Points'];
+  const topics = ['Nionyeshe games zote','Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Duka linafanyaje kazi','Mfumo wa Token','Kuhusu app hii'];
   quick.innerHTML = topics.map(t=>`<div class="ai-chip" onclick="aiAsk(${JSON.stringify(t)})">${t}</div>`).join('');
   const box = document.getElementById('aiMessages');
-  box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni msaidizi wa mumbigames 🤖 Niulize chochote — malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, points, au hata ukitaka tu kuongea, niko hapa kwa ajili yako.</div>`;
+  box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni FunBot 🤖✨ msaidizi wako wa mumbigames. Ninajua games ZOTE zilizopo kwenye site (niulize kwa jina lolote!), pamoja na malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, token, na zaidi. Au ukitaka tu kuongea, niko hapa kwa ajili yako 😊</div>`;
+}
+
+// Builds a rich, friendly answer about one specific game using its live
+// Firestore data (name, genre, price, offline/online, description, and
+// the same performance wording shown on the game's own detail page).
+function describeGame(g){
+  const priceTxt = g.paid ? ('Kulipia — TZS ' + (g.price||'0')) : 'Bure kabisa 🎉';
+  const offlineTxt = g.offline==='yes' ? '📴 Inachezeka Offline (bila mtandao)' : '📶 Inahitaji mtandao (Online)';
+  let perfTxt = '';
+  if(g.performance==='good') perfTxt = '⚡ Utendaji: Mzuri (60 FPS+) kwenye simu nyingi.';
+  else if(g.performance==='mid') perfTxt = '⚡ Utendaji: Wastani (25-40 FPS) — inategemea nguvu ya simu yako.';
+  else if(g.performance==='low') perfTxt = '⚡ Utendaji: Chini ya 25 FPS kwenye baadhi ya simu — tarajia lag kidogo.';
+  const desc = (g.desc || g.genre || '').trim();
+  const lines = [
+    '🎮 *' + g.name + '*' + (g.genre ? ' — ' + g.genre : ''),
+    desc,
+    '💰 ' + priceTxt,
+    offlineTxt,
+    perfTxt,
+    '',
+    'Fungua game hili kwenye Home (tafuta "' + g.name + '") kuipakua!'
+  ].filter(Boolean);
+  return lines.join('\n');
+}
+
+// Finds live games whose name matches (or is matched by) the user's text —
+// handles both "niambie kuhusu GTA" and someone typing just the game name.
+function findGameMatches(text){
+  const lower = text.toLowerCase().trim();
+  if(lower.length < 2) return [];
+  return games.filter(g=>{
+    const name = (g.name||'').toLowerCase();
+    if(!name) return false;
+    return lower.includes(name) || (name.length > 3 && name.includes(lower));
+  });
 }
 
 function aiRespond(text){
-  const lower = text.toLowerCase();
+  const lower = text.toLowerCase().trim();
+
+  // 1) "list all games" intent
+  if(/(games zote|orodha ya games|una games gani|list of games|show all games|zipi.*games|games zilizopo)/.test(lower)){
+    if(!games.length) return 'Kwa sasa sina taarifa za games — jaribu tena baada ya sekunde chache au fungua ukurasa wa Home.';
+    const shown = games.slice(0, 25);
+    const names = shown.map(g=>'• ' + g.name + (g.paid ? ' (TZS '+g.price+')' : ' (Bure)')).join('\n');
+    const more = games.length > 25 ? '\n...na nyingine ' + (games.length - 25) + ' zaidi — fungua Home kuona zote.' : '';
+    return '🕹️ Hizi ni games zilizopo kwenye mumbigames sasa hivi:\n\n' + names + more + '\n\nNiambie jina la moja nikuelezee zaidi!';
+  }
+
+  // 2) specific game lookup (by name, using live Firestore data)
+  const matches = findGameMatches(text);
+  if(matches.length === 1) return describeGame(matches[0]);
+  if(matches.length > 1 && matches.length <= 6){
+    return 'Nimepata games kadhaa zinazolingana na hilo:\n' + matches.map(g=>'• '+g.name).join('\n') + '\n\nAndika jina kamili la moja unayotaka nikuelezee vizuri zaidi.';
+  }
+
+  // 3) FAQ / knowledge-base match
   const hit = AI_KB.find(k=>k.keys.some(w=>lower.includes(w)));
-  return hit ? hit.a : 'Naelewa unachouliza, lakini sijapata jibu kamili kwenye maarifa yangu 🤔 Jaribu kuniambia kwa namna nyingine, au tumia maneno kama "malipo", "Winlator", "PPSSPP", "duka", "kura" au "points". Kama bado imekwama, admin yupo tayari kukusaidia moja kwa moja kupitia WhatsApp kwenye ukurasa wa Chat.';
+  if(hit) return hit.a;
+
+  const sample = games.length ? games[Math.floor(Math.random()*games.length)].name : 'jina la game';
+  return 'Naelewa unachouliza, lakini sijapata jibu kamili kwenye maarifa yangu 🤔 Unaweza kuniuliza kuhusu game yoyote kwa jina lake (mfano "' + sample + '"), au tumia maneno kama "malipo", "duka", "kura", "token". Kama bado imekwama, admin yupo tayari kukusaidia moja kwa moja WhatsApp kwenye ukurasa wa Chat.';
 }
 
 function aiAddMsg(text, who){
@@ -3197,7 +3265,12 @@ function loadListings(){
             <span class="d-gprice">TZS ${escapeHtml(l.price)}</span>
             ${l.wasPrice ? `<span class="d-gwas">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}
           </div>
-          <button class="d-greport" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title).replace(/'/g,"&#39;")})'>🚩 Ripoti</button>
+          <div class="d-gactions">
+            ${outOfStock
+              ? `<button class="d-gbuy" disabled style="opacity:0.45;cursor:not-allowed;">Imeisha</button>`
+              : `<button class="d-gbuy" onclick='buyListingOnWhatsApp(${JSON.stringify(l).replace(/'/g,"&#39;")})'>💬 Nunua</button>`}
+            <button class="d-greport" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title).replace(/'/g,"&#39;")})'>🚩 Ripoti</button>
+          </div>
         </div>
       </div>`;
     }).join('') : '<div class="empty">Bado hakuna bidhaa iliyothibitishwa. Kuwa wa kwanza kuweka! 🛍️</div>';
@@ -3222,6 +3295,41 @@ async function reportListing(id, title){
   }catch(e){
     alert('Imeshindwa kutuma taarifa. Jaribu tena.');
   }
+}
+
+// Normalizes a Tanzanian phone number into WhatsApp's wa.me format
+// (255XXXXXXXXX, no plus, no spaces/dashes, no leading zero).
+function formatPhoneForWhatsApp(phone){
+  let p = (phone || '').replace(/[^\d]/g, '');
+  if(p.startsWith('0')) p = '255' + p.slice(1);
+  else if(!p.startsWith('255')) p = '255' + p;
+  return p;
+}
+
+// Opens a WhatsApp chat directly with the seller of a listing, with a
+// friendly pre-filled message so the seller instantly knows which item
+// the buyer is asking about. No payment happens inside the app — buyer
+// and seller arrange everything themselves on WhatsApp from here. If the
+// listing tracks stock, each tap counts as one unit bought and lowers the
+// "zilizopo" count in real time for everyone browsing Duka; once it hits
+// 0 the card automatically shows "Imeisha" instead (see loadListings).
+function buyListingOnWhatsApp(l){
+  const phone = formatPhoneForWhatsApp(l.sellerPhone);
+  if(!phone){
+    alert('Samahani, muuzaji hakuweka namba sahihi. Jaribu kuripoti tangazo hili.');
+    return;
+  }
+  if(l.stock !== undefined && l.stock !== null && l.stock !== ''){
+    const listingRef = db.collection('listings').doc(l.id);
+    db.runTransaction(async (tx)=>{
+      const doc = await tx.get(listingRef);
+      if(!doc.exists) return;
+      const current = parseInt(doc.data().stock, 10) || 0;
+      if(current > 0) tx.update(listingRef, {stock: current - 1});
+    }).catch(e=>console.error(e));
+  }
+  const msg = 'Habari! 👋 Nilikuwa nahitaji bidhaa uliyopost kwenye mumbigames Duka — *' + l.title + '* (TZS ' + l.price + '). Bado ipo? Tuzungumze bei na delivery hapa 🙏';
+  window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
 // ---- Listing image upload to Firebase Storage (accepts any image type — not locked to .jpg) ----
@@ -3307,6 +3415,10 @@ async function submitListing(){
   const image = document.getElementById('lImage').value.trim();
   const sellerName = document.getElementById('lSellerName').value.trim();
   const sellerPhone = document.getElementById('lSellerPhone').value.trim();
+  if(sellerPhone && !/^[67]\d{8}$/.test(sellerPhone)){
+    alert('Namba ya WhatsApp si sahihi. Andika tarakimu 9 baada ya 255, zianze na 6 au 7 (mfano: 712345678).');
+    return;
+  }
   if(!title || !price || !sellerName || !sellerPhone){
     alert('Jaza jina la bidhaa, bei, jina lako na namba yako kabla ya kutuma.');
     return;
@@ -3515,12 +3627,12 @@ const TRANSLATIONS = {
     tourn_min_teams:'Angalau timu 4 zinahitajika.', tourn_finish:'Unda Tournament',
     chip_all:'Zote', chip_free:'Bure', chip_paid:'Kulipia', chip_offline:'Offline',
     poll_title:'Kura (Poll)', poll_sub:'Piga kura, ona matokeo',
-    ai_title:'🤖 AI Msaidizi', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi',
+    ai_title:'🤖 FunBot ✨', ai_sub:'Msaidizi wako wa mumbigames • Online',
     profile_title:'Profile Yangu', profile_sub:'Akaunti yako mumbigames',
     duka_title:'Duka la Wachezaji', duka_sub:'Vifaa vya games — vilivyothibitishwa na admin',
     duka_sub_home:'Nunua/uza vifaa vya games — vilivyothibitishwa na admin',
     duka_browse:'Tazama Bidhaa', duka_post_tab:'Weka Bidhaa',
-    duka_warning:'🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani. Malipo YOTE yafanyike kwa namba ya admin pekee (Tigo Pesa 0703504270) — USITUME PESA moja kwa moja kwa muuzaji. Ukiona utapeli, bonyeza "Ripoti".',
+    duka_warning:'🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani. Ukibonyeza "Nunua", utapelekwa WhatsApp kuongea na muuzaji moja kwa moja — malipo na delivery mnapangana wenyewe kule. Kuwa makini kabla ya kulipa. Ukiona utapeli, bonyeza "Ripoti".',
     duka_f_title:'Jina la bidhaa', duka_f_desc:'Maelezo', duka_f_price:'Bei (TZS)',
     duka_f_image:'Picha ya bidhaa', duka_f_name:'Jina lako', duka_f_phone:'Namba yako ya simu',
     duka_submit:'Tuma kwa Ukaguzi wa Admin',
@@ -3559,12 +3671,12 @@ const TRANSLATIONS = {
     tourn_min_teams:'Min 4 teams required.', tourn_finish:'Create Tournament',
     chip_all:'All', chip_free:'Free', chip_paid:'Paid', chip_offline:'Offline',
     poll_title:'Poll', poll_sub:'Vote and see results',
-    ai_title:'🤖 AI Assistant', ai_sub:'Ask about payments, game setup, and more',
+    ai_title:'🤖 FunBot ✨', ai_sub:'Your mumbigames assistant • Online',
     profile_title:'My Profile', profile_sub:'Your mumbigames account',
     duka_title:'Player Marketplace', duka_sub:'Gaming gear — verified by admin',
     duka_sub_home:'Buy/sell gaming gear — verified by admin',
     duka_browse:'Browse Items', duka_post_tab:'Post Item',
-    duka_warning:'🛡️ Marketplace protection: every item is checked by admin before it goes public. ALL payments go to the admin\'s number only (Tigo Pesa 0703504270) — never pay a seller directly. See a scam? Tap "Report".',
+    duka_warning:'🛡️ Marketplace protection: every item is checked by admin before it goes public. Tap "Buy" to chat with the seller directly on WhatsApp — payment and delivery are arranged between you two there. Be careful before paying. See a scam? Tap "Report".',
     duka_f_title:'Item name', duka_f_desc:'Description', duka_f_price:'Price (TZS)',
     duka_f_image:'Item photo', duka_f_name:'Your name', duka_f_phone:'Your phone number',
     duka_submit:'Submit for Admin Review',
