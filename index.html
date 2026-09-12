@@ -376,6 +376,22 @@
   .d-gprice{font-size:12px;color:var(--lime);font-weight:800;}
   .d-gwas{font-size:9.5px;color:var(--sub);text-decoration:line-through;}
   .d-greport{width:100%;margin-top:8px;font-size:9px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:5px 0;cursor:pointer;}
+  .d-gcard{cursor:pointer;}
+  .d-gbuy{width:100%;margin-top:8px;font-size:11px;font-weight:800;color:#0a0d0a;background:#25d366;border:none;border-radius:20px;padding:9px 0;cursor:pointer;font-family:'Baloo 2',sans-serif;}
+  .d-gbuy:disabled{opacity:0.5;cursor:not-allowed;}
+  .ld-img{width:100%;aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:var(--panel-2);margin-bottom:14px;}
+  .ld-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .ld-title{font-size:16px;font-weight:800;}
+  .ld-price-row{display:flex;align-items:baseline;gap:8px;margin-top:6px;}
+  .ld-price{font-size:18px;font-weight:900;color:var(--lime);}
+  .ld-was{font-size:12px;color:var(--sub);text-decoration:line-through;}
+  .ld-meta-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .ld-meta-chip{background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:5px 11px;font-size:10px;color:var(--sub);}
+  .ld-desc{font-size:12px;color:var(--sub);line-height:1.6;margin-top:12px;white-space:pre-wrap;}
+  .ld-seller{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--sub);}
+  .ld-owner-actions{display:flex;gap:8px;margin-top:14px;}
+  .ld-owner-actions button{flex:1;padding:10px 0;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Baloo 2',sans-serif;border:1px solid var(--line);background:var(--panel);color:var(--text);}
+  .ld-owner-actions .ld-danger{border-color:#a83232;color:#ff6b6b;}
   #dukaPost label{display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;}
   #dukaPost input, #dukaPost textarea{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;font-family:'Baloo 2',sans-serif;}
   #dukaPost textarea{min-height:70px;resize:vertical;}
@@ -513,7 +529,7 @@
   </div>
 
   <div id="dukaBrowse" class="duka-panel">
-    <div class="duka-warning" data-i18n="duka_warning">🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani, na kila muuzaji lazima awe na akaunti iliyosajiliwa (si mtu wa ghafla asiyejulikana). Malipo YOTE yafanyike kwa namba ya admin pekee (Tigo Pesa 0703504270) — admin ndiye anayemuunganisha mnunuzi na muuzaji. USITUME PESA moja kwa moja kwa muuzaji wala kwa namba nyingine yoyote — hilo ni ishara ya matapeli. Ukiona bidhaa/tabia ya utapeli, bonyeza "Ripoti" chini ya bidhaa.</div>
+    <div class="duka-warning" data-i18n="duka_warning">🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani, na kila muuzaji lazima awe na akaunti iliyosajiliwa (si mtu wa ghafla asiyejulikana). Ukibonyeza "Nunua", utapelekwa moja kwa moja WhatsApp ya muuzaji aliyethibitishwa ili muwasiliane. Kuwa makini: angalia bidhaa vizuri kabla ya kulipa, na epuka kutuma pesa kabla ya kuona uthibitisho wa kutosha. Ukiona bidhaa/tabia ya utapeli, bonyeza "Ripoti" chini ya bidhaa.</div>
     <div id="dukaList" class="d-grid"></div>
   </div>
 
@@ -625,11 +641,19 @@
       <input type="hidden" id="lImage" value="">
       <label data-i18n="duka_f_name">Jina lako</label>
       <input type="text" id="lSellerName" placeholder="Jina lako">
-      <label data-i18n="duka_f_phone">Namba yako ya simu</label>
+      <label data-i18n="duka_f_phone">Namba yako ya simu (WhatsApp)</label>
       <input type="text" id="lSellerPhone" placeholder="07XXXXXXXX">
-      <button class="post-btn" onclick="submitListing()" data-i18n="duka_submit">Tuma kwa Ukaguzi wa Admin</button>
+      <input type="hidden" id="lEditId" value="">
+      <button class="post-btn" onclick="submitListing()" id="dukaSubmitBtn" data-i18n="duka_submit">Tuma kwa Ukaguzi wa Admin</button>
       <p class="duka-note" data-i18n="duka_note">Bidhaa yako haitaonekana kwa umma mpaka admin aithibitishe kuwa ni ya kweli. Kuweka taarifa za uongo kunaweza kukufanya uzuiliwe kutumia Duka.</p>
     </div>
+  </div>
+</div>
+
+<div class="overlay" id="listingDetailOverlay" onclick="if(event.target===this) closeListingDetail()">
+  <div class="modal">
+    <div id="listingDetailBody"></div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:12px;" onclick="closeListingDetail()">Funga</button>
   </div>
 </div>
 
@@ -2393,7 +2417,8 @@ const AI_KB = [
   {keys:['save data','texture','textures','camera pack'], a:'📁 GAMES ZENYE FAILI ZA ZIADA (Game File, Save Data, Textures — mfano PPSSPP):\n\n🎮 **GAME FILE** — faili kuu la game (.iso/.cso), weka kwenye folder uliyochagua ndani ya emulator\n💾 **SAVE DATA** — maendeleo yaliyoshafanywa na mtu mwingine, nakili kwenye folder ya "SAVEDATA" ndani ya folder ya PSP ili uanze na maendeleo hayo badala ya mwanzo\n🎨 **TEXTURES** — huboresha ubora wa picha/graphics, weka kwenye folder ya "TEXTURES" ndani ya PSP, kisha washa "Texture Replacement" kwenye Settings za emulator\n📷 **CAMERA PACK** — mipangilio maalum ya kamera (ikiwepo) — fuata maelekezo yaliyoambatana nayo\n\nKila faili ina mahali pake maalum — usichanganye moja na nyingine.\n\n📺 Video kamili: ' + YT_CHANNEL},
 
   // --- Other features ---
-  {keys:['duka','uza','nunua','bidhaa','marketplace'], a:'Duka la Wachezaji unalipata kwa kubonyeza button ya "Duka" katikati ya menu ya chini (icon ya mfuko wa ununuzi 🛍️). Humo unaweza kutazama vifaa vya games vinavyouzwa na wachezaji wengine (vilivyothibitishwa na admin), au kuweka bidhaa yako mwenyewe kwa kujaza fomu — admin ataithibitisha kabla haijaonekana kwa umma. Malipo yote ya dukani pia hupitia utaratibu wa uthibitisho kama games za kulipia, ili kukukinga na matapeli.'},
+  {keys:['duka','uza','nunua','bidhaa','marketplace'], a:'Duka la Wachezaji unalipata kwa kubonyeza button ya "Duka" katikati ya menu ya chini (icon ya mfuko wa ununuzi 🛍️). Humo unaweza kutazama vifaa vya games vinavyouzwa na wachezaji wengine (vilivyothibitishwa na admin), au kuweka bidhaa yako mwenyewe kwa kujaza fomu — admin ataithibitisha kabla haijaonekana kwa umma. Bonyeza bidhaa yoyote kuona maelezo zaidi (picha, hali, bei), kisha bonyeza "💬 Nunua" ili ufunguliwe WhatsApp ya muuzaji moja kwa moja (ujumbe wa kwanza tayari umejazwa). Kama umeweka bidhaa yako mwenyewe, ukiifungua utaona vitufe vya "Hariri" (kurekebisha makosa), "Funga" (kama tayari imeisha stock), na "Ondoa" (kuiondoa kabisa dukani).'},
+  {keys:['shop','buy item','sell item','marketplace','buy gear','sell gear'], lang:'en', a:'The Player Marketplace is reached by tapping "Shop" in the bottom menu (🛍️ icon). There you can browse gear sold by other players (verified by admin), or post your own item by filling the form — admin approves it before it goes public. Tap any item to see more details (photo, condition, price), then tap "💬 Buy" to open WhatsApp directly with the seller (the first message is already filled in for you). If it\'s your own listing, opening it shows "Edit", "Close" (mark sold out), and "Remove" buttons.'},
   {keys:['kura','vote','poll'], a:'Bonyeza kitufe cha "Kura" (icon ya 🗳️) kwenye Home kuona kura zilizopo na kupiga kura yako. Kila mtumiaji anaweza kupiga kura mara moja kwa kila swali. Ukiona kitone (dot) chekundu juu ya button ya Kura, maana yake kuna kura mpya iliyowekwa na admin — fungua uione.'},
   {keys:['tiktok'], a:'Bonyeza button ya "TikTok" (icon ya 🎵) kwenye Home kufungua channel yetu ya TikTok moja kwa moja, kuona video za hivi karibuni za games. Ukiona kitone chekundu juu ya button hiyo, maana yake kuna video mpya.'},
   {keys:['youtube'], a:'Bonyeza button ya "YouTube" (icon nyekundu ▶️) kwenye Home kufungua channel yetu ya YouTube: ' + YT_CHANNEL + ' — humo kuna video za maelekezo ya jinsi ya kuseti games kwa emulator mbalimbali, pamoja na maudhui mengine ya games.'},
@@ -2416,10 +2441,31 @@ function initAI(){
   box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni msaidizi wa mumbigames 🤖 Niulize chochote — malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, points, au hata ukitaka tu kuongea, niko hapa kwa ajili yako.</div>`;
 }
 
+// Rahisi kutambua kama swali limeandikwa kwa Kiingereza au Kiswahili, ili
+// AI ijibu kwa lugha ileile aliyotumia mtu — bila kuhitaji abadilishe
+// mipangilio ya app.
+function detectAiLang(text){
+  const t = ' ' + text.toLowerCase() + ' ';
+  const enWords = [' the ',' is ',' are ',' how ',' what ',' can ',' you ',' please ',' hello ',' hi ',' does ',' do ',' my ',' i want ',' where ',' when ',' why ',' help '];
+  const swWords = [' na ',' ya ',' ni ',' nini ',' vipi ',' naomba ',' tafadhali ',' habari ',' mimi ',' wewe ',' kwa ',' ninaomba ',' saidia ',' bei '];
+  let enScore = 0, swScore = 0;
+  enWords.forEach(w=>{ if(t.includes(w)) enScore++; });
+  swWords.forEach(w=>{ if(t.includes(w)) swScore++; });
+  return enScore > swScore ? 'en' : 'sw';
+}
 function aiRespond(text){
   const lower = text.toLowerCase();
-  const hit = AI_KB.find(k=>k.keys.some(w=>lower.includes(w)));
-  return hit ? hit.a : 'Naelewa unachouliza, lakini sijapata jibu kamili kwenye maarifa yangu 🤔 Jaribu kuniambia kwa namna nyingine, au tumia maneno kama "malipo", "Winlator", "PPSSPP", "duka", "kura" au "points". Kama bado imekwama, admin yupo tayari kukusaidia moja kwa moja kupitia WhatsApp kwenye ukurasa wa Chat.';
+  const lang = detectAiLang(text);
+  // Kwanza jaribu kupata jibu lililowekewa lugha sahihi kabisa, kisha
+  // rudi kwenye jibu lolote linalolingana (hata kama ni Kiswahili) kama
+  // hakuna toleo la Kiingereza bado kwa hilo swali.
+  const exact = AI_KB.find(k=>k.keys.some(w=>lower.includes(w)) && (k.lang||'sw')===lang);
+  if(exact) return exact.a;
+  const any = AI_KB.find(k=>k.keys.some(w=>lower.includes(w)));
+  if(any) return any.a;
+  return lang === 'en'
+    ? 'I understand your question, but I don\'t have a complete answer for it yet 🤔 Try rephrasing it, or use words like "payment", "download", "shop", "bet tips" or "token". If you\'re still stuck, admin is available directly via WhatsApp on the Chat page.'
+    : 'Naelewa unachouliza, lakini sijapata jibu kamili kwenye maarifa yangu 🤔 Jaribu kuniambia kwa namna nyingine, au tumia maneno kama "malipo", "Winlator", "PPSSPP", "duka", "kura" au "token". Kama bado imekwama, admin yupo tayari kukusaidia moja kwa moja kupitia WhatsApp kwenye ukurasa wa Chat.';
 }
 
 function aiAddMsg(text, who){
@@ -3449,15 +3495,33 @@ function setDukaTab(t){
 }
 
 const CONDITION_LABELS = {new:'✨ Mpya', used:'♻️ Imetumika', refurbished:'🔧 Imekarabatiwa'};
+let dukaListingsCache = {};
+
+// Normalizes any Tanzanian phone format (07XXXXXXXX, +2557XXXXXXXX,
+// 2557XXXXXXXX) into the plain digits wa.me needs (255XXXXXXXXX).
+function normalizeTzPhone(phone){
+  let p = (phone||'').replace(/[^\d]/g, '');
+  if(p.startsWith('0')) p = '255' + p.slice(1);
+  else if(p.startsWith('255')){ /* already correct */ }
+  else if(p.length===9) p = '255' + p; // e.g. 7XXXXXXXX with no leading 0
+  return p;
+}
+function buildListingWaLink(listing){
+  const phone = normalizeTzPhone(listing.sellerPhone);
+  const msg = 'Hello🖐 nataka ninunue bidhaa uliyo weka kwenye app ya mumbigames: ' + (listing.title||'');
+  return 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+}
 
 function loadListings(){
   db.collection('listings').where('status','==','approved').onSnapshot(snap=>{
     const approved = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    dukaListingsCache = {};
+    approved.forEach(l=>{ dukaListingsCache[l.id] = l; });
     document.getElementById('dukaList').innerHTML = approved.length ? approved.map(l=>{
       const stockNum = (l.stock===undefined || l.stock===null || l.stock==='') ? null : parseInt(l.stock,10);
       const outOfStock = stockNum !== null && stockNum <= 0;
       return `
-      <div class="d-gcard">
+      <div class="d-gcard" onclick="openListingDetail('${l.id}')">
         <div class="d-gthumb">
           ${l.image ? `<img src="${l.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(l.title)}" loading="eager" decoding="async">` : ''}
           ${l.condition ? `<div class="d-gbadge">${CONDITION_LABELS[l.condition]||l.condition}</div>` : ''}
@@ -3470,7 +3534,8 @@ function loadListings(){
             <span class="d-gprice">TZS ${escapeHtml(l.price)}</span>
             ${l.wasPrice ? `<span class="d-gwas">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}
           </div>
-          <button class="d-greport" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title).replace(/'/g,"&#39;")})'>🚩 Ripoti</button>
+          <button type="button" class="d-gbuy" ${outOfStock?'disabled':''} onclick="event.stopPropagation(); buyListing('${l.id}')">${outOfStock ? '✕ Imeisha' : '💬 Nunua'}</button>
+          <button type="button" class="d-greport" data-listing-id="${l.id}" data-listing-title="${escapeHtml(l.title)}" onclick="event.stopPropagation(); reportListingBtn(this)">🚩 Ripoti</button>
         </div>
       </div>`;
     }).join('') : '<div class="empty">Bado hakuna bidhaa iliyothibitishwa. Kuwa wa kwanza kuweka! 🛍️</div>';
@@ -3480,6 +3545,99 @@ function loadListings(){
   });
 }
 
+function buyListing(id){
+  const l = dukaListingsCache[id];
+  if(!l) return;
+  window.open(buildListingWaLink(l), '_blank', 'noopener,noreferrer');
+}
+
+function openListingDetail(id){
+  const l = dukaListingsCache[id];
+  if(!l) return;
+  const stockNum = (l.stock===undefined || l.stock===null || l.stock==='') ? null : parseInt(l.stock,10);
+  const outOfStock = stockNum !== null && stockNum <= 0;
+  const isOwner = auth.currentUser && l.ownerUid === auth.currentUser.uid;
+  document.getElementById('listingDetailBody').innerHTML = `
+    ${l.image ? `<div class="ld-img"><img src="${l.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(l.title)}"></div>` : ''}
+    <div class="ld-title">${escapeHtml(l.title)}</div>
+    <div class="ld-price-row"><span class="ld-price">TZS ${escapeHtml(l.price)}</span>${l.wasPrice ? `<span class="ld-was">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}</div>
+    <div class="ld-meta-row">
+      ${l.condition ? `<span class="ld-meta-chip">${CONDITION_LABELS[l.condition]||l.condition}</span>` : ''}
+      ${l.brand ? `<span class="ld-meta-chip">${escapeHtml(l.brand)}</span>` : ''}
+      ${stockNum !== null ? `<span class="ld-meta-chip">${outOfStock ? 'Imeisha dukani' : stockNum + ' zilizopo'}</span>` : ''}
+      ${l.freeShipping ? `<span class="ld-meta-chip">🚚 Usafirishaji Bure</span>` : (l.deliveryFee ? `<span class="ld-meta-chip">🚚 TZS ${escapeHtml(l.deliveryFee)}</span>` : '')}
+    </div>
+    ${l.desc ? `<div class="ld-desc">${escapeHtml(l.desc)}</div>` : ''}
+    <div class="ld-seller">👤 Muuzaji: <b style="color:var(--text);">${escapeHtml(l.sellerName||'—')}</b></div>
+    ${isOwner ? `
+      <div class="ld-owner-actions">
+        <button onclick="editListing('${l.id}')">✏️ Hariri</button>
+        <button onclick="closeListingSoldOut('${l.id}')">🔒 Funga (Imeisha)</button>
+        <button class="ld-danger" onclick="deleteListing('${l.id}')">🗑️ Ondoa</button>
+      </div>
+    ` : `
+      <button type="button" class="d-gbuy" style="margin-top:14px;" ${outOfStock?'disabled':''} onclick="buyListing('${l.id}')">${outOfStock ? '✕ Bidhaa Imeisha' : '💬 Nunua kwa WhatsApp'}</button>
+    `}
+  `;
+  document.getElementById('listingDetailOverlay').classList.add('show');
+}
+function closeListingDetail(){
+  document.getElementById('listingDetailOverlay').classList.remove('show');
+}
+
+async function closeListingSoldOut(id){
+  if(!confirm('Weka bidhaa hii kama "Imeisha"? Haitaonekana tena kwa wanunuzi.')) return;
+  try{
+    await db.collection('listings').doc(id).update({stock: 0});
+    closeListingDetail();
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa. Jaribu tena.');
+  }
+}
+async function deleteListing(id){
+  if(!confirm('Una uhakika unataka kuondoa bidhaa hii kabisa? Hatua hii haiwezi kutenduliwa.')) return;
+  try{
+    await db.collection('listings').doc(id).delete();
+    closeListingDetail();
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kuondoa. Jaribu tena.');
+  }
+}
+function editListing(id){
+  const l = dukaListingsCache[id];
+  if(!l) return;
+  closeListingDetail();
+  setDukaTab('post');
+  document.getElementById('lEditId').value = id;
+  document.getElementById('lTitle').value = l.title || '';
+  document.getElementById('lDesc').value = l.desc || '';
+  document.getElementById('lBrand').value = l.brand || '';
+  document.getElementById('lCategory').value = l.category || '';
+  document.getElementById('lPrice').value = l.price || '';
+  document.getElementById('lWasPrice').value = l.wasPrice || '';
+  document.getElementById('lStock').value = (l.stock===undefined || l.stock===null) ? '1' : l.stock;
+  document.getElementById('lSku').value = l.sku || '';
+  selectCondition(l.condition || 'new');
+  document.getElementById('lWeight').value = l.weight || '';
+  document.getElementById('lFreeShipping').checked = !!l.freeShipping;
+  toggleDeliveryFeeField();
+  document.getElementById('lDeliveryFee').value = l.deliveryFee || '';
+  document.getElementById('lTags').value = (l.tags||[]).join(', ');
+  document.getElementById('lImage').value = l.image || '';
+  if(l.image){
+    document.getElementById('lImgPreview').src = l.image;
+    document.getElementById('lImgPreviewWrap').style.display = 'block';
+  }
+  document.getElementById('lSellerName').value = l.sellerName || '';
+  document.getElementById('lSellerPhone').value = l.sellerPhone || '';
+  document.getElementById('dukaSubmitBtn').textContent = 'Hifadhi Mabadiliko';
+}
+
+function reportListingBtn(btn){
+  reportListing(btn.dataset.listingId, btn.dataset.listingTitle);
+}
 async function reportListing(id, title){
   const reason = prompt('Eleza kwa ufupi tatizo la bidhaa "' + title + '" (mfano: muuzaji anataka pesa moja kwa moja, bidhaa si ya kweli, n.k):');
   if(reason === null) return;
@@ -3580,19 +3738,28 @@ async function submitListing(){
   const image = document.getElementById('lImage').value.trim();
   const sellerName = document.getElementById('lSellerName').value.trim();
   const sellerPhone = document.getElementById('lSellerPhone').value.trim();
+  const editId = document.getElementById('lEditId').value.trim();
   if(!title || !price || !sellerName || !sellerPhone){
     alert('Jaza jina la bidhaa, bei, jina lako na namba yako kabla ya kutuma.');
     return;
   }
   try{
-    await db.collection('listings').add({
-      title, desc, brand, category, price, wasPrice, stock, sku, condition,
-      weight, freeShipping, deliveryFee, tags, image, sellerName, sellerPhone,
-      ownerUid: auth.currentUser.uid,
-      ownerEmail: auth.currentUser.email || '',
-      status: 'pending',
-      createdAt: Date.now()
-    });
+    if(editId){
+      await db.collection('listings').doc(editId).update({
+        title, desc, brand, category, price, wasPrice, stock, sku, condition,
+        weight, freeShipping, deliveryFee, tags, image, sellerName, sellerPhone,
+        status: 'pending' // mabadiliko yanahitaji ukaguzi mpya wa admin
+      });
+    } else {
+      await db.collection('listings').add({
+        title, desc, brand, category, price, wasPrice, stock, sku, condition,
+        weight, freeShipping, deliveryFee, tags, image, sellerName, sellerPhone,
+        ownerUid: auth.currentUser.uid,
+        ownerEmail: auth.currentUser.email || '',
+        status: 'pending',
+        createdAt: Date.now()
+      });
+    }
   }catch(e){
     alert('Imeshindwa kutuma. Angalia mtandao wako na jaribu tena.');
     return;
@@ -3622,7 +3789,9 @@ async function submitListing(){
   if(urlFallback) urlFallback.style.display='none';
   document.getElementById('lSellerName').value='';
   document.getElementById('lSellerPhone').value='';
-  alert('Bidhaa yako imetumwa! Itaonekana baada ya admin kuithibitisha.');
+  document.getElementById('lEditId').value='';
+  document.getElementById('dukaSubmitBtn').textContent = 'Tuma kwa Ukaguzi wa Admin';
+  alert(editId ? 'Mabadiliko yametumwa! Yataonekana tena baada ya admin kuyathibitisha.' : 'Bidhaa yako imetumwa! Itaonekana baada ya admin kuithibitisha.');
   setDukaTab('browse');
 }
 
@@ -3793,7 +3962,7 @@ const TRANSLATIONS = {
     duka_title:'Duka la Wachezaji', duka_sub:'Vifaa vya games — vilivyothibitishwa na admin',
     duka_sub_home:'Nunua/uza vifaa vya games — vilivyothibitishwa na admin',
     duka_browse:'Tazama Bidhaa', duka_post_tab:'Weka Bidhaa',
-    duka_warning:'🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani. Malipo YOTE yafanyike kwa namba ya admin pekee (Tigo Pesa 0703504270) — USITUME PESA moja kwa moja kwa muuzaji. Ukiona utapeli, bonyeza "Ripoti".',
+    duka_warning:'🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani. Ukibonyeza "Nunua", utapelekwa WhatsApp ya muuzaji aliyethibitishwa. Kuwa makini kabla ya kulipa. Ukiona utapeli, bonyeza "Ripoti".',
     duka_f_title:'Jina la bidhaa', duka_f_desc:'Maelezo', duka_f_price:'Bei (TZS)',
     duka_f_image:'Picha ya bidhaa', duka_f_name:'Jina lako', duka_f_phone:'Namba yako ya simu',
     duka_submit:'Tuma kwa Ukaguzi wa Admin',
@@ -3873,7 +4042,7 @@ const TRANSLATIONS = {
     duka_title:'Player Marketplace', duka_sub:'Gaming gear — verified by admin',
     duka_sub_home:'Buy/sell gaming gear — verified by admin',
     duka_browse:'Browse Items', duka_post_tab:'Post Item',
-    duka_warning:'🛡️ Marketplace protection: every item is checked by admin before it goes public. ALL payments go to the admin\'s number only (Tigo Pesa 0703504270) — never pay a seller directly. See a scam? Tap "Report".',
+    duka_warning:'🛡️ Marketplace protection: every item is checked by admin before it goes public. Tapping "Buy" opens WhatsApp with the verified seller. Inspect items carefully before paying. See a scam? Tap "Report".',
     duka_f_title:'Item name', duka_f_desc:'Description', duka_f_price:'Price (TZS)',
     duka_f_image:'Item photo', duka_f_name:'Your name', duka_f_phone:'Your phone number',
     duka_submit:'Submit for Admin Review',
