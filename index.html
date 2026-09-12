@@ -139,13 +139,33 @@
   .banner-dots .dot.active{background:var(--lime);width:16px;border-radius:4px;}
 
   /* Quick action row */
-  .quick-actions{display:flex;gap:10px;padding:16px 16px 4px;}
+  .quick-actions{display:flex;gap:8px;padding:16px 16px 4px;flex-wrap:wrap;}
+  .quick-actions .qa-btn{flex:1 1 auto;min-width:64px;}
   .qa-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--lime);color:#fff;border:none;border-radius:14px;padding:12px 6px;font-size:10.5px;font-weight:700;cursor:pointer;position:relative;}
   .qa-btn .qa-ic{font-size:18px;}
   .qa-btn.alt{background:var(--panel);color:var(--text);border:1px solid var(--line);}
   .qa-btn.qa-tiktok{background:linear-gradient(135deg,#25f4ee,#000000 55%,#fe2c55);color:#fff;}
   .qa-btn.qa-kura{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;}
   .qa-btn.qa-youtube{background:linear-gradient(135deg,#ff4d4d,#c1121f);color:#fff;border:none;}
+  .qa-btn.qa-bettips{background:linear-gradient(135deg,#0f9d58,#0a6b3c);color:#fff;border:none;}
+
+  /* ---- Bet Tips ---- */
+  .bt-card{background:linear-gradient(180deg,rgba(166,255,0,0.05),transparent 40%),var(--panel);border:1px solid var(--line);border-top:3px solid var(--lime);border-radius:16px;padding:14px;margin-bottom:14px;}
+  .bt-head{display:flex;align-items:center;gap:10px;}
+  .bt-logo{width:42px;height:42px;border-radius:12px;background:var(--panel-2);object-fit:cover;flex:none;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .bt-bookmaker{font-size:13px;font-weight:800;color:var(--text);}
+  .bt-day{font-size:9.5px;color:var(--lime);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+  .bt-odds{margin-left:auto;background:rgba(166,255,0,0.12);border:1px solid var(--lime-dim);color:var(--lime);font-weight:800;font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;}
+  .bt-title{font-size:13px;font-weight:800;color:var(--text);margin-top:10px;}
+  .bt-desc{font-size:11.5px;color:var(--sub);margin-top:3px;line-height:1.5;}
+  .bt-code-row{display:flex;align-items:center;gap:8px;margin-top:12px;background:var(--panel-2);border:1.5px dashed var(--lime-dim);border-radius:12px;padding:12px 14px;}
+  .bt-code{flex:1;font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:800;letter-spacing:2px;color:var(--lime);text-align:center;}
+  .bt-copy-btn{background:var(--lime);color:#0a0d0a;border:none;border-radius:9px;padding:9px 14px;font-weight:800;font-size:11px;cursor:pointer;white-space:nowrap;font-family:'Baloo 2',sans-serif;}
+  .bt-foot{display:flex;align-items:center;gap:14px;margin-top:10px;}
+  .bt-like-btn{background:none;border:none;color:var(--sub);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Baloo 2',sans-serif;font-weight:700;}
+  .bt-like-btn.liked{color:#ff4d6d;}
+  .bt-date{margin-left:auto;font-size:9.5px;color:var(--sub);}
+  .bt-disclaimer{font-size:9.5px;color:var(--sub);line-height:1.5;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:16px;}
   .qa-badge{display:none;position:absolute;top:6px;right:10px;width:10px;height:10px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
 
   /* Trending carousel */
@@ -241,8 +261,6 @@
   .chat-header .back{width:30px;height:30px;border-radius:8px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14.5px;color:var(--sub);}
   .chat-header .title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13.5px;}
   .chat-header .sub{font-size:10px;color:var(--sub);}
-  .ai-online-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:4px;box-shadow:0 0 4px #22c55e;animation:aiPulse 1.8s infinite;}
-  @keyframes aiPulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
   .wa-btn{flex:none;background:var(--panel);border:1px solid var(--line);color:var(--lime);font-size:10px;font-weight:600;padding:8px 12px;border-radius:20px;}
   .name-gate{padding:40px 20px;text-align:center;}
   .name-gate .mark{margin:0 auto 14px;}
@@ -282,6 +300,7 @@
   #dukaView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   #tournamentView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   #tournDetailView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
+  #betTipsView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   .td-tab.active{background:var(--lime);color:var(--bg);}
   .td-tab:not(.active){color:var(--sub);}
 
@@ -332,25 +351,15 @@
   .d-gthumb img{width:100%;height:100%;object-fit:cover;display:block;}
   .d-gbadge{position:absolute;top:8px;left:8px;background:var(--lime);color:var(--bg);font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:capitalize;}
   .d-gstock{position:absolute;top:8px;right:8px;background:rgba(10,10,22,0.75);color:#fff;font-size:9px;font-weight:600;padding:3px 7px;border-radius:20px;}
-  .d-gnew{position:absolute;bottom:8px;left:8px;background:linear-gradient(135deg,#ff9d00,#ffd347);color:#241800;font-size:9px;font-weight:800;padding:3px 8px;border-radius:20px;}
-  .d-gclosed-overlay{position:absolute;inset:0;background:rgba(10,10,10,0.72);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;letter-spacing:0.5px;}
-  .d-gowner-btn{flex:1.4;font-size:10px;font-weight:800;border-radius:20px;padding:7px 0;cursor:pointer;font-family:'Baloo 2',sans-serif;}
-  .d-gowner-btn.close{background:linear-gradient(135deg,#ff4d4d,#c1121f);color:#fff;border:none;}
-  .d-gowner-btn.reopen{background:var(--lime);color:var(--bg);border:none;}
   .d-gbody{padding:10px 11px 12px;}
   .d-gname{font-size:11px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   .d-gbrand{font-size:9px;color:var(--sub);margin-top:2px;}
   .d-gprice-row{display:flex;align-items:baseline;gap:6px;margin-top:6px;flex-wrap:wrap;}
   .d-gprice{font-size:12px;color:var(--lime);font-weight:800;}
   .d-gwas{font-size:9.5px;color:var(--sub);text-decoration:line-through;}
-  .d-gactions{display:flex;gap:6px;margin-top:8px;}
-  .d-gbuy{flex:1.4;font-size:10px;font-weight:800;color:#241800;background:linear-gradient(135deg,#25d366,#128c7e);border:none;border-radius:20px;padding:7px 0;cursor:pointer;color:#fff;}
-  .d-greport{flex:1;font-size:9px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:5px 0;cursor:pointer;}
+  .d-greport{width:100%;margin-top:8px;font-size:9px;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:5px 0;cursor:pointer;}
   #dukaPost label{display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;}
   #dukaPost input, #dukaPost textarea{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;font-family:'Baloo 2',sans-serif;}
-  .wa-link-wrap{display:flex;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:9px;overflow:hidden;}
-  .wa-link-prefix{padding:11px 8px 11px 13px;font-size:11.5px;color:var(--sub);font-family:'Baloo 2',sans-serif;white-space:nowrap;background:rgba(37,211,102,0.08);border-right:1px solid var(--line);}
-  .wa-link-wrap input{border:none!important;background:none!important;padding:11px 13px 11px 6px!important;}
   #dukaPost textarea{min-height:70px;resize:vertical;}
   #lFreeShipping:checked ~ #lFreeShippingTrack{background:var(--lime);}
   #lFreeShipping:checked ~ #lFreeShippingKnob{transform:translateX(20px);}
@@ -403,8 +412,8 @@
 <header>
   <div class="mark"></div>
   <span>mumbigames</span>
-  <div class="token-pill" id="headerTokenPill" onclick="showProfile()" style="display:none;margin-left:auto;"><span class="coin">🪙</span><span id="headerTokenCount">0</span></div>
-  <div class="search" onclick="showSettings()" style="margin-left:8px;">☰</div>
+  <div class="search" onclick="showSettings()" style="margin-left:auto;">☰</div>
+  <div class="token-pill" id="headerTokenPill" onclick="showProfile()" style="display:none;margin-left:8px;"><span class="coin">🪙</span><span id="headerTokenCount">0</span></div>
 </header>
 
 <div class="searchbar-wrap">
@@ -484,7 +493,7 @@
   </div>
 
   <div id="dukaBrowse" class="duka-panel">
-    <div class="duka-warning" data-i18n="duka_warning">🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani, na kila muuzaji lazima awe na akaunti iliyosajiliwa (si mtu wa ghafla asiyejulikana). Ukibonyeza "Nunua", utapelekwa WhatsApp kuongea moja kwa moja na muuzaji — malipo na delivery mnapangana ninyi wenyewe kule. Kuwa makini: usilipe kabla ya kuridhika na muuzaji. Ukiona bidhaa/tabia ya utapeli, bonyeza "Ripoti" chini ya bidhaa.</div>
+    <div class="duka-warning" data-i18n="duka_warning">🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani, na kila muuzaji lazima awe na akaunti iliyosajiliwa (si mtu wa ghafla asiyejulikana). Malipo YOTE yafanyike kwa namba ya admin pekee (Tigo Pesa 0703504270) — admin ndiye anayemuunganisha mnunuzi na muuzaji. USITUME PESA moja kwa moja kwa muuzaji wala kwa namba nyingine yoyote — hilo ni ishara ya matapeli. Ukiona bidhaa/tabia ya utapeli, bonyeza "Ripoti" chini ya bidhaa.</div>
     <div id="dukaList" class="d-grid"></div>
   </div>
 
@@ -596,12 +605,8 @@
       <input type="hidden" id="lImage" value="">
       <label data-i18n="duka_f_name">Jina lako</label>
       <input type="text" id="lSellerName" placeholder="Jina lako">
-      <label data-i18n="duka_f_phone">Namba yako ya WhatsApp (itakuwa link ya moja kwa moja)</label>
-      <div class="wa-link-wrap">
-        <span class="wa-link-prefix">wa.me/255</span>
-        <input type="text" id="lSellerPhone" placeholder="7XXXXXXXX" maxlength="9" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-      </div>
-      <p class="duka-note" style="margin-top:4px;">Andika namba yako bila sifuri mwanzoni (mfano: 712345678). Mfumo utaunda link ya WhatsApp moja kwa moja kwa wanunuzi.</p>
+      <label data-i18n="duka_f_phone">Namba yako ya simu</label>
+      <input type="text" id="lSellerPhone" placeholder="07XXXXXXXX">
       <button class="post-btn" onclick="submitListing()" data-i18n="duka_submit">Tuma kwa Ukaguzi wa Admin</button>
       <p class="duka-note" data-i18n="duka_note">Bidhaa yako haitaonekana kwa umma mpaka admin aithibitishe kuwa ni ya kweli. Kuweka taarifa za uongo kunaweza kukufanya uzuiliwe kutumia Duka.</p>
     </div>
@@ -722,6 +727,20 @@
   </div>
 </div>
 
+<div id="betTipsView">
+  <div class="chat-header">
+    <div class="back" onclick="showHome()">←</div>
+    <div style="flex:1;">
+      <div class="title" data-i18n="bettips_view_title">🎫 Bet Tips</div>
+      <div class="sub" data-i18n="bettips_view_sub">Nakili msimbo, bandika kwenye app ya bet</div>
+    </div>
+  </div>
+  <div class="settings-body">
+    <div class="bt-disclaimer" data-i18n="bettips_disclaimer">ℹ️ Nakili msimbo (code) na uubandike kwenye app ya bet (mfano BetPawa, 1Win). Bet tips ni kwa taarifa tu — cheza bet kwa busara, 18+.</div>
+    <div id="betTipsList">Inapakia...</div>
+  </div>
+</div>
+
 <div id="pollView">
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
@@ -739,8 +758,8 @@
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
-      <div class="title" data-i18n="ai_title">🤖 FunBot ✨</div>
-      <div class="sub"><span class="ai-online-dot"></span><span data-i18n="ai_sub">Msaidizi wako wa mumbigames • Online</span></div>
+      <div class="title" data-i18n="ai_title">🤖 AI Msaidizi</div>
+      <div class="sub" data-i18n="ai_sub">Uliza kuhusu malipo, kuseti game, na zaidi</div>
     </div>
   </div>
   <div class="ai-quick" id="aiQuick"></div>
@@ -841,46 +860,56 @@
         <div style="font-size:10px;color:var(--sub);margin-top:2px;" id="profileMeta">—</div>
       </div>
       <div class="settings-section">
-        <div class="settings-label">📊 Takwimu Zangu</div>
+        <div class="settings-label" data-i18n="profile_stats_title">📊 Takwimu Zangu</div>
         <div style="display:flex;gap:10px;margin-top:10px;">
           <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
             <div style="font-size:20px;">👥</div>
             <div style="font-size:18px;font-weight:800;margin-top:4px;" id="profileReferralCount">0</div>
-            <div style="font-size:10px;color:var(--sub);margin-top:2px;">Marafiki walioalikwa</div>
+            <div style="font-size:10px;color:var(--sub);margin-top:2px;" data-i18n="profile_referrals_lbl">Marafiki walioalikwa</div>
           </div>
           <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
             <div style="font-size:20px;">⬇️</div>
             <div style="font-size:18px;font-weight:800;margin-top:4px;" id="profileDownloadsCount">0</div>
-            <div style="font-size:10px;color:var(--sub);margin-top:2px;">Downloads zako</div>
+            <div style="font-size:10px;color:var(--sub);margin-top:2px;" data-i18n="profile_downloads_lbl">Downloads zako</div>
           </div>
+        </div>
+      </div>
+      <div class="settings-section" style="cursor:pointer;" onclick="showBetTips()">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0f9d58,#0a6b3c);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;">🎫</div>
+          <div style="flex:1;">
+            <div class="settings-label" style="margin:0;" data-i18n="bettips_shortcut_title">Bet Tips</div>
+            <div class="settings-sub" style="margin:2px 0 0;" data-i18n="bettips_shortcut_sub">Msimbo wa bet, nakili na ubandike BetPawa/1Win</div>
+          </div>
+          <div style="color:var(--sub);font-size:18px;">›</div>
         </div>
       </div>
       <div class="settings-section">
         <div id="inviteFriendsBlock">
-        <div class="settings-label">🎁 Alika Marafiki, Pata Game Bure</div>
-        <div class="settings-sub">Mtumie rafiki yako APK ya mumbigames pamoja na msimbo wako wa mwaliko. Akijisajili na kuweka msimbo huo, unapata token 50. Ukifikisha token 500, unaweza kupata game moja la kulipia BURE (mara moja tu kwa akaunti yako).</div>
+        <div class="settings-label" data-i18n="invite_title">🎁 Alika Marafiki, Pata Game Bure</div>
+        <div class="settings-sub" data-i18n="invite_sub">Mtumie rafiki yako APK ya mumbigames pamoja na msimbo wako wa mwaliko. Akijisajili na kuweka msimbo huo, unapata token 50. Ukifikisha token 500, unaweza kupata game moja la kulipia BURE (mara moja tu kwa akaunti yako).</div>
         <div style="background:linear-gradient(135deg,#2a2210,#1a1a1a);border:1px solid #a8791a;border-radius:10px;padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;">
           <div>
-            <div style="font-size:10px;color:#e0c473;">🪙 Token zako</div>
+            <div style="font-size:10px;color:#e0c473;" data-i18n="invite_tokens_lbl">🪙 Token zako</div>
             <div style="font-size:20px;font-weight:800;color:#ffd347;font-family:'Baloo 2',sans-serif;" id="pointsCount">0</div>
           </div>
           <div style="text-align:right;font-size:10px;color:var(--sub);">
-            Marafiki walioalikwa<br><span id="referralCount" style="font-size:13.5px;font-weight:700;color:var(--text);">0</span>
+            <span data-i18n="invite_friends_lbl">Marafiki walioalikwa</span><br><span id="referralCount" style="font-size:13.5px;font-weight:700;color:var(--text);">0</span>
           </div>
         </div>
-        <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;">Msimbo wako wa Mwaliko</label>
+        <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;" data-i18n="invite_code_lbl">Msimbo wako wa Mwaliko</label>
         <input type="text" id="referralLinkInput" readonly style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14.5px;font-weight:700;letter-spacing:2px;text-align:center;font-family:'JetBrains Mono',monospace;">
-        <button class="post-btn" style="margin-top:10px;" onclick="shareReferralLink()">Shea APK + Msimbo Wangu</button>
+        <button class="post-btn" style="margin-top:10px;" onclick="shareReferralLink()" data-i18n="invite_share_btn">Shea APK + Msimbo Wangu</button>
         <div id="enterCodeSection" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);">
-          <label style="display:block;font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:600;">Una msimbo wa rafiki? Weka hapa upate token kwake</label>
+          <label style="display:block;font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:600;" data-i18n="invite_enter_code_lbl">Una msimbo wa rafiki? Weka hapa upate token kwake</label>
           <div style="display:flex;gap:8px;">
             <input type="text" id="enterCodeInput" placeholder="Mfano: JKV9WG" style="flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:12.5px;letter-spacing:1px;text-transform:uppercase;">
-            <button class="post-btn" style="width:auto;padding:0 16px;" onclick="redeemReferralCode()">Tumia</button>
+            <button class="post-btn" style="width:auto;padding:0 16px;" onclick="redeemReferralCode()" data-i18n="invite_use_code_btn">Tumia</button>
           </div>
         </div>
         </div>
         <div id="redeemSection" style="display:none;margin-top:14px;">
-          <div class="settings-label" style="margin-top:0;">🏆 Chagua Game la Kupata Bure</div>
+          <div class="settings-label" style="margin-top:0;" data-i18n="redeem_title">🏆 Chagua Game la Kupata Bure</div>
           <div id="redeemGamesList"></div>
         </div>
       </div>
@@ -926,20 +955,6 @@
         <button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button>
       </div>
     </div>
-  </div>
-</div>
-
-<div class="overlay" id="listingOverlay">
-  <div class="modal">
-    <div id="lmThumb" class="modal-thumb" style="height:220px;"></div>
-    <div id="lmBadges" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"></div>
-    <h3 id="lmTitle">Bidhaa</h3>
-    <div id="lmBrand" style="font-size:10px;color:var(--sub);margin:2px 0 8px;"></div>
-    <div id="lmPriceRow" style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;"></div>
-    <p id="lmDesc" class="modal-desc"></p>
-    <div id="lmMeta" style="font-size:10.5px;color:var(--sub);margin-bottom:16px;line-height:1.7;"></div>
-    <div id="lmActions" class="modal-actions" style="flex-direction:column;gap:8px;"></div>
-    <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="closeListingModal()">Funga</button>
   </div>
 </div>
 
@@ -2283,7 +2298,7 @@ const AI_KB = [
   {keys:['wewe ni nani','jina lako','ni nani wewe'], a:'Mimi ni msaidizi wa mumbigames 🤖 — nipo hapa kukusaidia na chochote kuhusu app hii: malipo, kuseti games, duka, kura, points, na zaidi. Niulize chochote!'},
 
   // --- Payments ---
-  {keys:['lipa','malipo','pay','pesa','tigo','kulipia'], a:'Kulipia game: fungua game, tuma pesa Tigo Pesa 0703504270 (jina: Josh Abdallahman), jaza namba uliyotumia, pakia picha MBILI za screenshot ya muamala, kisha bonyeza "Nimelipa ✓". Ombi lako litasubiri admin (binadamu) athibitishe kwa kuangalia picha zako — download itafunguka moja kwa moja mara tu atakapothibitisha. Ukisubiri zaidi ya dakika 5, mimi (AI) ninaweza kuanza kukusaidia moja kwa moja kwenye ukurasa huo huo. Kwa bidhaa za Duka (marketplace), ukibonyeza "Nunua" utapelekwa WhatsApp kuongea na muuzaji moja kwa moja — malipo na delivery mnapangana wenyewe kule, hii haihusiani na malipo ya games.'},
+  {keys:['lipa','malipo','pay','pesa','tigo','kulipia'], a:'Kulipia game: fungua game, tuma pesa Tigo Pesa 0703504270 (jina: Josh Abdallahman), jaza namba uliyotumia, pakia picha MBILI za screenshot ya muamala, kisha bonyeza "Nimelipa ✓". Ombi lako litasubiri admin (binadamu) athibitishe kwa kuangalia picha zako — download itafunguka moja kwa moja mara tu atakapothibitisha. Ukisubiri zaidi ya dakika 5, mimi (AI) ninaweza kuanza kukusaidia moja kwa moja kwenye ukurasa huo huo. Kwa bidhaa za dukani, malipo pia hupitia admin ili kukukinga na matapeli — usiwahi kutuma pesa moja kwa moja kwa muuzaji.'},
   {keys:['bure','free','za bure'], a:'Games za "Bure" unaweza kuzidownload moja kwa moja bila malipo — bonyeza game, kisha "DOWNLOAD GAME FILE" (na "DOWNLOAD EMULATOR" kama linahitaji). Chuja kwa kubonyeza kichupo "Bure" juu ya orodha ya games kuona zote za bure tu.'},
   {keys:['za kulipia','paid','bei','price'], a:'Games za "Kulipia" zina bei iliyoonyeshwa. Baada ya kulipa na kuthibitishwa (ona swali la "malipo"), download inafunguka. Unaweza pia kupata game la kulipia BURE kwa kutumia token 500 ulizokusanya kwa kualika marafiki — angalia Profile → "Alika Marafiki".'},
 
@@ -2305,83 +2320,27 @@ const AI_KB = [
   {keys:['youtube'], a:'Bonyeza button ya "YouTube" (icon nyekundu ▶️) kwenye Home kufungua channel yetu ya YouTube: ' + YT_CHANNEL + ' — humo kuna video za maelekezo ya jinsi ya kuseti games kwa emulator mbalimbali, pamoja na maudhui mengine ya games.'},
   {keys:['chat','ujumbe','mazungumzo'], a:'Ukurasa wa "Chat" (icon ya 💬 kwenye menu ya chini) ni sehemu ya mazungumzo ya jamii ya mumbigames na channel ya WhatsApp ya admin kwa msaada wa moja kwa moja.'},
   {keys:['token','pointi','point','alika','referral','mwaliko','msimbo'], a:'Mfumo wa Token: kila ukimwalika rafiki kwa kutumia msimbo wako wa kipekee (unaupata Profile → "Alika Marafiki"), akijisajili na kuweka msimbo wako, unapata token 50. Ukifikisha token 500, unaweza kupata game LOLOTE la kulipia BURE kabisa, mara moja tu kwa akaunti yako (Profile → "Chagua Game la Kupata Bure"). Msimbo wako unaonekana kwenye Profile, na kuna button ya "Shea APK + Msimbo Wangu" ya kutuma kwa rafiki yako moja kwa moja.'},
+  {keys:['bet','betting','bet tips','betpawa','1win','msimbo wa bet','booking code'], a:'Bet Tips ipo ndani ya Profile yako (Me → Bet Tips). Ni sehemu ya bure kabisa yenye misimbo (booking codes) ya bet inayowekwa na admin — kila kadi inaonyesha Bookmaker (mfano BetPawa au 1Win), odds, maelezo ya mechi, na msimbo wenyewe. Bonyeza "📋 Nakili" kuunakili msimbo, kisha nenda ufungue app ya bet uliyotaja (mfano BetPawa au 1Win) na ubandike msimbo huo pale kwenye sehemu ya "Booking Code" ili uone mechi zilizochaguliwa. Unaweza pia ku-like tip unayoipenda. Kumbuka: hizi ni maoni tu kwa taarifa, si uhakika wa kushinda — cheza bet kwa busara, ni kwa watu wenye miaka 18+.'},
   {keys:['download','pakua','haifunguki','tatizo'], a:'Kama download haifanyi kazi, hakikisha una mtandao mzuri na jaribu tena. Kumbuka: baada ya kubonyeza download, subiri hesabu ya sekunde ipite kabla faili halijafunguka — hii ni ya kawaida. Kama tatizo linaendelea, wasiliana na admin kupitia WhatsApp kwenye ukurasa wa Chat.'},
   {keys:['akaunti','login','ingia','jisajili','password'], a:'Nenda Profile (chini kulia, icon ya ☺), jaza email na password kuunda akaunti au kuingia. Akaunti inakusaidia kuona games ulizonunua hata ukibadili simu, kutumia mfumo wa points, na kutoa maoni kwenye games.'},
   {keys:['maoni','comment'], a:'Kila game ina sehemu ya "💬 Maoni" — bonyeza namba iliyo karibu na icon ya 💬 kwenye card ya game kuona maoni ya wengine na kutoa lako mwenyewe.'},
-  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'},
-  {keys:['kuhusu app','app hii inafanyaje','vipengele vya app','unaweza kunisaidiaje','unajua nini','app hii ni nini','mumbigames ni nini'], a:'mumbigames ni jukwaa la kupakua games za simu (bure na za kulipia) kwa ajili ya wachezaji Tanzania 🇹🇿. Vipengele vilivyopo: 🎮 Orodha ya games (chuja kwa Bure/Kulipia/Offline), 🛍️ Duka la Wachezaji (uza/nunua vifaa vya games — ukibonyeza "Nunua" unapelekwa WhatsApp kuongea moja kwa moja na muuzaji), 🏆 Tournament (mashindano ya games), 🗳️ Kura (piga kura kwenye maswali ya admin), 💬 Chat ya jamii, 🪙 Mfumo wa Token (kualika marafiki kupata token, token 500 = game bure), na akaunti binafsi (Profile) inayohifadhi historia ya ununuzi wako. Niulize chochote zaidi kuhusu chochote kati ya hivi, au niulize kuhusu game maalum kwa jina lake!'}
+  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'}
 ];
 
 function initAI(){
   const quick = document.getElementById('aiQuick');
   if(quick.dataset.init) return;
   quick.dataset.init = '1';
-  const topics = ['Nionyeshe games zote','Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Duka linafanyaje kazi','Mfumo wa Token','Kuhusu app hii'];
+  const topics = ['Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Kuseti MoBox','Kuseti AetherSX2','Kuseti Yuzu/Skyline','Kuseti Dolphin','Duka linafanyaje kazi','Mfumo wa Points'];
   quick.innerHTML = topics.map(t=>`<div class="ai-chip" onclick="aiAsk(${JSON.stringify(t)})">${t}</div>`).join('');
   const box = document.getElementById('aiMessages');
-  box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni FunBot 🤖✨ msaidizi wako wa mumbigames. Ninajua games ZOTE zilizopo kwenye site (niulize kwa jina lolote!), pamoja na malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, token, na zaidi. Au ukitaka tu kuongea, niko hapa kwa ajili yako 😊</div>`;
-}
-
-// Builds a rich, friendly answer about one specific game using its live
-// Firestore data (name, genre, price, offline/online, description, and
-// the same performance wording shown on the game's own detail page).
-function describeGame(g){
-  const priceTxt = g.paid ? ('Kulipia — TZS ' + (g.price||'0')) : 'Bure kabisa 🎉';
-  const offlineTxt = g.offline==='yes' ? '📴 Inachezeka Offline (bila mtandao)' : '📶 Inahitaji mtandao (Online)';
-  let perfTxt = '';
-  if(g.performance==='good') perfTxt = '⚡ Utendaji: Mzuri (60 FPS+) kwenye simu nyingi.';
-  else if(g.performance==='mid') perfTxt = '⚡ Utendaji: Wastani (25-40 FPS) — inategemea nguvu ya simu yako.';
-  else if(g.performance==='low') perfTxt = '⚡ Utendaji: Chini ya 25 FPS kwenye baadhi ya simu — tarajia lag kidogo.';
-  const desc = (g.desc || g.genre || '').trim();
-  const lines = [
-    '🎮 *' + g.name + '*' + (g.genre ? ' — ' + g.genre : ''),
-    desc,
-    '💰 ' + priceTxt,
-    offlineTxt,
-    perfTxt,
-    '',
-    'Fungua game hili kwenye Home (tafuta "' + g.name + '") kuipakua!'
-  ].filter(Boolean);
-  return lines.join('\n');
-}
-
-// Finds live games whose name matches (or is matched by) the user's text —
-// handles both "niambie kuhusu GTA" and someone typing just the game name.
-function findGameMatches(text){
-  const lower = text.toLowerCase().trim();
-  if(lower.length < 2) return [];
-  return games.filter(g=>{
-    const name = (g.name||'').toLowerCase();
-    if(!name) return false;
-    return lower.includes(name) || (name.length > 3 && name.includes(lower));
-  });
+  box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni msaidizi wa mumbigames 🤖 Niulize chochote — malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, points, au hata ukitaka tu kuongea, niko hapa kwa ajili yako.</div>`;
 }
 
 function aiRespond(text){
-  const lower = text.toLowerCase().trim();
-
-  // 1) "list all games" intent
-  if(/(games zote|orodha ya games|una games gani|list of games|show all games|zipi.*games|games zilizopo)/.test(lower)){
-    if(!games.length) return 'Kwa sasa sina taarifa za games — jaribu tena baada ya sekunde chache au fungua ukurasa wa Home.';
-    const shown = games.slice(0, 25);
-    const names = shown.map(g=>'• ' + g.name + (g.paid ? ' (TZS '+g.price+')' : ' (Bure)')).join('\n');
-    const more = games.length > 25 ? '\n...na nyingine ' + (games.length - 25) + ' zaidi — fungua Home kuona zote.' : '';
-    return '🕹️ Hizi ni games zilizopo kwenye mumbigames sasa hivi:\n\n' + names + more + '\n\nNiambie jina la moja nikuelezee zaidi!';
-  }
-
-  // 2) specific game lookup (by name, using live Firestore data)
-  const matches = findGameMatches(text);
-  if(matches.length === 1) return describeGame(matches[0]);
-  if(matches.length > 1 && matches.length <= 6){
-    return 'Nimepata games kadhaa zinazolingana na hilo:\n' + matches.map(g=>'• '+g.name).join('\n') + '\n\nAndika jina kamili la moja unayotaka nikuelezee vizuri zaidi.';
-  }
-
-  // 3) FAQ / knowledge-base match
+  const lower = text.toLowerCase();
   const hit = AI_KB.find(k=>k.keys.some(w=>lower.includes(w)));
-  if(hit) return hit.a;
-
-  const sample = games.length ? games[Math.floor(Math.random()*games.length)].name : 'jina la game';
-  return 'Naelewa unachouliza, lakini sijapata jibu kamili kwenye maarifa yangu 🤔 Unaweza kuniuliza kuhusu game yoyote kwa jina lake (mfano "' + sample + '"), au tumia maneno kama "malipo", "duka", "kura", "token". Kama bado imekwama, admin yupo tayari kukusaidia moja kwa moja WhatsApp kwenye ukurasa wa Chat.';
+  return hit ? hit.a : 'Naelewa unachouliza, lakini sijapata jibu kamili kwenye maarifa yangu 🤔 Jaribu kuniambia kwa namna nyingine, au tumia maneno kama "malipo", "Winlator", "PPSSPP", "duka", "kura" au "points". Kama bado imekwama, admin yupo tayari kukusaidia moja kwa moja kupitia WhatsApp kwenye ukurasa wa Chat.';
 }
 
 function aiAddMsg(text, who){
@@ -2410,7 +2369,7 @@ function aiSend(){
 let chatName = localStorage.getItem('mg-chat-name') || '';
 let chatUnsub = null;
 
-const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','pollView','aiView','tournamentView','tournDetailView'];
+const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','pollView','aiView','tournamentView','tournDetailView','betTipsView'];
 const ALL_NAVS = ['navHome','navChat','navGames','navAI','navMe'];
 function hideAllViews(){
   pollViewOpen = false;
@@ -2461,6 +2420,120 @@ function showPolls(){
   loadPolls();
 }
 
+// ============================================================
+// Shared token cap: no user's stored token balance can exceed this,
+// used when crediting referral bonuses.
+// ============================================================
+const TOKEN_CAP = 2500;
+async function creditPointsCapped(uid, amount){
+  const ref = db.collection('users').doc(uid);
+  await db.runTransaction(async (tx)=>{
+    const doc = await tx.get(ref);
+    const current = (doc.exists && doc.data().points) || 0;
+    tx.update(ref, {points: Math.min(TOKEN_CAP, current + amount)});
+  });
+}
+
+// ============================================================
+// ---- Bet Tips ----
+// Admin posts these from admin.html (collection: betTips). Anyone can
+// view and copy the code for free; liking is tracked per-device via
+// localStorage (no login required) so someone can't like the same tip
+// over and over from the same phone.
+// ============================================================
+const SWAHILI_DAYS = ['Jumapili','Jumatatu','Jumanne','Jumatano','Alhamisi','Ijumaa','Jumamosi'];
+function swahiliDayName(ts){
+  return SWAHILI_DAYS[new Date(ts).getDay()];
+}
+function loadBetTipLikedSet(){
+  try{
+    const raw = localStorage.getItem('mg-bettip-likes');
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  }catch(e){ return new Set(); }
+}
+function saveBetTipLikedSet(set){
+  try{ localStorage.setItem('mg-bettip-likes', JSON.stringify(Array.from(set))); }catch(e){}
+}
+function showBetTips(){
+  hideAllViews();
+  document.getElementById('betTipsView').style.display = 'flex';
+  loadBetTips();
+}
+function loadBetTips(){
+  db.collection('betTips').orderBy('createdAt','desc').limit(50).onSnapshot(snap=>{
+    const list = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    renderBetTips(list);
+  }, err=>{
+    console.error(err);
+    document.getElementById('betTipsList').innerHTML = '<div class="empty">Imeshindwa kupakia bet tips. Angalia mtandao wako.</div>';
+  });
+}
+function renderBetTips(list){
+  const box = document.getElementById('betTipsList');
+  if(!list.length){
+    box.innerHTML = '<div class="empty">Bado hakuna bet tip. Rudi baadaye 👀</div>';
+    return;
+  }
+  const likedSet = loadBetTipLikedSet();
+  box.innerHTML = list.map(t=>{
+    const liked = likedSet.has(t.id);
+    const d = new Date(t.createdAt);
+    const dd = String(d.getDate()).padStart(2,'0'), mo = String(d.getMonth()+1).padStart(2,'0');
+    return `
+    <div class="bt-card">
+      <div class="bt-head">
+        <div class="bt-logo">${t.logo ? `<img src="${escapeHtml(t.logo)}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">` : '🎫'}</div>
+        <div>
+          <div class="bt-bookmaker">${escapeHtml(t.bookmaker||'Bookmaker')}</div>
+          <div class="bt-day">${swahiliDayName(t.createdAt)}</div>
+        </div>
+        ${t.odds ? `<div class="bt-odds">Odds ${escapeHtml(t.odds)}</div>` : ''}
+      </div>
+      ${t.title ? `<div class="bt-title">${escapeHtml(t.title)}</div>` : ''}
+      ${t.desc ? `<div class="bt-desc">${escapeHtml(t.desc)}</div>` : ''}
+      <div class="bt-code-row">
+        <div class="bt-code">${escapeHtml(t.code)}</div>
+        <button type="button" class="bt-copy-btn" data-code="${escapeHtml(t.code)}">📋 Nakili</button>
+      </div>
+      <div class="bt-foot">
+        <button type="button" class="bt-like-btn ${liked?'liked':''}" data-tip-id="${t.id}">${liked?'❤️':'🤍'} <span>${t.likes||0}</span></button>
+        <div class="bt-date">${dd}/${mo}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+document.getElementById('betTipsList').addEventListener('click', (e)=>{
+  const copyBtn = e.target.closest('.bt-copy-btn');
+  if(copyBtn){
+    const code = copyBtn.dataset.code;
+    const done = ()=>{
+      const old = copyBtn.textContent;
+      copyBtn.textContent = '✓ Umenakili!';
+      setTimeout(()=>{ copyBtn.textContent = old; }, 1800);
+    };
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(code).then(done).catch(()=>{ alert('Msimbo: ' + code); });
+    } else {
+      alert('Msimbo: ' + code);
+    }
+    return;
+  }
+  const likeBtn = e.target.closest('.bt-like-btn');
+  if(likeBtn){
+    likeBetTip(likeBtn.dataset.tipId, likeBtn);
+  }
+});
+async function likeBetTip(id, btn){
+  const likedSet = loadBetTipLikedSet();
+  if(likedSet.has(id)) return; // already liked from this device
+  likedSet.add(id);
+  saveBetTipLikedSet(likedSet);
+  btn.classList.add('liked');
+  btn.innerHTML = '❤️ <span>' + ((parseInt(btn.querySelector('span').textContent,10)||0) + 1) + '</span>';
+  try{
+    await db.collection('betTips').doc(id).update({likes: firebase.firestore.FieldValue.increment(1)});
+  }catch(e){ console.error(e); }
+}
 
 // ---- Tournaments ----
 const SPORTS = [
@@ -3267,20 +3340,15 @@ const CONDITION_LABELS = {new:'✨ Mpya', used:'♻️ Imetumika', refurbished:'
 function loadListings(){
   db.collection('listings').where('status','==','approved').onSnapshot(snap=>{
     const approved = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    window._dukaListings = approved;
     document.getElementById('dukaList').innerHTML = approved.length ? approved.map(l=>{
       const stockNum = (l.stock===undefined || l.stock===null || l.stock==='') ? null : parseInt(l.stock,10);
-      const isNew = l.createdAt && (Date.now() - l.createdAt) < (3*24*60*60*1000);
-      const isOwner = auth.currentUser && l.ownerUid === auth.currentUser.uid;
-      const lJson = JSON.stringify(l).replace(/'/g,"&#39;");
+      const outOfStock = stockNum !== null && stockNum <= 0;
       return `
-      <div class="d-gcard" onclick='openListingDetail(${lJson})'>
+      <div class="d-gcard">
         <div class="d-gthumb">
           ${l.image ? `<img src="${l.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(l.title)}" loading="eager" decoding="async">` : ''}
           ${l.condition ? `<div class="d-gbadge">${CONDITION_LABELS[l.condition]||l.condition}</div>` : ''}
-          ${stockNum !== null ? `<div class="d-gstock">${stockNum} zilizopo</div>` : ''}
-          ${isNew && !l.closed ? `<div class="d-gnew">🆕 Mpya</div>` : ''}
-          ${l.closed ? `<div class="d-gclosed-overlay">🔒 IMEUZWA</div>` : ''}
+          ${stockNum !== null ? `<div class="d-gstock">${outOfStock ? 'Imeisha' : stockNum + ' zilizopo'}</div>` : ''}
         </div>
         <div class="d-gbody">
           <div class="d-gname">${escapeHtml(l.title)}</div>
@@ -3289,14 +3357,7 @@ function loadListings(){
             <span class="d-gprice">TZS ${escapeHtml(l.price)}</span>
             ${l.wasPrice ? `<span class="d-gwas">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}
           </div>
-          <div class="d-gactions">
-            ${isOwner
-              ? `<button class="d-gowner-btn ${l.closed?'reopen':'close'}" onclick='event.stopPropagation();toggleListingClosed(${JSON.stringify(l.id)},${!!l.closed})'>${l.closed?'🔓 Fungua Tena':'🔒 Funga (Imeuzwa)'}</button>`
-              : l.closed
-                ? `<button class="d-gbuy" disabled style="opacity:0.45;cursor:not-allowed;">Imeuzwa</button>`
-                : `<button class="d-gbuy" onclick='event.stopPropagation();buyListingOnWhatsApp(${lJson})'>💬 Nunua</button>`}
-            ${!isOwner ? `<button class="d-greport" onclick='event.stopPropagation();reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title).replace(/'/g,"&#39;")})'>🚩 Ripoti</button>` : ''}
-          </div>
+          <button class="d-greport" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title).replace(/'/g,"&#39;")})'>🚩 Ripoti</button>
         </div>
       </div>`;
     }).join('') : '<div class="empty">Bado hakuna bidhaa iliyothibitishwa. Kuwa wa kwanza kuweka! 🛍️</div>';
@@ -3304,64 +3365,6 @@ function loadListings(){
     console.error(err);
     document.getElementById('dukaList').innerHTML = '<div class="empty">Imeshindwa kupakia. Jaribu tena.</div>';
   });
-}
-
-// A seller can lock (mark sold/unavailable) or reopen their own listing at
-// any time, on their own judgement — this is fully manual and has nothing
-// to do with the stock number, which is purely informational.
-async function toggleListingClosed(id, currentlyClosed){
-  if(!auth.currentUser){ alert('Ingia kwenye akaunti yako kwanza.'); return; }
-  try{
-    await db.collection('listings').doc(id).update({closed: !currentlyClosed});
-  }catch(e){
-    alert('Imeshindwa kubadilisha hali ya bidhaa. Jaribu tena.');
-  }
-}
-
-// Full-detail view for a listing, opened by tapping its card. Shows the
-// same info as the card plus description, condition/category/delivery
-// details, and the same buy/report (or owner close/reopen) actions.
-function openListingDetail(l){
-  const stockNum = (l.stock===undefined || l.stock===null || l.stock==='') ? null : parseInt(l.stock,10);
-  const isNew = l.createdAt && (Date.now() - l.createdAt) < (3*24*60*60*1000);
-  const isOwner = auth.currentUser && l.ownerUid === auth.currentUser.uid;
-  const lJson = JSON.stringify(l).replace(/'/g,"&#39;");
-
-  document.getElementById('lmThumb').style.backgroundImage = l.image ? `url('${l.image.replace(/'/g,"\\'")}')` : '';
-  document.getElementById('lmTitle').textContent = l.title || '';
-  document.getElementById('lmBrand').textContent = l.brand || '';
-
-  const badges = [];
-  if(l.condition) badges.push(`<span class="tag">${CONDITION_LABELS[l.condition]||l.condition}</span>`);
-  if(l.category) badges.push(`<span class="tag">${escapeHtml(l.category)}</span>`);
-  if(stockNum !== null) badges.push(`<span class="tag">📦 ${stockNum} zilizopo</span>`);
-  if(l.freeShipping) badges.push(`<span class="tag">🚚 Delivery Bure</span>`);
-  else if(l.deliveryFee) badges.push(`<span class="tag">🚚 Delivery TZS ${escapeHtml(l.deliveryFee)}</span>`);
-  if(isNew && !l.closed) badges.push(`<span class="tag" style="background:linear-gradient(135deg,#ff9d00,#ffd347);color:#241800;border:none;">🆕 Mpya</span>`);
-  if(l.closed) badges.push(`<span class="tag" style="background:#c1121f;color:#fff;border:none;">🔒 Imeuzwa</span>`);
-  document.getElementById('lmBadges').innerHTML = badges.join('');
-
-  document.getElementById('lmPriceRow').innerHTML = `<span class="d-gprice" style="font-size:16px;">TZS ${escapeHtml(l.price)}</span>${l.wasPrice ? `<span class="d-gwas">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}`;
-  document.getElementById('lmDesc').textContent = l.desc || '';
-  document.getElementById('lmMeta').innerHTML = l.sellerName ? `Muuzaji: ${escapeHtml(l.sellerName)}` : '';
-
-  let actionsHtml = '';
-  if(isOwner){
-    actionsHtml = `<button class="d-gowner-btn ${l.closed?'reopen':'close'}" style="width:100%;padding:12px 0;font-size:12px;" onclick='toggleListingClosed(${JSON.stringify(l.id)},${!!l.closed});closeListingModal();'>${l.closed?'🔓 Fungua Tena':'🔒 Funga (Imeuzwa)'}</button>`;
-  } else if(l.closed){
-    actionsHtml = `<button class="d-gbuy" disabled style="width:100%;padding:12px 0;font-size:12px;opacity:0.45;cursor:not-allowed;">Bidhaa Imeuzwa</button>`;
-  } else {
-    actionsHtml = `<button class="d-gbuy" style="width:100%;padding:12px 0;font-size:12px;" onclick='buyListingOnWhatsApp(${lJson})'>💬 Nunua kwa WhatsApp</button>`;
-  }
-  if(!isOwner){
-    actionsHtml += `<button class="d-greport" style="width:100%;padding:9px 0;" onclick='reportListing(${JSON.stringify(l.id)},${JSON.stringify(l.title).replace(/'/g,"&#39;")});closeListingModal();'>🚩 Ripoti</button>`;
-  }
-  document.getElementById('lmActions').innerHTML = actionsHtml;
-
-  document.getElementById('listingOverlay').classList.add('show');
-}
-function closeListingModal(){
-  document.getElementById('listingOverlay').classList.remove('show');
 }
 
 async function reportListing(id, title){
@@ -3379,31 +3382,6 @@ async function reportListing(id, title){
   }catch(e){
     alert('Imeshindwa kutuma taarifa. Jaribu tena.');
   }
-}
-
-// Normalizes a Tanzanian phone number into WhatsApp's wa.me format
-// (255XXXXXXXXX, no plus, no spaces/dashes, no leading zero).
-function formatPhoneForWhatsApp(phone){
-  let p = (phone || '').replace(/[^\d]/g, '');
-  if(p.startsWith('0')) p = '255' + p.slice(1);
-  else if(!p.startsWith('255')) p = '255' + p;
-  return p;
-}
-
-// Opens a WhatsApp chat directly with the seller of a listing, with a
-// friendly pre-filled message so the seller instantly knows which item
-// the buyer is asking about. No payment happens inside the app, and stock
-// is purely informational — it never auto-locks the listing. Only the
-// seller themselves can mark a listing as sold/unavailable (see
-// toggleListingClosed), whenever they decide it's actually sold.
-function buyListingOnWhatsApp(l){
-  const phone = formatPhoneForWhatsApp(l.sellerPhone);
-  if(!phone){
-    alert('Samahani, muuzaji hakuweka namba sahihi. Jaribu kuripoti tangazo hili.');
-    return;
-  }
-  const msg = 'Habari! 👋 Nilikuwa nahitaji bidhaa uliyopost kwenye mumbigames Duka — *' + l.title + '* (TZS ' + l.price + '). Bado ipo? Tuzungumze bei na delivery hapa 🙏';
-  window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
 // ---- Listing image upload to Firebase Storage (accepts any image type — not locked to .jpg) ----
@@ -3489,10 +3467,6 @@ async function submitListing(){
   const image = document.getElementById('lImage').value.trim();
   const sellerName = document.getElementById('lSellerName').value.trim();
   const sellerPhone = document.getElementById('lSellerPhone').value.trim();
-  if(sellerPhone && !/^[67]\d{8}$/.test(sellerPhone)){
-    alert('Namba ya WhatsApp si sahihi. Andika tarakimu 9 baada ya 255, zianze na 6 au 7 (mfano: 712345678).');
-    return;
-  }
   if(!title || !price || !sellerName || !sellerPhone){
     alert('Jaza jina la bidhaa, bei, jina lako na namba yako kabla ya kutuma.');
     return;
@@ -3504,7 +3478,6 @@ async function submitListing(){
       ownerUid: auth.currentUser.uid,
       ownerEmail: auth.currentUser.email || '',
       status: 'pending',
-      closed: false,
       createdAt: Date.now()
     });
   }catch(e){
@@ -3702,12 +3675,12 @@ const TRANSLATIONS = {
     tourn_min_teams:'Angalau timu 4 zinahitajika.', tourn_finish:'Unda Tournament',
     chip_all:'Zote', chip_free:'Bure', chip_paid:'Kulipia', chip_offline:'Offline',
     poll_title:'Kura (Poll)', poll_sub:'Piga kura, ona matokeo',
-    ai_title:'🤖 FunBot ✨', ai_sub:'Msaidizi wako wa mumbigames • Online',
+    ai_title:'🤖 AI Msaidizi', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi',
     profile_title:'Profile Yangu', profile_sub:'Akaunti yako mumbigames',
     duka_title:'Duka la Wachezaji', duka_sub:'Vifaa vya games — vilivyothibitishwa na admin',
     duka_sub_home:'Nunua/uza vifaa vya games — vilivyothibitishwa na admin',
     duka_browse:'Tazama Bidhaa', duka_post_tab:'Weka Bidhaa',
-    duka_warning:'🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani. Ukibonyeza "Nunua", utapelekwa WhatsApp kuongea na muuzaji moja kwa moja — malipo na delivery mnapangana wenyewe kule. Kuwa makini kabla ya kulipa. Ukiona utapeli, bonyeza "Ripoti".',
+    duka_warning:'🛡️ Ulinzi wa Duka: Kila bidhaa hukaguliwa na admin kabla haijaonekana hadharani. Malipo YOTE yafanyike kwa namba ya admin pekee (Tigo Pesa 0703504270) — USITUME PESA moja kwa moja kwa muuzaji. Ukiona utapeli, bonyeza "Ripoti".',
     duka_f_title:'Jina la bidhaa', duka_f_desc:'Maelezo', duka_f_price:'Bei (TZS)',
     duka_f_image:'Picha ya bidhaa', duka_f_name:'Jina lako', duka_f_phone:'Namba yako ya simu',
     duka_submit:'Tuma kwa Ukaguzi wa Admin',
@@ -3725,7 +3698,17 @@ const TRANSLATIONS = {
     duka_f_tags:'Tags (hiari)', duka_f_tags_hint:'Tags husaidia wanunuzi kuipata bidhaa yako haraka.',
     chat_title:'Jumuiya ya mumbigames', chat_sub:'Chati ya wachezaji wote',
     chat_join_title:'Jiunge na Chati', chat_join_sub:'Weka jina utakalotumia kuchati na wachezaji wengine',
-    chat_join_btn:'Ingia Chatini'
+    chat_join_btn:'Ingia Chatini',
+    profile_stats_title:'📊 Takwimu Zangu', profile_referrals_lbl:'Marafiki walioalikwa', profile_downloads_lbl:'Downloads zako',
+    bettips_shortcut_title:'Bet Tips', bettips_shortcut_sub:'Msimbo wa bet, nakili na ubandike BetPawa/1Win',
+    bettips_view_title:'🎫 Bet Tips', bettips_view_sub:'Nakili msimbo, bandika kwenye app ya bet',
+    bettips_disclaimer:'ℹ️ Nakili msimbo (code) na uubandike kwenye app ya bet (mfano BetPawa, 1Win). Bet tips ni kwa taarifa tu — cheza bet kwa busara, 18+.',
+    invite_title:'🎁 Alika Marafiki, Pata Game Bure',
+    invite_sub:'Mtumie rafiki yako APK ya mumbigames pamoja na msimbo wako wa mwaliko. Akijisajili na kuweka msimbo huo, unapata token 50. Ukifikisha token 500, unaweza kupata game moja la kulipia BURE (mara moja tu kwa akaunti yako).',
+    invite_tokens_lbl:'🪙 Token zako', invite_friends_lbl:'Marafiki walioalikwa',
+    invite_code_lbl:'Msimbo wako wa Mwaliko', invite_share_btn:'Shea APK + Msimbo Wangu',
+    invite_enter_code_lbl:'Una msimbo wa rafiki? Weka hapa upate token kwake', invite_use_code_btn:'Tumia',
+    redeem_title:'🏆 Chagua Game la Kupata Bure'
   },
   en: {
     settings_title:'Settings', settings_sub:'App preferences',
@@ -3746,12 +3729,12 @@ const TRANSLATIONS = {
     tourn_min_teams:'Min 4 teams required.', tourn_finish:'Create Tournament',
     chip_all:'All', chip_free:'Free', chip_paid:'Paid', chip_offline:'Offline',
     poll_title:'Poll', poll_sub:'Vote and see results',
-    ai_title:'🤖 FunBot ✨', ai_sub:'Your mumbigames assistant • Online',
+    ai_title:'🤖 AI Assistant', ai_sub:'Ask about payments, game setup, and more',
     profile_title:'My Profile', profile_sub:'Your mumbigames account',
     duka_title:'Player Marketplace', duka_sub:'Gaming gear — verified by admin',
     duka_sub_home:'Buy/sell gaming gear — verified by admin',
     duka_browse:'Browse Items', duka_post_tab:'Post Item',
-    duka_warning:'🛡️ Marketplace protection: every item is checked by admin before it goes public. Tap "Buy" to chat with the seller directly on WhatsApp — payment and delivery are arranged between you two there. Be careful before paying. See a scam? Tap "Report".',
+    duka_warning:'🛡️ Marketplace protection: every item is checked by admin before it goes public. ALL payments go to the admin\'s number only (Tigo Pesa 0703504270) — never pay a seller directly. See a scam? Tap "Report".',
     duka_f_title:'Item name', duka_f_desc:'Description', duka_f_price:'Price (TZS)',
     duka_f_image:'Item photo', duka_f_name:'Your name', duka_f_phone:'Your phone number',
     duka_submit:'Submit for Admin Review',
@@ -3769,7 +3752,17 @@ const TRANSLATIONS = {
     duka_f_tags:'Tags (Optional)', duka_f_tags_hint:'Tags help buyers find your item faster.',
     chat_title:'mumbigames Community', chat_sub:'Chat with all players',
     chat_join_title:'Join Chat', chat_join_sub:'Enter the name you\'ll use to chat with other players',
-    chat_join_btn:'Enter Chat'
+    chat_join_btn:'Enter Chat',
+    profile_stats_title:'📊 My Stats', profile_referrals_lbl:'Friends invited', profile_downloads_lbl:'Your downloads',
+    bettips_shortcut_title:'Bet Tips', bettips_shortcut_sub:'Bet codes — copy and paste into BetPawa/1Win',
+    bettips_view_title:'🎫 Bet Tips', bettips_view_sub:'Copy the code, paste it in your bet app',
+    bettips_disclaimer:'ℹ️ Copy the code and paste it in the betting app (e.g. BetPawa, 1Win). Bet tips are for information only — bet responsibly, 18+.',
+    invite_title:'🎁 Invite Friends, Get a Free Game',
+    invite_sub:'Send your friend the mumbigames APK along with your invite code. When they sign up and enter that code, you get 50 tokens. Reach 500 tokens and you can get one paid game FREE (once per account only).',
+    invite_tokens_lbl:'🪙 Your tokens', invite_friends_lbl:'Friends invited',
+    invite_code_lbl:'Your Invite Code', invite_share_btn:'Share APK + My Code',
+    invite_enter_code_lbl:'Have a friend\'s code? Enter it here to get them tokens', invite_use_code_btn:'Apply',
+    redeem_title:'🏆 Pick a Free Game'
   }
 };
 

@@ -223,6 +223,7 @@
     <div class="tab" data-view="tournaments">Tournaments</div>
     <div class="tab" data-view="banners">Banner</div>
     <div class="tab" data-view="polls">Kura</div>
+    <div class="tab" data-view="bettips">🎫 Bet Tips</div>
     <div class="tab" data-view="social">Social</div>
     <div class="tab" data-view="ads">Tangazo</div>
   </div>
@@ -458,6 +459,33 @@
       <div id="pollList"></div>
     </div>
 
+    <!-- BET TIPS -->
+    <div class="view" id="view-bettips">
+      <div class="section-title"><h2>🎫 Weka Bet Tip Mpya</h2></div>
+      <label>Bookmaker (mfano: BetPawa, 1Win)</label>
+      <input type="text" id="btBookmaker" placeholder="mfano: BetPawa">
+      <label>Nembo ya Bookmaker (si lazima)</label>
+      <div id="btLogoPreviewWrap" style="display:none;margin-bottom:10px;">
+        <img id="btLogoPreview" src="" style="width:56px;height:56px;object-fit:cover;border-radius:12px;border:1px solid var(--line);">
+      </div>
+      <input type="file" id="btLogoFile" accept="image/*" onchange="handleBetTipLogoSelect()">
+      <div id="btLogoUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
+      <input type="hidden" id="btLogo" value="">
+      <label style="margin-top:14px;">Kichwa cha tip (mfano: Wednesday Multi Bet)</label>
+      <input type="text" id="btTitle" placeholder="mfano: Wednesday Multi Bet">
+      <label>Maelezo mafupi</label>
+      <textarea id="btDesc" rows="2" placeholder="mfano: Leo odds ni bwanga, stake kistaarabu😜🔥"></textarea>
+      <label>Odds jumla</label>
+      <input type="text" id="btOdds" placeholder="mfano: 64.16">
+      <label>Booking Code</label>
+      <input type="text" id="btCode" placeholder="mfano: 5AXVBX" style="text-transform:uppercase;font-family:monospace;letter-spacing:1px;">
+      <div class="form-actions">
+        <button class="btn btn-primary" style="flex:1" onclick="saveBetTip()">Chapisha Bet Tip</button>
+      </div>
+      <div class="section-title"><h2>Bet Tips zilizopo</h2></div>
+      <div id="betTipsList"></div>
+    </div>
+
     <!-- SOCIAL -->
     <div class="view" id="view-social">
       <div class="section-title"><h2>Social media links</h2></div>
@@ -627,6 +655,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
     if(tab.dataset.view==='tournaments'){ loadTournamentsAdmin(); }
     if(tab.dataset.view==='banners') loadBannersAdmin();
     if(tab.dataset.view==='polls') loadPollsAdmin();
+    if(tab.dataset.view==='bettips') loadBetTipsAdmin();
     if(tab.dataset.view==='payment') loadPaymentRequests();
     if(tab.dataset.view==='ads') loadSponsoredAd();
   });
@@ -844,6 +873,81 @@ function loadBannersAdmin(){
 async function deleteBanner(id){
   if(!confirm('Una uhakika unataka kufuta banner hii?')) return;
   try{ await db.collection('banners').doc(id).delete(); showToast('Imefutwa.'); }
+  catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
+}
+
+// ---- Bet Tips ----
+async function handleBetTipLogoSelect(){
+  const fileInput = document.getElementById('btLogoFile');
+  const file = fileInput.files[0];
+  if(!file) return;
+  const statusEl = document.getElementById('btLogoUploadStatus');
+  statusEl.textContent = 'Inapakia picha...';
+  try{
+    const url = await uploadToImgbb(file);
+    document.getElementById('btLogo').value = url;
+    document.getElementById('btLogoPreview').src = url;
+    document.getElementById('btLogoPreviewWrap').style.display = 'block';
+    statusEl.textContent = 'Nembo imepakiwa ✓';
+  }catch(e){
+    console.error(e);
+    statusEl.textContent = 'Imeshindwa kupakia picha. Jaribu tena.';
+  }
+}
+
+async function saveBetTip(){
+  const bookmaker = document.getElementById('btBookmaker').value.trim();
+  const logo = document.getElementById('btLogo').value.trim();
+  const title = document.getElementById('btTitle').value.trim();
+  const desc = document.getElementById('btDesc').value.trim();
+  const odds = document.getElementById('btOdds').value.trim();
+  const code = document.getElementById('btCode').value.trim().toUpperCase();
+  if(!bookmaker || !code){ showToast('Weka angalau Bookmaker na Booking Code.'); return; }
+  try{
+    await db.collection('betTips').add({
+      bookmaker, logo, title, desc, odds, code,
+      likes: 0, createdAt: Date.now()
+    });
+    showToast('Bet Tip imechapishwa ✓');
+    document.getElementById('btBookmaker').value = '';
+    document.getElementById('btTitle').value = '';
+    document.getElementById('btDesc').value = '';
+    document.getElementById('btOdds').value = '';
+    document.getElementById('btCode').value = '';
+    document.getElementById('btLogo').value = '';
+    document.getElementById('btLogoFile').value = '';
+    document.getElementById('btLogoPreviewWrap').style.display = 'none';
+    document.getElementById('btLogoUploadStatus').textContent = '';
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kuchapisha Bet Tip.');
+  }
+}
+
+function loadBetTipsAdmin(){
+  db.collection('betTips').orderBy('createdAt','desc').limit(100).onSnapshot(snap=>{
+    const list = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    document.getElementById('betTipsList').innerHTML = list.length ? list.map(t=>{
+      const d = new Date(t.createdAt);
+      const dd = String(d.getDate()).padStart(2,'0'), mo = String(d.getMonth()+1).padStart(2,'0');
+      return `
+      <div class="game-card">
+        <div class="thumb" style="${t.logo?`background-image:url('${t.logo.replace(/'/g,"")}');background-size:cover;background-position:center;`:''}">${t.logo?'':'🎫'}</div>
+        <div class="g-info">
+          <div class="name">${escapeHtmlAdmin(t.bookmaker)} — ${escapeHtmlAdmin(t.code)}</div>
+          <div class="g-tags"><span class="tag">${dd}/${mo}</span>${t.odds?`<span class="tag paid">Odds: ${escapeHtmlAdmin(t.odds)}</span>`:''}<span class="tag">❤ ${t.likes||0}</span></div>
+        </div>
+        <div class="g-actions">
+          <button class="icon-btn del" onclick="deleteBetTip('${t.id}')">🗑</button>
+        </div>
+      </div>`;
+    }).join('') : '<div class="empty">Hakuna bet tip bado. Chapisha moja hapo juu.</div>';
+  }, err=>console.error(err));
+}
+
+async function deleteBetTip(id){
+  if(!confirm('Una uhakika unataka kufuta bet tip hii?')) return;
+  try{ await db.collection('betTips').doc(id).delete(); showToast('Imefutwa.'); }
   catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
 }
 
