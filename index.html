@@ -166,6 +166,25 @@
   .bt-like-btn.liked{color:#ff4d6d;}
   .bt-date{margin-left:auto;font-size:9.5px;color:var(--sub);}
   .bt-disclaimer{font-size:9.5px;color:var(--sub);line-height:1.5;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:16px;}
+
+  /* ---- Profile tabs (Overview / Policy / Bet Tips / Promo) ---- */
+  .ptabs{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;margin-bottom:14px;-webkit-overflow-scrolling:touch;}
+  .ptabs::-webkit-scrollbar{display:none;}
+  .ptab{flex:none;padding:9px 16px;border-radius:20px;font-size:11px;font-weight:700;background:var(--panel);border:1px solid var(--line);color:var(--sub);cursor:pointer;white-space:nowrap;}
+  .ptab.active{background:var(--lime);color:var(--bg);border-color:var(--lime);}
+  .ptab-panel{display:none;}
+  .ptab-panel.active{display:block;}
+  .policy-block{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;}
+  .policy-block.warn{border-color:#a83232;background:rgba(168,50,50,0.08);}
+  .policy-block h4{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;margin:0 0 10px;color:var(--text);}
+  .policy-block ul{margin:0;padding-left:18px;}
+  .policy-block li{font-size:11.5px;color:var(--sub);line-height:1.6;margin-bottom:8px;}
+  .policy-block li:last-child{margin-bottom:0;}
+  .policy-block li b{color:var(--text);}
+  .policy-block p{font-size:11.5px;color:var(--sub);line-height:1.6;margin:0 0 8px;}
+  .acct-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:11.5px;color:var(--sub);}
+  .acct-row:last-child{border-bottom:none;}
+  .acct-row b{color:var(--text);font-weight:700;}
   .qa-badge{display:none;position:absolute;top:6px;right:10px;width:10px;height:10px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
 
   /* Trending carousel */
@@ -300,7 +319,6 @@
   #dukaView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   #tournamentView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   #tournDetailView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
-  #betTipsView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   .td-tab.active{background:var(--lime);color:var(--bg);}
   .td-tab:not(.active){color:var(--sub);}
 
@@ -727,20 +745,6 @@
   </div>
 </div>
 
-<div id="betTipsView">
-  <div class="chat-header">
-    <div class="back" onclick="showHome()">←</div>
-    <div style="flex:1;">
-      <div class="title" data-i18n="bettips_view_title">🎫 Bet Tips</div>
-      <div class="sub" data-i18n="bettips_view_sub">Nakili msimbo, bandika kwenye app ya bet</div>
-    </div>
-  </div>
-  <div class="settings-body">
-    <div class="bt-disclaimer" data-i18n="bettips_disclaimer">ℹ️ Nakili msimbo (code) na uubandike kwenye app ya bet (mfano BetPawa, 1Win). Bet tips ni kwa taarifa tu — cheza bet kwa busara, 18+.</div>
-    <div id="betTipsList">Inapakia...</div>
-  </div>
-</div>
-
 <div id="pollView">
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
@@ -859,60 +863,133 @@
         <div style="font-size:10.5px;color:var(--sub);margin-top:4px;" id="profileEmail">—</div>
         <div style="font-size:10px;color:var(--sub);margin-top:2px;" id="profileMeta">—</div>
       </div>
-      <div class="settings-section">
-        <div class="settings-label" data-i18n="profile_stats_title">📊 Takwimu Zangu</div>
-        <div style="display:flex;gap:10px;margin-top:10px;">
-          <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
-            <div style="font-size:20px;">👥</div>
-            <div style="font-size:18px;font-weight:800;margin-top:4px;" id="profileReferralCount">0</div>
-            <div style="font-size:10px;color:var(--sub);margin-top:2px;" data-i18n="profile_referrals_lbl">Marafiki walioalikwa</div>
+
+      <div class="ptabs" id="profileTabs">
+        <div class="ptab active" data-ptab="overview" data-i18n="ptab_overview">Muhtasari</div>
+        <div class="ptab" data-ptab="policy" data-i18n="ptab_policy">Sera</div>
+        <div class="ptab" data-ptab="bettips" data-i18n="ptab_bettips">🎫 Bet Tips</div>
+        <div class="ptab" data-ptab="promo" data-i18n="ptab_promo">🎁 Promo</div>
+      </div>
+
+      <!-- ---- MUHTASARI (Overview) ---- -->
+      <div class="ptab-panel active" id="ptabOverview">
+        <div class="settings-section">
+          <div class="settings-label" data-i18n="profile_stats_title">📊 Takwimu Zangu</div>
+          <div style="display:flex;gap:10px;margin-top:10px;">
+            <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
+              <div style="font-size:20px;">👥</div>
+              <div style="font-size:18px;font-weight:800;margin-top:4px;" id="profileReferralCount">0</div>
+              <div style="font-size:10px;color:var(--sub);margin-top:2px;" data-i18n="profile_referrals_lbl">Marafiki walioalikwa</div>
+            </div>
+            <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
+              <div style="font-size:20px;">⬇️</div>
+              <div style="font-size:18px;font-weight:800;margin-top:4px;" id="profileDownloadsCount">0</div>
+              <div style="font-size:10px;color:var(--sub);margin-top:2px;" data-i18n="profile_downloads_lbl">Downloads zako</div>
+            </div>
           </div>
-          <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
-            <div style="font-size:20px;">⬇️</div>
-            <div style="font-size:18px;font-weight:800;margin-top:4px;" id="profileDownloadsCount">0</div>
-            <div style="font-size:10px;color:var(--sub);margin-top:2px;" data-i18n="profile_downloads_lbl">Downloads zako</div>
+        </div>
+        <div class="settings-section">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="settings-label" style="margin:0;" data-i18n="account_title">👤 Akaunti</div>
+            <div style="color:var(--lime);font-size:11px;font-weight:700;cursor:pointer;" onclick="toggleAccountEdit()"><span data-i18n="account_edit_btn">✏️ EDIT</span></div>
+          </div>
+          <div id="accountViewMode" style="margin-top:10px;">
+            <div class="acct-row"><span data-i18n="account_country">🌍 Taifa</span><b id="acctCountryView">—</b></div>
+            <div class="acct-row"><span data-i18n="account_email">✉️ Email</span><b id="acctEmailView">—</b></div>
+            <div class="acct-row"><span data-i18n="account_since">📅 Mwanachama tangu</span><b id="acctSinceView">—</b></div>
+          </div>
+          <div id="accountEditMode" style="display:none;margin-top:10px;">
+            <label style="display:block;font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:600;" data-i18n="account_username_lbl">Jina la mtumiaji</label>
+            <input type="text" id="acctUsernameInput" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:12.5px;margin-bottom:10px;">
+            <label style="display:block;font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:600;" data-i18n="account_country_lbl">Taifa</label>
+            <input type="text" id="acctCountryInput" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:12.5px;margin-bottom:10px;">
+            <label style="display:block;font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:600;" data-i18n="account_phone_lbl">Namba ya simu</label>
+            <input type="tel" id="acctPhoneInput" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:12.5px;margin-bottom:12px;">
+            <button class="post-btn" onclick="saveAccountEdit()" data-i18n="account_save_btn">Hifadhi</button>
           </div>
         </div>
       </div>
-      <div class="settings-section" style="cursor:pointer;" onclick="showBetTips()">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0f9d58,#0a6b3c);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;">🎫</div>
-          <div style="flex:1;">
-            <div class="settings-label" style="margin:0;" data-i18n="bettips_shortcut_title">Bet Tips</div>
-            <div class="settings-sub" style="margin:2px 0 0;" data-i18n="bettips_shortcut_sub">Msimbo wa bet, nakili na ubandike BetPawa/1Win</div>
-          </div>
-          <div style="color:var(--sub);font-size:18px;">›</div>
+
+      <!-- ---- SERA (Policy) ---- -->
+      <div class="ptab-panel" id="ptabPolicy">
+        <div class="policy-block">
+          <h4 data-i18n="policy_terms_title">📄 Masharti ya Matumizi</h4>
+          <ul>
+            <li data-i18n="policy_terms_1">Lazima uwe na akaunti kudownload games za kulipia.</li>
+            <li data-i18n="policy_terms_2">Akaunti moja kwa kila mtu. Udanganyifu, matumizi mabaya, au ushahidi wa malipo wa uongo utapelekea kufungiwa kabisa (permanent ban).</li>
+            <li data-i18n="policy_terms_3">Token na misimbo ya mwaliko havina thamani ya pesa taslimu na haviwezi kuhamishwa wala kurudishiwa pesa.</li>
+            <li data-i18n="policy_terms_4">Bet Tips ni kwa taarifa tu. Kucheza bet kuna hatari — wewe mwenyewe unawajibika na maamuzi yako, na lazima uwe na umri unaokubalika kisheria (18+).</li>
+            <li data-i18n="policy_terms_5">Games zinatolewa "kama zilivyo". Hatuwezi kuhakikisha zitaendana na kila simu.</li>
+          </ul>
+        </div>
+        <div class="policy-block">
+          <h4 data-i18n="policy_privacy_title">🔒 Faragha (Privacy)</h4>
+          <ul>
+            <li data-i18n="policy_privacy_1">Tunahifadhi tu kile app inachohitaji: email, jina la mtumiaji, taifa, picha ya profile, na shughuli zako ndani ya app.</li>
+            <li data-i18n="policy_privacy_2">Hatuuzi taarifa zako binafsi kwa upande wowote wa tatu.</li>
+            <li data-i18n="policy_privacy_3">Unaweza kuomba kufutwa kwa akaunti na taarifa zako wakati wowote kupitia ukurasa wa Chat.</li>
+          </ul>
+        </div>
+        <div class="policy-block">
+          <h4 data-i18n="policy_ownership_title">⚠️ Umiliki wa Games</h4>
+          <p data-i18n="policy_ownership_1">mumbigames si mmiliki, mtengenezaji, wala mchapishaji wa games zilizoorodheshwa humu. Sisi ni jukwaa la kusambaza na kugundua tu. Games, majina, logo, na alama zote ni mali ya wamiliki wake husika.</p>
+          <p data-i18n="policy_ownership_2">Ada yoyote inayotozwa ndani ya app inagharamia huduma, hosting, na msaada wetu — si ununuzi wa leseni kutoka kwa mmiliki wa game.</p>
+        </div>
+        <div class="policy-block">
+          <h4 data-i18n="policy_contact_title">✉️ Wasiliana Nasi</h4>
+          <p data-i18n="policy_contact_1">Maswali, malalamiko, au maombi ya kuondoa maudhui? Tutumie ujumbe kwenye ukurasa wa Chat, au WhatsApp:</p>
+          <p><a href="https://wa.me/255703504270" target="_blank" style="color:var(--lime);font-weight:700;text-decoration:none;">+255 703 504 270</a></p>
         </div>
       </div>
-      <div class="settings-section">
-        <div id="inviteFriendsBlock">
-        <div class="settings-label" data-i18n="invite_title">🎁 Alika Marafiki, Pata Game Bure</div>
-        <div class="settings-sub" data-i18n="invite_sub">Mtumie rafiki yako APK ya mumbigames pamoja na msimbo wako wa mwaliko. Akijisajili na kuweka msimbo huo, unapata token 50. Ukifikisha token 500, unaweza kupata game moja la kulipia BURE (mara moja tu kwa akaunti yako).</div>
-        <div style="background:linear-gradient(135deg,#2a2210,#1a1a1a);border:1px solid #a8791a;border-radius:10px;padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;">
-          <div>
-            <div style="font-size:10px;color:#e0c473;" data-i18n="invite_tokens_lbl">🪙 Token zako</div>
-            <div style="font-size:20px;font-weight:800;color:#ffd347;font-family:'Baloo 2',sans-serif;" id="pointsCount">0</div>
+
+      <!-- ---- BET TIPS ---- -->
+      <div class="ptab-panel" id="ptabBettips">
+        <div class="bt-disclaimer" data-i18n="bettips_disclaimer">ℹ️ Nakili msimbo (code) na uubandike kwenye app ya bet (mfano BetPawa, 1Win). Bet tips ni kwa taarifa tu — cheza bet kwa busara, 18+.</div>
+        <div id="betTipsList">Inapakia...</div>
+      </div>
+
+      <!-- ---- PROMO ---- -->
+      <div class="ptab-panel" id="ptabPromo">
+        <div class="settings-section">
+          <div id="inviteFriendsBlock">
+          <div class="settings-label" data-i18n="invite_title">🎁 Alika Marafiki, Pata Game Bure</div>
+          <div style="background:linear-gradient(135deg,#2a2210,#1a1a1a);border:1px solid #a8791a;border-radius:10px;padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:10px;color:#e0c473;" data-i18n="invite_tokens_lbl">🪙 Token zako</div>
+              <div style="font-size:20px;font-weight:800;color:#ffd347;font-family:'Baloo 2',sans-serif;" id="pointsCount">0</div>
+            </div>
+            <div style="text-align:right;font-size:10px;color:var(--sub);">
+              <span data-i18n="invite_friends_lbl">Marafiki walioalikwa</span><br><span id="referralCount" style="font-size:13.5px;font-weight:700;color:var(--text);">0</span>
+            </div>
           </div>
-          <div style="text-align:right;font-size:10px;color:var(--sub);">
-            <span data-i18n="invite_friends_lbl">Marafiki walioalikwa</span><br><span id="referralCount" style="font-size:13.5px;font-weight:700;color:var(--text);">0</span>
+          <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;" data-i18n="invite_code_lbl">Msimbo wako wa Mwaliko</label>
+          <input type="text" id="referralLinkInput" readonly style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14.5px;font-weight:700;letter-spacing:2px;text-align:center;font-family:'JetBrains Mono',monospace;">
+          <button class="post-btn" style="margin-top:10px;" onclick="shareReferralLink()" data-i18n="invite_share_btn">Shea APK + Msimbo Wangu</button>
+          <div id="enterCodeSection" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);">
+            <label style="display:block;font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:600;" data-i18n="invite_enter_code_lbl">Una msimbo wa rafiki? Weka hapa upate token kwake</label>
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="enterCodeInput" placeholder="Mfano: JKV9WG" style="flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:12.5px;letter-spacing:1px;text-transform:uppercase;">
+              <button class="post-btn" style="width:auto;padding:0 16px;" onclick="redeemReferralCode()" data-i18n="invite_use_code_btn">Tumia</button>
+            </div>
+          </div>
+          </div>
+          <div id="redeemSection" style="display:none;margin-top:14px;">
+            <div class="settings-label" style="margin-top:0;" data-i18n="redeem_title">🏆 Chagua Game la Kupata Bure</div>
+            <div id="redeemGamesList"></div>
           </div>
         </div>
-        <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;" data-i18n="invite_code_lbl">Msimbo wako wa Mwaliko</label>
-        <input type="text" id="referralLinkInput" readonly style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14.5px;font-weight:700;letter-spacing:2px;text-align:center;font-family:'JetBrains Mono',monospace;">
-        <button class="post-btn" style="margin-top:10px;" onclick="shareReferralLink()" data-i18n="invite_share_btn">Shea APK + Msimbo Wangu</button>
-        <div id="enterCodeSection" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);">
-          <label style="display:block;font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:600;" data-i18n="invite_enter_code_lbl">Una msimbo wa rafiki? Weka hapa upate token kwake</label>
-          <div style="display:flex;gap:8px;">
-            <input type="text" id="enterCodeInput" placeholder="Mfano: JKV9WG" style="flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:12.5px;letter-spacing:1px;text-transform:uppercase;">
-            <button class="post-btn" style="width:auto;padding:0 16px;" onclick="redeemReferralCode()" data-i18n="invite_use_code_btn">Tumia</button>
-          </div>
-        </div>
-        </div>
-        <div id="redeemSection" style="display:none;margin-top:14px;">
-          <div class="settings-label" style="margin-top:0;" data-i18n="redeem_title">🏆 Chagua Game la Kupata Bure</div>
-          <div id="redeemGamesList"></div>
+        <div class="policy-block">
+          <h4 data-i18n="promo_how_title">ℹ️ Jinsi Promo Code Inavyofanya Kazi</h4>
+          <ul>
+            <li data-i18n="promo_how_1">Msimbo wako wa mwaliko upo tayari juu — mtumie tu rafiki yako.</li>
+            <li data-i18n="promo_how_2">Kila mtu anayejisajili kwa msimbo wako anakupa <b>token 50</b>.</li>
+            <li data-i18n="promo_how_3">Marafiki 5 = token 250, Marafiki 10 = token 500, na kuendelea.</li>
+            <li data-i18n="promo_how_4">Ukifikisha token 500, chagua game LOLOTE la kulipia BURE kabisa — mara moja tu kwa kila akaunti.</li>
+            <li data-i18n="promo_how_5">Msimbo unatumika wakati wa kujisajili tu, na ni hiari.</li>
+          </ul>
         </div>
       </div>
+
       <div class="settings-item" onclick="logoutUser()">
         <div class="si-icon">🚪</div>
         <div class="si-text">
@@ -2369,7 +2446,7 @@ function aiSend(){
 let chatName = localStorage.getItem('mg-chat-name') || '';
 let chatUnsub = null;
 
-const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','pollView','aiView','tournamentView','tournDetailView','betTipsView'];
+const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','pollView','aiView','tournamentView','tournDetailView'];
 const ALL_NAVS = ['navHome','navChat','navGames','navAI','navMe'];
 function hideAllViews(){
   pollViewOpen = false;
@@ -2413,6 +2490,41 @@ function showProfile(){
   document.getElementById('profileView').style.display = 'flex';
   document.getElementById('navMe').classList.add('active');
 }
+function switchProfileTab(name){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.toggle('active', t.dataset.ptab===name));
+  document.querySelectorAll('.ptab-panel').forEach(p=>p.classList.remove('active'));
+  const panel = document.getElementById('ptab' + name.charAt(0).toUpperCase() + name.slice(1));
+  if(panel) panel.classList.add('active');
+}
+function toggleAccountEdit(){
+  const editMode = document.getElementById('accountEditMode');
+  const viewMode = document.getElementById('accountViewMode');
+  const editing = editMode.style.display === 'block';
+  editMode.style.display = editing ? 'none' : 'block';
+  viewMode.style.display = editing ? 'block' : 'none';
+}
+async function saveAccountEdit(){
+  if(!auth.currentUser) return;
+  const username = document.getElementById('acctUsernameInput').value.trim();
+  const nationality = document.getElementById('acctCountryInput').value.trim();
+  const phone = document.getElementById('acctPhoneInput').value.trim();
+  if(!username){ alert('Weka jina lako.'); return; }
+  try{
+    await db.collection('users').doc(auth.currentUser.uid).set({username, nationality, phone}, {merge:true});
+    document.getElementById('profileUsername').textContent = username;
+    document.getElementById('profileMeta').textContent = [nationality, phone].filter(Boolean).join(' • ');
+    document.getElementById('acctCountryView').textContent = nationality || '—';
+    toggleAccountEdit();
+    alert('Taarifa zimehifadhiwa ✓');
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kuhifadhi. Jaribu tena.');
+  }
+}
+document.getElementById('profileTabs').addEventListener('click', (e)=>{
+  const tab = e.target.closest('.ptab');
+  if(tab) switchProfileTab(tab.dataset.ptab);
+});
 function showPolls(){
   hideAllViews();
   pollViewOpen = true;
@@ -2439,7 +2551,7 @@ async function creditPointsCapped(uid, amount){
 // Admin posts these from admin.html (collection: betTips). Anyone can
 // view and copy the code for free; liking is tracked per-device via
 // localStorage (no login required) so someone can't like the same tip
-// over and over from the same phone.
+// over and over from the same phone. Shown as a tab inside Profile.
 // ============================================================
 const SWAHILI_DAYS = ['Jumapili','Jumatatu','Jumanne','Jumatano','Alhamisi','Ijumaa','Jumamosi'];
 function swahiliDayName(ts){
@@ -2455,9 +2567,8 @@ function saveBetTipLikedSet(set){
   try{ localStorage.setItem('mg-bettip-likes', JSON.stringify(Array.from(set))); }catch(e){}
 }
 function showBetTips(){
-  hideAllViews();
-  document.getElementById('betTipsView').style.display = 'flex';
-  loadBetTips();
+  showProfile();
+  switchProfileTab('bettips');
 }
 function loadBetTips(){
   db.collection('betTips').orderBy('createdAt','desc').limit(50).onSnapshot(snap=>{
@@ -3708,7 +3819,33 @@ const TRANSLATIONS = {
     invite_tokens_lbl:'🪙 Token zako', invite_friends_lbl:'Marafiki walioalikwa',
     invite_code_lbl:'Msimbo wako wa Mwaliko', invite_share_btn:'Shea APK + Msimbo Wangu',
     invite_enter_code_lbl:'Una msimbo wa rafiki? Weka hapa upate token kwake', invite_use_code_btn:'Tumia',
-    redeem_title:'🏆 Chagua Game la Kupata Bure'
+    redeem_title:'🏆 Chagua Game la Kupata Bure',
+    ptab_overview:'Muhtasari', ptab_policy:'Sera', ptab_bettips:'🎫 Bet Tips', ptab_promo:'🎁 Promo',
+    account_title:'👤 Akaunti', account_edit_btn:'✏️ EDIT',
+    account_country:'🌍 Taifa', account_email:'✉️ Email', account_since:'📅 Mwanachama tangu',
+    account_username_lbl:'Jina la mtumiaji', account_country_lbl:'Taifa', account_phone_lbl:'Namba ya simu',
+    account_save_btn:'Hifadhi',
+    policy_terms_title:'📄 Masharti ya Matumizi',
+    policy_terms_1:'Lazima uwe na akaunti kudownload games za kulipia.',
+    policy_terms_2:'Akaunti moja kwa kila mtu. Udanganyifu, matumizi mabaya, au ushahidi wa malipo wa uongo utapelekea kufungiwa kabisa (permanent ban).',
+    policy_terms_3:'Token na misimbo ya mwaliko havina thamani ya pesa taslimu na haviwezi kuhamishwa wala kurudishiwa pesa.',
+    policy_terms_4:'Bet Tips ni kwa taarifa tu. Kucheza bet kuna hatari — wewe mwenyewe unawajibika na maamuzi yako, na lazima uwe na umri unaokubalika kisheria (18+).',
+    policy_terms_5:'Games zinatolewa "kama zilivyo". Hatuwezi kuhakikisha zitaendana na kila simu.',
+    policy_privacy_title:'🔒 Faragha (Privacy)',
+    policy_privacy_1:'Tunahifadhi tu kile app inachohitaji: email, jina la mtumiaji, taifa, picha ya profile, na shughuli zako ndani ya app.',
+    policy_privacy_2:'Hatuuzi taarifa zako binafsi kwa upande wowote wa tatu.',
+    policy_privacy_3:'Unaweza kuomba kufutwa kwa akaunti na taarifa zako wakati wowote kupitia ukurasa wa Chat.',
+    policy_ownership_title:'⚠️ Umiliki wa Games',
+    policy_ownership_1:'mumbigames si mmiliki, mtengenezaji, wala mchapishaji wa games zilizoorodheshwa humu. Sisi ni jukwaa la kusambaza na kugundua tu. Games, majina, logo, na alama zote ni mali ya wamiliki wake husika.',
+    policy_ownership_2:'Ada yoyote inayotozwa ndani ya app inagharamia huduma, hosting, na msaada wetu — si ununuzi wa leseni kutoka kwa mmiliki wa game.',
+    policy_contact_title:'✉️ Wasiliana Nasi',
+    policy_contact_1:'Maswali, malalamiko, au maombi ya kuondoa maudhui? Tutumie ujumbe kwenye ukurasa wa Chat, au WhatsApp:',
+    promo_how_title:'ℹ️ Jinsi Promo Code Inavyofanya Kazi',
+    promo_how_1:'Msimbo wako wa mwaliko upo tayari juu — mtumie tu rafiki yako.',
+    promo_how_2:'Kila mtu anayejisajili kwa msimbo wako anakupa token 50.',
+    promo_how_3:'Marafiki 5 = token 250, Marafiki 10 = token 500, na kuendelea.',
+    promo_how_4:'Ukifikisha token 500, chagua game LOLOTE la kulipia BURE kabisa — mara moja tu kwa kila akaunti.',
+    promo_how_5:'Msimbo unatumika wakati wa kujisajili tu, na ni hiari.'
   },
   en: {
     settings_title:'Settings', settings_sub:'App preferences',
@@ -3762,7 +3899,33 @@ const TRANSLATIONS = {
     invite_tokens_lbl:'🪙 Your tokens', invite_friends_lbl:'Friends invited',
     invite_code_lbl:'Your Invite Code', invite_share_btn:'Share APK + My Code',
     invite_enter_code_lbl:'Have a friend\'s code? Enter it here to get them tokens', invite_use_code_btn:'Apply',
-    redeem_title:'🏆 Pick a Free Game'
+    redeem_title:'🏆 Pick a Free Game',
+    ptab_overview:'Overview', ptab_policy:'Policy', ptab_bettips:'🎫 Bet Tips', ptab_promo:'🎁 Promo',
+    account_title:'👤 Account', account_edit_btn:'✏️ EDIT',
+    account_country:'🌍 Country', account_email:'✉️ Email', account_since:'📅 Member since',
+    account_username_lbl:'Username', account_country_lbl:'Country', account_phone_lbl:'Phone number',
+    account_save_btn:'Save',
+    policy_terms_title:'📄 Terms of Use',
+    policy_terms_1:'You must have an account to download paid games.',
+    policy_terms_2:'One account per person. Fraud, abuse, or fake payment proofs lead to a permanent ban.',
+    policy_terms_3:'Tokens and invite codes have no cash value and cannot be transferred or refunded.',
+    policy_terms_4:'Bet Tips are shared for information only. Betting carries risk — you are responsible for your own choices, and you must be of legal age (18+).',
+    policy_terms_5:'Games are provided "as is". We do not guarantee compatibility with every device.',
+    policy_privacy_title:'🔒 Privacy',
+    policy_privacy_1:'We store only what the app needs: email, username, country, profile photo, and your activity in the app.',
+    policy_privacy_2:'We never sell your personal data to any third party.',
+    policy_privacy_3:'You can request deletion of your account and data at any time through the Chat tab.',
+    policy_ownership_title:'⚠️ Games Ownership',
+    policy_ownership_1:'mumbigames is not the owner, developer, or publisher of any game listed here. We are a distribution and discovery platform only. All games, names, logos, and trademarks belong to their respective owners.',
+    policy_ownership_2:'Any fee charged inside the app covers our service, hosting, and support costs — it is not a purchase of a licence from the game\'s owner.',
+    policy_contact_title:'✉️ Contact Us',
+    policy_contact_1:'Questions, complaints, or takedown requests? Message us in the Chat tab, or on WhatsApp:',
+    promo_how_title:'ℹ️ How Promo Codes Work',
+    promo_how_1:'Your invite code is already shown above — just share it with your friend.',
+    promo_how_2:'Everyone who signs up with your code earns you 50 tokens.',
+    promo_how_3:'5 friends = 250 tokens, 10 friends = 500 tokens, and so on.',
+    promo_how_4:'Reach 500 tokens and pick ANY paid game completely FREE — once per account only.',
+    promo_how_5:'A code can only be entered during sign-up, and it is optional.'
   }
 };
 
@@ -3929,6 +4092,18 @@ try{
         document.getElementById('profileMeta').textContent = [data.nationality, data.phone].filter(Boolean).join(' • ');
         if(data.username) document.getElementById('avatarInitial').textContent = data.username.charAt(0).toUpperCase();
         if(data.photoURL) setAvatarPhoto(data.photoURL);
+        // Account tab (Overview) view + edit fields
+        document.getElementById('acctCountryView').textContent = data.nationality || '—';
+        document.getElementById('acctEmailView').textContent = user.email || '—';
+        if(data.createdAt){
+          const cd = new Date(data.createdAt);
+          const months = ['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ago','Sep','Okt','Nov','Des'];
+          document.getElementById('acctSinceView').textContent = months[cd.getMonth()] + ' ' + cd.getFullYear();
+        }
+        document.getElementById('acctUsernameInput').value = data.username || '';
+        document.getElementById('acctCountryInput').value = data.nationality || '';
+        document.getElementById('acctPhoneInput').value = data.phone || '';
+        loadBetTips();
         const points = data.points || 0;
         document.getElementById('pointsCount').textContent = points;
         const headerPill = document.getElementById('headerTokenPill');
