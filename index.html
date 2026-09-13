@@ -185,6 +185,15 @@
   .acct-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:11.5px;color:var(--sub);}
   .acct-row:last-child{border-bottom:none;}
   .acct-row b{color:var(--text);font-weight:700;}
+  .fb-type-btn{flex:1;text-align:center;padding:9px 6px;border-radius:10px;font-size:10.5px;font-weight:700;background:var(--panel-2);border:1px solid var(--line);color:var(--sub);cursor:pointer;}
+  .fb-type-btn.active{background:var(--lime);color:var(--bg);border-color:var(--lime);}
+  .fb-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;}
+  .fb-card .fb-badge{display:inline-block;font-size:9px;font-weight:800;padding:3px 9px;border-radius:20px;background:var(--panel-2);color:var(--sub);margin-bottom:6px;}
+  .fb-card .fb-badge.request{color:#ffb703;background:rgba(255,183,3,0.12);}
+  .fb-card .fb-text{font-size:11.5px;color:var(--text);line-height:1.5;}
+  .fb-card .fb-time{font-size:9px;color:var(--sub);margin-top:6px;}
+  .fb-card .fb-reply{margin-top:10px;padding:10px 12px;background:rgba(166,255,0,0.08);border-left:2px solid var(--lime);border-radius:8px;font-size:11px;color:var(--text);line-height:1.5;}
+  .fb-card .fb-reply b{color:var(--lime);}
   .qa-badge{display:none;position:absolute;top:6px;right:10px;width:10px;height:10px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
 
   /* Trending carousel */
@@ -895,6 +904,7 @@
         <div class="ptab" data-ptab="policy" data-i18n="ptab_policy">Sera</div>
         <div class="ptab" data-ptab="bettips" data-i18n="ptab_bettips">🎫 Bet Tips</div>
         <div class="ptab" data-ptab="promo" data-i18n="ptab_promo">🎁 Promo</div>
+        <div class="ptab" data-ptab="feedback" data-i18n="ptab_feedback">💬 Maoni</div>
       </div>
 
       <!-- ---- MUHTASARI (Overview) ---- -->
@@ -1014,6 +1024,27 @@
             <li data-i18n="promo_how_5">Msimbo unatumika wakati wa kujisajili tu, na ni hiari.</li>
           </ul>
         </div>
+      </div>
+
+      <!-- ---- MAONI & MAOMBI (Feedback & Game Requests) ---- -->
+      <div class="ptab-panel" id="ptabFeedback">
+        <div class="settings-section">
+          <div class="settings-label" data-i18n="fb_title">💬 Toa Maoni au Omba Game</div>
+          <div class="settings-sub" data-i18n="fb_sub">Una changamoto, malalamiko, wazo, au unataka game fulani iongezwe? Tuandikie hapa — admin atakujibu papo hapa.</div>
+          <div class="fb-type-row" style="display:flex;gap:8px;margin-top:12px;">
+            <div class="fb-type-btn active" data-fbtype="feedback" onclick="setFbType('feedback')" data-i18n="fb_type_feedback">📝 Maoni/Malalamiko</div>
+            <div class="fb-type-btn" data-fbtype="request" onclick="setFbType('request')" data-i18n="fb_type_request">🎮 Omba Game</div>
+          </div>
+          <div id="fbGameTitleWrap" style="display:none;">
+            <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;" data-i18n="fb_game_title_lbl">Jina la game unayotaka</label>
+            <input type="text" id="fbGameTitle" data-i18n-placeholder="fb_game_title_placeholder" placeholder="mfano: FIFA 26" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;">
+          </div>
+          <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;" data-i18n="fb_msg_lbl">Ujumbe wako</label>
+          <textarea id="fbMessage" rows="3" data-i18n-placeholder="fb_msg_placeholder" placeholder="Andika hapa..." style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;font-family:'Baloo 2',sans-serif;resize:vertical;"></textarea>
+          <button class="post-btn" style="margin-top:10px;" onclick="submitFeedback()" data-i18n="fb_submit_btn">Tuma</button>
+        </div>
+        <div style="font-size:12px;font-weight:800;color:var(--text);margin:18px 4px 8px;" data-i18n="fb_history_title">Historia yako</div>
+        <div id="fbHistoryList" style="font-size:11px;color:var(--sub);">—</div>
       </div>
 
       <div class="settings-item" onclick="logoutUser()">
@@ -2422,6 +2453,8 @@ const AI_KB = [
   // --- Other features ---
   {keys:['duka','uza','nunua','bidhaa','marketplace'], a:'Duka la Wachezaji unalipata kwa kubonyeza button ya "Duka" katikati ya menu ya chini (icon ya mfuko wa ununuzi 🛍️). Humo unaweza kutazama vifaa vya games vinavyouzwa na wachezaji wengine (vilivyothibitishwa na admin), au kuweka bidhaa yako mwenyewe kwa kujaza fomu — admin ataithibitisha kabla haijaonekana kwa umma. Bonyeza bidhaa yoyote kuona maelezo zaidi (picha, hali, bei), kisha bonyeza "💬 Nunua" ili ufunguliwe WhatsApp ya muuzaji moja kwa moja (ujumbe wa kwanza tayari umejazwa). Kama umeweka bidhaa yako mwenyewe, ukiifungua utaona vitufe vya "Hariri" (kurekebisha makosa), "Funga" (kama tayari imeisha stock), na "Ondoa" (kuiondoa kabisa dukani).'},
   {keys:['shop','buy item','sell item','marketplace','buy gear','sell gear'], lang:'en', a:'The Player Marketplace is reached by tapping "Shop" in the bottom menu (🛍️ icon). There you can browse gear sold by other players (verified by admin), or post your own item by filling the form — admin approves it before it goes public. Tap any item to see more details (photo, condition, price), then tap "💬 Buy" to open WhatsApp directly with the seller (the first message is already filled in for you). If it\'s your own listing, opening it shows "Edit", "Close" (mark sold out), and "Remove" buttons.'},
+  {keys:['maoni','malalamiko','changamoto','feedback','complaint','request game','omba game'], a:'Kwenye Profile (Me) → tab ya "💬 Maoni", unaweza kuandika maoni, malalamiko, au changamoto zako — au kuomba game fulani iongezwe kwenye app (chagua "🎮 Omba Game" kisha andika jina la game unayotaka). Admin ataona ujumbe wako na atakujibu hapo hapo — utaona jibu lake chini ya ujumbe wako mwenyewe, kwenye "Historia yako".'},
+  {keys:['feedback','complaint','challenge','request a game','suggest'], lang:'en', a:'Under Profile (Me) → the "💬 Feedback" tab, you can write feedback, complaints, or challenges you\'re facing — or request that a specific game be added (choose "🎮 Request a Game" then type the game\'s name). Admin will see your message and reply right there — you\'ll see the reply under your own message, in "Your history".'},
   {keys:['kura','vote','poll'], a:'Bonyeza kitufe cha "Kura" (icon ya 🗳️) kwenye Home kuona kura zilizopo na kupiga kura yako. Kila mtumiaji anaweza kupiga kura mara moja kwa kila swali. Ukiona kitone (dot) chekundu juu ya button ya Kura, maana yake kuna kura mpya iliyowekwa na admin — fungua uione.'},
   {keys:['tiktok'], a:'Bonyeza button ya "TikTok" (icon ya 🎵) kwenye Home kufungua channel yetu ya TikTok moja kwa moja, kuona video za hivi karibuni za games. Ukiona kitone chekundu juu ya button hiyo, maana yake kuna video mpya.'},
   {keys:['youtube'], a:'Bonyeza button ya "YouTube" (icon nyekundu ▶️) kwenye Home kufungua channel yetu ya YouTube: ' + YT_CHANNEL + ' — humo kuna video za maelekezo ya jinsi ya kuseti games kwa emulator mbalimbali, pamoja na maudhui mengine ya games.'},
@@ -2546,6 +2579,72 @@ function switchProfileTab(name){
   document.querySelectorAll('.ptab-panel').forEach(p=>p.classList.remove('active'));
   const panel = document.getElementById('ptab' + name.charAt(0).toUpperCase() + name.slice(1));
   if(panel) panel.classList.add('active');
+}
+
+// ============================================================
+// ---- Maoni & Maombi (Feedback / Game Requests) ----
+// Stored in Firestore `feedback`, one doc per submission. Admin replies
+// from admin.html; the reply shows back here once posted.
+// ============================================================
+let fbType = 'feedback';
+function setFbType(type){
+  fbType = type;
+  document.querySelectorAll('.fb-type-btn').forEach(b=>b.classList.toggle('active', b.dataset.fbtype===type));
+  document.getElementById('fbGameTitleWrap').style.display = type === 'request' ? 'block' : 'none';
+}
+async function submitFeedback(){
+  if(!auth.currentUser){ alert('Ingia kwenye akaunti yako kwanza.'); return; }
+  const message = document.getElementById('fbMessage').value.trim();
+  const gameTitle = document.getElementById('fbGameTitle').value.trim();
+  if(fbType === 'request' && !gameTitle){
+    alert('Weka jina la game unayotaka.');
+    return;
+  }
+  if(!message){
+    alert('Andika ujumbe wako kwanza.');
+    return;
+  }
+  try{
+    await db.collection('feedback').add({
+      uid: auth.currentUser.uid,
+      userName: (document.getElementById('profileUsername')||{}).textContent || 'Mtumiaji',
+      userEmail: auth.currentUser.email || '',
+      type: fbType,
+      gameTitle: fbType === 'request' ? gameTitle : '',
+      text: message,
+      status: 'open',
+      adminReply: '',
+      createdAt: Date.now()
+    });
+    document.getElementById('fbMessage').value = '';
+    document.getElementById('fbGameTitle').value = '';
+    alert('Umetuma! Admin atakujibu hapa hapa.');
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kutuma. Angalia mtandao wako na ujaribu tena.');
+  }
+}
+function loadFeedbackHistory(){
+  if(!auth.currentUser) return;
+  db.collection('feedback').where('uid','==',auth.currentUser.uid).orderBy('createdAt','desc').limit(30)
+    .onSnapshot(snap=>{
+      const list = document.getElementById('fbHistoryList');
+      if(!list) return;
+      if(snap.empty){ list.textContent = 'Bado hujatuma chochote.'; return; }
+      list.innerHTML = snap.docs.map(d=>{
+        const f = d.data();
+        const t = new Date(f.createdAt);
+        const dd = String(t.getDate()).padStart(2,'0'), mo = String(t.getMonth()+1).padStart(2,'0');
+        const isReq = f.type === 'request';
+        return `<div class="fb-card">
+          <span class="fb-badge ${isReq?'request':''}">${isReq ? '🎮 Ombi la Game' : '📝 Maoni'}</span>
+          ${isReq && f.gameTitle ? `<div class="fb-text"><b>${escapeHtml(f.gameTitle)}</b></div>` : ''}
+          <div class="fb-text">${escapeHtml(f.text)}</div>
+          <div class="fb-time">${dd}/${mo}</div>
+          ${f.adminReply ? `<div class="fb-reply"><b>Admin:</b> ${escapeHtml(f.adminReply)}</div>` : ''}
+        </div>`;
+      }).join('');
+    }, err=>console.error(err));
 }
 function toggleAccountEdit(){
   const editMode = document.getElementById('accountEditMode');
@@ -4019,7 +4118,14 @@ const TRANSLATIONS = {
     promo_how_2:'Kila mtu anayejisajili kwa msimbo wako anakupa token 50.',
     promo_how_3:'Marafiki 5 = token 250, Marafiki 10 = token 500, na kuendelea.',
     promo_how_4:'Ukifikisha token 500, chagua game LOLOTE la kulipia BURE kabisa — mara moja tu kwa kila akaunti.',
-    promo_how_5:'Msimbo unatumika wakati wa kujisajili tu, na ni hiari.'
+    promo_how_5:'Msimbo unatumika wakati wa kujisajili tu, na ni hiari.',
+    ptab_feedback:'💬 Maoni',
+    fb_title:'💬 Toa Maoni au Omba Game',
+    fb_sub:'Una changamoto, malalamiko, wazo, au unataka game fulani iongezwe? Tuandikie hapa — admin atakujibu papo hapa.',
+    fb_type_feedback:'📝 Maoni/Malalamiko', fb_type_request:'🎮 Omba Game',
+    fb_game_title_lbl:'Jina la game unayotaka', fb_msg_lbl:'Ujumbe wako',
+    fb_submit_btn:'Tuma', fb_history_title:'Historia yako',
+    fb_game_title_placeholder:'mfano: FIFA 26', fb_msg_placeholder:'Andika hapa...'
   },
   en: {
     settings_title:'Settings', settings_sub:'App preferences',
@@ -4099,7 +4205,14 @@ const TRANSLATIONS = {
     promo_how_2:'Everyone who signs up with your code earns you 50 tokens.',
     promo_how_3:'5 friends = 250 tokens, 10 friends = 500 tokens, and so on.',
     promo_how_4:'Reach 500 tokens and pick ANY paid game completely FREE — once per account only.',
-    promo_how_5:'A code can only be entered during sign-up, and it is optional.'
+    promo_how_5:'A code can only be entered during sign-up, and it is optional.',
+    ptab_feedback:'💬 Feedback',
+    fb_title:'💬 Give Feedback or Request a Game',
+    fb_sub:'Have a challenge, a complaint, an idea, or want a specific game added? Write to us here — admin will reply right here.',
+    fb_type_feedback:'📝 Feedback/Complaint', fb_type_request:'🎮 Request a Game',
+    fb_game_title_lbl:'Name of the game you want', fb_msg_lbl:'Your message',
+    fb_submit_btn:'Send', fb_history_title:'Your history',
+    fb_game_title_placeholder:'e.g. FIFA 26', fb_msg_placeholder:'Type here...'
   }
 };
 
@@ -4278,6 +4391,7 @@ try{
         document.getElementById('acctCountryInput').value = data.nationality || '';
         document.getElementById('acctPhoneInput').value = data.phone || '';
         loadBetTips();
+        loadFeedbackHistory();
         const points = data.points || 0;
         document.getElementById('pointsCount').textContent = points;
         const headerPill = document.getElementById('headerTokenPill');

@@ -222,8 +222,8 @@
     <div class="tab" data-view="duka">Duka</div>
     <div class="tab" data-view="tournaments">Tournaments</div>
     <div class="tab" data-view="banners">Banner</div>
-    <div class="tab" data-view="polls">Kura</div>
     <div class="tab" data-view="bettips">🎫 Bet Tips</div>
+    <div class="tab" data-view="feedback">💬 Maoni</div>
     <div class="tab" data-view="social">Social</div>
     <div class="tab" data-view="ads">Tangazo</div>
   </div>
@@ -444,21 +444,6 @@
       <div id="bannerList"></div>
     </div>
 
-    <!-- POLLS -->
-    <div class="view" id="view-polls">
-      <div class="section-title"><h2>Tengeneza Kura Mpya</h2></div>
-      <label>Swali la kura</label>
-      <input type="text" id="pQuestion" placeholder="mfano: Game gani tuiweke wiki hii?">
-      <label style="margin-top:20px;display:block;">Chaguo (options)</label>
-      <div id="pollOptionRows"></div>
-      <button type="button" class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="addPollOptionRow()">+ Ongeza Chaguo</button>
-      <div class="form-actions">
-        <button class="btn btn-primary" style="flex:1" onclick="createPoll()">Anzisha Kura</button>
-      </div>
-      <div class="section-title"><h2>Kura zilizopo</h2></div>
-      <div id="pollList"></div>
-    </div>
-
     <!-- BET TIPS -->
     <div class="view" id="view-bettips">
       <div class="section-title"><h2>🎫 Weka Bet Tip Mpya</h2></div>
@@ -484,6 +469,18 @@
       </div>
       <div class="section-title"><h2>Bet Tips zilizopo</h2></div>
       <div id="betTipsList"></div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="view" id="view-feedback">
+      <div class="section-title"><h2>💬 Maoni na Maombi ya Games</h2></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <div class="tab active" style="flex:1;text-align:center;" data-fbfilter="all" onclick="setFbAdminFilter('all')">Yote</div>
+        <div class="tab" style="flex:1;text-align:center;" data-fbfilter="feedback" onclick="setFbAdminFilter('feedback')">📝 Maoni</div>
+        <div class="tab" style="flex:1;text-align:center;" data-fbfilter="request" onclick="setFbAdminFilter('request')">🎮 Maombi ya Game</div>
+        <div class="tab" style="flex:1;text-align:center;" data-fbfilter="open" onclick="setFbAdminFilter('open')">🔴 Bado Hazijajibiwa</div>
+      </div>
+      <div id="feedbackList"></div>
     </div>
 
     <!-- SOCIAL -->
@@ -654,8 +651,8 @@ document.querySelectorAll('.tab').forEach(tab=>{
     if(tab.dataset.view==='duka'){ loadListings(); loadListingReports(); }
     if(tab.dataset.view==='tournaments'){ loadTournamentsAdmin(); }
     if(tab.dataset.view==='banners') loadBannersAdmin();
-    if(tab.dataset.view==='polls') loadPollsAdmin();
     if(tab.dataset.view==='bettips') loadBetTipsAdmin();
+    if(tab.dataset.view==='feedback') loadFeedbackAdmin();
     if(tab.dataset.view==='payment') loadPaymentRequests();
     if(tab.dataset.view==='ads') loadSponsoredAd();
   });
@@ -790,24 +787,6 @@ function addDownloadRow(label, url){
 }
 function escapeAttr(s){
   return (s||'').replace(/"/g,'&quot;');
-}
-
-// ---- Poll option rows ----
-let pollRowCounter = 0;
-function addPollOptionRow(val){
-  pollRowCounter++;
-  const id = 'pollopt_' + pollRowCounter;
-  const row = document.createElement('div');
-  row.className = 'dl-row';
-  row.id = id;
-  row.innerHTML = `
-    <input type="text" placeholder="Chaguo" class="poll-opt-input" value="${val ? escapeAttr(val) : ''}">
-    <button type="button" class="rm-btn" onclick="document.getElementById('${id}').remove()">✕</button>
-  `;
-  document.getElementById('pollOptionRows').appendChild(row);
-}
-function collectPollOptions(){
-  return Array.from(document.querySelectorAll('.poll-opt-input')).map(i=>i.value.trim()).filter(Boolean);
 }
 
 // ---- Banners: image upload ----
@@ -951,57 +930,67 @@ async function deleteBetTip(id){
   catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
 }
 
-// ---- Polls ----
-async function createPoll(){
-  const question = document.getElementById('pQuestion').value.trim();
-  const options = collectPollOptions();
-  if(!question || options.length < 2){ showToast('Weka swali na angalau chaguo 2.'); return; }
-  try{
-    await db.collection('polls').add({
-      question, options, active: true, counts: {}, voters: {}, createdAt: Date.now()
-    });
-    showToast('Kura imeanzishwa ✓');
-    document.getElementById('pQuestion').value='';
-    document.getElementById('pollOptionRows').innerHTML='';
-    addPollOptionRow(); addPollOptionRow();
-  }catch(e){
-    console.error(e);
-    showToast('Imeshindwa kuanzisha kura.');
-  }
+// ---- Feedback & Game Requests ----
+let fbAdminFilter = 'all';
+let feedbackCache = [];
+function setFbAdminFilter(f){
+  fbAdminFilter = f;
+  document.querySelectorAll('[data-fbfilter]').forEach(t=>t.classList.toggle('active', t.dataset.fbfilter===f));
+  renderFeedbackAdmin();
 }
-
-function loadPollsAdmin(){
-  if(document.getElementById('pollOptionRows').children.length===0){
-    addPollOptionRow(); addPollOptionRow();
-  }
-  db.collection('polls').orderBy('createdAt','desc').onSnapshot(snap=>{
-    const list = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    document.getElementById('pollList').innerHTML = list.length ? list.map(p=>{
-      const counts = p.counts || {};
-      const total = (p.options||[]).reduce((s,o)=>s+(counts[o]||0),0);
-      const rows = (p.options||[]).map(o=>`<div class="pay-line"><span>${escapeHtmlAdmin(o)}</span><b>${counts[o]||0}</b></div>`).join('');
-      return `<div class="listing-card" style="flex-direction:column;">
-        <div class="lname">${escapeHtmlAdmin(p.question)}</div>
-        <div class="lmeta">Kura jumla: <b>${total}</b> — ${p.active!==false?'Inaendelea':'Imefungwa'}</div>
-        <div class="pay-card" style="margin-top:8px;">${rows}</div>
-        <div class="listing-actions">
-          <button class="btn-sm ${p.active!==false?'btn-reject':'btn-approve'}" onclick="togglePollActive('${p.id}', ${p.active===false})">${p.active!==false?'Funga Kura':'Fungua Kura'}</button>
-          <button class="btn-sm btn-remove" onclick="deletePoll('${p.id}')">Futa</button>
-        </div>
-      </div>`;
-    }).join('') : '<div class="empty">Hakuna kura bado. Anzisha moja hapo juu.</div>';
+function loadFeedbackAdmin(){
+  db.collection('feedback').orderBy('createdAt','desc').limit(200).onSnapshot(snap=>{
+    feedbackCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    renderFeedbackAdmin();
   }, err=>console.error(err));
 }
-
-async function togglePollActive(id, makeActive){
-  try{ await db.collection('polls').doc(id).update({active: makeActive}); showToast('Imesasishwa.'); }
-  catch(e){ console.error(e); showToast('Imeshindwa.'); }
+function renderFeedbackAdmin(){
+  let list = feedbackCache;
+  if(fbAdminFilter === 'feedback') list = list.filter(f=>f.type==='feedback');
+  if(fbAdminFilter === 'request') list = list.filter(f=>f.type==='request');
+  if(fbAdminFilter === 'open') list = list.filter(f=>!f.adminReply);
+  document.getElementById('feedbackList').innerHTML = list.length ? list.map(f=>{
+    const d = new Date(f.createdAt);
+    const dd = String(d.getDate()).padStart(2,'0'), mo = String(d.getMonth()+1).padStart(2,'0');
+    const isReq = f.type === 'request';
+    return `
+    <div class="game-card" style="flex-direction:column;align-items:stretch;gap:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <span class="tag ${isReq?'paid':'free'}">${isReq ? '🎮 Ombi la Game' : '📝 Maoni'}</span>
+          <span class="tag">${dd}/${mo}</span>
+          ${!f.adminReply ? '<span class="tag" style="color:#ff6b6b;">🔴 Bado</span>' : '<span class="tag" style="color:var(--lime);">✅ Imejibiwa</span>'}
+        </div>
+      </div>
+      <div style="font-size:12.5px;font-weight:700;">${escapeHtmlAdmin(f.userName||'Mtumiaji')} <span style="font-weight:400;color:var(--sub);font-size:10.5px;">(${escapeHtmlAdmin(f.userEmail||'')})</span></div>
+      ${isReq && f.gameTitle ? `<div style="font-size:12px;color:var(--lime);font-weight:700;">🎮 ${escapeHtmlAdmin(f.gameTitle)}</div>` : ''}
+      <div style="font-size:12px;color:var(--text);line-height:1.5;">${escapeHtmlAdmin(f.text)}</div>
+      ${f.adminReply ? `<div style="background:rgba(0,0,0,0.2);border-left:2px solid var(--lime);border-radius:8px;padding:8px 10px;font-size:11.5px;color:var(--sub);"><b style="color:var(--lime);">Jibu lako:</b> ${escapeHtmlAdmin(f.adminReply)}</div>` : ''}
+      <textarea id="fbReplyInput-${f.id}" rows="2" placeholder="Andika jibu lako hapa..." style="margin-top:4px;">${f.adminReply ? escapeHtmlAdmin(f.adminReply) : ''}</textarea>
+      <div class="form-actions">
+        <button class="btn btn-primary" style="flex:1" onclick="replyToFeedback('${f.id}')">${f.adminReply ? 'Sasisha Jibu' : 'Tuma Jibu'}</button>
+        <button class="icon-btn del" onclick="deleteFeedback('${f.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty">Hakuna ujumbe hapa.</div>';
 }
-async function deletePoll(id){
-  if(!confirm('Una uhakika unataka kufuta kura hii?')) return;
-  try{ await db.collection('polls').doc(id).delete(); showToast('Imefutwa.'); }
+async function replyToFeedback(id){
+  const val = document.getElementById('fbReplyInput-' + id).value.trim();
+  if(!val){ showToast('Andika jibu kwanza.'); return; }
+  try{
+    await db.collection('feedback').doc(id).update({adminReply: val, adminReplyAt: Date.now(), status: 'replied'});
+    showToast('Jibu limetumwa ✓');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kutuma jibu.');
+  }
+}
+async function deleteFeedback(id){
+  if(!confirm('Una uhakika unataka kufuta ujumbe huu?')) return;
+  try{ await db.collection('feedback').doc(id).delete(); showToast('Imefutwa.'); }
   catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
 }
+
 function escapeHtmlAdmin(s){
   return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
