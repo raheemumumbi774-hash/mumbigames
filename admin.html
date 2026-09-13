@@ -1035,7 +1035,8 @@ async function saveGame(){
     performance: document.getElementById('gPerformance').value,
     needsSetup: setupOn,
     setupSteps: setupOn ? document.getElementById('gSetupSteps').value.trim() : '',
-    createdAt: editingId ? (games.find(g=>g.id===editingId)?.createdAt || Date.now()) : Date.now()
+    createdAt: editingId ? (games.find(g=>g.id===editingId)?.createdAt || Date.now()) : Date.now(),
+    hidden: editingId ? !!(games.find(g=>g.id===editingId)?.hidden) : false
   };
   try{
     await db.collection('games').doc(data.id).set(data);
@@ -1097,12 +1098,21 @@ async function deleteGame(id){
   }
   showToast('Game imefutwa.');
 }
+async function toggleGameHidden(id, hideIt){
+  try{
+    await db.collection('games').doc(id).update({hidden: hideIt});
+    showToast(hideIt ? 'Game imefichwa — haitaonekana kwa watumiaji.' : 'Game imeonyeshwa tena.');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa. Jaribu tena.');
+  }
+}
 
 // ---- Rendering ----
 function gameCardHtml(g){
   const thumbStyle = g.image ? `style="background-image:url('${g.image.replace(/'/g,"")}')"` : '';
   return `
-    <div class="game-card ${g.trending?'trending':''}">
+    <div class="game-card ${g.trending?'trending':''}" ${g.hidden?'style="opacity:0.45;"':''}>
       <div class="thumb" ${thumbStyle}>${g.image?'':'IMG'}</div>
       <div class="g-info">
         <div class="name">${escapeHtml(g.name)}</div>
@@ -1111,10 +1121,12 @@ function gameCardHtml(g){
           ${g.genre?`<span class="tag">${escapeHtml(g.genre)}</span>`:''}
           <span class="tag">${g.offline==='yes'?'Offline':'Online'}</span>
           ${g.trending?'<span class="tag" style="color:var(--lime)">🔥 Trending</span>':''}
+          ${g.hidden?'<span class="tag" style="color:var(--danger)">🚫 Imefichwa</span>':''}
         </div>
       </div>
       <div class="g-actions">
         <button class="icon-btn" onclick="editGame('${g.id}')">✎</button>
+        <button class="icon-btn" title="${g.hidden?'Onyesha tena':'Ficha bila kufuta'}" onclick="toggleGameHidden('${g.id}', ${g.hidden?'false':'true'})">${g.hidden?'👁️':'🚫'}</button>
         <button class="icon-btn del" onclick="deleteGame('${g.id}')">🗑</button>
       </div>
     </div>`;

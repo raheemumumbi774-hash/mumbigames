@@ -1161,7 +1161,7 @@ function loadGames(){
   // after returning from Chrome mid-download) while live data loads.
   const cached = loadCachedGames();
   if(cached && cached.length){
-    games = cached;
+    games = cached.filter(g=>!g.hidden);
     sortGamesAlphabetically();
     render();
     try{ refreshBanners(); }catch(e){ console.error(e); }
@@ -1170,7 +1170,10 @@ function loadGames(){
     listEl.innerHTML = '<div class="empty">Inapakia games...</div>';
   }
   db.collection('games').onSnapshot(snap=>{
-    games = snap.docs.map(d=>d.data());
+    // Games the admin has hidden (but not deleted) from the dashboard never
+    // reach the public list, banners, trending, search, or deep links —
+    // they're simply left out of the `games` array from this point on.
+    games = snap.docs.map(d=>d.data()).filter(g=>!g.hidden);
     sortGamesAlphabetically();
     checkNewGameNotification();
     render();
