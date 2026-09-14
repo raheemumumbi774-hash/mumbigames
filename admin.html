@@ -1009,7 +1009,13 @@ async function saveGame(){
   const name = document.getElementById('gName').value.trim();
   if(!name){ showToast('Weka jina la game kwanza.'); return; }
   if(imgUploading){ showToast('Subiri, picha inaendelea kupakia...'); return; }
+  // Ukiedit game iliyopo, anza na taarifa zake zote za sasa (downloadCount,
+  // commentCount, hidden, n.k) ili kuhariri jina/maelezo/link kusifute
+  // takwimu zake za nyuma kimakosa — kisha bandika juu yake fields
+  // zinazotoka kwenye fomu hapa chini pekee.
+  const existing = editingId ? (games.find(g=>g.id===editingId) || {}) : {};
   const data = {
+    ...existing,
     id: editingId || ('g_'+Date.now()),
     name,
     desc: document.getElementById('gDesc').value.trim(),
@@ -1024,8 +1030,8 @@ async function saveGame(){
     performance: document.getElementById('gPerformance').value,
     needsSetup: setupOn,
     setupSteps: setupOn ? document.getElementById('gSetupSteps').value.trim() : '',
-    createdAt: editingId ? (games.find(g=>g.id===editingId)?.createdAt || Date.now()) : Date.now(),
-    hidden: editingId ? !!(games.find(g=>g.id===editingId)?.hidden) : false
+    createdAt: editingId ? (existing.createdAt || Date.now()) : Date.now(),
+    hidden: editingId ? !!existing.hidden : false
   };
   try{
     await db.collection('games').doc(data.id).set(data);
