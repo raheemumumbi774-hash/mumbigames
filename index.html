@@ -14,6 +14,19 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>mumbigames</title>
+<meta name="description" content="mumbigames — pakua games za simu za bure na za kulipia (PC/PSP/PS/Android), tazama Bet Tips, uze/nunue vifaa vya games, na ujiunge na jumuiya ya wachezaji Tanzania.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://raheemumumbi774-hash.github.io/">
+<meta property="og:title" content="mumbigames — Pakua Games za Bure na za Kulipia">
+<meta property="og:description" content="Pakua games za simu za bure na za kulipia, tazama Bet Tips, uze/nunue vifaa vya games, na ujiunge na jumuiya ya wachezaji Tanzania.">
+<meta property="og:image" content="https://raheemumumbi774-hash.github.io/og-image.jpg">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="1024">
+<meta property="og:site_name" content="mumbigames">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="mumbigames — Pakua Games za Bure na za Kulipia">
+<meta name="twitter:description" content="Pakua games za simu za bure na za kulipia, tazama Bet Tips, uze/nunue vifaa vya games, na ujiunge na jumuiya ya wachezaji Tanzania.">
+<meta name="twitter:image" content="https://raheemumumbi774-hash.github.io/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://www.gstatic.com">
@@ -2627,12 +2640,17 @@ async function submitFeedback(){
 }
 function loadFeedbackHistory(){
   if(!auth.currentUser) return;
-  db.collection('feedback').where('uid','==',auth.currentUser.uid).orderBy('createdAt','desc').limit(30)
+  // Kupanga kwa tarehe kunafanywa hapa (si kwenye Firestore query yenyewe)
+  // ili kuepuka uhitaji wa "composite index" maalum ambayo mara nyingi
+  // haijaundwa kwenye Firebase console — hii inafanya kazi papo hapo bila
+  // usanidi wowote wa ziada.
+  db.collection('feedback').where('uid','==',auth.currentUser.uid).limit(50)
     .onSnapshot(snap=>{
       const list = document.getElementById('fbHistoryList');
       if(!list) return;
       if(snap.empty){ list.textContent = 'Bado hujatuma chochote.'; return; }
-      list.innerHTML = snap.docs.map(d=>{
+      const docs = snap.docs.slice().sort((a,b)=>(b.data().createdAt||0)-(a.data().createdAt||0));
+      list.innerHTML = docs.map(d=>{
         const f = d.data();
         const t = new Date(f.createdAt);
         const dd = String(t.getDate()).padStart(2,'0'), mo = String(t.getMonth()+1).padStart(2,'0');
@@ -2645,7 +2663,11 @@ function loadFeedbackHistory(){
           ${f.adminReply ? `<div class="fb-reply"><b>Admin:</b> ${escapeHtml(f.adminReply)}</div>` : ''}
         </div>`;
       }).join('');
-    }, err=>console.error(err));
+    }, err=>{
+      console.error(err);
+      const list = document.getElementById('fbHistoryList');
+      if(list) list.textContent = 'Imeshindwa kupakia historia. Jaribu tena.';
+    });
 }
 
 // ---- Arifa ya kujibiwa (Maoni/Ombi la Game) ----
