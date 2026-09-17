@@ -978,7 +978,10 @@ async function replyToFeedback(id){
   const val = document.getElementById('fbReplyInput-' + id).value.trim();
   if(!val){ showToast('Andika jibu kwanza.'); return; }
   try{
-    await db.collection('feedback').doc(id).update({adminReply: val, adminReplyAt: Date.now(), status: 'replied'});
+    // replySeen:false kila unapojibu/kusasisha jibu, ili mtumiaji husika
+    // apate arifa mpya ndani ya app yake — hata kama alishaona jibu la
+    // zamani huko nyuma.
+    await db.collection('feedback').doc(id).update({adminReply: val, adminReplyAt: Date.now(), status: 'replied', replySeen: false});
     showToast('Jibu limetumwa ✓');
   }catch(e){
     console.error(e);

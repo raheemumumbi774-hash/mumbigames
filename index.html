@@ -2614,6 +2614,7 @@ async function submitFeedback(){
       text: message,
       status: 'open',
       adminReply: '',
+      replySeen: true,
       createdAt: Date.now()
     });
     document.getElementById('fbMessage').value = '';
@@ -2646,6 +2647,34 @@ function loadFeedbackHistory(){
       }).join('');
     }, err=>console.error(err));
 }
+
+// ---- Arifa ya kujibiwa (Maoni/Ombi la Game) ----
+// Kila mara mtumiaji anapoingia app (au kufungua kurasa kuu), tunaangalia
+// kama admin amejibu ujumbe wake wowote ambao bado hajauona — ikiwa
+// ndivyo, tunamwonyesha arifa ndani ya app (kwa lugha aliyochagua),
+// kisha tunaweka alama replySeen:true ili isijirudie mara nyingine.
+async function checkFeedbackReplyNotification(){
+  if(!auth.currentUser) return;
+  try{
+    const snap = await db.collection('feedback')
+      .where('uid','==',auth.currentUser.uid)
+      .where('replySeen','==',false)
+      .get();
+    const unseen = snap.docs.filter(d => (d.data().adminReply||'').trim());
+    if(!unseen.length) return;
+    const isEn = currentLang === 'en';
+    showAppNotification(
+      isEn ? 'You got a reply! 💬' : 'Umejibiwa! 💬',
+      isEn ? 'Admin replied to your feedback/request — open Profile → Feedback to see it.'
+           : 'Admin amejibu maoni/ombi lako — fungua Profile → Maoni kuona jibu.',
+      '💬'
+    );
+    const batch = db.batch();
+    unseen.forEach(d => batch.update(d.ref, {replySeen: true}));
+    await batch.commit();
+  }catch(e){ console.error(e); }
+}
+
 function toggleAccountEdit(){
   const editMode = document.getElementById('accountEditMode');
   const viewMode = document.getElementById('accountViewMode');
@@ -4392,6 +4421,7 @@ try{
         document.getElementById('acctPhoneInput').value = data.phone || '';
         loadBetTips();
         loadFeedbackHistory();
+        checkFeedbackReplyNotification();
         const points = data.points || 0;
         document.getElementById('pointsCount').textContent = points;
         const headerPill = document.getElementById('headerTokenPill');
