@@ -2868,7 +2868,7 @@ function renderBetTips(list){
       ${t.desc ? `<div class="bt-desc">${escapeHtml(t.desc)}</div>` : ''}
       <div class="bt-code-row">
         <div class="bt-code">${escapeHtml(t.code)}</div>
-        <button type="button" class="bt-copy-btn" data-code="${escapeHtml(t.code)}">📋 Nakili</button>
+        <button type="button" class="bt-copy-btn" data-code="${escapeHtml(t.code)}">📋 Copy</button>
       </div>
       <div class="bt-foot">
         <button type="button" class="bt-like-btn ${liked?'liked':''}" data-tip-id="${t.id}">${liked?'❤️':'🤍'} <span>${t.likes||0}</span></button>
