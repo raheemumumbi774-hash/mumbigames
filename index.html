@@ -1905,19 +1905,26 @@ function showModalDownloads(g, restoreState){
   renderSponsoredAd();
 }
 
-let sponsoredAdCache = null;
+let sponsoredAdsCache = null;
 function renderSponsoredAd(){
   const box = document.getElementById('sponsoredAdBox');
   if(!box) return;
-  if(sponsoredAdCache){
-    applySponsoredAd(sponsoredAdCache);
+  if(sponsoredAdsCache){
+    applySponsoredAd(pickRandomAd(sponsoredAdsCache));
     return;
   }
-  db.collection('meta').doc('sponsoredAd').get().then(doc=>{
-    const d = doc.exists ? doc.data() : {};
-    sponsoredAdCache = d;
-    applySponsoredAd(d);
+  db.collection('sponsoredAds').where('enabled','==',true).get().then(snap=>{
+    const list = snap.docs.map(d=>d.data()).filter(a=>a.linkUrl && ((a.adType==='video' && a.videoUrl) || (a.adType!=='video' && a.image)));
+    sponsoredAdsCache = list;
+    applySponsoredAd(pickRandomAd(list));
   }).catch(()=>{ box.style.display = 'none'; });
+}
+// Kila mtu akifungua game, mfumo unachagua tangazo LIMOJA kwa bahati
+// nasibu kutoka kwenye yale yaliyowekwa na admin — hivyo watu wanaona
+// matangazo tofauti-tofauti kila wakifungua/kurudi tena.
+function pickRandomAd(list){
+  if(!list || !list.length) return null;
+  return list[Math.floor(Math.random() * list.length)];
 }
 function youtubeEmbedUrl(url){
   try{
