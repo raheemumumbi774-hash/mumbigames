@@ -329,6 +329,42 @@
   @keyframes mgPulse{0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}}
   .send-btn{width:42px;height:42px;border-radius:50%;background:var(--lime);border:none;color:var(--bg);font-size:14.5px;cursor:pointer;flex:none;}
   .chat-empty{text-align:center;color:var(--sub);font-size:11px;padding:30px 10px;}
+  .msg .img-wrap{margin-top:2px;}
+  .msg .img-wrap img{max-width:100%;max-height:220px;border-radius:10px;display:block;cursor:zoom-in;object-fit:cover;}
+  .msg.replied-hl{border-color:var(--lime);box-shadow:0 0 0 1px var(--lime);animation:mgRepliedGlow 1.6s ease-in-out 2;}
+  @keyframes mgRepliedGlow{0%{box-shadow:0 0 0 1px var(--lime);}50%{box-shadow:0 0 0 3px rgba(245,166,35,0.35);}100%{box-shadow:0 0 0 1px var(--lime);}}
+  .chat-img-btn{width:42px;height:42px;border-radius:50%;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:15px;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;}
+  .nav-badge{display:none;position:absolute;top:-4px;right:-8px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:#ff3b30;border:2px solid var(--bg);color:#fff;font-size:8.5px;font-weight:800;font-family:'Baloo 2',sans-serif;align-items:center;justify-content:center;line-height:1;}
+  .nav-badge.replied{background:var(--lime);}
+  /* Online status indicator (AI + Chat headers) */
+  .online-row{display:flex;align-items:center;gap:5px;margin-top:2px;}
+  .online-dot-wrap{width:7px;height:7px;border-radius:50%;background:#2ecc71;box-shadow:0 0 0 rgba(46,204,113,0.6);animation:mgOnlinePulse 1.6s infinite;flex:none;}
+  @keyframes mgOnlinePulse{0%{box-shadow:0 0 0 0 rgba(46,204,113,0.55);}70%{box-shadow:0 0 0 6px rgba(46,204,113,0);}100%{box-shadow:0 0 0 0 rgba(46,204,113,0);}}
+  .online-label{font-size:9.5px;color:#2ecc71;font-weight:700;}
+  /* Chat sub-tabs: Group chat vs Matangazo (channel) */
+  .chat-subtabs{display:flex;gap:0;border-bottom:1px solid var(--line);background:var(--bg);}
+  .chat-subtab{flex:1;text-align:center;padding:10px 6px;font-size:11px;font-weight:700;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;position:relative;}
+  .chat-subtab.active{color:var(--lime);border-bottom-color:var(--lime);}
+  /* Channel (Matangazo) feed */
+  .channel-feed{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:14px;}
+  .channel-post{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .channel-post .cp-head{display:flex;align-items:center;gap:8px;padding:10px 12px 0;}
+  .channel-post .cp-avatar{width:26px;height:26px;border-radius:50%;background:var(--lime);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none;}
+  .channel-post .cp-author{font-size:11.5px;font-weight:700;}
+  .channel-post .cp-time{font-size:9.5px;color:var(--sub);}
+  .channel-post .cp-text{padding:8px 12px;font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word;}
+  .channel-post .cp-img{width:100%;max-height:280px;object-fit:cover;cursor:zoom-in;display:block;}
+  .channel-post .cp-badge{display:inline-block;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;margin:8px 12px 0;background:rgba(245,166,35,0.14);color:var(--lime);}
+  .channel-post .cp-opts{padding:8px 12px 12px;display:flex;flex-direction:column;gap:7px;}
+  .channel-post .cp-opt{position:relative;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:11.5px;cursor:pointer;overflow:hidden;}
+  .channel-post .cp-opt .cp-fill{position:absolute;top:0;left:0;bottom:0;background:rgba(245,166,35,0.16);z-index:0;}
+  .channel-post .cp-opt .cp-fill.correct{background:rgba(46,204,113,0.22);}
+  .channel-post .cp-opt .cp-fill.wrong{background:rgba(255,92,92,0.22);}
+  .channel-post .cp-opt-label{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px;}
+  .channel-post .cp-opt.answered-correct{border-color:#2ecc71;}
+  .channel-post .cp-opt.answered-wrong{border-color:#ff5c5c;}
+  .channel-post .cp-meta{padding:0 12px 12px;font-size:9.5px;color:var(--sub);}
+  .channel-empty{text-align:center;color:var(--sub);font-size:11px;padding:40px 14px;}
 
   /* Duka banner + view */
   .duka-banner{margin:0 16px 4px;padding:14px;background:linear-gradient(135deg, rgba(166,255,0,0.14), rgba(166,255,0,0.03));border:1px solid var(--lime-dim);border-radius:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
@@ -516,6 +552,11 @@
     <a class="wa-btn" href="https://whatsapp.com/channel/0029VbDjDDrCnA7s1aPmcR3b" target="_blank">WhatsApp</a>
   </div>
 
+  <div class="chat-subtabs">
+    <div class="chat-subtab active" id="chatSubtabGroup" onclick="switchChatSubtab('group')">💬 Chati</div>
+    <div class="chat-subtab" id="chatSubtabChannel" onclick="switchChatSubtab('channel')">📢 Matangazo<span class="ptab-dot" id="channelSubtabDot"></span></div>
+  </div>
+
   <div id="nameGate" class="name-gate">
     <div class="mark"></div>
     <h3 data-i18n="chat_join_title">Jiunge na Chati</h3>
@@ -531,10 +572,16 @@
       <span class="x" onclick="cancelChatReply()">✕</span>
     </div>
     <div class="chat-input-row">
+      <input type="file" id="chatImageInput" accept="image/*" style="display:none;" onchange="handleChatImagePick()">
+      <button class="chat-img-btn" id="chatImgBtn" onclick="document.getElementById('chatImageInput').click()">📷</button>
       <input type="text" id="chatMsgInput" placeholder="Andika ujumbe..." maxlength="300" onkeydown="if(event.key==='Enter')sendMsg()">
       <button class="mic-btn" id="chatMicBtn" onclick="toggleVoiceRecording()">🎤</button>
       <button class="send-btn" onclick="sendMsg()">➤</button>
     </div>
+  </div>
+
+  <div id="channelBody" style="display:none;flex-direction:column;flex:1;min-height:0;">
+    <div class="channel-feed" id="channelFeed"></div>
   </div>
 </div>
 
@@ -814,6 +861,7 @@
     <div style="flex:1;">
       <div class="title" data-i18n="ai_title">🤖 AI Msaidizi</div>
       <div class="sub" data-i18n="ai_sub">Uliza kuhusu malipo, kuseti game, na zaidi</div>
+      <div class="online-row"><span class="online-dot-wrap"></span><span class="online-label" data-i18n="ai_online">Online</span></div>
     </div>
   </div>
   <div class="ai-quick" id="aiQuick"></div>
@@ -1124,7 +1172,7 @@
 
 <div class="bottomnav">
   <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
-  <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic">💬</div><span data-i18n="nav_chat">Chat</span></div>
+  <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic">💬<span class="nav-badge" id="navChatBadge"></span></div><span data-i18n="nav_chat">Chat</span></div>
   <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5c0-1.2.4-2.3 1-3.3l.6-1c.2-.3.5-.5.9-.5h10c.4 0 .7.2.9.5l.6 1c.6 1 1 2.1 1 3.3"/><path d="M4.5 9.5c1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0"/><path d="M5.5 9.5V18a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.5"/><path d="M9.5 14c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5"/></svg></div><span data-i18n="nav_duka">Duka</span></div>
   <div class="nav-item" id="navAI" onclick="showAI()"><div class="ic">🤖</div><span data-i18n="nav_ai">AI</span></div>
   <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic">☺<span class="nav-dot" id="navMeDot"></span></div><span data-i18n="nav_me">Me</span></div>
@@ -2394,6 +2442,33 @@ function markSocialSeen(type){
 }
 try{ loadSocialUpdates(); }catch(e){ console.error('loadSocialUpdates failed', e); }
 
+// ---- Arifa ya Matangazo mapya (Channel) — doti kwenye tab ya "Matangazo" ----
+function watchChannelPostNotifications(){
+  db.collection('channel_posts').orderBy('createdAt','desc').limit(1)
+    .onSnapshot(snap=>{
+      if(snap.empty) return;
+      const latest = {id: snap.docs[0].id, ...snap.docs[0].data()};
+      const lastSeen = localStorage.getItem('mg_last_channel_post_id');
+      const dot = document.getElementById('channelSubtabDot');
+      if(lastSeen === null){
+        localStorage.setItem('mg_last_channel_post_id', latest.id);
+        return;
+      }
+      const isNew = lastSeen !== latest.id;
+      const channelOpenNow = document.getElementById('chatView') && document.getElementById('chatView').style.display !== 'none' && chatActiveSubtab === 'channel';
+      if(channelOpenNow){
+        localStorage.setItem('mg_last_channel_post_id', latest.id);
+        if(dot) dot.style.display = 'none';
+        return;
+      }
+      if(isNew){
+        showAppNotification('Tangazo Jipya! 📢', (latest.author||'Admin') + ' ameweka chapisho jipya — fungua Chat → Matangazo kuona.', '📢');
+        if(dot) dot.style.display = 'block';
+      }
+    }, err=>{ console.error('watchChannelPostNotifications failed', err); });
+}
+try{ watchChannelPostNotifications(); }catch(e){ console.error('watchChannelPostNotifications init failed', e); }
+
 // ---- Kura (Polls) ----
 function getVoterId(){
   let v = localStorage.getItem('mg-voter-id');
@@ -2493,7 +2568,7 @@ async function votePoll(pollId, option){
 const YT_CHANNEL = 'https://youtube.com/@mumbi_gaming';
 const AI_KB = [
   // --- Small talk / greetings / mood — make the AI feel warm and human ---
-  {keys:['habari','mambo','vipi','hujambo','hodi','shikamoo','salama'], a:'Habari yako! 😊 Nipo poa, tayari kukusaidia. Unahitaji nini leo — malipo, kuseti game, duka, au kitu kingine?'},
+  {keys:['habari','mambo','vipi','hujambo','hodi','shikamoo','salama','niaje','mzima','sasa','shwari','za asubuhi','za jioni'], a:'Habari yako! 😊 Nipo poa, tayari kukusaidia. Unahitaji nini leo — malipo, kuseti game, duka, chati/matangazo, au kitu kingine?'},
   {keys:['asante','shukrani','thanks','umenisaidia'], a:'Karibu sana! Nimefurahi kukusaidia 🙏 Kama kuna kitu kingine chochote, niko hapa tu.'},
   {keys:['poa','sawa','ok','safi','vizuri','nzuri'], a:'Poa kabisa! 👍 Kuna kitu kingine unachotaka kujua?'},
   {keys:['nimechoka','stress','msongo','nimekasirika','naumia','pole'], a:'Pole sana kwa hisia hizo 🤍 Naelewa vitu vya teknolojia vinaweza kukera mtu unapotaka tu kucheza game. Tuende hatua kwa hatua pamoja — niambie hasa kinachokusumbua na nitakusaidia kukitatua.'},
@@ -2529,14 +2604,27 @@ const AI_KB = [
   {keys:['download','pakua','haifunguki','tatizo'], a:'Kama download haifanyi kazi, hakikisha una mtandao mzuri na jaribu tena. Kumbuka: baada ya kubonyeza download, subiri hesabu ya sekunde ipite kabla faili halijafunguka — hii ni ya kawaida. Kama tatizo linaendelea, wasiliana na admin kupitia WhatsApp kwenye ukurasa wa Chat.'},
   {keys:['akaunti','login','ingia','jisajili','password'], a:'Nenda Profile (chini kulia, icon ya ☺), jaza email na password kuunda akaunti au kuingia. Akaunti inakusaidia kuona games ulizonunua hata ukibadili simu, kutumia mfumo wa points, na kutoa maoni kwenye games.'},
   {keys:['maoni','comment'], a:'Kila game ina sehemu ya "💬 Maoni" — bonyeza namba iliyo karibu na icon ya 💬 kwenye card ya game kuona maoni ya wengine na kutoa lako mwenyewe.'},
-  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'}
+  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'},
+
+  // --- Chat: picha, "umejibiwa", idadi ya ujumbe, Matangazo (poll/quiz) ---
+  {keys:['picha kwenye chat','tuma picha','send image','send photo','picha ya screenshot chat'], a:'Ndani ya Chati ya jamii (Chat), bonyeza icon ya 📷 kando ya sehemu ya kuandika ujumbe ili kutuma picha — mfano screenshot ya tatizo unalopata, ili wachezaji wengine au admin waone na wakusaidie haraka.'},
+  {keys:['umejibiwa','nimejibiwa','amejibu','replied','reply notification'], a:'Ukijibiwa kwenye Chati ya jamii (na admin au mtu mwingine), ujumbe huo unang\'aa kidogo na unaonekana kwenye "Chat" (menu ya chini) kama alama/idadi — hata kama ulikuwa hujafungua app wakati huo. Ukifungua Chat, alama hiyo inatoweka baada ya kuiona.'},
+  {keys:['idadi ya ujumbe','ujumbe mpya','unread','haujasomwa'], a:'Kwenye "Chat" (menu ya chini) utaona namba ndogo (badge) inayoonyesha ujumbe wangapi mpya haujawaona bado kwenye Chati ya jamii. Namba hiyo inapotea mara tu unapofungua Chat na kuona ujumbe husika.'},
+  {keys:['matangazo','channel','tangazo jipya','post ya admin'], a:'Ndani ya ukurasa wa Chat, bonyeza kichupo cha "📢 Matangazo" juu — humo admin huweka machapisho (picha/maandishi), kura (poll), na maswali ya quiz kwa ajili ya jamii nzima kuona na kushiriki. Ukiona doti juu ya "Matangazo", maana yake kuna chapisho jipya.'},
+  {keys:['quiz','jibu swali','majibu sahihi'], a:'Ndani ya "Matangazo" (Chat → Matangazo), baadhi ya machapisho ni Quiz — chagua jibu unaloona ni sahihi, na papo hapo utaona kama umepata sahihi (kijani) au la (nyekundu), pamoja na asilimia ya watu waliochagua kila jibu. Unaweza kujibu mara moja tu kwa kila quiz.'},
+  {keys:['kura ya matangazo','poll ya channel','piga kura channel'], a:'Poll zilizo ndani ya "Matangazo" (Chat → Matangazo) ni tofauti na "Kura" ya Home — piga kura kwa kubonyeza chaguo unalolipenda, kisha utaona asilimia ya kura za kila chaguo. Kura moja tu kwa kila mtu kwa kila swali.'},
+  {keys:['historia ya mumbigames','mumbigames ilianzaje','kuhusu mumbigames','about mumbigames','app hii ni ya nani'], a:'mumbigames ni jukwaa (app/website) la Kitanzania la kupakua games za simu (bure na za kulipia) kwa emulator mbalimbali (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), lenye pia Duka la Wachezaji, Bet Tips, mfumo wa Points/Token, Chati ya jamii, na Matangazo. Lengo ni kuunganisha wachezaji wa Tanzania mahali pamoja kupata games, kusaidiana, na kufanya biashara ndogondogo za vifaa vya games kwa usalama (kupitia uthibitisho wa admin).'},
+  {keys:['home','ukurasa mkuu','sehemu za app','features','vipengele vya app'], a:'Kwenye Home utapata: orodha ya games (chuja kwa "Bure"/"Kulipia" au tafuta kwa jina), Bet Tips, Kura, TikTok na YouTube za hivi karibuni, na banners za matangazo. Menu ya chini ina: Home, Chat (Chati + Matangazo), Duka (soko la vifaa), AI (mimi 🤖), na Me (Profile/akaunti yako).'},
+  {keys:['badili lugha','language','kiingereza','english mode'], a:'Nenda Profile (Me) → Settings, kisha chagua lugha unayopenda: Kiswahili au English. Mimi (AI) pia najibu kwa lugha uliyotumia kuuliza, hata bila kubadilisha mipangilio.'},
+  {keys:['theme','giza','mwanga','dark mode','light mode'], a:'Nenda Profile (Me) → Settings → "Mwonekano (Theme)" kuchagua kati ya Giza (Dark) au Mwanga (Light).'},
+  {keys:['shea app','share app','waalike marafiki','invite friends'], a:'Nenda Profile (Me) → "Alika Marafiki" kupata msimbo wako wa kipekee na button ya "Shea APK + Msimbo Wangu" ya kutuma kwa rafiki yako kupitia WhatsApp au app nyingine moja kwa moja.'},
 ];
 
 function initAI(){
   const quick = document.getElementById('aiQuick');
   if(quick.dataset.init) return;
   quick.dataset.init = '1';
-  const topics = ['Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Kuseti MoBox','Kuseti AetherSX2','Kuseti Yuzu/Skyline','Kuseti Dolphin','Duka linafanyaje kazi','Mfumo wa Points'];
+  const topics = ['Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Kuseti MoBox','Kuseti AetherSX2','Kuseti Yuzu/Skyline','Kuseti Dolphin','Duka linafanyaje kazi','Mfumo wa Points','Matangazo ni nini'];
   quick.innerHTML = topics.map(t=>`<div class="ai-chip" onclick="aiAsk(${JSON.stringify(t)})">${t}</div>`).join('');
   const box = document.getElementById('aiMessages');
   box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni msaidizi wa mumbigames 🤖 Niulize chochote — malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, points, au hata ukitaka tu kuongea, niko hapa kwa ajili yako.</div>`;
@@ -2594,6 +2682,10 @@ function aiSend(){
 // ---- Community chat ----
 let chatName = localStorage.getItem('mg-chat-name') || '';
 let chatUnsub = null;
+// Anza kusikiliza ujumbe mapema (hata kama Chat haijafunguliwa), ili
+// mtumiaji ajue amejibiwa/kuna ujumbe mpya hata akiwa sehemu nyingine
+// ya app — badge huonekana kwenye "Chat" (bottom nav) papo hapo.
+if(chatName){ try{ subscribeMessages(); }catch(e){ console.error('early chat subscribe failed', e); } }
 
 const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','pollView','aiView','tournamentView','tournDetailView'];
 const ALL_NAVS = ['navHome','navChat','navGames','navAI','navMe'];
@@ -2618,10 +2710,28 @@ function showChat(){
   hideAllViews();
   document.getElementById('chatView').style.display = 'flex';
   document.getElementById('navChat').classList.add('active');
+  switchChatSubtab(chatActiveSubtab || 'group');
   if(chatName){
-    document.getElementById('nameGate').style.display = 'none';
-    document.getElementById('chatBody').style.display = 'flex';
     subscribeMessages();
+  }
+}
+
+// ---- Chati / Matangazo sub-tabs ----
+let chatActiveSubtab = 'group';
+function switchChatSubtab(tab){
+  chatActiveSubtab = tab;
+  const isGroup = tab === 'group';
+  document.getElementById('chatSubtabGroup').classList.toggle('active', isGroup);
+  document.getElementById('chatSubtabChannel').classList.toggle('active', !isGroup);
+  document.getElementById('nameGate').style.display = (isGroup && !chatName) ? 'block' : 'none';
+  document.getElementById('chatBody').style.display = (isGroup && chatName) ? 'flex' : 'none';
+  document.getElementById('channelBody').style.display = isGroup ? 'none' : 'flex';
+  if(isGroup){
+    if(chatName) markChatRead();
+  } else {
+    loadChannelPosts();
+    const dot = document.getElementById('channelSubtabDot');
+    if(dot) dot.style.display = 'none';
   }
 }
 function showDuka(){
@@ -4026,6 +4136,7 @@ function joinChat(){
   document.getElementById('nameGate').style.display = 'none';
   document.getElementById('chatBody').style.display = 'flex';
   subscribeMessages();
+  markChatRead();
 }
 
 function subscribeMessages(){
@@ -4039,13 +4150,17 @@ function subscribeMessages(){
     });
 }
 
+let currentChatMsgs = [];
 function renderMessages(msgs){
+  updateChatBadges(msgs);
   const box = document.getElementById('chatMessages');
+  if(!box) return;
   if(msgs.length===0){
     box.innerHTML = '<div class="chat-empty">Bado hakuna ujumbe. Kuwa wa kwanza kuandika! 👋</div>';
     return;
   }
   const wasAtBottom = (box.scrollHeight - box.scrollTop - box.clientHeight) < 60;
+  const lastSeenReplyTime = Number(localStorage.getItem('mg-chat-last-reply-seen') || 0);
   box.innerHTML = msgs.map((m,idx)=>{
     const mine = m.name === chatName;
     const t = new Date(m.time);
@@ -4054,8 +4169,15 @@ function renderMessages(msgs){
     const quote = m.replyToName ? `<div class="quote"><b>${escapeHtml(m.replyToName)}</b><br>${escapeHtml(m.replyToText||'')}</div>` : '';
     const body = m.type === 'voice'
       ? `<div class="voice-player"><audio controls preload="none" src="${escapeHtml(m.audioUrl)}"></audio></div>`
+      : m.type === 'image'
+      ? `<div class="img-wrap"><img src="${escapeHtml(m.imageUrl)}" onclick="window.open('${escapeHtml(m.imageUrl)}','_blank')" loading="lazy"></div>${m.text?`<div class="txt">${escapeHtml(m.text)}</div>`:''}`
       : `<div class="txt">${escapeHtml(m.text)}</div>`;
-    return `<div class="msg ${mine?'me':''}" data-msg-idx="${idx}">
+    // "Umejibiwa" — mtu akijibiwa (replyToName ni jina lake mwenyewe) na bado
+    // hajaiona (baada ya lastSeenReplyTime), ujumbe huo unang'aa kidogo ili
+    // aone haraka kuwa admin/mtu amemjibu — hata kama alikuwa offline.
+    const isReplyToMe = m.replyToName === chatName && !mine;
+    const isNewReply = isReplyToMe && m.time > lastSeenReplyTime;
+    return `<div class="msg ${mine?'me':''} ${isNewReply?'replied-hl':''}" data-msg-idx="${idx}">
       <div class="who">${escapeHtml(m.name)}</div>
       ${quote}
       ${body}
@@ -4066,10 +4188,176 @@ function renderMessages(msgs){
   if(wasAtBottom) box.scrollTop = box.scrollHeight;
 }
 
-// ---- Kujibu ujumbe (reply/quote), kama WhatsApp: bonyeza ujumbe wowote
-// ili kuujibu — jina la mtu na sehemu ya ujumbe wake huonekana juu ya
-// jibu lako, ili yeye (na wengine) waone kajibiwa nini hasa. ----
-let currentChatMsgs = [];
+// ============================================================
+// ---- Arifa ya Chat: idadi ya ujumbe mpya + "umejibiwa" ----
+// `mg-chat-last-read` = wakati (ms) mtumiaji aliona chat mwenyewe mara ya
+// mwisho (huwekwa upya pale anapofungua tab ya "Chati"). Kila ujumbe wenye
+// time > hiyo (na si wake mwenyewe) huhesabiwa kama "haujasomwa". Kama
+// mmoja wao ni jibu la moja kwa moja kwake (replyToName === chatName),
+// badge inakuwa ya rangi tofauti (dhahabu) na arifa ya ndani ya app
+// inaonekana mara moja tu kwa kundi la ujumbe huo. ----
+function updateChatBadges(msgs){
+  const badge = document.getElementById('navChatBadge');
+  if(!badge) return;
+  if(!chatName || !msgs.length){ badge.style.display = 'none'; return; }
+  const lastRead = Number(localStorage.getItem('mg-chat-last-read') || 0);
+  const unseen = msgs.filter(m => m.name !== chatName && m.time > lastRead);
+  const repliedToMe = unseen.filter(m => m.replyToName === chatName);
+  if(!unseen.length){ badge.style.display = 'none'; badge.classList.remove('replied'); return; }
+  // Kama tab ya "Chati" iko wazi hivi sasa, tunachukulia kama tayari anaisoma —
+  // usimwonyeshe badge/arifa isiyo na maana, isipokuwa data ihifadhiwe kwenye onyesho lenyewe (renderMessages).
+  const chatOpenNow = document.getElementById('chatView').style.display !== 'none'
+    && chatActiveSubtab === 'group'
+    && document.getElementById('chatBody').style.display !== 'none';
+  if(chatOpenNow){
+    badge.style.display = 'none'; badge.classList.remove('replied');
+    // Bado yuko kwenye Chati akiangalia moja kwa moja — endelea kusasisha "amesoma"
+    // ili asipopotea kwenda ukurasa mwingine baadaye asionekane na ujumbe "mpya" wa zamani.
+    localStorage.setItem('mg-chat-last-read', String(Date.now()));
+    localStorage.setItem('mg-chat-last-reply-seen', String(Date.now()));
+    return;
+  }
+  badge.style.display = 'flex';
+  badge.textContent = unseen.length > 99 ? '99+' : String(unseen.length);
+  badge.classList.toggle('replied', repliedToMe.length > 0);
+  if(repliedToMe.length){
+    const lastNotified = localStorage.getItem('mg-chat-last-reply-notified');
+    const latestReplyTime = String(repliedToMe[repliedToMe.length-1].time);
+    if(lastNotified !== latestReplyTime){
+      localStorage.setItem('mg-chat-last-reply-notified', latestReplyTime);
+      const isEn = currentLang === 'en';
+      showAppNotification(
+        isEn ? 'You got a reply! 💬' : 'Umejibiwa Chatini! 💬',
+        isEn ? 'Someone replied to your message in the community chat.' : 'Mtu (au admin) amekujibu kwenye Chati ya jamii — fungua kuona.',
+        '💬'
+      );
+    }
+  }
+}
+function markChatRead(){
+  localStorage.setItem('mg-chat-last-read', String(Date.now()));
+  localStorage.setItem('mg-chat-last-reply-seen', String(Date.now()));
+  const badge = document.getElementById('navChatBadge');
+  if(badge){ badge.style.display = 'none'; badge.classList.remove('replied'); }
+}
+
+// ---- Kutuma picha kwenye chati ya jamii ----
+async function handleChatImagePick(){
+  if(!chatName) return;
+  const fileInput = document.getElementById('chatImageInput');
+  const file = fileInput.files[0];
+  fileInput.value = '';
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ alert('Chagua faili la picha tu.'); return; }
+  if(file.size > 8*1024*1024){ alert('Picha ni kubwa mno. Chagua picha isiyozidi 8MB.'); return; }
+  const btn = document.getElementById('chatImgBtn');
+  const original = btn.textContent;
+  btn.textContent = '⏳';
+  try{
+    const path = 'chat_images/' + Date.now() + '_' + Math.random().toString(36).slice(2,8) + '_' + file.name.replace(/[^a-zA-Z0-9.]+/g,'_');
+    const ref = storage.ref().child(path);
+    await ref.put(file);
+    const imageUrl = await ref.getDownloadURL();
+    const msg = {name: chatName, type: 'image', imageUrl, time: Date.now()};
+    if(chatReplyTo){ msg.replyToName = chatReplyTo.name; msg.replyToText = chatReplyTo.text; cancelChatReply(); }
+    await db.collection('chat_messages').add(msg);
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kutuma picha. Angalia mtandao wako na ujaribu tena.');
+  }finally{
+    btn.textContent = original;
+  }
+}
+
+// ============================================================
+// ---- Matangazo (Channel): machapisho ya admin — post/poll/quiz ----
+// Firestore `channel_posts`: {type:'post'|'poll'|'quiz', text, image,
+// options:[...], counts:{idx:count}, voters:{voterId:idx}, correctIndex,
+// createdAt, author}. Kila mtumiaji (kwa voterId ya kudumu kutoka
+// getVoterId()) anaweza kupiga kura/kujibu quiz mara moja tu kwa kila
+// chapisho — baada ya hapo anaona matokeo/asilimia badala ya chaguo.
+// ============================================================
+let channelUnsub = null;
+function loadChannelPosts(){
+  if(channelUnsub) return;
+  channelUnsub = db.collection('channel_posts').orderBy('createdAt','desc').limit(100)
+    .onSnapshot(snap=>{
+      const posts = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      renderChannelPosts(posts);
+    }, err=>{
+      console.error(err);
+      const feed = document.getElementById('channelFeed');
+      if(feed) feed.innerHTML = '<div class="channel-empty">Imeshindwa kupakia matangazo. Angalia mtandao wako.</div>';
+    });
+}
+
+function renderChannelPosts(posts){
+  const feed = document.getElementById('channelFeed');
+  if(!feed) return;
+  if(!posts.length){
+    feed.innerHTML = '<div class="channel-empty">Bado hakuna matangazo. Rudi baadaye! 📢</div>';
+    return;
+  }
+  const voterId = getVoterId();
+  feed.innerHTML = posts.map(p=>{
+    const t = new Date(p.createdAt || 0);
+    const dd = String(t.getDate()).padStart(2,'0'), mo = String(t.getMonth()+1).padStart(2,'0');
+    const author = p.author || 'MUMBI ADMIN OFFICIAL';
+    const badgeLabel = p.type === 'poll' ? '🗳️ Kura' : p.type === 'quiz' ? '❓ Quiz' : '';
+    const img = p.image ? `<img class="cp-img" src="${escapeHtml(p.image)}" onclick="window.open('${escapeHtml(p.image)}','_blank')" loading="lazy">` : '';
+    let optsHtml = '';
+    if((p.type === 'poll' || p.type === 'quiz') && Array.isArray(p.options) && p.options.length){
+      const counts = p.counts || {};
+      const total = p.options.reduce((s,_,i)=>s + (counts[i]||0), 0);
+      const votedIdx = (p.voters && p.voters[voterId] !== undefined) ? p.voters[voterId] : null;
+      const answered = votedIdx !== null;
+      const optsList = p.options.map((opt,i)=>{
+        const pct = total>0 ? Math.round(((counts[i]||0)/total)*100) : 0;
+        let cls = 'cp-opt', fillCls = '';
+        if(p.type === 'quiz' && answered){
+          if(i === p.correctIndex){ cls += ' answered-correct'; fillCls = 'correct'; }
+          else if(i === votedIdx){ cls += ' answered-wrong'; fillCls = 'wrong'; }
+        }
+        const clickAttr = answered ? '' : ` onclick="voteChannelOption(${JSON.stringify(p.id)}, ${i})"`;
+        const fillBar = answered ? `<div class="cp-fill ${fillCls}" style="width:${pct}%"></div>` : '';
+        return `<div class="${cls}"${clickAttr}>${fillBar}<div class="cp-opt-label"><span>${escapeHtml(opt)}${answered && i===votedIdx ? ' ✓' : ''}</span>${answered?`<span>${pct}%</span>`:''}</div></div>`;
+      }).join('');
+      let metaLine = 'Kura ' + total;
+      if(answered && p.type === 'quiz'){
+        metaLine = (votedIdx === p.correctIndex) ? 'Umepata sahihi! ✅' : ('Samahani — jibu sahihi lilikuwa: ' + escapeHtml(p.options[p.correctIndex] || ''));
+      }
+      optsHtml = `<div class="cp-opts">${optsList}</div><div class="cp-meta">${metaLine}</div>`;
+    }
+    return `<div class="channel-post">
+      <div class="cp-head"><div class="cp-avatar">M</div><div><div class="cp-author">${escapeHtml(author)}</div><div class="cp-time">${dd}/${mo}</div></div></div>
+      ${badgeLabel?`<div class="cp-badge">${badgeLabel}</div>`:''}
+      ${p.text?`<div class="cp-text">${escapeHtml(p.text)}</div>`:''}
+      ${img}
+      ${optsHtml}
+    </div>`;
+  }).join('');
+}
+
+async function voteChannelOption(postId, idx){
+  const voterId = getVoterId();
+  const ref = db.collection('channel_posts').doc(postId);
+  try{
+    await db.runTransaction(async (t)=>{
+      const doc = await t.get(ref);
+      if(!doc.exists) return;
+      const data = doc.data();
+      const voters = data.voters || {};
+      if(voters[voterId] !== undefined) return; // tayari amejibu/amepiga kura
+      const counts = data.counts || {};
+      counts[idx] = (counts[idx]||0) + 1;
+      voters[voterId] = idx;
+      t.update(ref, {counts, voters});
+    });
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kutuma jibu/kura. Jaribu tena.');
+  }
+}
 let chatReplyTo = null; // {name, text}
 document.getElementById('chatMessages').addEventListener('click', (e)=>{
   const el = e.target.closest('.msg');
@@ -4180,7 +4468,7 @@ const TRANSLATIONS = {
     tourn_min_teams:'Angalau timu 4 zinahitajika.', tourn_finish:'Unda Tournament',
     chip_all:'Zote', chip_free:'Bure', chip_paid:'Kulipia', chip_offline:'Offline',
     poll_title:'Kura (Poll)', poll_sub:'Piga kura, ona matokeo',
-    ai_title:'🤖 AI Msaidizi', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi',
+    ai_title:'🤖 AI Msaidizi', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi', ai_online:'Ipo Mtandaoni',
     profile_title:'Profile Yangu', profile_sub:'Akaunti yako mumbigames',
     duka_title:'Duka la Wachezaji', duka_sub:'Vifaa vya games — vilivyothibitishwa na admin',
     duka_sub_home:'Nunua/uza vifaa vya games — vilivyothibitishwa na admin',
@@ -4267,7 +4555,7 @@ const TRANSLATIONS = {
     tourn_min_teams:'Min 4 teams required.', tourn_finish:'Create Tournament',
     chip_all:'All', chip_free:'Free', chip_paid:'Paid', chip_offline:'Offline',
     poll_title:'Poll', poll_sub:'Vote and see results',
-    ai_title:'🤖 AI Assistant', ai_sub:'Ask about payments, game setup, and more',
+    ai_title:'🤖 AI Assistant', ai_sub:'Ask about payments, game setup, and more', ai_online:'Online',
     profile_title:'My Profile', profile_sub:'Your mumbigames account',
     duka_title:'Player Marketplace', duka_sub:'Gaming gear — verified by admin',
     duka_sub_home:'Buy/sell gaming gear — verified by admin',
