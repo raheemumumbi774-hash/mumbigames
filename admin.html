@@ -81,9 +81,6 @@
   .tabs::-webkit-scrollbar{display:none;}
   .tab{flex:none;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;color:var(--sub);background:var(--panel);border:1px solid var(--line);cursor:pointer;white-space:nowrap;}
   .tab.active{color:#0a0d0a;background:var(--lime);border-color:var(--lime);}
-  .seg-control{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;}
-  .seg-btn{flex:1;text-align:center;padding:8px 6px;border-radius:8px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;}
-  .seg-btn.active{background:var(--lime);color:#0a0d0a;}
 
   main{padding:16px;max-width:720px;margin:0 auto;}
   .view{display:none;}
@@ -229,7 +226,6 @@
     <div class="tab" data-view="feedback">💬 Maoni</div>
     <div class="tab" data-view="social">Social</div>
     <div class="tab" data-view="ads">Tangazo</div>
-    <div class="tab" data-view="channel">📢 Matangazo</div>
   </div>
 
   <main>
@@ -502,48 +498,6 @@
       <p style="color:var(--sub);font-size:12px;margin-top:10px;">Hizi ndizo link zitakazowekwa kwenye nembo za bottom nav ya website/app kuu.</p>
     </div>
 
-    <div class="view" id="view-channel">
-      <div class="section-title"><h2>📢 Matangazo (Post / Kura / Quiz)</h2></div>
-      <p style="color:var(--sub);font-size:12px;margin-bottom:14px;">Hapa unaweza kuweka chapisho la kawaida (maandishi/picha), Kura (Poll), au Quiz kwa ajili ya jamii nzima ya wachezaji — wataviona kwenye Chat → "📢 Matangazo" ndani ya app.</p>
-
-      <label>Aina ya Chapisho</label>
-      <div class="seg-control" id="cpTypeSwitch">
-        <div class="seg-btn active" data-cptype="post" onclick="setChannelPostType('post')">📝 Post</div>
-        <div class="seg-btn" data-cptype="poll" onclick="setChannelPostType('poll')">🗳️ Kura</div>
-        <div class="seg-btn" data-cptype="quiz" onclick="setChannelPostType('quiz')">❓ Quiz</div>
-      </div>
-
-      <label style="margin-top:14px;" id="cpTextLabel">Maandishi</label>
-      <textarea id="cpText" rows="3" placeholder="Andika maandishi ya chapisho / swali la kura au quiz..."></textarea>
-
-      <div id="cpImageBlock">
-        <label>Picha (si lazima kwa Post; hazitumiki kwa Kura/Quiz)</label>
-        <div id="cpImgPreviewWrap" style="display:none;margin-bottom:10px;">
-          <img id="cpImgPreview" src="" style="width:100%;max-height:160px;object-fit:cover;border-radius:12px;border:1px solid var(--line);">
-        </div>
-        <input type="file" id="cpImageFile" accept="image/*" onchange="handleChannelPostImageSelect()">
-        <div id="cpImgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
-        <input type="hidden" id="cpImage" value="">
-      </div>
-
-      <div id="cpOptionsBlock" style="display:none;">
-        <label style="margin-top:14px;">Chaguo (angalau 2)</label>
-        <div id="cpOptionsList"></div>
-        <button class="btn btn-ghost" type="button" style="margin-top:8px;" onclick="addChannelOptionField()">+ Ongeza chaguo</button>
-        <div id="cpCorrectBlock" style="display:none;margin-top:14px;">
-          <label>Jibu Sahihi (kwa Quiz)</label>
-          <select id="cpCorrectIndex"></select>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button class="btn btn-primary" style="flex:1" onclick="saveChannelPost()">Chapisha</button>
-      </div>
-
-      <div class="section-title"><h2>Machapisho yaliyopo</h2></div>
-      <div id="channelPostsAdminList"></div>
-    </div>
-
     <div class="view" id="view-ads">
       <div class="section-title"><h2>📢 Weka Tangazo Jipya (Sponsored)</h2></div>
       <p style="color:var(--sub);font-size:12px;margin-bottom:14px;">Weka matangazo mengi hapa — mfumo utachagua LIMOJA KWA BAHATI NASIBU kila mtu akifungua game, hivyo watu wataona matangazo tofauti-tofauti kila wakiingia/kufungua tena. Mteja akikubali kulipia nafasi hii, jaza taarifa zake hapa chini kisha bonyeza "Ongeza Tangazo".</p>
@@ -706,7 +660,6 @@ document.querySelectorAll('.tab').forEach(tab=>{
     if(tab.dataset.view==='feedback') loadFeedbackAdmin();
     if(tab.dataset.view==='payment') loadPaymentRequests();
     if(tab.dataset.view==='ads') loadSponsoredAdsAdmin();
-    if(tab.dataset.view==='channel') loadChannelPostsAdmin();
   });
 });
 
@@ -979,121 +932,6 @@ function loadBetTipsAdmin(){
 async function deleteBetTip(id){
   if(!confirm('Una uhakika unataka kufuta bet tip hii?')) return;
   try{ await db.collection('betTips').doc(id).delete(); showToast('Imefutwa.'); }
-  catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
-}
-
-// ============================================================
-// ---- Matangazo (Channel): Post / Kura / Quiz kwa jamii nzima ----
-// Firestore `channel_posts`: {type, text, image, options:[...],
-// counts:{idx:count}, voters:{voterId:idx}, correctIndex, createdAt, author}
-// ============================================================
-let channelPostType = 'post';
-function setChannelPostType(type){
-  channelPostType = type;
-  document.querySelectorAll('#cpTypeSwitch [data-cptype]').forEach(b=>b.classList.toggle('active', b.dataset.cptype===type));
-  const isPost = type === 'post';
-  const isQuiz = type === 'quiz';
-  document.getElementById('cpImageBlock').style.display = isPost ? 'block' : 'none';
-  document.getElementById('cpOptionsBlock').style.display = isPost ? 'none' : 'block';
-  document.getElementById('cpCorrectBlock').style.display = isQuiz ? 'block' : 'none';
-  document.getElementById('cpTextLabel').textContent = isPost ? 'Maandishi' : (type==='poll' ? 'Swali la Kura' : 'Swali la Quiz');
-  if(!isPost && !document.getElementById('cpOptionsList').children.length){
-    addChannelOptionField(); addChannelOptionField();
-  }
-}
-function addChannelOptionField(){
-  const list = document.getElementById('cpOptionsList');
-  const row = document.createElement('div');
-  row.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
-  row.innerHTML = `<input type="text" class="cp-opt-input" placeholder="Chaguo" style="flex:1;" oninput="refreshChannelCorrectOptions()"><button type="button" class="icon-btn del" onclick="this.parentElement.remove();refreshChannelCorrectOptions();">🗑</button>`;
-  list.appendChild(row);
-  refreshChannelCorrectOptions();
-}
-function refreshChannelCorrectOptions(){
-  const sel = document.getElementById('cpCorrectIndex');
-  if(!sel) return;
-  const inputs = Array.from(document.querySelectorAll('#cpOptionsList .cp-opt-input'));
-  const current = sel.value;
-  sel.innerHTML = inputs.map((inp,i)=>`<option value="${i}">${escapeHtmlAdmin(inp.value || ('Chaguo ' + (i+1)))}</option>`).join('');
-  if(current && Number(current) < inputs.length) sel.value = current;
-}
-async function handleChannelPostImageSelect(){
-  const fileInput = document.getElementById('cpImageFile');
-  const file = fileInput.files[0];
-  if(!file) return;
-  const statusEl = document.getElementById('cpImgUploadStatus');
-  statusEl.textContent = 'Inapakia picha...';
-  try{
-    const url = await uploadToImgbb(file);
-    document.getElementById('cpImage').value = url;
-    document.getElementById('cpImgPreview').src = url;
-    document.getElementById('cpImgPreviewWrap').style.display = 'block';
-    statusEl.textContent = 'Picha imepakiwa ✓';
-  }catch(e){
-    console.error(e);
-    statusEl.textContent = 'Imeshindwa kupakia picha. Jaribu tena.';
-  }
-}
-async function saveChannelPost(){
-  const text = document.getElementById('cpText').value.trim();
-  const image = document.getElementById('cpImage').value.trim();
-  const type = channelPostType;
-  const payload = {type, text, createdAt: Date.now(), author: 'MUMBI ADMIN OFFICIAL'};
-  if(type === 'post'){
-    if(!text && !image){ showToast('Weka maandishi au picha kwa Post.'); return; }
-    if(image) payload.image = image;
-  } else {
-    const options = Array.from(document.querySelectorAll('#cpOptionsList .cp-opt-input')).map(i=>i.value.trim()).filter(Boolean);
-    if(!text){ showToast('Weka swali la ' + (type==='poll'?'kura':'quiz') + '.'); return; }
-    if(options.length < 2){ showToast('Weka angalau chaguo 2.'); return; }
-    payload.options = options;
-    payload.counts = {};
-    payload.voters = {};
-    if(type === 'quiz'){
-      const ci = Number(document.getElementById('cpCorrectIndex').value || 0);
-      payload.correctIndex = ci;
-    }
-  }
-  try{
-    await db.collection('channel_posts').add(payload);
-    showToast('Chapisho limewekwa ✓');
-    document.getElementById('cpText').value = '';
-    document.getElementById('cpImage').value = '';
-    document.getElementById('cpImageFile').value = '';
-    document.getElementById('cpImgPreviewWrap').style.display = 'none';
-    document.getElementById('cpImgUploadStatus').textContent = '';
-    document.getElementById('cpOptionsList').innerHTML = '';
-    setChannelPostType('post');
-  }catch(e){
-    console.error(e);
-    showToast('Imeshindwa kuchapisha. Jaribu tena.');
-  }
-}
-function loadChannelPostsAdmin(){
-  db.collection('channel_posts').orderBy('createdAt','desc').limit(100).onSnapshot(snap=>{
-    const list = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    document.getElementById('channelPostsAdminList').innerHTML = list.length ? list.map(p=>{
-      const d = new Date(p.createdAt||0);
-      const dd = String(d.getDate()).padStart(2,'0'), mo = String(d.getMonth()+1).padStart(2,'0');
-      const label = p.type==='poll' ? '🗳️ Kura' : p.type==='quiz' ? '❓ Quiz' : '📝 Post';
-      const totalVotes = p.counts ? Object.values(p.counts).reduce((s,v)=>s+v,0) : 0;
-      return `
-      <div class="game-card">
-        <div class="thumb" style="${p.image?`background-image:url('${p.image.replace(/'/g,"")}');background-size:cover;background-position:center;`:''}">${p.image?'':'📢'}</div>
-        <div class="g-info">
-          <div class="name">${escapeHtmlAdmin((p.text||'').slice(0,60) || '(bila maandishi)')}</div>
-          <div class="g-tags"><span class="tag">${dd}/${mo}</span><span class="tag paid">${label}</span>${p.options?`<span class="tag">Kura ${totalVotes}</span>`:''}</div>
-        </div>
-        <div class="g-actions">
-          <button class="icon-btn del" onclick="deleteChannelPost('${p.id}')">🗑</button>
-        </div>
-      </div>`;
-    }).join('') : '<div class="empty">Hakuna chapisho bado. Weka moja hapo juu.</div>';
-  }, err=>{ console.error(err); showToast('Imeshindwa kupakia machapisho.'); });
-}
-async function deleteChannelPost(id){
-  if(!confirm('Una uhakika unataka kufuta chapisho hili?')) return;
-  try{ await db.collection('channel_posts').doc(id).delete(); showToast('Imefutwa.'); }
   catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
 }
 
