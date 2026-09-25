@@ -329,53 +329,6 @@
   @keyframes mgPulse{0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}}
   .send-btn{width:42px;height:42px;border-radius:50%;background:var(--lime);border:none;color:var(--bg);font-size:14.5px;cursor:pointer;flex:none;}
   .chat-empty{text-align:center;color:var(--sub);font-size:11px;padding:30px 10px;}
-  .msg .img-wrap{margin-top:2px;}
-  .msg .img-wrap img{max-width:100%;max-height:220px;border-radius:10px;display:block;cursor:zoom-in;object-fit:cover;}
-  .msg.replied-hl{border-color:var(--lime);box-shadow:0 0 0 1px var(--lime);animation:mgRepliedGlow 1.6s ease-in-out 2;}
-  @keyframes mgRepliedGlow{0%{box-shadow:0 0 0 1px var(--lime);}50%{box-shadow:0 0 0 3px rgba(245,166,35,0.35);}100%{box-shadow:0 0 0 1px var(--lime);}}
-  .nav-badge{display:none;position:absolute;top:-4px;right:-8px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:#ff3b30;border:2px solid var(--bg);color:#fff;font-size:8.5px;font-weight:800;font-family:'Baloo 2',sans-serif;align-items:center;justify-content:center;line-height:1;}
-  .nav-badge.replied{background:var(--lime);}
-  /* Online status indicator (AI header) */
-  .online-row{display:flex;align-items:center;gap:5px;margin-top:2px;}
-  .online-dot-wrap{width:7px;height:7px;border-radius:50%;background:#2ecc71;box-shadow:0 0 0 rgba(46,204,113,0.6);animation:mgOnlinePulse 1.6s infinite;flex:none;}
-  @keyframes mgOnlinePulse{0%{box-shadow:0 0 0 0 rgba(46,204,113,0.55);}70%{box-shadow:0 0 0 6px rgba(46,204,113,0);}100%{box-shadow:0 0 0 0 rgba(46,204,113,0);}}
-  .online-label{font-size:9.5px;color:#2ecc71;font-weight:700;}
-
-  /* ---- Menu ya Chat (☰): Picha / Sauti / Kura / Quiz ---- */
-  .chat-menu-btn{width:42px;height:42px;border-radius:50%;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:17px;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;}
-  .chat-menu-btn.recording{background:#ff3b30;color:#fff;border-color:#ff3b30;animation:mgPulse 1s infinite;}
-  .chat-menu-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:60;}
-  .chat-menu-backdrop.open{display:block;}
-  .chat-menu-sheet{display:none;position:absolute;left:12px;bottom:70px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px;z-index:61;min-width:190px;box-shadow:0 6px 24px rgba(0,0,0,0.4);}
-  .chat-menu-sheet.open{display:block;}
-  .cm-item{display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:12.5px;font-weight:600;border-radius:9px;cursor:pointer;}
-  .cm-item:active{background:var(--panel-2);}
-
-  /* ---- Fomu ya kutengeneza Kura/Quiz (mtumiaji yeyote) ---- */
-  .cq-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:70;align-items:flex-end;justify-content:center;}
-  .cq-overlay.open{display:flex;}
-  .cq-card{background:var(--bg);border-top:1px solid var(--line);border-radius:18px 18px 0 0;padding:18px 16px 22px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;}
-  .cq-head{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:800;margin-bottom:12px;}
-  .cq-close{cursor:pointer;color:var(--sub);font-size:16px;}
-  .cq-card label{display:block;font-size:11px;color:var(--sub);margin:10px 0 5px;font-weight:700;}
-  .cq-card textarea, .cq-card select{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:12.5px;font-family:'Baloo 2',sans-serif;resize:vertical;}
-  .cq-opt-row{display:flex;gap:6px;margin-top:6px;}
-  .cq-opt-row input{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:9px 11px;border-radius:9px;font-size:12px;}
-  .cq-opt-row .cq-opt-del{background:none;border:none;color:var(--sub);font-size:14px;cursor:pointer;}
-  .cq-add-opt{background:none;border:1px dashed var(--line);color:var(--sub);width:100%;padding:9px;border-radius:9px;font-size:11.5px;margin-top:8px;cursor:pointer;}
-  .cq-submit{width:100%;background:var(--lime);color:var(--bg);border:none;padding:13px;border-radius:10px;font-weight:800;font-size:13px;margin-top:16px;cursor:pointer;}
-
-  /* ---- Kura/Quiz zilizoingizwa ndani ya ujumbe wa chati ---- */
-  .msg .mp-badge{display:inline-block;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;margin-bottom:6px;background:rgba(245,166,35,0.14);color:var(--lime);}
-  .msg .mp-opts{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
-  .msg .mp-opt{position:relative;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:11.5px;cursor:pointer;overflow:hidden;}
-  .msg .mp-opt .mp-fill{position:absolute;top:0;left:0;bottom:0;background:rgba(245,166,35,0.16);z-index:0;}
-  .msg .mp-opt .mp-fill.correct{background:rgba(46,204,113,0.22);}
-  .msg .mp-opt .mp-fill.wrong{background:rgba(255,92,92,0.22);}
-  .msg .mp-opt-label{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px;}
-  .msg .mp-opt.answered-correct{border-color:#2ecc71;}
-  .msg .mp-opt.answered-wrong{border-color:#ff5c5c;}
-  .msg .mp-meta{font-size:9.5px;color:var(--sub);margin-top:4px;}
 
   /* Duka banner + view */
   .duka-banner{margin:0 16px 4px;padding:14px;background:linear-gradient(135deg, rgba(166,255,0,0.14), rgba(166,255,0,0.03));border:1px solid var(--lime-dim);border-radius:14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
@@ -567,7 +520,7 @@
     <div class="mark"></div>
     <h3 data-i18n="chat_join_title">Jiunge na Chati</h3>
     <p data-i18n="chat_join_sub">Weka jina utakalotumia kuchati na wachezaji wengine</p>
-    <input type="text" id="chatNameInput" data-i18n-placeholder="chat_join_name_ph" placeholder="Jina lako" maxlength="24">
+    <input type="text" id="chatNameInput" placeholder="Jina lako" maxlength="24">
     <button onclick="joinChat()" data-i18n="chat_join_btn">Ingia Chatini</button>
   </div>
 
@@ -577,40 +530,10 @@
       <span id="chatReplyBannerText"></span>
       <span class="x" onclick="cancelChatReply()">✕</span>
     </div>
-
-    <div class="chat-menu-sheet" id="chatMenuSheet">
-      <div class="cm-item" onclick="chatMenuAction('image')">📷 <span data-i18n="chat_menu_image">Tuma Picha</span></div>
-      <div class="cm-item" onclick="chatMenuAction('voice')">🎤 <span data-i18n="chat_menu_voice">Rekodi Sauti</span></div>
-      <div class="cm-item" onclick="chatMenuAction('poll')">🗳️ <span data-i18n="chat_menu_poll">Weka Kura</span></div>
-      <div class="cm-item" onclick="chatMenuAction('quiz')">❓ <span data-i18n="chat_menu_quiz">Unda Quiz</span></div>
-    </div>
-    <div class="chat-menu-backdrop" id="chatMenuBackdrop" onclick="closeChatMenu()"></div>
-
     <div class="chat-input-row">
-      <input type="file" id="chatImageInput" accept="image/*" style="display:none;" onchange="handleChatImagePick()">
-      <button class="chat-menu-btn" id="chatMenuBtn" onclick="toggleChatMenu()">☰</button>
-      <input type="text" id="chatMsgInput" data-i18n-placeholder="chat_msg_ph" placeholder="Andika ujumbe..." maxlength="300" onkeydown="if(event.key==='Enter')sendMsg()">
+      <input type="text" id="chatMsgInput" placeholder="Andika ujumbe..." maxlength="300" onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="mic-btn" id="chatMicBtn" onclick="toggleVoiceRecording()">🎤</button>
       <button class="send-btn" onclick="sendMsg()">➤</button>
-    </div>
-  </div>
-
-  <!-- Fomu ya kutengeneza Kura/Quiz — mtu yeyote kwenye chati anaweza kuunda -->
-  <div class="cq-overlay" id="cqOverlay">
-    <div class="cq-card">
-      <div class="cq-head">
-        <span id="cqTitle" data-i18n="chat_menu_poll">Weka Kura</span>
-        <span class="cq-close" onclick="closeChatQuizForm()">✕</span>
-      </div>
-      <label data-i18n="cq_question_lbl">Swali</label>
-      <textarea id="cqQuestion" rows="2" data-i18n-placeholder="cq_question_ph" placeholder="Andika swali lako..."></textarea>
-      <label data-i18n="cq_options_lbl">Chaguo (angalau 2)</label>
-      <div id="cqOptionsList"></div>
-      <button type="button" class="cq-add-opt" onclick="addCqOptionField()">+ <span data-i18n="cq_add_option">Ongeza chaguo</span></button>
-      <div id="cqCorrectBlock" style="display:none;">
-        <label data-i18n="cq_correct_lbl">Jibu Sahihi</label>
-        <select id="cqCorrectIndex"></select>
-      </div>
-      <button class="cq-submit" onclick="submitChatQuizOrPoll()" data-i18n="cq_submit">Tuma</button>
     </div>
   </div>
 </div>
@@ -641,12 +564,12 @@
     </div>
     <div id="dukaPostForm">
       <label data-i18n="duka_f_title">Jina la bidhaa</label>
-      <input type="text" id="lTitle" data-i18n-placeholder="duka_f_title_ph" placeholder="mfano: Padi ya PS4">
+      <input type="text" id="lTitle" placeholder="mfano: Padi ya PS4">
       <label data-i18n="duka_f_desc">Maelezo</label>
-      <textarea id="lDesc" data-i18n-placeholder="duka_f_desc_ph" placeholder="Maelezo ya bidhaa, hali yake..."></textarea>
+      <textarea id="lDesc" placeholder="Maelezo ya bidhaa, hali yake..."></textarea>
 
       <label data-i18n="duka_f_brand">Brand (hiari)</label>
-      <input type="text" id="lBrand" data-i18n-placeholder="duka_f_brand_ph" placeholder="mfano: Sony, Nintendo, n.k.">
+      <input type="text" id="lBrand" placeholder="mfano: Sony, Nintendo, n.k.">
 
       <label data-i18n="duka_f_category">Category</label>
       <select id="lCategory" style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;font-family:'Baloo 2',sans-serif;">
@@ -662,11 +585,11 @@
       <div style="display:flex;gap:10px;">
         <div style="flex:1;">
           <label data-i18n="duka_f_price">Bei (TZS)</label>
-          <input type="number" id="lPrice" data-i18n-placeholder="duka_f_price_ph" placeholder="mfano: 20000">
+          <input type="number" id="lPrice" placeholder="mfano: 20000">
         </div>
         <div style="flex:1;">
           <label data-i18n="duka_f_wasprice">Bei ya Awali (hiari)</label>
-          <input type="number" id="lWasPrice" data-i18n-placeholder="duka_f_wasprice_ph" placeholder="mfano: 30000">
+          <input type="number" id="lWasPrice" placeholder="mfano: 30000">
         </div>
       </div>
       <p style="font-size:10px;color:var(--sub);margin:-6px 0 0;line-height:1.5;" data-i18n="duka_f_wasprice_hint">"Bei ya Awali" inaonesha punguzo — mfano Ilikuwa TZS 30,000 → Sasa TZS 20,000.</p>
@@ -678,7 +601,7 @@
         </div>
         <div style="flex:1;">
           <label data-i18n="duka_f_sku">Namba ya Bidhaa (hiari)</label>
-          <input type="text" id="lSku" data-i18n-placeholder="duka_f_sku_ph" placeholder="mfano: PS4-001">
+          <input type="text" id="lSku" placeholder="mfano: PS4-001">
         </div>
       </div>
 
@@ -889,9 +812,8 @@
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
-      <div class="title" data-i18n="ai_title">🤖 mumbigames AI</div>
+      <div class="title" data-i18n="ai_title">🤖 AI Msaidizi</div>
       <div class="sub" data-i18n="ai_sub">Uliza kuhusu malipo, kuseti game, na zaidi</div>
-      <div class="online-row"><span class="online-dot-wrap"></span><span class="online-label" data-i18n="ai_online">Online</span></div>
     </div>
   </div>
   <div class="ai-quick" id="aiQuick"></div>
@@ -1202,7 +1124,7 @@
 
 <div class="bottomnav">
   <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
-  <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic">💬<span class="nav-badge" id="navChatBadge"></span></div><span data-i18n="nav_chat">Chat</span></div>
+  <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic">💬</div><span data-i18n="nav_chat">Chat</span></div>
   <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5c0-1.2.4-2.3 1-3.3l.6-1c.2-.3.5-.5.9-.5h10c.4 0 .7.2.9.5l.6 1c.6 1 1 2.1 1 3.3"/><path d="M4.5 9.5c1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0"/><path d="M5.5 9.5V18a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.5"/><path d="M9.5 14c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5"/></svg></div><span data-i18n="nav_duka">Duka</span></div>
   <div class="nav-item" id="navAI" onclick="showAI()"><div class="ic">🤖</div><span data-i18n="nav_ai">AI</span></div>
   <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic">☺<span class="nav-dot" id="navMeDot"></span></div><span data-i18n="nav_me">Me</span></div>
@@ -2571,7 +2493,7 @@ async function votePoll(pollId, option){
 const YT_CHANNEL = 'https://youtube.com/@mumbi_gaming';
 const AI_KB = [
   // --- Small talk / greetings / mood — make the AI feel warm and human ---
-  {keys:['habari','mambo','vipi','hujambo','hodi','shikamoo','salama','niaje','mzima','sasa','shwari','za asubuhi','za jioni'], a:'Habari yako! 😊 Nipo poa, tayari kukusaidia. Unahitaji nini leo — malipo, kuseti game, duka, chati/matangazo, au kitu kingine?'},
+  {keys:['habari','mambo','vipi','hujambo','hodi','shikamoo','salama'], a:'Habari yako! 😊 Nipo poa, tayari kukusaidia. Unahitaji nini leo — malipo, kuseti game, duka, au kitu kingine?'},
   {keys:['asante','shukrani','thanks','umenisaidia'], a:'Karibu sana! Nimefurahi kukusaidia 🙏 Kama kuna kitu kingine chochote, niko hapa tu.'},
   {keys:['poa','sawa','ok','safi','vizuri','nzuri'], a:'Poa kabisa! 👍 Kuna kitu kingine unachotaka kujua?'},
   {keys:['nimechoka','stress','msongo','nimekasirika','naumia','pole'], a:'Pole sana kwa hisia hizo 🤍 Naelewa vitu vya teknolojia vinaweza kukera mtu unapotaka tu kucheza game. Tuende hatua kwa hatua pamoja — niambie hasa kinachokusumbua na nitakusaidia kukitatua.'},
@@ -2607,27 +2529,14 @@ const AI_KB = [
   {keys:['download','pakua','haifunguki','tatizo'], a:'Kama download haifanyi kazi, hakikisha una mtandao mzuri na jaribu tena. Kumbuka: baada ya kubonyeza download, subiri hesabu ya sekunde ipite kabla faili halijafunguka — hii ni ya kawaida. Kama tatizo linaendelea, wasiliana na admin kupitia WhatsApp kwenye ukurasa wa Chat.'},
   {keys:['akaunti','login','ingia','jisajili','password'], a:'Nenda Profile (chini kulia, icon ya ☺), jaza email na password kuunda akaunti au kuingia. Akaunti inakusaidia kuona games ulizonunua hata ukibadili simu, kutumia mfumo wa points, na kutoa maoni kwenye games.'},
   {keys:['maoni','comment'], a:'Kila game ina sehemu ya "💬 Maoni" — bonyeza namba iliyo karibu na icon ya 💬 kwenye card ya game kuona maoni ya wengine na kutoa lako mwenyewe.'},
-  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'},
-
-  // --- Chat: picha, "umejibiwa", idadi ya ujumbe, Matangazo (poll/quiz) ---
-  {keys:['picha kwenye chat','tuma picha','send image','send photo','picha ya screenshot chat'], a:'Ndani ya Chati ya jamii (Chat), bonyeza icon ya 📷 kando ya sehemu ya kuandika ujumbe ili kutuma picha — mfano screenshot ya tatizo unalopata, ili wachezaji wengine au admin waone na wakusaidie haraka.'},
-  {keys:['umejibiwa','nimejibiwa','amejibu','replied','reply notification'], a:'Ukijibiwa kwenye Chati ya jamii (na admin au mtu mwingine), ujumbe huo unang\'aa kidogo na unaonekana kwenye "Chat" (menu ya chini) kama alama/idadi — hata kama ulikuwa hujafungua app wakati huo. Ukifungua Chat, alama hiyo inatoweka baada ya kuiona.'},
-  {keys:['idadi ya ujumbe','ujumbe mpya','unread','haujasomwa'], a:'Kwenye "Chat" (menu ya chini) utaona namba ndogo (badge) inayoonyesha ujumbe wangapi mpya haujawaona bado kwenye Chati ya jamii. Namba hiyo inapotea mara tu unapofungua Chat na kuona ujumbe husika.'},
-  {keys:['matangazo','channel','tangazo jipya','post ya admin'], a:'Ndani ya ukurasa wa Chat, bonyeza kichupo cha "📢 Matangazo" juu — humo admin huweka machapisho (picha/maandishi), kura (poll), na maswali ya quiz kwa ajili ya jamii nzima kuona na kushiriki. Ukiona doti juu ya "Matangazo", maana yake kuna chapisho jipya.'},
-  {keys:['quiz','jibu swali','majibu sahihi'], a:'Ndani ya "Matangazo" (Chat → Matangazo), baadhi ya machapisho ni Quiz — chagua jibu unaloona ni sahihi, na papo hapo utaona kama umepata sahihi (kijani) au la (nyekundu), pamoja na asilimia ya watu waliochagua kila jibu. Unaweza kujibu mara moja tu kwa kila quiz.'},
-  {keys:['kura ya matangazo','poll ya channel','piga kura channel'], a:'Poll zilizo ndani ya "Matangazo" (Chat → Matangazo) ni tofauti na "Kura" ya Home — piga kura kwa kubonyeza chaguo unalolipenda, kisha utaona asilimia ya kura za kila chaguo. Kura moja tu kwa kila mtu kwa kila swali.'},
-  {keys:['historia ya mumbigames','mumbigames ilianzaje','kuhusu mumbigames','about mumbigames','app hii ni ya nani'], a:'mumbigames ni jukwaa (app/website) la Kitanzania la kupakua games za simu (bure na za kulipia) kwa emulator mbalimbali (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), lenye pia Duka la Wachezaji, Bet Tips, mfumo wa Points/Token, Chati ya jamii, na Matangazo. Lengo ni kuunganisha wachezaji wa Tanzania mahali pamoja kupata games, kusaidiana, na kufanya biashara ndogondogo za vifaa vya games kwa usalama (kupitia uthibitisho wa admin).'},
-  {keys:['home','ukurasa mkuu','sehemu za app','features','vipengele vya app'], a:'Kwenye Home utapata: orodha ya games (chuja kwa "Bure"/"Kulipia" au tafuta kwa jina), Bet Tips, Kura, TikTok na YouTube za hivi karibuni, na banners za matangazo. Menu ya chini ina: Home, Chat (Chati + Matangazo), Duka (soko la vifaa), AI (mimi 🤖), na Me (Profile/akaunti yako).'},
-  {keys:['badili lugha','language','kiingereza','english mode'], a:'Nenda Profile (Me) → Settings, kisha chagua lugha unayopenda: Kiswahili au English. Mimi (AI) pia najibu kwa lugha uliyotumia kuuliza, hata bila kubadilisha mipangilio.'},
-  {keys:['theme','giza','mwanga','dark mode','light mode'], a:'Nenda Profile (Me) → Settings → "Mwonekano (Theme)" kuchagua kati ya Giza (Dark) au Mwanga (Light).'},
-  {keys:['shea app','share app','waalike marafiki','invite friends'], a:'Nenda Profile (Me) → "Alika Marafiki" kupata msimbo wako wa kipekee na button ya "Shea APK + Msimbo Wangu" ya kutuma kwa rafiki yako kupitia WhatsApp au app nyingine moja kwa moja.'},
+  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'}
 ];
 
 function initAI(){
   const quick = document.getElementById('aiQuick');
   if(quick.dataset.init) return;
   quick.dataset.init = '1';
-  const topics = ['Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Kuseti MoBox','Kuseti AetherSX2','Kuseti Yuzu/Skyline','Kuseti Dolphin','Duka linafanyaje kazi','Mfumo wa Points','Matangazo ni nini'];
+  const topics = ['Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Kuseti MoBox','Kuseti AetherSX2','Kuseti Yuzu/Skyline','Kuseti Dolphin','Duka linafanyaje kazi','Mfumo wa Points'];
   quick.innerHTML = topics.map(t=>`<div class="ai-chip" onclick="aiAsk(${JSON.stringify(t)})">${t}</div>`).join('');
   const box = document.getElementById('aiMessages');
   box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni msaidizi wa mumbigames 🤖 Niulize chochote — malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, points, au hata ukitaka tu kuongea, niko hapa kwa ajili yako.</div>`;
@@ -2685,10 +2594,6 @@ function aiSend(){
 // ---- Community chat ----
 let chatName = localStorage.getItem('mg-chat-name') || '';
 let chatUnsub = null;
-// Anza kusikiliza ujumbe mapema (hata kama Chat haijafunguliwa), ili
-// mtumiaji ajue amejibiwa/kuna ujumbe mpya hata akiwa sehemu nyingine
-// ya app — badge huonekana kwenye "Chat" (bottom nav) papo hapo.
-if(chatName){ try{ subscribeMessages(); }catch(e){ console.error('early chat subscribe failed', e); } }
 
 const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','pollView','aiView','tournamentView','tournDetailView'];
 const ALL_NAVS = ['navHome','navChat','navGames','navAI','navMe'];
@@ -2713,11 +2618,10 @@ function showChat(){
   hideAllViews();
   document.getElementById('chatView').style.display = 'flex';
   document.getElementById('navChat').classList.add('active');
-  document.getElementById('nameGate').style.display = chatName ? 'none' : 'block';
-  document.getElementById('chatBody').style.display = chatName ? 'flex' : 'none';
   if(chatName){
+    document.getElementById('nameGate').style.display = 'none';
+    document.getElementById('chatBody').style.display = 'flex';
     subscribeMessages();
-    markChatRead();
   }
 }
 function showDuka(){
@@ -4122,76 +4026,36 @@ function joinChat(){
   document.getElementById('nameGate').style.display = 'none';
   document.getElementById('chatBody').style.display = 'flex';
   subscribeMessages();
-  markChatRead();
 }
 
 function subscribeMessages(){
   if(chatUnsub) return; // already listening
   chatUnsub = db.collection('chat_messages').orderBy('time','desc').limit(200)
     .onSnapshot(snap=>{
-      const msgs = snap.docs.map(d=>({id:d.id, ...d.data()})).reverse();
+      const msgs = snap.docs.map(d=>d.data()).reverse();
       renderMessages(msgs);
     }, err=>{
       console.error(err);
     });
 }
 
-let currentChatMsgs = [];
 function renderMessages(msgs){
-  updateChatBadges(msgs);
   const box = document.getElementById('chatMessages');
-  if(!box) return;
   if(msgs.length===0){
     box.innerHTML = '<div class="chat-empty">Bado hakuna ujumbe. Kuwa wa kwanza kuandika! 👋</div>';
     return;
   }
   const wasAtBottom = (box.scrollHeight - box.scrollTop - box.clientHeight) < 60;
-  const lastSeenReplyTime = Number(localStorage.getItem('mg-chat-last-reply-seen') || 0);
-  const voterId = getVoterId();
-  const isEn = currentLang === 'en';
   box.innerHTML = msgs.map((m,idx)=>{
     const mine = m.name === chatName;
     const t = new Date(m.time);
     const hh = String(t.getHours()).padStart(2,'0');
     const mm = String(t.getMinutes()).padStart(2,'0');
     const quote = m.replyToName ? `<div class="quote"><b>${escapeHtml(m.replyToName)}</b><br>${escapeHtml(m.replyToText||'')}</div>` : '';
-    let body;
-    if(m.type === 'voice'){
-      body = `<div class="voice-player"><audio controls preload="none" src="${escapeHtml(m.audioUrl)}"></audio></div>`;
-    } else if(m.type === 'image'){
-      body = `<div class="img-wrap"><img src="${escapeHtml(m.imageUrl)}" onclick="window.open('${escapeHtml(m.imageUrl)}','_blank')" loading="lazy"></div>${m.text?`<div class="txt">${escapeHtml(m.text)}</div>`:''}`;
-    } else if(m.type === 'poll' || m.type === 'quiz'){
-      const opts = Array.isArray(m.options) ? m.options : [];
-      const counts = m.counts || {};
-      const total = opts.reduce((s,_,i)=>s + (counts[i]||0), 0);
-      const votedIdx = (m.voters && m.voters[voterId] !== undefined) ? m.voters[voterId] : null;
-      const answered = votedIdx !== null;
-      const badgeLabel = m.type === 'poll' ? (isEn?'🗳️ Poll':'🗳️ Kura') : (isEn?'❓ Quiz':'❓ Quiz');
-      const optsList = opts.map((opt,i)=>{
-        const pct = total>0 ? Math.round(((counts[i]||0)/total)*100) : 0;
-        let cls = 'mp-opt', fillCls = '';
-        if(m.type === 'quiz' && answered){
-          if(i === m.correctIndex){ cls += ' answered-correct'; fillCls = 'correct'; }
-          else if(i === votedIdx){ cls += ' answered-wrong'; fillCls = 'wrong'; }
-        }
-        const clickAttr = answered ? '' : ` onclick="voteChatMsgOption('${m.id}', ${i})"`;
-        const fillBar = answered ? `<div class="mp-fill ${fillCls}" style="width:${pct}%"></div>` : '';
-        return `<div class="${cls}"${clickAttr}>${fillBar}<div class="mp-opt-label"><span>${escapeHtml(opt)}${answered && i===votedIdx ? ' ✓' : ''}</span>${answered?`<span>${pct}%</span>`:''}</div></div>`;
-      }).join('');
-      let metaLine = (isEn?'Votes ':'Kura ') + total;
-      if(answered && m.type === 'quiz'){
-        metaLine = (votedIdx === m.correctIndex) ? (isEn?'Correct! ✅':'Umepata sahihi! ✅') : ((isEn?'Correct answer: ':'Jibu sahihi lilikuwa: ') + escapeHtml(opts[m.correctIndex] || ''));
-      }
-      body = `<div class="mp-badge">${badgeLabel}</div><div class="txt" style="font-weight:700;">${escapeHtml(m.text||'')}</div><div class="mp-opts">${optsList}</div><div class="mp-meta">${metaLine}</div>`;
-    } else {
-      body = `<div class="txt">${escapeHtml(m.text)}</div>`;
-    }
-    // "Umejibiwa" — mtu akijibiwa (replyToName ni jina lake mwenyewe) na bado
-    // hajaiona (baada ya lastSeenReplyTime), ujumbe huo unang'aa kidogo ili
-    // aone haraka kuwa admin/mtu amemjibu — hata kama alikuwa offline.
-    const isReplyToMe = m.replyToName === chatName && !mine;
-    const isNewReply = isReplyToMe && m.time > lastSeenReplyTime;
-    return `<div class="msg ${mine?'me':''} ${isNewReply?'replied-hl':''}" data-msg-idx="${idx}">
+    const body = m.type === 'voice'
+      ? `<div class="voice-player"><audio controls preload="none" src="${escapeHtml(m.audioUrl)}"></audio></div>`
+      : `<div class="txt">${escapeHtml(m.text)}</div>`;
+    return `<div class="msg ${mine?'me':''}" data-msg-idx="${idx}">
       <div class="who">${escapeHtml(m.name)}</div>
       ${quote}
       ${body}
@@ -4202,188 +4066,10 @@ function renderMessages(msgs){
   if(wasAtBottom) box.scrollTop = box.scrollHeight;
 }
 
-// ============================================================
-// ---- Arifa ya Chat: idadi ya ujumbe mpya + "umejibiwa" ----
-// `mg-chat-last-read` = wakati (ms) mtumiaji aliona chat mwenyewe mara ya
-// mwisho (huwekwa upya pale anapofungua tab ya "Chati"). Kila ujumbe wenye
-// time > hiyo (na si wake mwenyewe) huhesabiwa kama "haujasomwa". Kama
-// mmoja wao ni jibu la moja kwa moja kwake (replyToName === chatName),
-// badge inakuwa ya rangi tofauti (dhahabu) na arifa ya ndani ya app
-// inaonekana mara moja tu kwa kundi la ujumbe huo. ----
-function updateChatBadges(msgs){
-  const badge = document.getElementById('navChatBadge');
-  if(!badge) return;
-  if(!chatName || !msgs.length){ badge.style.display = 'none'; return; }
-  const lastRead = Number(localStorage.getItem('mg-chat-last-read') || 0);
-  const unseen = msgs.filter(m => m.name !== chatName && m.time > lastRead);
-  const repliedToMe = unseen.filter(m => m.replyToName === chatName);
-  if(!unseen.length){ badge.style.display = 'none'; badge.classList.remove('replied'); return; }
-  // Kama tab ya "Chati" iko wazi hivi sasa, tunachukulia kama tayari anaisoma —
-  // usimwonyeshe badge/arifa isiyo na maana, isipokuwa data ihifadhiwe kwenye onyesho lenyewe (renderMessages).
-  const chatOpenNow = document.getElementById('chatView').style.display !== 'none'
-    && document.getElementById('chatBody').style.display !== 'none';
-  if(chatOpenNow){
-    badge.style.display = 'none'; badge.classList.remove('replied');
-    // Bado yuko kwenye Chati akiangalia moja kwa moja — endelea kusasisha "amesoma"
-    // ili asipopotea kwenda ukurasa mwingine baadaye asionekane na ujumbe "mpya" wa zamani.
-    localStorage.setItem('mg-chat-last-read', String(Date.now()));
-    localStorage.setItem('mg-chat-last-reply-seen', String(Date.now()));
-    return;
-  }
-  badge.style.display = 'flex';
-  badge.textContent = unseen.length > 99 ? '99+' : String(unseen.length);
-  badge.classList.toggle('replied', repliedToMe.length > 0);
-  if(repliedToMe.length){
-    const lastNotified = localStorage.getItem('mg-chat-last-reply-notified');
-    const latestReplyTime = String(repliedToMe[repliedToMe.length-1].time);
-    if(lastNotified !== latestReplyTime){
-      localStorage.setItem('mg-chat-last-reply-notified', latestReplyTime);
-      const isEn = currentLang === 'en';
-      showAppNotification(
-        isEn ? 'You got a reply! 💬' : 'Umejibiwa Chatini! 💬',
-        isEn ? 'Someone replied to your message in the community chat.' : 'Mtu (au admin) amekujibu kwenye Chati ya jamii — fungua kuona.',
-        '💬'
-      );
-    }
-  }
-}
-function markChatRead(){
-  localStorage.setItem('mg-chat-last-read', String(Date.now()));
-  localStorage.setItem('mg-chat-last-reply-seen', String(Date.now()));
-  const badge = document.getElementById('navChatBadge');
-  if(badge){ badge.style.display = 'none'; badge.classList.remove('replied'); }
-}
-
-// ---- Kutuma picha kwenye chati ya jamii ----
-async function handleChatImagePick(){
-  if(!chatName) return;
-  const fileInput = document.getElementById('chatImageInput');
-  const file = fileInput.files[0];
-  fileInput.value = '';
-  if(!file) return;
-  if(!file.type.startsWith('image/')){ alert('Chagua faili la picha tu.'); return; }
-  if(file.size > 8*1024*1024){ alert('Picha ni kubwa mno. Chagua picha isiyozidi 8MB.'); return; }
-  const btn = document.getElementById('chatMenuBtn');
-  const original = btn.textContent;
-  btn.textContent = '⏳';
-  try{
-    const path = 'chat_images/' + Date.now() + '_' + Math.random().toString(36).slice(2,8) + '_' + file.name.replace(/[^a-zA-Z0-9.]+/g,'_');
-    const ref = storage.ref().child(path);
-    await ref.put(file);
-    const imageUrl = await ref.getDownloadURL();
-    const msg = {name: chatName, type: 'image', imageUrl, time: Date.now()};
-    if(chatReplyTo){ msg.replyToName = chatReplyTo.name; msg.replyToText = chatReplyTo.text; cancelChatReply(); }
-    await db.collection('chat_messages').add(msg);
-  }catch(e){
-    console.error(e);
-    alert('Imeshindwa kutuma picha. Angalia mtandao wako na ujaribu tena.');
-  }finally{
-    btn.textContent = original;
-  }
-}
-
-// ============================================================
-// ---- Menu ya Chat (☰): Picha / Sauti / Kura / Quiz ----
-// Kura na Quiz sasa ni ujumbe wa kawaida ndani ya chati moja (chat_messages),
-// hivyo MTU YEYOTE aliyejiunga na chati anaweza kutengeneza kura/quiz yake
-// mwenyewe — si admin pekee. Kila mtu (kwa voterId ya kudumu kutoka
-// getVoterId()) anaweza kujibu/kupiga kura mara moja tu kwa kila ujumbe.
-// ============================================================
-function toggleChatMenu(){
-  if(isRecording){ toggleVoiceRecording(); return; } // bonyeza wakati inarekodi = simamisha
-  const sheet = document.getElementById('chatMenuSheet');
-  const backdrop = document.getElementById('chatMenuBackdrop');
-  const isOpen = sheet.classList.contains('open');
-  sheet.classList.toggle('open', !isOpen);
-  backdrop.classList.toggle('open', !isOpen);
-}
-function closeChatMenu(){
-  document.getElementById('chatMenuSheet').classList.remove('open');
-  document.getElementById('chatMenuBackdrop').classList.remove('open');
-}
-function chatMenuAction(action){
-  closeChatMenu();
-  if(action === 'image') document.getElementById('chatImageInput').click();
-  else if(action === 'voice') toggleVoiceRecording();
-  else if(action === 'poll') openChatQuizForm('poll');
-  else if(action === 'quiz') openChatQuizForm('quiz');
-}
-
-// ---- Fomu ya kutengeneza Kura/Quiz ----
-let cqType = 'poll';
-function openChatQuizForm(type){
-  if(!chatName) return;
-  cqType = type;
-  const isEn = currentLang === 'en';
-  document.getElementById('cqTitle').textContent = type === 'poll'
-    ? (isEn ? 'Create a Poll' : 'Weka Kura')
-    : (isEn ? 'Create a Quiz' : 'Unda Quiz');
-  document.getElementById('cqQuestion').value = '';
-  document.getElementById('cqOptionsList').innerHTML = '';
-  document.getElementById('cqCorrectBlock').style.display = type === 'quiz' ? 'block' : 'none';
-  addCqOptionField(); addCqOptionField();
-  document.getElementById('cqOverlay').classList.add('open');
-}
-function closeChatQuizForm(){
-  document.getElementById('cqOverlay').classList.remove('open');
-}
-function addCqOptionField(){
-  const list = document.getElementById('cqOptionsList');
-  if(list.children.length >= 5) return;
-  const isEn = currentLang === 'en';
-  const row = document.createElement('div');
-  row.className = 'cq-opt-row';
-  row.innerHTML = `<input type="text" class="cq-opt-input" placeholder="${isEn?'Option':'Chaguo'}" oninput="refreshCqCorrectOptions()"><button type="button" class="cq-opt-del" onclick="this.parentElement.remove();refreshCqCorrectOptions();">🗑</button>`;
-  list.appendChild(row);
-  refreshCqCorrectOptions();
-}
-function refreshCqCorrectOptions(){
-  const sel = document.getElementById('cqCorrectIndex');
-  const isEn = currentLang === 'en';
-  const inputs = Array.from(document.querySelectorAll('#cqOptionsList .cq-opt-input'));
-  const current = sel.value;
-  sel.innerHTML = inputs.map((inp,i)=>`<option value="${i}">${escapeHtml(inp.value || ((isEn?'Option ':'Chaguo ') + (i+1)))}</option>`).join('');
-  if(current && Number(current) < inputs.length) sel.value = current;
-}
-async function submitChatQuizOrPoll(){
-  if(!chatName) return;
-  const isEn = currentLang === 'en';
-  const question = document.getElementById('cqQuestion').value.trim();
-  const options = Array.from(document.querySelectorAll('#cqOptionsList .cq-opt-input')).map(i=>i.value.trim()).filter(Boolean);
-  if(!question){ alert(isEn ? 'Please write a question.' : 'Andika swali kwanza.'); return; }
-  if(options.length < 2){ alert(isEn ? 'Add at least 2 options.' : 'Weka angalau chaguo 2.'); return; }
-  const msg = {name: chatName, type: cqType, text: question, options, counts: {}, voters: {}, time: Date.now()};
-  if(cqType === 'quiz'){
-    msg.correctIndex = Number(document.getElementById('cqCorrectIndex').value || 0);
-  }
-  try{
-    await db.collection('chat_messages').add(msg);
-    closeChatQuizForm();
-  }catch(e){
-    console.error(e);
-    alert(isEn ? 'Failed to send. Try again.' : 'Imeshindwa kutuma. Jaribu tena.');
-  }
-}
-async function voteChatMsgOption(msgId, idx){
-  const voterId = getVoterId();
-  const ref = db.collection('chat_messages').doc(msgId);
-  try{
-    await db.runTransaction(async (t)=>{
-      const doc = await t.get(ref);
-      if(!doc.exists) return;
-      const data = doc.data();
-      const voters = data.voters || {};
-      if(voters[voterId] !== undefined) return; // tayari amejibu/amepiga kura
-      const counts = data.counts || {};
-      counts[idx] = (counts[idx]||0) + 1;
-      voters[voterId] = idx;
-      t.update(ref, {counts, voters});
-    });
-  }catch(e){
-    console.error(e);
-    alert('Imeshindwa kutuma jibu/kura. Jaribu tena.');
-  }
-}
+// ---- Kujibu ujumbe (reply/quote), kama WhatsApp: bonyeza ujumbe wowote
+// ili kuujibu — jina la mtu na sehemu ya ujumbe wake huonekana juu ya
+// jibu lako, ili yeye (na wengine) waone kajibiwa nini hasa. ----
+let currentChatMsgs = [];
 let chatReplyTo = null; // {name, text}
 document.getElementById('chatMessages').addEventListener('click', (e)=>{
   const el = e.target.closest('.msg');
@@ -4424,7 +4110,7 @@ async function toggleVoiceRecording(){
     mediaRecorder.ondataavailable = (e)=>{ if(e.data && e.data.size>0) recordedChunks.push(e.data); };
     mediaRecorder.onstop = async ()=>{
       isRecording = false;
-      document.getElementById('chatMenuBtn').classList.remove('recording');
+      document.getElementById('chatMicBtn').classList.remove('recording');
       stream.getTracks().forEach(tr=>tr.stop());
       if(!recordedChunks.length) return;
       const blob = new Blob(recordedChunks, {type: mediaRecorder.mimeType || 'audio/webm'});
@@ -4433,14 +4119,14 @@ async function toggleVoiceRecording(){
     };
     mediaRecorder.start();
     isRecording = true;
-    document.getElementById('chatMenuBtn').classList.add('recording');
+    document.getElementById('chatMicBtn').classList.add('recording');
   }catch(e){
     console.error(e);
     alert('Imeshindwa kufikia maikrofoni. Hakikisha umeruhusu app kutumia maikrofoni ya simu yako.');
   }
 }
 async function sendVoiceMessage(blob){
-  const micBtn = document.getElementById('chatMenuBtn');
+  const micBtn = document.getElementById('chatMicBtn');
   micBtn.textContent = '⏳';
   try{
     const ext = (blob.type||'').includes('mp4') ? 'm4a' : 'webm';
@@ -4455,7 +4141,7 @@ async function sendVoiceMessage(blob){
     console.error(e);
     alert('Imeshindwa kutuma ujumbe wa sauti. Angalia mtandao wako na ujaribu tena.');
   }finally{
-    micBtn.textContent = '☰';
+    micBtn.textContent = '🎤';
   }
 }
 
@@ -4494,7 +4180,7 @@ const TRANSLATIONS = {
     tourn_min_teams:'Angalau timu 4 zinahitajika.', tourn_finish:'Unda Tournament',
     chip_all:'Zote', chip_free:'Bure', chip_paid:'Kulipia', chip_offline:'Offline',
     poll_title:'Kura (Poll)', poll_sub:'Piga kura, ona matokeo',
-    ai_title:'🤖 mumbigames AI', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi', ai_online:'Ipo Mtandaoni',
+    ai_title:'🤖 AI Msaidizi', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi',
     profile_title:'Profile Yangu', profile_sub:'Akaunti yako mumbigames',
     duka_title:'Duka la Wachezaji', duka_sub:'Vifaa vya games — vilivyothibitishwa na admin',
     duka_sub_home:'Nunua/uza vifaa vya games — vilivyothibitishwa na admin',
@@ -4515,14 +4201,9 @@ const TRANSLATIONS = {
     duka_f_weight:'Uzito (kg) - hiari', duka_f_freeship:'Usafirishaji Bure',
     duka_f_freeship_sub:'Toa usafirishaji bure kwa bidhaa hii', duka_f_deliveryfee:'Gharama ya Usafirishaji (TZS)',
     duka_f_tags:'Tags (hiari)', duka_f_tags_hint:'Tags husaidia wanunuzi kuipata bidhaa yako haraka.',
-    duka_f_title_ph:'mfano: Padi ya PS4', duka_f_desc_ph:'Maelezo ya bidhaa, hali yake...', duka_f_brand_ph:'mfano: Sony, Nintendo, n.k.',
-    duka_f_price_ph:'mfano: 20000', duka_f_wasprice_ph:'mfano: 30000', duka_f_sku_ph:'mfano: PS4-001',
     chat_title:'Jumuiya ya mumbigames', chat_sub:'Chati ya wachezaji wote',
     chat_join_title:'Jiunge na Chati', chat_join_sub:'Weka jina utakalotumia kuchati na wachezaji wengine',
-    chat_join_btn:'Ingia Chatini', chat_join_name_ph:'Jina lako', chat_msg_ph:'Andika ujumbe...',
-    chat_menu_image:'Tuma Picha', chat_menu_voice:'Rekodi Sauti', chat_menu_poll:'Weka Kura', chat_menu_quiz:'Unda Quiz',
-    cq_question_lbl:'Swali', cq_question_ph:'Andika swali lako...', cq_options_lbl:'Chaguo (angalau 2)',
-    cq_add_option:'Ongeza chaguo', cq_correct_lbl:'Jibu Sahihi', cq_submit:'Tuma',
+    chat_join_btn:'Ingia Chatini',
     profile_stats_title:'📊 Takwimu Zangu', profile_referrals_lbl:'Marafiki walioalikwa', profile_downloads_lbl:'Downloads zako',
     bettips_shortcut_title:'Bet Tips', bettips_shortcut_sub:'Msimbo wa bet, nakili na ubandike BetPawa/1Win',
     bettips_view_title:'🎫 Bet Tips', bettips_view_sub:'Nakili msimbo, bandika kwenye app ya bet',
@@ -4586,7 +4267,7 @@ const TRANSLATIONS = {
     tourn_min_teams:'Min 4 teams required.', tourn_finish:'Create Tournament',
     chip_all:'All', chip_free:'Free', chip_paid:'Paid', chip_offline:'Offline',
     poll_title:'Poll', poll_sub:'Vote and see results',
-    ai_title:'🤖 mumbigames AI', ai_sub:'Ask about payments, game setup, and more', ai_online:'Online',
+    ai_title:'🤖 AI Assistant', ai_sub:'Ask about payments, game setup, and more',
     profile_title:'My Profile', profile_sub:'Your mumbigames account',
     duka_title:'Player Marketplace', duka_sub:'Gaming gear — verified by admin',
     duka_sub_home:'Buy/sell gaming gear — verified by admin',
@@ -4607,14 +4288,9 @@ const TRANSLATIONS = {
     duka_f_weight:'Weight (kg) - Optional', duka_f_freeship:'Free Shipping',
     duka_f_freeship_sub:'Offer free delivery for this item', duka_f_deliveryfee:'Delivery Fee (TZS)',
     duka_f_tags:'Tags (Optional)', duka_f_tags_hint:'Tags help buyers find your item faster.',
-    duka_f_title_ph:'e.g. PS4 Controller', duka_f_desc_ph:'Item description, condition...', duka_f_brand_ph:'e.g. Sony, Nintendo, etc.',
-    duka_f_price_ph:'e.g. 20000', duka_f_wasprice_ph:'e.g. 30000', duka_f_sku_ph:'e.g. PS4-001',
     chat_title:'mumbigames Community', chat_sub:'Chat with all players',
     chat_join_title:'Join Chat', chat_join_sub:'Enter the name you\'ll use to chat with other players',
-    chat_join_btn:'Enter Chat', chat_join_name_ph:'Your name', chat_msg_ph:'Type a message...',
-    chat_menu_image:'Send Photo', chat_menu_voice:'Record Voice', chat_menu_poll:'Create Poll', chat_menu_quiz:'Create Quiz',
-    cq_question_lbl:'Question', cq_question_ph:'Type your question...', cq_options_lbl:'Options (at least 2)',
-    cq_add_option:'Add option', cq_correct_lbl:'Correct Answer', cq_submit:'Send',
+    chat_join_btn:'Enter Chat',
     profile_stats_title:'📊 My Stats', profile_referrals_lbl:'Friends invited', profile_downloads_lbl:'Your downloads',
     bettips_shortcut_title:'Bet Tips', bettips_shortcut_sub:'Bet codes — copy and paste into BetPawa/1Win',
     bettips_view_title:'🎫 Bet Tips', bettips_view_sub:'Copy the code, paste it in your bet app',
@@ -4672,23 +4348,6 @@ function applyLang(lang){
     if(dict[key]) el.placeholder = dict[key];
   });
 }
-
-// Baadhi ya sehemu za app (fomu, ujumbe wa chat, kadi za bidhaa n.k)
-// huchorwa upya (innerHTML) BAADA ya lugha kubadilishwa — hapo awali
-// hazikutafsiriwa tena kiotomatiki, ndiyo maana baadhi ya sehemu
-// zilibaki Kiswahili hata baada ya kuchagua English. Observer hii
-// inahakikisha kila kipengele kipya chenye data-i18n/data-i18n-placeholder
-// kinatafsiriwa papo hapo, bila kujali ni lini kimechorwa.
-try{
-  const mgLangObserver = new MutationObserver(muts=>{
-    for(const m of muts){
-      if(m.addedNodes && m.addedNodes.length){ applyLang(currentLang); return; }
-    }
-  });
-  document.addEventListener('DOMContentLoaded', ()=>{
-    mgLangObserver.observe(document.body, {childList:true, subtree:true});
-  });
-}catch(e){ console.error('mgLangObserver init failed', e); }
 
 function setLang(lang){
   currentLang = lang;
