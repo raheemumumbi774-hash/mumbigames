@@ -1836,7 +1836,21 @@ async function submitPaymentClaim(){
   }
 }
 
+// ============================================================
+// AD SYSTEM — tangazo MOJA tu kwa kila hatua:
+//   - Mtumiaji akifungua game (ya bure) → tangazo 1
+//   - Kila kitufe cha download akibofya (game file, emulator/PPSSPP,
+//     data/OBB — chochote alichobofya) → tangazo 1 kwa hicho kitufe
+// Games za kulipia (paid) hazina tangazo kabisa.
+// ============================================================
+const AD_GATE_DIRECT_LINK = 'https://www.profitableratecpmnetwork.com/j5d149kj?key=41022893b66104869ed5cbfec65a07aa';
+
+function openAdTab(){
+  try{ window.open(AD_GATE_DIRECT_LINK, '_blank', 'noopener'); }catch(e){}
+}
+
 function showModalDownloads(g, restoreState){
+  if(!g.paid) openAdTab();
   document.getElementById('modalPaySection').style.display = 'none';
   document.getElementById('modalDownloadsSection').style.display = 'block';
 
@@ -2052,6 +2066,19 @@ function startDownloadCountdown(i, url, gameId, gameName){
   const btn = document.getElementById('dlbtn-' + i);
   const countEl = document.getElementById('dlcount-' + i);
   if(!btn || btn.disabled) return;
+
+  // Games za BURE: hakuna kuhesabu tena — download inaanza papo hapo
+  // (tangazo tayari limeshafunguka kwenye kubofya kitufe hiki). Countdown
+  // ya sekunde 10 inabaki kwa games za KULIPIA tu.
+  if(!(currentModalGame && currentModalGame.paid)){
+    btn.disabled = true;
+    markDownloaded(i, gameId, gameName);
+    rememberGameInUrl(gameId, Array.from(downloadedSet), downloadCounted);
+    escapeToExternalBrowser(url);
+    btn.disabled = false;
+    return;
+  }
+
   btn.disabled = true;
   let secs = 10;
   countEl.textContent = ' (' + secs + ')';
@@ -2249,6 +2276,7 @@ function closeModal(){
 document.getElementById('modalDownloadsList').addEventListener('click', (e)=>{
   const btn = e.target.closest('.dl-btn');
   if(!btn) return;
+  if(currentModalGame && !currentModalGame.paid) openAdTab();
   const i = parseInt(btn.dataset.dlIndex, 10);
   const url = btn.dataset.dlUrl || '';
   const gameId = btn.dataset.dlGameid || '';
