@@ -1086,8 +1086,16 @@
       <div id="modalDetails"></div>
       <div id="modalPerfBoxes"></div>
       <div id="modalSetupHelper"></div>
-      <div id="modalDownloadsList"></div>
-      <div style="font-size:10px;color:var(--sub);text-align:center;margin:4px 0 2px;line-height:1.5;">ℹ️ Ukiona "Could not preview the file" kwenye Chrome baada ya download, si tatizo — faili limeshahifadhiwa salama kwenye Downloads za simu yako. Bonyeza back kurudi mumbigames.</div>
+
+      <div id="modalAdGate" style="display:none;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:20px 16px;text-align:center;margin-bottom:12px;">
+        <div style="font-size:15px;font-weight:800;margin-bottom:10px;">Support mumbigames</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:16px;">Bonyeza "Tazama Tangazo" subiri lifunguke (kaa hata sekunde 5) kisha urudi nyuma umenye tena. Fanya mara 3 ili ufungue download hii Bure.</div>
+        <button type="button" id="adGateBtn" class="btn" style="width:100%;background:#e0342c;color:#fff;font-weight:700;font-size:14.5px;padding:14px;border-radius:10px;border:none;cursor:pointer;">Tazama Tangazo (0/3)</button>
+      </div>
+
+      <div id="modalDownloadsContent">
+        <div id="modalDownloadsList"></div>
+        <div style="font-size:10px;color:var(--sub);text-align:center;margin:4px 0 2px;line-height:1.5;">ℹ️ Ukiona "Could not preview the file" kwenye Chrome baada ya download, si tatizo — faili limeshahifadhiwa salama kwenye Downloads za simu yako. Bonyeza back kurudi mumbigames.</div>
       <div id="modalThanks" style="display:none;font-size:11px;color:var(--lime);font-weight:600;text-align:center;margin:6px 0 4px;">Asante kwa kuchagua mumbigames🥰</div>
       <div id="sponsoredAdBox" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
         <div style="font-size:9.5px;letter-spacing:1px;color:var(--sub);font-weight:700;margin-bottom:8px;">SPONSORED</div>
@@ -1099,6 +1107,7 @@
         <div id="adBoxTitle" style="font-weight:700;font-size:12.5px;margin-bottom:4px;"></div>
         <div id="adBoxSubtitle" style="font-size:11px;color:var(--sub);margin-bottom:10px;line-height:1.4;"></div>
         <a id="adBoxButton" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display:block;text-align:center;text-decoration:none;padding:12px;border-radius:10px;"></a>
+      </div>
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button>
@@ -1836,9 +1845,93 @@ async function submitPaymentClaim(){
   }
 }
 
+// ============================================================
+// AD GATE — mtu lazima "atazame" matangazo 3 kabla ya kuona
+// download links za game. Tunatumia "Direct Link" ya mtandao wa
+// matangazo (mf. Adsterra Smart Direct Link / Monetag Direct Link):
+// kila click inafungua tab mpya yenye ofa/tangazo, halafu mtumiaji
+// anarudi mumbigames na kubofya tena. BADILISHA link hapa chini na
+// Direct Link yako halisi utakayopata baada ya kujisajili kwenye
+// mtandao wa matangazo.
+// ============================================================
+const AD_GATE_DIRECT_LINK = 'https://REPLACE-WITH-YOUR-DIRECT-LINK'; // TODO: weka Direct Link yako hapa
+const AD_GATE_REQUIRED = 3;      // idadi ya matangazo yanayotakiwa
+const AD_GATE_WAIT_SECONDS = 5;  // sekunde za kusubiri kabla kitufe kirudi kubofyeka
+
+let adGateCurrentGameId = null;
+let adGateCount = 0;
+
+function isAdGateUnlocked(gameId){
+  try{ return sessionStorage.getItem('mg-adgate-' + gameId) === '1'; }
+  catch(e){ return false; }
+}
+function setAdGateUnlocked(gameId){
+  try{ sessionStorage.setItem('mg-adgate-' + gameId, '1'); }catch(e){}
+}
+
+function renderAdGate(g){
+  adGateCurrentGameId = g.id;
+  const gateEl = document.getElementById('modalAdGate');
+  const contentEl = document.getElementById('modalDownloadsContent');
+  if(!gateEl || !contentEl) return;
+
+  if(isAdGateUnlocked(g.id)){
+    gateEl.style.display = 'none';
+    contentEl.style.display = 'block';
+    return;
+  }
+  adGateCount = 0;
+  gateEl.style.display = 'block';
+  contentEl.style.display = 'none';
+  const btn = document.getElementById('adGateBtn');
+  btn.disabled = false;
+  btn.textContent = 'Tazama Tangazo (0/' + AD_GATE_REQUIRED + ')';
+}
+
+let adGateBusy = false;
+function watchAdGateAd(){
+  if(adGateBusy) return;
+  const btn = document.getElementById('adGateBtn');
+  if(!btn || btn.disabled) return;
+  adGateBusy = true;
+  btn.disabled = true;
+
+  let newWin = null;
+  try{ newWin = window.open(AD_GATE_DIRECT_LINK, '_blank', 'noopener'); }catch(e){ newWin = null; }
+  if(!newWin){
+    alert('Ruhusu pop-up kwenye browser yako ili uweze kutazama tangazo.');
+    btn.disabled = false;
+    adGateBusy = false;
+    return;
+  }
+
+  let secs = AD_GATE_WAIT_SECONDS;
+  btn.textContent = 'Inasubiri... (' + secs + ')';
+  const timer = setInterval(()=>{
+    secs--;
+    if(secs > 0){
+      btn.textContent = 'Inasubiri... (' + secs + ')';
+    } else {
+      clearInterval(timer);
+      adGateCount++;
+      adGateBusy = false;
+      if(adGateCount >= AD_GATE_REQUIRED){
+        setAdGateUnlocked(adGateCurrentGameId);
+        document.getElementById('modalAdGate').style.display = 'none';
+        document.getElementById('modalDownloadsContent').style.display = 'block';
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Tazama Tangazo (' + adGateCount + '/' + AD_GATE_REQUIRED + ')';
+      }
+    }
+  }, 1000);
+}
+document.getElementById('adGateBtn').addEventListener('click', watchAdGateAd);
+
 function showModalDownloads(g, restoreState){
   document.getElementById('modalPaySection').style.display = 'none';
   document.getElementById('modalDownloadsSection').style.display = 'block';
+  renderAdGate(g);
 
   // Game details rows
   const detailsEl = document.getElementById('modalDetails');
