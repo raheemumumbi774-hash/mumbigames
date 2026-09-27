@@ -249,6 +249,8 @@
         <div class="mini-stat"><div class="num" id="statFree">0</div><div class="lbl">Bure</div></div>
         <div class="mini-stat"><div class="num" id="statDownloadsToday">0</div><div class="lbl">Downloads Leo</div></div>
         <div class="mini-stat"><div class="num" id="statVisits">0</div><div class="lbl">Watembeleaji</div></div>
+        <div class="mini-stat"><div class="num" id="statAds24h">0</div><div class="lbl">Matangazo (Saa 24)</div></div>
+        <div class="mini-stat"><div class="num" id="statAdsMonth">0</div><div class="lbl">Matangazo (Mwezi Huu)</div></div>
       </div>
       <div style="display:none;"><span id="statUnique">0</span></div>
       <div class="section-title"><h2>Trending sasa</h2></div>
@@ -624,6 +626,47 @@ function loadSiteStats(){
     document.getElementById('statAccounts').textContent = snap.size;
   }, function(err){ console.error(err); });
   loadDownloadStats();
+  loadAdStats24h();
+  loadAdStatsMonth();
+  // Dirisha la "saa 24 zilizopita" linasogea kila saa inavyopita, kwa hiyo
+  // tunapakia upya kila dakika 5 ili namba ibaki sahihi bila kusubiri
+  // mtu a-refresh page.
+  setInterval(loadAdStats24h, 5 * 60 * 1000);
+}
+
+// ---- Jumla ya matangazo ya MWEZI HUU — hii ni document MOJA tu
+// (adStatsMonthly/YYYY-MM) inayoongezeka kila tangazo linapofunguka, kwa
+// hiyo ni haraka na nafuu kusoma tofauti na kuhesabu bucket nyingi za saa. ----
+function loadAdStatsMonth(){
+  try{
+    const monthKey = new Date().toISOString().slice(0,7); // "YYYY-MM"
+    db.collection('adStatsMonthly').doc(monthKey).onSnapshot(function(doc){
+      document.getElementById('statAdsMonth').textContent = doc.exists ? (doc.data().count || 0) : 0;
+    }, function(e){ console.error('loadAdStatsMonth failed', e); });
+  }catch(e){ console.error(e); }
+}
+
+// ---- Idadi ya matangazo (Adsterra) yaliyoonyeshwa ndani ya saa 24
+// zilizopita. index.html huandika hesabu moja kwa "bucket" ya kila saa
+// (mfano doc id "2026-09-27T14") kwenye collection ya adStats — hapa
+// tunachukua jumla ya bucket 24 za mwisho pekee. ----
+function loadAdStats24h(){
+  try{
+    const now = new Date();
+    const endKey = now.toISOString().slice(0,13);
+    const startKey = new Date(now.getTime() - 23*60*60*1000).toISOString().slice(0,13);
+    db.collection('adStats')
+      .orderBy(firebase.firestore.FieldPath.documentId())
+      .startAt(startKey)
+      .endAt(endKey)
+      .get()
+      .then(function(snap){
+        let total = 0;
+        snap.forEach(function(doc){ total += (doc.data().count || 0); });
+        document.getElementById('statAds24h').textContent = total;
+      })
+      .catch(function(e){ console.error('loadAdStats24h failed', e); });
+  }catch(e){ console.error(e); }
 }
 
 function loadDownloadStats(){
