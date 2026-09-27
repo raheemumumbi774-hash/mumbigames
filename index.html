@@ -2349,6 +2349,17 @@ document.getElementById('modalDownloadsList').addEventListener('click', (e)=>{
   const url = btn.dataset.dlUrl || '';
   const gameId = btn.dataset.dlGameid || '';
   const gameName = btn.dataset.dlGamename || '';
+
+  if(currentModalGame && !currentModalGame.paid){
+    if(isAndroidUA()){
+      logAdImpression();
+      rememberGameInUrl(gameId, Array.from(downloadedSet), downloadCounted);
+      setPendingDownloadInUrl(i);
+      escapeToExternalBrowser(AD_GATE_DIRECT_LINK);
+      return; // akirudi kwa BACK, download hii hii inaendelea yenyewe (tazama tryOpenDeepLinkGame)
+    }
+    openAdTab(); // tab mpya — haiathiri tab hii, download inaendelea papo hapo
+  }
   startDownloadCountdown(i, url, gameId, gameName);
 });
 
