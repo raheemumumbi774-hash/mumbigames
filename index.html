@@ -1202,18 +1202,6 @@ function tryOpenDeepLinkGame(){
   if(g){
     deepLinkOpened = true;
     openGameModal(g, {dl: deepLinkDl, counted: deepLinkCounted});
-    // Kama tulikuwa tunamsubiri arudi kutoka kwenye tangazo baada ya
-    // kubofya download (Android), endelea moja kwa moja na download hiyo
-    // hiyo bila kumtaka abofye tena — haihitaji tangazo la pili.
-    if(deepLinkPendingDl !== null){
-      const pdl = deepLinkPendingDl;
-      setTimeout(function(){
-        const btn = document.getElementById('dlbtn-' + pdl);
-        if(btn){
-          startDownloadCountdown(pdl, btn.dataset.dlUrl || '', btn.dataset.dlGameid || '', btn.dataset.dlGamename || '');
-        }
-      }, 0);
-    }
     clearDeepLinkUrlParams();
   }
 }
@@ -2136,20 +2124,9 @@ function startDownloadCountdown(i, url, gameId, gameName){
   const countEl = document.getElementById('dlcount-' + i);
   if(!btn || btn.disabled) return;
 
-  // Games za BURE: hakuna kuhesabu tena — download inaanza papo hapo
-  // (tangazo tayari limeshafunguka kwenye kubofya kitufe hiki). Countdown
-  // ya sekunde 10 inabaki kwa games za KULIPIA tu.
-  if(!(currentModalGame && currentModalGame.paid)){
-    btn.disabled = true;
-    markDownloaded(i, gameId, gameName);
-    rememberGameInUrl(gameId, Array.from(downloadedSet), downloadCounted);
-    escapeToExternalBrowser(url);
-    btn.disabled = false;
-    return;
-  }
-
+  const isPaid = !!(currentModalGame && currentModalGame.paid);
   btn.disabled = true;
-  let secs = 10;
+  let secs = isPaid ? 10 : 5; // Bure: sekunde 5. Kulipia: sekunde 10 (kama zamani).
   countEl.textContent = ' (' + secs + ')';
   const timer = setInterval(()=>{
     secs--;
@@ -2342,6 +2319,16 @@ function closeModal(){
 // used to break the inline onclick attribute and silently disable the
 // button — reading the values back from data-* attributes avoids that
 // entirely, for any game name or link, no matter what characters it has.
+// Kila kitufe cha download (kwa game YA BURE) kinahitaji click MBILI:
+//  - Click ya 1: tangazo linaonekana, alama inawekwa "ameshaona tangazo"
+//    (kwenye localStorage — hii inabaki hata page ikiload upya, tofauti
+//    na variable ya kawaida ya JS ambayo ingepotea)
+//  - Click ya 2 (baada ya kurudi kutoka tangazo): alama tayari ipo, kwa
+//    hiyo tunaruka tangazo na kuanza kuhesabu sekunde 5→1 kisha Chrome
+// Alama inafutwa mara moja click ya 2 inapoanza, ili download inayofuata
+// (siku nyingine au faili lingine) ionyeshe tangazo tena kutoka mwanzo.
+function adShownKey(gameId, i){ return 'mg_ad_shown_' + gameId + '_' + i; }
+
 document.getElementById('modalDownloadsList').addEventListener('click', (e)=>{
   const btn = e.target.closest('.dl-btn');
   if(!btn) return;
@@ -2351,14 +2338,22 @@ document.getElementById('modalDownloadsList').addEventListener('click', (e)=>{
   const gameName = btn.dataset.dlGamename || '';
 
   if(currentModalGame && !currentModalGame.paid){
-    if(isAndroidUA()){
+    const key = adShownKey(gameId, i);
+    let alreadyShown = false;
+    try{ alreadyShown = localStorage.getItem(key) === '1'; }catch(e){}
+
+    if(!alreadyShown){
+      try{ localStorage.setItem(key, '1'); }catch(e){}
       logAdImpression();
-      rememberGameInUrl(gameId, Array.from(downloadedSet), downloadCounted);
-      setPendingDownloadInUrl(i);
-      escapeToExternalBrowser(AD_GATE_DIRECT_LINK);
-      return; // akirudi kwa BACK, download hii hii inaendelea yenyewe (tazama tryOpenDeepLinkGame)
+      rememberGameInUrl(gameId, Array.from(downloadedSet), downloadCounted); // ili game ifunguke yenyewe tena ukirudi
+      if(isAndroidUA()){
+        escapeToExternalBrowser(AD_GATE_DIRECT_LINK);
+      } else {
+        openAdTab();
+      }
+      return; // subiri abonyeze DOWNLOAD tena mara ya pili
     }
-    openAdTab(); // tab mpya — haiathiri tab hii, download inaendelea papo hapo
+    try{ localStorage.removeItem(key); }catch(e){}
   }
   startDownloadCountdown(i, url, gameId, gameName);
 });
