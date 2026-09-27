@@ -1870,19 +1870,24 @@ async function submitPaymentClaim(){
 // ============================================================
 const AD_GATE_DIRECT_LINK = 'https://www.profitableratecpmnetwork.com/j5d149kj?key=41022893b66104869ed5cbfec65a07aa';
 
-// Kila tangazo linapofunguka, tunaongeza namba 1 kwenye "bucket" ya saa
-// hiyo (mfano 2026-09-27T14) NA kwenye counter ya mwezi mzima (mfano
-// 2026-09) kwa wakati mmoja. Bucket za saa zinatumika kuhesabu "Saa 24
-// zilizopita" kwa admin dashboard; counter ya mwezi ni document MOJA tu
-// (nafuu sana kusoma) kwa jumla ya mwezi mzima.
+// Kila tangazo linapofunguka, tunaongeza namba 1 kwenye counter ya SIKU
+// ya kalenda (mfano "2026-09-27") NA kwenye counter ya mwezi mzima
+// (mfano "2026-09") kwa wakati mmoja. Kwa kuwa siku mpya = document mpya,
+// namba ya "Leo" inaanza yenyewe kutoka sifuri saa 6 usiku (00:00) bila
+// kuhitaji "kuzima/kurudisha" chochote — tunatumia saa za simu (local
+// time) ili siku ibadilike saa sahihi ya usiku Tanzania.
+function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+function localDayKey(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
+function localMonthKey(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1); }
+
 function logAdImpression(){
   try{
     const now = new Date();
-    const hourKey = now.toISOString().slice(0,13);  // "YYYY-MM-DDTHH"
-    const monthKey = now.toISOString().slice(0,7);   // "YYYY-MM"
-    db.collection('adStats').doc(hourKey).set({
+    const dayKey = localDayKey(now);
+    const monthKey = localMonthKey(now);
+    db.collection('adStatsDaily').doc(dayKey).set({
       count: firebase.firestore.FieldValue.increment(1)
-    }, {merge:true}).catch(function(e){ console.error('logAdImpression (hour) failed', e); });
+    }, {merge:true}).catch(function(e){ console.error('logAdImpression (day) failed', e); });
     db.collection('adStatsMonthly').doc(monthKey).set({
       count: firebase.firestore.FieldValue.increment(1)
     }, {merge:true}).catch(function(e){ console.error('logAdImpression (month) failed', e); });
@@ -2344,17 +2349,6 @@ document.getElementById('modalDownloadsList').addEventListener('click', (e)=>{
   const url = btn.dataset.dlUrl || '';
   const gameId = btn.dataset.dlGameid || '';
   const gameName = btn.dataset.dlGamename || '';
-
-  if(currentModalGame && !currentModalGame.paid){
-    if(isAndroidUA()){
-      logAdImpression();
-      rememberGameInUrl(gameId, Array.from(downloadedSet), downloadCounted);
-      setPendingDownloadInUrl(i);
-      escapeToExternalBrowser(AD_GATE_DIRECT_LINK);
-      return; // akirudi kwa BACK, download hii hii inaendelea yenyewe (tazama tryOpenDeepLinkGame)
-    }
-    openAdTab(); // tab mpya — haiathiri tab hii, download inaendelea papo hapo
-  }
   startDownloadCountdown(i, url, gameId, gameName);
 });
 
