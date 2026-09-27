@@ -474,9 +474,18 @@
   <span>mumbigames</span>
   <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
     <div class="token-pill" id="headerTokenPill" onclick="showProfile()" style="display:none;margin-left:0;"><span class="coin">🪙</span><span id="headerTokenCount">0</span></div>
+    <div class="search" onclick="showChangelog()" style="margin-left:0;position:relative;">🔔<span id="changelogBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#e0342c;color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:8px;line-height:16px;text-align:center;padding:0 3px;">0</span></div>
     <div class="search" onclick="showSettings()" style="margin-left:0;">☰</div>
   </div>
 </header>
+
+<div class="overlay" id="changelogOverlay" onclick="if(event.target===this) closeChangelog()">
+  <div class="modal">
+    <h3>🔔 Mabadiliko ya App</h3>
+    <div id="changelogList" style="max-height:60vh;overflow-y:auto;"></div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:12px;" onclick="closeChangelog()">Funga</button>
+  </div>
+</div>
 
 <div class="searchbar-wrap">
   <div class="searchbar">
@@ -814,7 +823,7 @@
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
-      <div class="title" data-i18n="ai_title">🤖 AI Msaidizi</div>
+      <div class="title" data-i18n="ai_title">🤖 Mumbigames AI</div>
       <div class="sub" data-i18n="ai_sub">Uliza kuhusu malipo, kuseti game, na zaidi</div>
     </div>
   </div>
@@ -2595,11 +2604,12 @@ async function votePoll(pollId, option){
 const YT_CHANNEL = 'https://youtube.com/@mumbi_gaming';
 const AI_KB = [
   // --- Small talk / greetings / mood — make the AI feel warm and human ---
-  {keys:['habari','mambo','vipi','hujambo','hodi','shikamoo','salama'], a:'Habari yako! 😊 Nipo poa, tayari kukusaidia. Unahitaji nini leo — malipo, kuseti game, duka, au kitu kingine?'},
+  {keys:['habari','mambo','vipi','hujambo','hodi','shikamoo','salama','niaje','sasa','mzuka','uko aje','za kwako'], a:'Habari yako! 😊 Nipo poa, tayari kukusaidia. Unahitaji nini leo — malipo, kuseti game, duka, tournament, au kitu kingine?'},
   {keys:['asante','shukrani','thanks','umenisaidia'], a:'Karibu sana! Nimefurahi kukusaidia 🙏 Kama kuna kitu kingine chochote, niko hapa tu.'},
   {keys:['poa','sawa','ok','safi','vizuri','nzuri'], a:'Poa kabisa! 👍 Kuna kitu kingine unachotaka kujua?'},
   {keys:['nimechoka','stress','msongo','nimekasirika','naumia','pole'], a:'Pole sana kwa hisia hizo 🤍 Naelewa vitu vya teknolojia vinaweza kukera mtu unapotaka tu kucheza game. Tuende hatua kwa hatua pamoja — niambie hasa kinachokusumbua na nitakusaidia kukitatua.'},
-  {keys:['wewe ni nani','jina lako','ni nani wewe'], a:'Mimi ni msaidizi wa mumbigames 🤖 — nipo hapa kukusaidia na chochote kuhusu app hii: malipo, kuseti games, duka, kura, points, na zaidi. Niulize chochote!'},
+  {keys:['wewe ni nani','jina lako','ni nani wewe'], a:'Mimi ni Mumbigames AI 🤖 — nipo hapa kukusaidia na CHOCHOTE kuhusu app hii: malipo, kuseti games, duka, kura, tournament, points, chat, na zaidi. Niulize chochote!'},
+  {keys:['who are you','your name'], lang:'en', a:'I\'m Mumbigames AI 🤖 — I\'m here to help with ANYTHING about this app: payments, game setup, shop, polls, tournaments, points, chat, and more. Ask me anything!'},
 
   // --- Payments ---
   {keys:['lipa','malipo','pay','pesa','tigo','kulipia'], a:'Kulipia game: fungua game, tuma pesa Tigo Pesa 0703504270 (jina: Josh Abdallahman), jaza namba uliyotumia, pakia picha MBILI za screenshot ya muamala, kisha bonyeza "Nimelipa ✓". Ombi lako litasubiri admin (binadamu) athibitishe kwa kuangalia picha zako — download itafunguka moja kwa moja mara tu atakapothibitisha. Ukisubiri zaidi ya dakika 5, mimi (AI) ninaweza kuanza kukusaidia moja kwa moja kwenye ukurasa huo huo. Kwa bidhaa za dukani, malipo pia hupitia admin ili kukukinga na matapeli — usiwahi kutuma pesa moja kwa moja kwa muuzaji.'},
@@ -2631,7 +2641,31 @@ const AI_KB = [
   {keys:['download','pakua','haifunguki','tatizo'], a:'Kama download haifanyi kazi, hakikisha una mtandao mzuri na jaribu tena. Kumbuka: baada ya kubonyeza download, subiri hesabu ya sekunde ipite kabla faili halijafunguka — hii ni ya kawaida. Kama tatizo linaendelea, wasiliana na admin kupitia WhatsApp kwenye ukurasa wa Chat.'},
   {keys:['akaunti','login','ingia','jisajili','password'], a:'Nenda Profile (chini kulia, icon ya ☺), jaza email na password kuunda akaunti au kuingia. Akaunti inakusaidia kuona games ulizonunua hata ukibadili simu, kutumia mfumo wa points, na kutoa maoni kwenye games.'},
   {keys:['maoni','comment'], a:'Kila game ina sehemu ya "💬 Maoni" — bonyeza namba iliyo karibu na icon ya 💬 kwenye card ya game kuona maoni ya wengine na kutoa lako mwenyewe.'},
-  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'}
+  {keys:['admin','wasiliana','msaada','contact'], a:'Kwa msaada zaidi kutoka kwa admin moja kwa moja, tumia WhatsApp channel iliyopo kwenye ukurasa wa Chat, au namba ya simu iliyoonyeshwa kwenye sehemu ya malipo ya game lolote la kulipia.'},
+
+  // --- Tournament ---
+  {keys:['tournament','mashindano','kombe'], a:'Bonyeza kitufe cha "Tournament" (🏆) kwenye Home kuona mashindano yaliyopo — maelezo ya jinsi ya kujiunga, tarehe, na zawadi yanaonyeshwa humo humo. Fungua tournament yoyote kuona maelezo kamili na hatua za kushiriki.'},
+  {keys:['tournament','competition'], lang:'en', a:'Tap the "Tournament" button (🏆) on Home to see ongoing tournaments — how to join, dates, and prizes are all shown there. Open any tournament card to see full details and how to participate.'},
+
+  // --- Ads / tangazo (muhimu kwa download) ---
+  {keys:['tangazo','ads','matangazo','kwanini tangazo','ad inanisumbua'], a:'Games za BURE zinahitaji uangalie tangazo kabla ya kudownload — hii ndiyo njia inayotusaidia site iendelee kuwepo bure kwako. Mzunguko ni: bonyeza Download → tangazo linafunguka kwenye tab/Chrome mpya → bonyeza BACK ya simu yako kurudi mumbigames → bonyeza Download HIYO HIYO mara ya pili → sasa inahesabu sekunde chache kisha inakupeleka kudownload faili lenyewe. Games za KULIPIA hazina tangazo kabisa.'},
+  {keys:['ad','ads','why ads','advertisement'], lang:'en', a:'Free games require you to view one ad before downloading — this is what keeps the site free for everyone. The flow is: tap Download → an ad opens in a new tab/Chrome → press your phone\'s BACK button to return to mumbigames → tap Download again (same button) → it counts down a few seconds then takes you to download the actual file. Paid games have no ads at all.'},
+
+  // --- Changelog bell ---
+  {keys:['update','mabadiliko','version','toleo','kikengele','notification','arifa'], a:'Icon ya kengele 🔔 iliyo juu ya Home inaonyesha update mpya za app (mabadiliko, features mapya, marekebisho ya usalama). Namba nyekundu inaonekana ukiwa na update ambazo bado hujaziona — bonyeza kengele kuzisoma, badge itaondoka yenyewe.'},
+  {keys:['update','changelog','notification bell','what\'s new'], lang:'en', a:'The bell icon 🔔 at the top of Home shows new app updates (changes, new features, security fixes). A red badge appears when there are unseen updates — tap the bell to read them and the badge clears automatically.'},
+
+  // --- Theme / Language ---
+  {keys:['dark mode','giza','mwanga','theme','mandhari'], a:'Nenda Settings (☰ juu kulia) kubadilisha kati ya "Dark" (giza) na "Light" (mwanga) mandhari ya app kulingana na unavyopenda.'},
+  {keys:['lugha','language','kiingereza','kiswahili','english'], a:'Nenda Settings (☰ juu kulia) kubadilisha lugha ya app kati ya Kiswahili na Kiingereza — maandishi mengi ya app yatabadilika papo hapo.'},
+  {keys:['language','switch language'], lang:'en', a:'Go to Settings (☰ top right) to switch the app\'s language between Swahili and English — most of the app\'s text updates instantly.'},
+
+  // --- Search / filters ---
+  {keys:['tafuta','search','sitaoni game','sipati game'], a:'Tumia sehemu ya "Tafuta games..." iliyo juu ya orodha ya games kutafuta kwa jina moja kwa moja. Unaweza pia kuchuja kwa kubonyeza vichupo "Zote / Bure / Kulipia / Offline" chini ya searchbar.'},
+  {keys:['search','find a game','filter'], lang:'en', a:'Use the "Search games..." box above the game list to search by name directly. You can also filter using the "All / Free / Paid / Offline" tabs below the search bar.'},
+
+  // --- Profile ---
+  {keys:['profile','wasifu','badilisha jina','edit profile'], a:'Nenda "Me" (kona ya chini kulia) kuona/kubadilisha taarifa zako za wasifu, kuona historia yako ya maoni, msimbo wako wa kualika marafiki, na Bet Tips.'}
 ];
 
 function initAI(){
@@ -2641,7 +2675,7 @@ function initAI(){
   const topics = ['Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Kuseti MoBox','Kuseti AetherSX2','Kuseti Yuzu/Skyline','Kuseti Dolphin','Duka linafanyaje kazi','Mfumo wa Points'];
   quick.innerHTML = topics.map(t=>`<div class="ai-chip" onclick="aiAsk(${JSON.stringify(t)})">${t}</div>`).join('');
   const box = document.getElementById('aiMessages');
-  box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni msaidizi wa mumbigames 🤖 Niulize chochote — malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, points, au hata ukitaka tu kuongea, niko hapa kwa ajili yako.</div>`;
+  box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni Mumbigames AI 🤖 Niulize chochote — malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, tournament, matangazo, token, chat, au hata ukitaka tu kuongea, niko hapa kwa ajili yako.</div>`;
 }
 
 // Rahisi kutambua kama swali limeandikwa kwa Kiingereza au Kiswahili, ili
@@ -2732,6 +2766,58 @@ function showDuka(){
   document.getElementById('navGames').classList.add('active');
   loadListings();
 }
+// ============================================================
+// CHANGELOG (kikengele cha update) — orodha hii inaishi HAPA
+// ndani ya index.html yenyewe (sio Firebase), kwa hiyo kila
+// mara file jipya linapopakiwa GitHub na ORODHA HII IKIONGEZWA
+// kipengele kipya juu, wageni wote wataona badge mpya papo hapo.
+// Muundo: {id: namba ya kipekee inayoongezeka kila wakati, title, body}
+// MUHIMU: id lazima iwe kubwa kuliko lililopita kila wakati unapoongeza.
+// ============================================================
+const APP_CHANGELOG = [
+  {id: 1, title: 'Mumbigames v1.0', body: 'Karibu mumbigames! Hii ndiyo toleo la kwanza la app.'},
+  {id: 2, title: 'Mumbigames AI - Update', body: 'AI Msaidizi sasa inaitwa "Mumbigames AI" na imeongezewa maarifa mengi zaidi — inaweza sasa kukusaidia kuhusu Tournament, jinsi tangazo za download zinavyofanya kazi, kikengele cha update, mandhari/lugha, kutafuta games, na profile yako.'}
+  // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
+  // {id: 3, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+];
+
+function renderChangelogList(){
+  const el = document.getElementById('changelogList');
+  const sorted = APP_CHANGELOG.slice().sort((a,b)=>b.id - a.id);
+  el.innerHTML = sorted.map(c => `
+    <div style="border-bottom:1px solid var(--line);padding:12px 2px;">
+      <div style="font-weight:800;font-size:13px;margin-bottom:4px;">${escapeHtml(c.title)}</div>
+      <div style="color:var(--sub);font-size:12px;line-height:1.5;white-space:pre-line;">${escapeHtml(c.body)}</div>
+    </div>
+  `).join('');
+}
+
+function getChangelogLastSeenId(){
+  try{ return parseInt(localStorage.getItem('mg-changelog-seen') || '0', 10); }catch(e){ return 0; }
+}
+function updateChangelogBadge(){
+  const lastSeen = getChangelogLastSeenId();
+  const maxId = APP_CHANGELOG.reduce((m,c)=>Math.max(m,c.id), 0);
+  const unread = APP_CHANGELOG.filter(c => c.id > lastSeen).length;
+  const badge = document.getElementById('changelogBadge');
+  if(unread > 0){
+    badge.style.display = 'block';
+    badge.textContent = unread > 9 ? '9+' : String(unread);
+  } else {
+    badge.style.display = 'none';
+  }
+}
+function showChangelog(){
+  renderChangelogList();
+  document.getElementById('changelogOverlay').classList.add('show');
+  const maxId = APP_CHANGELOG.reduce((m,c)=>Math.max(m,c.id), 0);
+  try{ localStorage.setItem('mg-changelog-seen', String(maxId)); }catch(e){}
+  updateChangelogBadge(); // itaonyesha 0 sasa mpaka update mpya iongezwe
+}
+function closeChangelog(){
+  document.getElementById('changelogOverlay').classList.remove('show');
+}
+
 function showSettings(){
   hideAllViews();
   document.getElementById('settingsView').style.display = 'flex';
@@ -4282,7 +4368,7 @@ const TRANSLATIONS = {
     tourn_min_teams:'Angalau timu 4 zinahitajika.', tourn_finish:'Unda Tournament',
     chip_all:'Zote', chip_free:'Bure', chip_paid:'Kulipia', chip_offline:'Offline',
     poll_title:'Kura (Poll)', poll_sub:'Piga kura, ona matokeo',
-    ai_title:'🤖 AI Msaidizi', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi',
+    ai_title:'🤖 Mumbigames AI', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi',
     profile_title:'Profile Yangu', profile_sub:'Akaunti yako mumbigames',
     duka_title:'Duka la Wachezaji', duka_sub:'Vifaa vya games — vilivyothibitishwa na admin',
     duka_sub_home:'Nunua/uza vifaa vya games — vilivyothibitishwa na admin',
@@ -4369,7 +4455,7 @@ const TRANSLATIONS = {
     tourn_min_teams:'Min 4 teams required.', tourn_finish:'Create Tournament',
     chip_all:'All', chip_free:'Free', chip_paid:'Paid', chip_offline:'Offline',
     poll_title:'Poll', poll_sub:'Vote and see results',
-    ai_title:'🤖 AI Assistant', ai_sub:'Ask about payments, game setup, and more',
+    ai_title:'🤖 Mumbigames AI', ai_sub:'Ask about payments, game setup, and more',
     profile_title:'My Profile', profile_sub:'Your mumbigames account',
     duka_title:'Player Marketplace', duka_sub:'Gaming gear — verified by admin',
     duka_sub_home:'Buy/sell gaming gear — verified by admin',
@@ -4484,6 +4570,7 @@ function initSettings(){
   setLang(savedLang);
 }
 initSettings();
+updateChangelogBadge();
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(err => console.error('SW register failed', err));
