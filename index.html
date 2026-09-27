@@ -90,8 +90,6 @@
       if(dlParam) window.__mgDeepLinkDl = dlParam;
       const cntParam = params.get('cnt');
       if(cntParam) window.__mgDeepLinkCounted = cntParam;
-      const pdlParam = params.get('pdl');
-      if(pdlParam) window.__mgDeepLinkPendingDl = pdlParam;
       const tournId = params.get('tournament');
       if(tournId) window.__mgDeepLinkTournId = tournId;
     }catch(e){ console.error(e); }
@@ -1149,8 +1147,6 @@ const DEMO_GAMES = [
 let deepLinkGameId = window.__mgDeepLinkGameId || null;
 let deepLinkDl = window.__mgDeepLinkDl ? window.__mgDeepLinkDl.split(',').map(Number).filter(n=>!isNaN(n)) : [];
 let deepLinkCounted = window.__mgDeepLinkCounted === '1';
-let deepLinkPendingDl = window.__mgDeepLinkPendingDl !== undefined ? parseInt(window.__mgDeepLinkPendingDl, 10) : null;
-if(deepLinkPendingDl !== null && isNaN(deepLinkPendingDl)) deepLinkPendingDl = null;
 let deepLinkOpened = false;
 
 // ---- Wait for Firebase Auth to confirm whether the user is logged in
@@ -1191,7 +1187,6 @@ function clearDeepLinkUrlParams(){
     url.searchParams.delete('game');
     url.searchParams.delete('dl');
     url.searchParams.delete('cnt');
-    url.searchParams.delete('pdl');
     history.replaceState(null, '', url.toString());
   }catch(e){}
 }
@@ -1202,18 +1197,6 @@ function tryOpenDeepLinkGame(){
   if(g){
     deepLinkOpened = true;
     openGameModal(g, {dl: deepLinkDl, counted: deepLinkCounted});
-    // Kama tulikuwa tunamsubiri arudi kutoka kwenye tangazo baada ya
-    // kubofya download (Android), endelea moja kwa moja na download hiyo
-    // hiyo bila kumtaka abofye tena — haihitaji tangazo la pili.
-    if(deepLinkPendingDl !== null){
-      const pdl = deepLinkPendingDl;
-      setTimeout(function(){
-        const btn = document.getElementById('dlbtn-' + pdl);
-        if(btn){
-          startDownloadCountdown(pdl, btn.dataset.dlUrl || '', btn.dataset.dlGameid || '', btn.dataset.dlGamename || '');
-        }
-      }, 0);
-    }
     clearDeepLinkUrlParams();
   }
 }
@@ -1853,62 +1836,7 @@ async function submitPaymentClaim(){
   }
 }
 
-// ============================================================
-// AD SYSTEM — tangazo MOJA tu kwa kila hatua:
-//   - Mtumiaji akifungua game (ya bure) → tangazo 1
-//   - Kila kitufe cha download akibofya (game file, emulator/PPSSPP,
-//     data/OBB — chochote alichobofya) → tangazo 1 kwa hicho kitufe
-// Games za kulipia (paid) hazina tangazo kabisa.
-//
-// MUHIMU (Android): tunatumia function ile ile "escapeToExternalBrowser"
-// inayotumika kwa download halisi (kupitia intent://) ili tangazo
-// lifunguke kwa uhakika kwenye Chrome. Kabla ya kwenda kwenye tangazo,
-// tunahifadhi ?game= (na ?pdl= kwa download) kwenye URL — hivyo
-// mtumiaji akibonyeza BACK, page inarudi na kujirekebisha yenyewe
-// moja kwa moja kurudi kwenye game hiyo hiyo (au kuendelea na download
-// hiyo hiyo), badala ya "kuanza upya" kwenye ukurasa wa nyumbani.
-// ============================================================
-const AD_GATE_DIRECT_LINK = 'https://www.profitableratecpmnetwork.com/j5d149kj?key=41022893b66104869ed5cbfec65a07aa';
-
-// Kila tangazo linapofunguka, tunaongeza namba 1 kwenye "bucket" ya saa
-// hiyo (mfano 2026-09-27T14) badala ya kuandika document mpya kila mara —
-// hii inafanya iwe rahisi na nafuu kuhesabu jumla ya saa 24 zilizopita
-// baadaye kwenye admin dashboard (soma tu docs 24 za mwisho kwa jina).
-function logAdImpression(){
-  try{
-    const hourKey = new Date().toISOString().slice(0,13); // "YYYY-MM-DDTHH"
-    db.collection('adStats').doc(hourKey).set({
-      count: firebase.firestore.FieldValue.increment(1)
-    }, {merge:true}).catch(function(e){ console.error('logAdImpression failed', e); });
-  }catch(e){ console.error(e); }
-}
-
-function isAndroidUA(){
-  try{ return /Android/i.test(navigator.userAgent || ''); }catch(e){ return false; }
-}
-function openAdTab(){
-  logAdImpression();
-  try{ window.open(AD_GATE_DIRECT_LINK, '_blank', 'noopener'); }catch(e){}
-}
-function setPendingDownloadInUrl(i){
-  try{
-    const url = new URL(window.location.href);
-    if(i === null || i === undefined) url.searchParams.delete('pdl');
-    else url.searchParams.set('pdl', i);
-    history.replaceState(null, '', url.toString());
-  }catch(e){}
-}
-
 function showModalDownloads(g, restoreState){
-  if(!g.paid && !restoreState){
-    if(isAndroidUA()){
-      logAdImpression();
-      rememberGameInUrl(g.id, [], false);
-      escapeToExternalBrowser(AD_GATE_DIRECT_LINK);
-    } else {
-      openAdTab();
-    }
-  }
   document.getElementById('modalPaySection').style.display = 'none';
   document.getElementById('modalDownloadsSection').style.display = 'block';
 
@@ -2124,19 +2052,6 @@ function startDownloadCountdown(i, url, gameId, gameName){
   const btn = document.getElementById('dlbtn-' + i);
   const countEl = document.getElementById('dlcount-' + i);
   if(!btn || btn.disabled) return;
-
-  // Games za BURE: hakuna kuhesabu tena — download inaanza papo hapo
-  // (tangazo tayari limeshafunguka kwenye kubofya kitufe hiki). Countdown
-  // ya sekunde 10 inabaki kwa games za KULIPIA tu.
-  if(!(currentModalGame && currentModalGame.paid)){
-    btn.disabled = true;
-    markDownloaded(i, gameId, gameName);
-    rememberGameInUrl(gameId, Array.from(downloadedSet), downloadCounted);
-    escapeToExternalBrowser(url);
-    btn.disabled = false;
-    return;
-  }
-
   btn.disabled = true;
   let secs = 10;
   countEl.textContent = ' (' + secs + ')';
@@ -2338,17 +2253,6 @@ document.getElementById('modalDownloadsList').addEventListener('click', (e)=>{
   const url = btn.dataset.dlUrl || '';
   const gameId = btn.dataset.dlGameid || '';
   const gameName = btn.dataset.dlGamename || '';
-
-  if(currentModalGame && !currentModalGame.paid){
-    if(isAndroidUA()){
-      logAdImpression();
-      rememberGameInUrl(gameId, Array.from(downloadedSet), downloadCounted);
-      setPendingDownloadInUrl(i);
-      escapeToExternalBrowser(AD_GATE_DIRECT_LINK);
-      return; // akirudi kwa BACK, download hii hii inaendelea yenyewe (tazama tryOpenDeepLinkGame)
-    }
-    openAdTab(); // tab mpya — haiathiri tab hii, download inaendelea papo hapo
-  }
   startDownloadCountdown(i, url, gameId, gameName);
 });
 
