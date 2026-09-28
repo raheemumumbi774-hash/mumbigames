@@ -1689,7 +1689,7 @@ function renderAiChatUI(g, req, remainMs){
 
 function aiRespondForPay(text){
   const lower = text.toLowerCase();
-  const hit = AI_KB.find(k=>k.keys.some(w=>lower.includes(w)));
+  const hit = aiFind(lower, 'sw');
   if(hit) return hit.a;
   return 'Pole kwa usumbufu huo. Naendelea kufuatilia ombi lako la malipo — nitakupa taarifa zaidi hivi punde. Kama una tatizo maalum, niambie zaidi ili nikusaidie vizuri.';
 }
@@ -2653,8 +2653,8 @@ const AI_KB = [
   {keys:['tournament','competition'], lang:'en', a:'Tap the "Tournament" button (🏆) on Home to see ongoing tournaments — how to join, dates, and prizes are all shown there. Open any tournament card to see full details and how to participate.'},
 
   // --- Ads / tangazo (muhimu kwa download) ---
-  {keys:['tangazo','ads','matangazo','kwanini tangazo','ad inanisumbua'], a:'Games za BURE zinahitaji uangalie tangazo kabla ya kudownload — hii ndiyo njia inayotusaidia site iendelee kuwepo bure kwako. Mzunguko ni: bonyeza Download → tangazo linafunguka kwenye tab/Chrome mpya → bonyeza BACK ya simu yako kurudi mumbigames → bonyeza Download HIYO HIYO mara ya pili → sasa inahesabu sekunde chache kisha inakupeleka kudownload faili lenyewe. Games za KULIPIA hazina tangazo kabisa.'},
-  {keys:['ad','ads','why ads','advertisement'], lang:'en', a:'Free games require you to view one ad before downloading — this is what keeps the site free for everyone. The flow is: tap Download → an ad opens in a new tab/Chrome → press your phone\'s BACK button to return to mumbigames → tap Download again (same button) → it counts down a few seconds then takes you to download the actual file. Paid games have no ads at all.'},
+  {keys:['tangazo','ads','matangazo','kwanini tangazo','ad inanisumbua'], a:'Games za BURE zinaonyesha tangazo — hii ndiyo njia inayotusaidia site iendelee kuwepo bure kwako. Ukifungua game ya bure, tangazo linafunguka; bonyeza BACK ya simu kurudi kwenye game. Kisha bonyeza Download: tangazo linafunguka mara moja → bonyeza BACK → bonyeza Download HIYO HIYO mara ya pili → inahesabu sekunde chache kisha inakupeleka kudownload faili lenyewe. Games za KULIPIA hazina tangazo kabisa.'},
+  {keys:['ad','ads','why ads','advertisement'], lang:'en', a:'Free games show ads — this is what keeps the site free for everyone. When you open a free game an ad opens; press your phone\'s BACK button to return to the game. Then tap Download: an ad opens once → press BACK → tap the same Download button again → it counts down a few seconds then takes you to download the actual file. Paid games have no ads at all.'},
 
   // --- Changelog bell ---
   {keys:['update','mabadiliko','version','toleo','kikengele','notification','arifa'], a:'Icon ya kengele 🔔 iliyo juu ya Home inaonyesha update mpya za app (mabadiliko, features mapya, marekebisho ya usalama). Namba nyekundu inaonekana ukiwa na update ambazo bado hujaziona — bonyeza kengele kuzisoma, badge itaondoka yenyewe.'},
@@ -2686,6 +2686,80 @@ function initAI(){
 // Rahisi kutambua kama swali limeandikwa kwa Kiingereza au Kiswahili, ili
 // AI ijibu kwa lugha ileile aliyotumia mtu — bila kuhitaji abadilishe
 // mipangilio ya app.
+
+// ---- Majibu ya Kiingereza kwa AI: kila jibu la Kiswahili sasa lina toleo la
+// Kiingereza ("ae") pamoja na maneno ya ziada ya kutafutia (Kiingereza). ----
+const AI_EN_EXTRA = [
+  [0, ["hello", "hey", "hi", "good morning", "good evening", "how are you"], "Hello! 😊 I'm doing great and ready to help. What do you need today — payments, game setup, shop, tournaments, or something else?"],
+  [1, ["thank", "thank you", "appreciate"], "You're very welcome! I'm glad I could help 🙏 If there's anything else, I'm right here."],
+  [2, ["okay", "cool", "nice", "great", "alright"], "Awesome! 👍 Is there anything else you'd like to know?"],
+  [3, ["tired", "sad", "angry", "frustrated", "stressed"], "I'm sorry you feel that way 🤍 I understand tech stuff can be annoying when you just want to play a game. Let's go step by step together — tell me exactly what's bothering you and I'll help you fix it."],
+  [6, ["payment", "how to pay", "money", "send money", "mobile money"], "Paying for a game: open the game, send money via Tigo Pesa 0703504270 (name: Josh Abdallahman), enter the number you sent from, upload TWO screenshots of the transaction, then tap \"I have paid ✓\". Your request waits for admin (a human) to confirm by checking your photos — the download unlocks automatically as soon as they confirm. If you wait more than 5 minutes, I (the AI) can start helping you directly on that same page. For shop items, payments also go through admin to protect you from scammers — never send money directly to a seller."],
+  [7, ["free games", "free game", "free to download"], "\"Free\" games can be downloaded at no cost — open a game, then tap the download buttons (\"Download Game\" and \"Download Emulator\" if it needs one). Filter by tapping the \"Free\" tab above the game list to see only free games."],
+  [8, ["paid games", "paid game", "cost", "how much"], "\"Paid\" games show their price. After you pay and get confirmed (see the \"payment\" question), the download unlocks. You can also get a paid game FREE using the 500 tokens you earn by inviting friends — see Profile → \"Invite Friends\"."],
+  [9, [], "🔧 WINLATOR (for PC games played on Android):\n1. Download and install Winlator (allow \"install from unknown sources\" in your phone settings)\n2. Open Winlator, create a new \"Container\" (tap +), choose the Windows version (usually Windows 10)\n3. Inside the container, tap \"Install\" then choose the game file (.exe) you downloaded\n4. Wait for it to install, then tap the game's icon to start it\n5. If it doesn't run well, adjust the graphics driver (Box86/Box64, DXVK) in the container settings\n\n📺 Full video: {{YT}}"],
+  [10, [], "🎮 PPSSPP (for PSP games):\n1. Download and install PPSSPP from the Play Store or the link we gave you\n2. Open PPSSPP and tap the \"Games\" tab\n3. Browse to the folder where you put the game file (.iso or .cso)\n4. Tap the game to start it — graphics settings (Rendering, Frame skipping) are in Settings inside PPSSPP\n\n📺 Full video: {{YT}}"],
+  [11, [], "📦 MOBOX (for small/medium PC games on Android):\n1. Download and install MoBox\n2. Open MoBox and tap \"+\" to add a new game\n3. Point to the game file (.exe) you downloaded and wait for it to install\n4. If you see graphics problems, pick the \"Graphics driver\" (Turnip/Zink) that suits your phone in settings\n5. Tap the game to start it\n\n📺 Full video: {{YT}}"],
+  [12, ["ps2 emulator"], "🕹️ AETHERSX2 (for PS2 games):\n1. Download and install AetherSX2\n2. Open the app and, in the first-time setup, point to your PS2 BIOS file (required before playing)\n3. Tap \"+\" or \"Add Game\" and choose the ISO file you downloaded\n4. Adjust the \"Renderer\" (Vulkan is usually best) in Settings if the picture looks wrong\n5. Tap the game to start it\n\n📺 Full video: {{YT}}"],
+  [13, ["nintendo", "switch emulator"], "🎮 NINTENDO SWITCH EMULATORS (Yuzu / Skyline / Suyu):\n1. Download the emulator you prefer (Skyline is easiest on Android; Yuzu/Suyu need a stronger phone)\n2. Install it, then add the Switch \"Keys\" and \"Firmware\" in the first-time setup (required before playing anything — watch our video for where to get them)\n3. Tap \"+\" to add a game and choose the game file (.xci or .nsp) you downloaded\n4. Adjust graphics settings (resolution, backend) if the game doesn't run well\n5. Tap the game to start it\n\n📺 Full video: {{YT}}"],
+  [14, ["gamecube", "wii"], "🎮 DOLPHIN EMULATOR (for GameCube and Wii games):\n1. Download and install Dolphin Emulator\n2. Open the app and tap the folder icon to point to where you put the game file (.iso/.rvz/.wbfs)\n3. Tap the game in the list to start it\n4. Adjust \"Graphics Backend\" (usually Vulkan) and \"Internal Resolution\" in settings if you see lag\n\n📺 Full video: {{YT}}"],
+  [15, ["set up", "how to play", "how do i play", "how to run"], "We use different emulators depending on the game type: **Winlator** or **MoBox** for PC games, **PPSSPP** for PSP, **AetherSX2** for PS2, **Yuzu/Skyline/Suyu** for Nintendo Switch, and **Dolphin** for GameCube/Wii. There are also **APK+OBB** games (real Android, no emulator needed) and games with extra **Save Data/Textures**. Tell me the type of game you want to set up (e.g. \"APK OBB\", \"Save data\", or an emulator name) and I'll give you the full steps.\n\n📺 All tutorial videos: {{YT}}"],
+  [16, ["obb file", "data file", "apk obb"], "📦 APK + OBB/DATA GAMES (real Android, no emulator needed):\n1. Download the APK file and install it like a normal app (allow \"install from unknown sources\" in your phone settings)\n2. Download the OBB or Data file (usually a .zip)\n3. Use the **ZArchiver** app (or any zip opener) to extract it\n4. Copy the extracted folder to: **Android/obb/[game name]** (if OBB) or **Android/data/[game name]** (if Data) — the folder name must exactly match the game's package name\n5. Open the game from its icon\n\n⚠️ If you're not sure of the exact folder name: open the game ONCE first without the OBB — it will create the folder with the correct name — then put the OBB/Data files there afterwards.\n\n📺 Full video: {{YT}}"],
+  [17, ["save file", "saved game", "camera pack"], "📁 GAMES WITH EXTRA FILES (Game File, Save Data, Textures — e.g. PPSSPP):\n\n🎮 **GAME FILE** — the main game file (.iso/.cso), put it in the folder you chose inside the emulator\n💾 **SAVE DATA** — progress made by someone else; copy it into the \"SAVEDATA\" folder inside the PSP folder to start with that progress instead of from the beginning\n🎨 **TEXTURES** — improve the graphics quality; put them in the \"TEXTURES\" folder inside PSP, then enable \"Texture Replacement\" in the emulator Settings\n📷 **CAMERA PACK** — special camera settings (if included) — follow the instructions that come with it\n\nEach file has its own place — don't mix them up.\n\n📺 Full video: {{YT}}"],
+  [18, ["gear", "item for sale"], "The Player Marketplace is reached by tapping the \"Shop\" button in the middle of the bottom menu (🛍️ shopping bag icon). There you can browse gear sold by other players (verified by admin), or post your own item by filling in a form — admin approves it before it shows publicly. Tap any item to see more details (photo, condition, price), then tap \"💬 Buy\" to open the seller's WhatsApp directly (the first message is already filled in). If it's your own listing, opening it shows \"Edit\" (fix mistakes), \"Close\" (if sold out), and \"Remove\" (delete from the shop completely) buttons."],
+  [20, ["feedback", "complaint", "request game", "suggest"], "Under Profile (Me) → the \"💬 Feedback\" tab you can write feedback, complaints, or challenges — or request that a specific game be added to the app (choose \"🎮 Request a Game\" then type the game's name). Admin will see your message and reply right there — you'll see the reply under your own message in \"Your history\"."],
+  [22, ["polls", "voting", "vote"], "Tap the \"Poll\" button (🗳️ icon) on Home to see current polls and cast your vote. Each user can vote once per question. If you see a red dot above the Poll button, admin has posted a new poll — open it to see. New polls also appear in Chat as a message you can tap to vote."],
+  [23, [], "Tap the \"TikTok\" button (🎵 icon) on Home to open our TikTok channel directly and see the latest game videos. If you see a red dot above that button, there's a new video."],
+  [24, [], "Tap the \"YouTube\" button (red ▶️ icon) on Home to open our YouTube channel: {{YT}} — it has tutorial videos on how to set up games with different emulators, plus other game content."],
+  [25, ["community", "messages", "photo", "image"], "The \"Chat\" page (💬 icon in the bottom menu) is the mumbigames community chat, plus the admin's WhatsApp channel for direct help. You can send text, voice notes and photos (📷 button), and tap any message to reply. A red number on the Chat button shows how many new messages you haven't seen yet."],
+  [26, ["tokens", "points", "invite", "reward", "referral code", "free game reward"], "Token system: every time you invite a friend with your unique code (find it in Profile → \"Invite Friends\") and they sign up entering your code, you earn 50 tokens. When you reach 500 tokens you can get ANY paid game completely FREE, once per account (Profile → \"Choose a Game to Get Free\"). Your code is shown in Profile, and there's a \"Share APK + My Code\" button to send it to your friend directly."],
+  [27, ["betting", "bet tips", "booking code", "bookmaker"], "Bet Tips is inside your Profile (Me → Bet Tips). It's a completely free section with betting booking codes posted by admin — each card shows the Bookmaker (e.g. BetPawa or 1Win), odds, match details, and the code itself. Tap \"📋 Copy\" to copy the code, then open the betting app named (e.g. BetPawa or 1Win) and paste it into the \"Booking Code\" section to see the selected matches. You can also like tips you enjoy. Remember: these are opinions for information only, not a guarantee of winning — bet responsibly, 18+ only."],
+  [28, ["not downloading", "download problem", "download error", "problem", "issue", "not working"], "If a download isn't working, make sure you have a good connection and try again. Remember: for free games, tap the download button once (an ad opens), press BACK to return, then tap the same download button again — it counts down a few seconds and takes you to download the file. This is normal. If the problem continues, contact admin via WhatsApp on the Chat page."],
+  [29, ["account", "sign up", "log in", "register", "sign in", "create account"], "Go to Profile (bottom right, ☺ icon), enter your email and password to create an account or log in. An account lets you keep the games you bought even if you change phones, use the points system, and comment on games."],
+  [30, ["comments"], "Every game has a \"💬 Comments\" section — tap the number next to the 💬 icon on a game card to read others' comments and leave your own."],
+  [31, ["help", "support", "contact admin", "whatsapp"], "For more help directly from admin, use the WhatsApp channel on the Chat page, or the phone number shown in the payment section of any paid game."],
+  [34, ["ad", "ads", "why ads", "advertisement", "adverts"], "Free games show you an ad — this is what keeps the site free for you. When you OPEN a free game, an ad opens; press your phone's BACK button to return to the game. Then tap a Download button: an ad opens once, press BACK, tap the same Download button again → it counts down a few seconds and takes you to download the actual file. Paid games have no ads at all."],
+  [36, ["updates", "changelog", "notification bell", "what's new", "bell"], "The bell icon 🔔 at the top of Home shows new app updates (changes, new features, security fixes). A red badge appears when there are updates you haven't seen — tap the bell to read them and the badge clears by itself."],
+  [38, ["light mode", "dark", "appearance", "colors"], "Go to Settings (☰ top right) to switch between \"Dark\" and \"Light\" themes, whichever you like."],
+  [39, ["language", "english", "swahili", "translate"], "Go to Settings (☰ top right) to switch the app's language between Swahili and English — the whole app's text (including forms and messages) changes instantly."],
+  [41, ["search", "find a game", "filter"], "Use the \"Search games...\" box above the game list to search by name directly. You can also filter using the \"All / Free / Paid / Offline\" tabs below the search bar."],
+  [43, ["my profile", "edit profile", "my account"], "Go to \"Me\" (bottom right corner) to see/change your profile details, see your comments history, your friend-invite code, and Bet Tips."],
+  [32, ["competition", "league"], "Tap the \"Tournament\" button (🏆) on Home to see ongoing tournaments — how to join, dates, and prizes are shown right there. Open any tournament to see full details and how to take part."]
+];
+AI_EN_EXTRA.forEach(function(x){
+  const k = AI_KB[x[0]];
+  if(!k) return;
+  x[1].forEach(w=>{ if(k.keys.indexOf(w) === -1) k.keys.push(w); });
+  k.ae = x[2].split('{{YT}}').join(YT_CHANNEL);
+});
+
+// Kutafuta jibu bora: ufunguo mrefu zaidi uliopatikana ndio unashinda
+// (hii inazuia neno fupi kama "ok" lisiteke "token"). Maneno mafupi (<=4)
+// yanatafutwa kama neno kamili tu.
+const AI_GENERIC_KEYS = ['help','msaada','wasiliana','admin','contact','support','tatizo','problem','issue','not working','sasa','habari','mambo','vipi','poa','sawa','ok','safi','vizuri','nzuri','pole','stress','msongo','seti','setup','set up','install','emulator','weka game','how to play','hi','hey','hello','thanks','thank'];
+function aiKeyScore(lower, k){
+  let best = 0;
+  for(let i=0;i<k.keys.length;i++){
+    const w = k.keys[i].trim();
+    if(!w) continue;
+    const wt = AI_GENERIC_KEYS.indexOf(w) !== -1 ? 1 : w.length; // maneno ya jumla yanashinda tu pale hakuna jingine
+    if(w.length <= 4){
+      const re = new RegExp('(^|[^a-z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '([^a-z0-9]|$)');
+      if(re.test(lower) && wt > best) best = wt;
+    } else if(lower.indexOf(w) !== -1 && wt > best){ best = wt; }
+  }
+  return best;
+}
+function aiFind(lower, lang){
+  let bestL = null, bestLs = 0, bestA = null, bestAs = 0;
+  AI_KB.forEach(k=>{
+    const s = aiKeyScore(lower, k);
+    if(!s) return;
+    if((k.lang || 'sw') === lang && s > bestLs){ bestLs = s; bestL = k; }
+    if(s > bestAs){ bestAs = s; bestA = k; }
+  });
+  return bestL || bestA;
+}
 function detectAiLang(text){
   const t = ' ' + text.toLowerCase() + ' ';
   const enWords = [' the ',' is ',' are ',' how ',' what ',' can ',' you ',' please ',' hello ',' hi ',' does ',' do ',' my ',' i want ',' where ',' when ',' why ',' help '];
@@ -2693,6 +2767,7 @@ function detectAiLang(text){
   let enScore = 0, swScore = 0;
   enWords.forEach(w=>{ if(t.includes(w)) enScore++; });
   swWords.forEach(w=>{ if(t.includes(w)) swScore++; });
+  if(enScore === swScore) return currentLang === 'en' ? 'en' : 'sw';
   return enScore > swScore ? 'en' : 'sw';
 }
 function aiRespond(text){
@@ -2701,10 +2776,8 @@ function aiRespond(text){
   // Kwanza jaribu kupata jibu lililowekewa lugha sahihi kabisa, kisha
   // rudi kwenye jibu lolote linalolingana (hata kama ni Kiswahili) kama
   // hakuna toleo la Kiingereza bado kwa hilo swali.
-  const exact = AI_KB.find(k=>k.keys.some(w=>lower.includes(w)) && (k.lang||'sw')===lang);
-  if(exact) return exact.a;
-  const any = AI_KB.find(k=>k.keys.some(w=>lower.includes(w)));
-  if(any) return any.a;
+  const hit = aiFind(lower, lang);
+  if(hit) return (lang === 'en' && hit.ae) ? hit.ae : hit.a;
   return lang === 'en'
     ? 'I understand your question, but I don\'t have a complete answer for it yet 🤔 Try rephrasing it, or use words like "payment", "download", "shop", "bet tips" or "token". If you\'re still stuck, admin is available directly via WhatsApp on the Chat page.'
     : 'Naelewa unachouliza, lakini sijapata jibu kamili kwenye maarifa yangu 🤔 Jaribu kuniambia kwa namna nyingine, au tumia maneno kama "malipo", "Winlator", "PPSSPP", "duka", "kura" au "token". Kama bado imekwama, admin yupo tayari kukusaidia moja kwa moja kupitia WhatsApp kwenye ukurasa wa Chat.';
@@ -2720,7 +2793,7 @@ function aiAddMsg(text, who){
 }
 
 function aiAsk(text){
-  aiAddMsg(text, 'user');
+  aiAddMsg(currentLang === 'en' ? i18nTr(text) : text, 'user');
   setTimeout(()=>aiAddMsg(aiRespond(text), 'bot'), 300);
 }
 
@@ -2785,8 +2858,9 @@ const APP_CHANGELOG = [
   {id: 2, title: 'Mumbigames AI - Update', body: 'AI Msaidizi sasa inaitwa "Mumbigames AI" na imeongezewa maarifa mengi zaidi — inaweza sasa kukusaidia kuhusu Tournament, jinsi tangazo za download zinavyofanya kazi, kikengele cha update, mandhari/lugha, kutafuta games, na profile yako.'},
   {id: 3, title: 'Chat - Update', body: 'Sasa unaweza kutuma PICHA kwenye chat (bonyeza 📷) ili kusaidiwa kirahisi. Pia kitufe cha Chat kinaonyesha namba nyekundu ya ujumbe mpya ambao hujaufungua — ukifungua Chat inaondoka.'},
   {id: 4, title: 'Kura kwenye Chat', body: 'Kura mpya sasa zinaonekana pia kwenye Chat kama ujumbe mpya — bonyeza ujumbe huo kwenda kupiga kura moja kwa moja.'},
+  {id: 5, title: 'Lugha: Kiingereza / Kiswahili', body: 'Ukichagua Kiingereza kwenye Settings, sasa app nzima (fomu, ujumbe, orodha, na majibu ya Mumbigames AI) inabadilika papo hapo, na ukirudi Kiswahili inarudi kama ilivyokuwa. Mumbigames AI pia inajibu kwa Kiingereza.'},
   // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
-  // {id: 5, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  // {id: 6, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -4531,7 +4605,8 @@ const TRANSLATIONS = {
     fb_type_feedback:'📝 Maoni/Malalamiko', fb_type_request:'🎮 Omba Game',
     fb_game_title_lbl:'Jina la game unayotaka', fb_msg_lbl:'Ujumbe wako',
     fb_submit_btn:'Tuma', fb_history_title:'Historia yako',
-    fb_game_title_placeholder:'mfano: FIFA 26', fb_msg_placeholder:'Andika hapa...'
+    fb_game_title_placeholder:'mfano: FIFA 26', fb_msg_placeholder:'Andika hapa...',
+    tourn_f_photo:'Picha ya Tournament (hiari)', tourn_f_photo_pick:'Chagua picha kutoka simu yako'
   },
   en: {
     settings_title:'Settings', settings_sub:'App preferences',
@@ -4618,9 +4693,133 @@ const TRANSLATIONS = {
     fb_type_feedback:'📝 Feedback/Complaint', fb_type_request:'🎮 Request a Game',
     fb_game_title_lbl:'Name of the game you want', fb_msg_lbl:'Your message',
     fb_submit_btn:'Send', fb_history_title:'Your history',
-    fb_game_title_placeholder:'e.g. FIFA 26', fb_msg_placeholder:'Type here...'
+    fb_game_title_placeholder:'e.g. FIFA 26', fb_msg_placeholder:'Type here...',
+    tourn_f_photo:'Tournament photo (optional)', tourn_f_photo_pick:'Choose a photo from your phone'
   }
 };
+
+// ============================================================
+// KAMUSI YA LUGHA (Kiswahili <-> English) kwa SEHEMU ZOTE za app.
+// Mfumo wa data-i18n unashughulikia maandishi yaliyopo kwenye HTML;
+// kamusi hii inashughulikia YALIYOBAKI: maandishi yanayotengenezwa na JS
+// (kadi za games, fomu, ujumbe wa alert/confirm, hali za "hakuna kitu"
+// n.k). Inabadilisha papo hapo na inakumbuka Kiswahili cha asili, hivyo
+// kurudi Kiswahili kunarudisha kila kitu kama kilivyokuwa.
+// Maandishi ya watumiaji (chat, maoni, majina) hayabadilishwi.
+// ============================================================
+const I18N_EN = {"Funga": "Close", "Fungua": "Open", "Fungua Akaunti": "Create Account", "Unda Akaunti": "Create Account", "Ingia": "Log in", "Ingia / Jisajili": "Log in / Sign up", "Ingia hapa": "Log in here", "Ingia Akauntini": "Log in to account", "Jisajili hapa": "Sign up here", "Tayari una akaunti?": "Already have an account?", "Toka (Logout)": "Log out", "Tuma": "Send", "Tumia": "Use", "Inapakia...": "Loading...", "Inapakia games...": "Loading games...", "Inapakia kura...": "Loading polls...", "Inapakia maoni...": "Loading comments...", "Inapakia picha...": "Uploading image...", "Game": "Game", "Bei": "Price", "Jina": "Name", "Kiasi": "Amount", "Namba": "Number", "Mtandao": "Network", "Mtumiaji": "User", "Mgeni": "Guest", "Kiswahili": "Kiswahili", "English": "English", "Download": "Download", "Nyingine": "Other", "Karibu": "Welcome", "Sare": "Draw", "Aina (Genre)": "Genre", "Inatumika Offline": "Works Offline", "Bure kupakua": "Free to download", "Hifadhi Mabadiliko": "Save Changes", "Bofya Uendelee": "Tap to continue", "Kuna Kipya! 🔔": "Something new! 🔔", "Bet Tip Mpya! 🎫": "New Bet Tip! 🎫", "Umejibiwa! 💬": "You got a reply! 💬", "Karibu mumbigames": "Welcome to mumbigames", "Pakua michezo bora kila wiki": "Download the best games every week", "Unamjibu": "Replying to", "↩ Jibu": "↩ Reply", "♻️ Imetumika": "♻️ Used", "✓ Umenakili!": "✓ Copied!", "✨ Mpya": "✨ New", "👤 Muuzaji:": "👤 Seller:", "📞 Piga Simu": "📞 Call", "📋 Fuata hatua hizi:": "📋 Follow these steps:", "🚩 Ripoti": "🚩 Report", "🔧 Imekarabatiwa": "🔧 Refurbished", "🤖 Inaandaa jibu...": "🤖 Preparing a reply...", "Kuseti Winlator": "Set up Winlator", "Kuseti PPSSPP": "Set up PPSSPP", "Kuseti MoBox": "Set up MoBox", "Kuseti AetherSX2": "Set up AetherSX2", "Kuseti Dolphin": "Set up Dolphin", "Kuseti Yuzu/Skyline": "Set up Yuzu/Skyline", "Jinsi ya kulipia": "How to pay", "Duka linafanyaje kazi": "How the Shop works", "Mfumo wa Points": "Points system", "Hongera! Umepata \"": "Congratulations! You got \"", "Adventure ya vijiji": "Village adventure", "Endless runner ya kasi": "Fast endless runner", "Michezo ya akili": "Brain games", "Link imenakiliwa!": "Link copied!", "Taarifa zimehifadhiwa ✓": "Details saved ✓", "Nimelipa ✓": "I have paid ✓", "Ndiyo, nisaidie": "Yes, help me", "Tuma kwa Ukaguzi wa Admin": "Submit for Admin Review", "Picha imepakiwa ✓": "Image uploaded ✓", "Picha imewekwa ✓": "Image set ✓", "Picha imewekwa kutoka link ✓": "Image set from link ✓", "Bonyeza hapa kuweka picha": "Tap here to add a photo", "AU weka link ya picha": "OR paste an image link", "Kama unavyotuma picha WhatsApp — chagua tu, itapakia yenyewe": "Just like sending a photo on WhatsApp — pick one and it uploads by itself", "Picha ya 1 — screenshot ya muamala": "Photo 1 — transaction screenshot", "Picha ya 2 — screenshot ya muamala (thibitisho la pili)": "Photo 2 — transaction screenshot (second proof)", "Namba uliyotumia": "Number you used", "Namba uliyotumia kutuma pesa": "Number you sent the money from", "Kiasi ulichotuma": "Amount you sent", "SPONSORED": "SPONSORED", "Asante kwa kuchagua mumbigames🥰": "Thanks for choosing mumbigames🥰", "Utahitaji kuingia tena kwa email/password": "You will need to log in again with your email/password", "Fungua akaunti hili uweze kutunza game ulizonunua na kudownload — hata ukipoteza simu utaweza kuingia tena hapa hapa.": "Create an account so you can keep the games you bought and download them — even if you lose your phone you can log in again right here.", "Lazima uingie kwenye akaunti yako kwanza ndipo uweze kuweka bidhaa dukani. Hii inatusaidia kumtambua kila muuzaji na kuzuia matapeli.": "You must log in first before you can list a product in the shop. This helps us identify every seller and stop scammers.", "kwenye kivinjari chako, pakia picha yako pale (bure, hauitaji akaunti), kisha nakili link ya \"Direct link\" (huanza na": "in your browser, upload your photo there (free, no account needed), then copy the \"Direct link\" (it starts with", ") na ubandike hapa chini.": ") and paste it below.", "ℹ️ Ukiona \"Could not preview the file\" kwenye Chrome baada ya download, si tatizo — faili limeshahifadhiwa salama kwenye Downloads za simu yako. Bonyeza back kurudi mumbigames.": "ℹ️ If you see \"Could not preview the file\" in Chrome after downloading, it's not a problem — the file is already saved safely in your phone's Downloads. Press back to return to mumbigames.", "💬 Maoni —": "💬 Comments —", "🔔 Mabadiliko ya App": "🔔 App Updates", "▶ Fungua": "▶ Open", "🔗 Share": "🔗 Share", "Bado hakuna bet tip. Rudi baadaye 👀": "No bet tips yet. Come back later 👀", "Bado hakuna bidhaa iliyothibitishwa. Kuwa wa kwanza kuweka! 🛍️": "No verified products yet. Be the first to list one! 🛍️", "Bado hakuna tournament. Bonyeza \"Create New Tournament\" kuanza! 🏆": "No tournaments yet. Tap \"Create New Tournament\" to start! 🏆", "Bado hakuna ujumbe. Kuwa wa kwanza kuandika! 👋": "No messages yet. Be the first to write! 👋", "Hakuna games kwenye kundi hili bado": "No games in this group yet", "Hakuna kura kwa sasa. Rudi baadaye! 🗳️": "No polls right now. Come back later! 🗳️", "Hakuna maoni bado. Kuwa wa kwanza kutoa maoni! 💬": "No comments yet. Be the first to comment! 💬", "Hakuna michezo bado.": "No matches yet.", "Bado hujatuma chochote.": "You haven't sent anything yet.", "Link ya kudownload bado haijawekwa na admin.": "The download link hasn't been added by admin yet.", "Imeshindwa kupakia bet tips. Angalia mtandao wako.": "Failed to load bet tips. Check your connection.", "Imeshindwa kupakia games. Angalia mtandao wako na ujaribu tena.": "Failed to load games. Check your connection and try again.", "Imeshindwa kupakia kura.": "Failed to load polls.", "Imeshindwa kupakia maoni.": "Failed to load comments.", "Imeshindwa kupakia. Jaribu tena.": "Failed to load. Try again.", "Imeshindwa kupakia historia. Jaribu tena.": "Failed to load history. Try again.", "Imeshindwa kupakia. Angalia mtandao wako na jaribu tena.": "Failed to load. Check your connection and try again.", "Standings hazitumiki kwa Knockout. Angalia matokeo kwenye tab ya Matches.": "Standings don't apply to Knockout. See results in the Matches tab.", "Knockout stage itaanza automatiki baada ya michezo yote ya makundi kukamilika.": "The Knockout stage will start automatically once all group matches are finished.", "Timu zimegawanywa makundi ya ~4. Bora 2 wa kila kundi wanaingia Knockout moja kwa moja baada ya michezo yote ya makundi kukamilika.": "Teams are split into groups of ~4. The top 2 from each group go straight into Knockout after all group matches are finished.", "Double Elimination: kila timu inapata nafasi ya pili kwenye Losers Bracket. Grand Final moja ndiyo huamua mshindi wa mwisho (hakuna \"bracket reset\").": "Double Elimination: every team gets a second chance in the Losers Bracket. A single Grand Final decides the winner (no \"bracket reset\").", "Hii ni game ya kulipia. Tuma malipo kwa maelezo hapa chini, kisha PAKIA PICHA MBILI za uthibitisho wa muamala (screenshot ya ujumbe wa Tigo Pesa) na bonyeza \"Nimelipa\" — admin ataangalia picha na kuthibitisha, download itafunguka.": "This is a paid game. Send payment using the details below, then UPLOAD TWO PHOTOS proving the transaction (screenshot of the Tigo Pesa message) and tap \"I have paid\" — admin will check the photos and confirm, then the download will unlock.", "Ili kudownload game, ingia kwanza kwenye akaunti yako (bure na ni haraka).": "To download a game, first log in to your account (free and quick).", "⏳ Ombi lako linahitaji ukaguzi wa ziada wa admin kabla ya kuthibitishwa. Tutakujulisha mara litakapoangaliwa.": "⏳ Your request needs an extra check by admin before it is confirmed. We'll let you know once it has been reviewed.", "🤖 Asante! Ninathibitisha muamala wako. Subiri dakika chache zaidi — download itafunguka moja kwa moja hapa hapa bila wewe kufanya lolote zaidi.": "🤖 Thanks! I'm confirming your transaction. Wait a few more minutes — the download will unlock right here automatically, you don't need to do anything else.", "⏳ Subiri dakika 5 tunakagua malipo yako. Download itafunguka hapa moja kwa moja mara itakapothibitishwa.": "⏳ Wait 5 minutes while we check your payment. The download will unlock right here as soon as it is confirmed.", "⏳ Ninathibitisha muamala wako sasa hivi, subiri kidogo...": "⏳ I'm confirming your transaction right now, wait a moment...", "🤖 Bado tunasubiri admin athibitishe. Vipi, unaonaje huduma zetu kwa sasa? Niambie hapa nikusaidie.": "🤖 We're still waiting for admin to confirm. How do you find our service so far? Tell me here and I'll help.", "Kama admin bado hajakujibu, mimi (AI) nitakuhudumia. Hakikisha umeshatuma screenshot za malipo (tayari nazo kwenye ombi lako) — nitasubiri dakika tano nyingine kuthibitisha muamala wako, kisha download itafunguka moja kwa moja.": "If admin hasn't replied yet, I (AI) will assist you. Make sure you've sent the payment screenshots (they're already in your request) — I'll wait another five minutes to confirm your transaction, then the download will unlock automatically.", "Pole kwa usumbufu huo. Naendelea kufuatilia ombi lako la malipo — nitakupa taarifa zaidi hivi punde. Kama una tatizo maalum, niambie zaidi ili nikusaidie vizuri.": "Sorry for the inconvenience. I'm still following up your payment request — I'll update you shortly. If you have a specific problem, tell me more so I can help properly.", "🤖 Je, unahitaji msaada wa kuseti game hii?": "🤖 Do you need help setting up this game?", "👍 Sawa, endelea na download.": "👍 Okay, continue with the download.", "Samahani, admin bado hajaweka maelekezo ya usanidi wa game hii. Wasiliana naye moja kwa moja kwa msaada.": "Sorry, admin hasn't added setup instructions for this game yet. Contact them directly for help.", "🎮 Utendaji Unaotarajiwa: Chini ya 25 FPS": "🎮 Expected Performance: Below 25 FPS", "🔥 Lag na kudondoka kwa fremu kunawezekana.": "🔥 Lag and frame drops are possible.", "🎮 Utendaji Unaotarajiwa: Nzuri (60 FPS+)": "🎮 Expected Performance: Good (60 FPS+)", "🎮 Utendaji Unaotarajiwa: Wastani (25-40 FPS)": "🎮 Expected Performance: Average (25-40 FPS)", "Bonyeza kupiga kura →": "Tap to vote →", "🗳️ Kura mpya": "🗳️ New poll", "🎤 Ujumbe wa sauti": "🎤 Voice message", "📷 Picha": "📷 Photo", "Habari! Mimi ni Mumbigames AI 🤖 Niulize chochote — malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, tournament, matangazo, token, chat, au hata ukitaka tu kuongea, niko hapa kwa ajili yako.": "Hello! I'm Mumbigames AI 🤖 Ask me anything — payments, game setup (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), shop, polls, tournaments, ads, tokens, chat, or even if you just want to talk, I'm here for you.", "Naelewa unachouliza, lakini sijapata jibu kamili kwenye maarifa yangu 🤔 Jaribu kuniambia kwa namna nyingine, au tumia maneno kama \"malipo\", \"Winlator\", \"PPSSPP\", \"duka\", \"kura\" au \"token\". Kama bado imekwama, admin yupo tayari kukusaidia moja kwa moja kupitia WhatsApp kwenye ukurasa wa Chat.": "I understand your question, but I don't have a complete answer for it yet 🤔 Try rephrasing it, or use words like \"payment\", \"Winlator\", \"PPSSPP\", \"shop\", \"poll\" or \"token\". If you're still stuck, admin is available directly via WhatsApp on the Chat page.", "Andika ujumbe wako kwanza.": "Write your message first.", "Chagua mchezo kwanza.": "Choose a game first.", "Chagua muundo wa tournament kwanza.": "Choose a tournament format first.", "Chagua picha halali (jpg/png).": "Choose a valid image (jpg/png).", "Email hii tayari ina akaunti. Jaribu \"Ingia\" badala yake.": "This email already has an account. Try \"Log in\" instead.", "Hakuna akaunti na email hii. Jaribu \"Jisajili\" badala yake.": "There is no account with this email. Try \"Sign up\" instead.", "Huwezi kutumia msimbo wako mwenyewe.": "You can't use your own code.", "Imeshindwa kufikia maikrofoni. Hakikisha umeruhusu app kutumia maikrofoni ya simu yako.": "Couldn't access the microphone. Make sure you've allowed the app to use your phone's microphone.", "Imeshindwa kufuta. Jaribu tena.": "Failed to delete. Try again.", "Imeshindwa kuhifadhi matokeo. Jaribu tena.": "Failed to save results. Try again.", "Imeshindwa kuhifadhi. Jaribu tena.": "Failed to save. Try again.", "Imeshindwa kuondoa. Jaribu tena.": "Failed to remove. Try again.", "Imeshindwa kupakia picha kiotomatiki. Tumia njia ya link hapa chini.": "Automatic image upload failed. Use the link option below.", "Imeshindwa kupakia picha. Jaribu tena.": "Failed to upload the image. Try again.", "Imeshindwa kutuma kura. Jaribu tena.": "Failed to submit vote. Try again.", "Imeshindwa kutuma maoni. Jaribu tena.": "Failed to send comment. Try again.", "Imeshindwa kutuma ombi. Angalia mtandao wako na jaribu tena.": "Failed to send request. Check your connection and try again.", "Imeshindwa kutuma picha. Angalia mtandao wako na ujaribu tena.": "Failed to send the image. Check your connection and try again.", "Imeshindwa kutuma taarifa. Jaribu tena.": "Failed to send details. Try again.", "Imeshindwa kutuma ujumbe wa sauti. Angalia mtandao wako na ujaribu tena.": "Failed to send voice message. Check your connection and try again.", "Imeshindwa kutuma. Angalia mtandao wako na jaribu tena.": "Failed to send. Check your connection and try again.", "Imeshindwa kutuma. Angalia mtandao wako na ujaribu tena.": "Failed to send. Check your connection and try again.", "Imeshindwa kuunda tournament. Angalia mtandao wako na jaribu tena.": "Failed to create the tournament. Check your connection and try again.", "Imeshindwa. Jaribu tena.": "Failed. Try again.", "Ingia kwenye akaunti yako kwanza.": "Log in to your account first.", "Jaza email na password.": "Enter your email and password.", "Jaza jina la bidhaa, bei, jina lako na namba yako kabla ya kutuma.": "Fill in the product name, price, your name and your number before sending.", "Jaza jina la mtumiaji, taifa na namba ya simu.": "Fill in your username, nationality and phone number.", "Lazima uingie kwenye akaunti yako kwanza ndipo uweze kuunda tournament.": "You must log in first before you can create a tournament.", "Lazima uingie kwenye akaunti yako kwanza ndipo uweze kuweka bidhaa.": "You must log in first before you can list a product.", "Lazima uingie kwenye akaunti yako kwanza.": "You must log in to your account first.", "Link hii haionekani kuwa picha halali. Angalia tena.": "This link doesn't look like a valid image. Check again.", "Hii ni link ya ukurasa, si picha moja kwa moja. Tafuta \"Direct link\" (huanza na i.ibb.co).": "This is a page link, not a direct image. Look for the \"Direct link\" (it starts with i.ibb.co).", "Link ya mwaliko imenakiliwa! Bandika kwa rafiki yako.": "Invite link copied! Paste it to your friend.", "Ujumbe wa mwaliko umenakiliwa! Bandika kwa rafiki yako.": "Invite message copied! Paste it to your friend.", "Mabadiliko yametumwa! Yataonekana tena baada ya admin kuyathibitisha.": "Changes submitted! They will show again after admin approves them.", "Mipangilio imerudishwa kwenye hali ya awali.": "Settings have been reset to default.", "Msimbo mpya wa bet umewekwa — fungua Profile → Bet Tips.": "A new betting code was posted — open Profile → Bet Tips.", "Namba ya simu si sahihi. Andika kwa mfumo wa 07XXXXXXXX au +255XXXXXXXXX.": "Invalid phone number. Use the format 07XXXXXXXX or +255XXXXXXXXX.", "Pakia picha zote mbili za muamala (screenshot) kabla ya kutuma — hii inamsaidia admin kuthibitisha haraka hata akiwa mbali.": "Upload both transaction photos (screenshots) before sending — this helps admin confirm quickly even when far away.", "Penati lazima ziwe namba halali na ziwe na mshindi (si sare).": "Penalties must be valid numbers and have a winner (not a draw).", "Picha ni kubwa mno. Chagua picha chini ya 5MB.": "The image is too large. Choose an image under 5MB.", "Picha ulizopakia ni sawa (screenshot ile ile mara mbili). Pakia picha mbili tofauti za muamala wako.": "The two photos you uploaded are the same (one screenshot twice). Upload two different photos of your transaction.", "Tayari umeshatumia msimbo wa mwaliko awali.": "You have already used an invite code before.", "Tayari umeshatumia zawadi hii ya token 500 (mara moja tu kwa kila akaunti).": "You've already used this 500-token reward (once per account only).", "Tayari umeshatumia zawadi hii ya token 500 huko nyuma (mara moja tu kwa kila akaunti).": "You already used this 500-token reward before (once per account only).", "Umefanikiwa! Rafiki yako amepata token 50.": "Success! Your friend received 50 tokens.", "Unaweza kufuta tournament zako mwenyewe tu.": "You can only delete your own tournaments.", "Weka angalau timu/wachezaji 4 kabla ya kuunda tournament.": "Add at least 4 teams/players before creating the tournament.", "Weka jina la game unayotaka.": "Enter the name of the game you want.", "Weka jina la tournament kwanza.": "Enter the tournament name first.", "Weka jina lako.": "Enter your name.", "Weka link ya picha kwanza.": "Paste an image link first.", "Weka matokeo sahihi ya mechi (namba, si hasi).": "Enter valid match results (numbers, not negative).", "Weka msimbo wa rafiki yako kwanza.": "Enter your friend's code first.", "Weka namba uliyotumia kutuma malipo, ili admin aweze kuthibitisha haraka.": "Enter the number you used to send the payment so admin can confirm quickly.", "Asante! Taarifa yako imetumwa kwa admin kwa ukaguzi.": "Thanks! Your details have been sent to admin for review.", "Bidhaa yako imetumwa! Itaonekana baada ya admin kuithibitisha.": "Your product has been submitted! It will appear after admin approves it.", "Admin amejibu maoni/ombi lako — fungua Profile → Maoni kuona jibu.": "Admin replied to your feedback/request — open Profile → Feedback to see it.", "Una uhakika unataka kuondoa bidhaa hii kabisa? Hatua hii haiwezi kutenduliwa.": "Are you sure you want to remove this product permanently? This can't be undone.", "Weka bidhaa hii kama \"Imeisha\"? Haitaonekana tena kwa wanunuzi.": "Mark this product as \"Sold out\"? Buyers will no longer see it.", "Email si sahihi.": "Invalid email.", "Password si sahihi.": "Incorrect password.", "Password iwe angalau herufi 6.": "Password must be at least 6 characters.", "Msimbo huo haupo. Hakikisha umeuandika sahihi.": "That code doesn't exist. Make sure you typed it correctly.", "Token zako hazitoshi tena. Onesha upya ukurasa.": "You no longer have enough tokens. Refresh the page.", "Simu/kivinjari chako hakiruhusu kurekodi sauti hapa.": "Your phone/browser doesn't allow voice recording here.", "Umetuma! Admin atakujibu hapa hapa.": "Sent! Admin will reply right here.", "Uthibitisho unachukua muda mrefu?": "Confirmation taking long?", "Tournament imefutwa": "Tournament deleted", "Andika jibu lako...": "Type your reply...", "Andika maoni yako...": "Write your comment...", "Angalia game \"": "Check out the game \"", "Angalia mumbigames:": "Check out mumbigames:", "Pakua app ya mumbigames hapa:": "Download the mumbigames app here:", "Hello🖐 nataka ninunue bidhaa uliyo weka kwenye app ya mumbigames:": "Hello🖐 I want to buy the product you listed on the mumbigames app:", "Jiunge na tournament yangu \"": "Join my tournament \"", "Ukishafungua akaunti, weka msimbo wangu wa mwaliko:": "After creating an account, enter my invite code:", "Fungua app: kura mpya imewekwa": "Open the app: a new poll has been posted", "Fungua app: video mpya TikTok": "Open the app: new TikTok video", "Fungua app: video mpya YouTube": "Open the app: new YouTube video", "(1) — Inatoka kwenda kwenye browser...": "(1) — Opening in your browser...", "Karibu mumbigames! Hii ndiyo toleo la kwanza la app.": "Welcome to mumbigames! This is the first version of the app.", "Kura kwenye Chat": "Polls in Chat", "Kura mpya sasa zinaonekana pia kwenye Chat kama ujumbe mpya — bonyeza ujumbe huo kwenda kupiga kura moja kwa moja.": "New polls now also appear in Chat as a new message — tap that message to go straight to voting.", "Sasa unaweza kutuma PICHA kwenye chat (bonyeza 📷) ili kusaidiwa kirahisi. Pia kitufe cha Chat kinaonyesha namba nyekundu ya ujumbe mpya ambao hujaufungua — ukifungua Chat inaondoka.": "You can now send PHOTOS in chat (tap 📷) to get help easily. The Chat button also shows a red number for new unread messages — it clears when you open Chat.", "AI Msaidizi sasa inaitwa \"Mumbigames AI\" na imeongezewa maarifa mengi zaidi — inaweza sasa kukusaidia kuhusu Tournament, jinsi tangazo za download zinavyofanya kazi, kikengele cha update, mandhari/lugha, kutafuta games, na profile yako.": "AI Assistant is now called \"Mumbigames AI\" and has much more knowledge — it can now help with Tournaments, how download ads work, the update bell, theme/language, searching games, and your profile.", "Mabadiliko ya App": "App Updates", "Hapana, ninajua": "No, I know", "Andika ujumbe...": "Type a message...", "Andika swali lako...": "Type your question...", "Andika hapa...": "Type here...", "Email yako": "Your email", "Jina la mtumiaji (username)": "Username", "Jina lako": "Your name", "Maelezo ya bidhaa, hali yake...": "Product description, its condition...", "Mfano: JKV9WG": "Example: JKV9WG", "Msimbo wa mwaliko (hiari)": "Invite code (optional)", "Namba ya simu (07XXXXXXXX)": "Phone number (07XXXXXXXX)", "Taifa lako (mfano: Tanzania)": "Your nationality (e.g. Tanzania)", "mfano: 20000": "e.g. 20000", "mfano: 30000": "e.g. 30000", "mfano: 5000": "e.g. 5000", "mfano: Ligi ya Mtaani 2026": "e.g. Street League 2026", "mfano: PS4-001": "e.g. PS4-001", "mfano: Padi ya PS4": "e.g. PS4 Controller", "mfano: Sony, Nintendo, n.k.": "e.g. Sony, Nintendo, etc.", "mfano: mpya, punguzo, mauzo (tenganisha kwa koma)": "e.g. new, discount, sale (separate with commas)", "Andika ujumbe wako...": "Type your message...", "Jina lako (lazima)": "Your name (required)", "Hifadhi": "Save", "Ghairi": "Cancel", "Sawa": "OK", "Ndiyo": "Yes", "Hapana": "No", "Tafuta games...": "Search games...", "Hariri": "Edit", "Ondoa": "Remove", "Nunua": "Buy", "💬 Nunua": "💬 Buy"};
+const I18N_FRAGS = [["\" (mfano: muuzaji anataka pesa moja kwa moja, bidhaa si ya kweli, n.k):", "\" (e.g. seller wants money directly, product is not genuine, etc.):"], ["! Kwenye Knockout lazima kuwe na mshindi. Weka bao za penati kwa", "! In Knockout there must be a winner. Enter penalty scores for"], ["Picha ya muamala tayari ilitumika kuthibitisha ombi la \"", "The transaction photo was already used to confirm the request for \""], ["\". Inahitaji ukaguzi wa admin kabla ya kuthibitishwa.", "\". It needs admin review before it is confirmed."], ["\" bure? (Fursa hii ni mara moja tu kwa kila akaunti)", "\" for free? (This chance is once per account only)"], ["\" bure kwa token zako. Fungua game hili kudownload.", "\" for free with your tokens. Open this game to download."], ["\" imeundwa! Alika marafiki zako kupitia \"Share\".", "\" was created! Invite your friends using \"Share\"."], ["Una uhakika unataka kufuta tournament \"", "Are you sure you want to delete the tournament \""], ["Angalia mtandao wako na ujaribu tena.", "Check your connection and try again."], ["Angalia mtandao wako na jaribu tena.", "Check your connection and try again."], ["Eleza kwa ufupi tatizo la bidhaa \"", "Briefly describe the problem with the product \""], ["\"? Hatua hii haiwezi kurudishwa.", "\"? This can't be undone."], ["ili tupate token zote wawili!", "so we both get tokens!"], ["Tumia token 500 kupata \"", "Use 500 tokens to get \""], ["Angalia mtandao wako.", "Check your connection."], ["\" kwenye mumbigames:", "\" on mumbigames:"], ["Imeshindwa kuhifadhi", "Failed to save"], ["Hongera! Umepata \"", "Congratulations! You got \""], ["Imeshindwa kupakia", "Failed to load"], ["Imeshindwa kuondoa", "Failed to remove"], ["Bao za penati kwa", "Penalty scores for"], ["Imeshindwa kutuma", "Failed to send"], ["Imeshindwa kufuta", "Failed to delete"], ["Fungua app: \"", "Open the app: \""], ["\" imeongezwa", "\" was added"], ["Tournament \"", "Tournament \""], ["Jaribu tena.", "Try again."]];
+const I18N_PATTERNS = [
+  [/^Kura (\d+)$/, 'Votes $1'],
+  [/^Maoni \((\d+)\)$/, 'Comments ($1)']
+];
+const I18N_UGC_SEL = '#chatMessages .txt, #chatMessages .who, #chatMessages .quote, #commentsList, .ai-msg.user, script, style, textarea, noscript, [data-no-i18n]';
+const I18N_ORIG = new WeakMap();
+const I18N_SET = new WeakMap();
+let i18nObserver = null;
+
+function i18nTr(s){
+  if(!s) return s;
+  const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/);
+  const lead = m[1], core = m[2].replace(/\s+/g,' '), trail = m[3];
+  if(!core) return s;
+  if(Object.prototype.hasOwnProperty.call(I18N_EN, core)) return lead + I18N_EN[core] + trail;
+  for(let i=0;i<I18N_PATTERNS.length;i++){
+    if(I18N_PATTERNS[i][0].test(core)) return lead + core.replace(I18N_PATTERNS[i][0], I18N_PATTERNS[i][1]) + trail;
+  }
+  let out = s, changed = false;
+  for(let i=0;i<I18N_FRAGS.length;i++){
+    const f = I18N_FRAGS[i][0];
+    if(out.indexOf(f) !== -1){ out = out.split(f).join(I18N_FRAGS[i][1]); changed = true; }
+  }
+  return changed ? out : s;
+}
+
+function i18nSkipNode(n){
+  const el = n.nodeType === 3 ? n.parentElement : n;
+  if(!el) return true;
+  return !!(el.closest && el.closest(I18N_UGC_SEL));
+}
+function i18nProcessText(n){
+  const cur = n.nodeValue;
+  if(I18N_SET.get(n) === cur) return;          // ni matokeo yetu wenyewe
+  if(!cur || !cur.trim() || i18nSkipNode(n)) return;
+  const tr = i18nTr(cur);
+  if(tr !== cur){ I18N_ORIG.set(n, cur); I18N_SET.set(n, tr); n.nodeValue = tr; }
+}
+function i18nProcessAttrs(el){
+  if(!el.getAttribute || (el.closest && el.closest(I18N_UGC_SEL))) return;
+  ['placeholder','title'].forEach(a=>{
+    const v = el.getAttribute(a);
+    if(!v) return;
+    if(el['_i18nSet_'+a] === v) return;
+    const tr = i18nTr(v);
+    if(tr !== v){ el['_i18nOrig_'+a] = v; el['_i18nSet_'+a] = tr; el.setAttribute(a, tr); }
+  });
+}
+function i18nWalk(root, fn){
+  if(root.nodeType === 3){ fn(root); return; }
+  const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let n; const list = [];
+  while((n = tw.nextNode())) list.push(n);
+  list.forEach(fn);
+}
+function i18nAttrsWalk(root){
+  if(root.nodeType !== 1) return;
+  i18nProcessAttrs(root);
+  root.querySelectorAll('[placeholder],[title]').forEach(i18nProcessAttrs);
+}
+function i18nRestoreAll(){
+  i18nWalk(document.body, n=>{
+    if(I18N_ORIG.has(n) && I18N_SET.get(n) === n.nodeValue){
+      const o = I18N_ORIG.get(n);
+      I18N_SET.delete(n); I18N_ORIG.delete(n);
+      n.nodeValue = o;
+    }
+  });
+  document.querySelectorAll('[placeholder],[title]').forEach(el=>{
+    ['placeholder','title'].forEach(a=>{
+      if(el['_i18nOrig_'+a] !== undefined && el.getAttribute(a) === el['_i18nSet_'+a]){
+        el.setAttribute(a, el['_i18nOrig_'+a]);
+      }
+      delete el['_i18nOrig_'+a]; delete el['_i18nSet_'+a];
+    });
+  });
+}
+function i18nStartObserver(){
+  if(i18nObserver) return;
+  i18nObserver = new MutationObserver(muts=>{
+    if(currentLang !== 'en') return;
+    muts.forEach(m=>{
+      if(m.type === 'characterData'){ i18nProcessText(m.target); }
+      else if(m.type === 'attributes'){ i18nProcessAttrs(m.target); }
+      else {
+        m.addedNodes.forEach(nd=>{
+          if(nd.nodeType === 3) i18nProcessText(nd);
+          else if(nd.nodeType === 1){ i18nWalk(nd, i18nProcessText); i18nAttrsWalk(nd); }
+        });
+      }
+    });
+  });
+  i18nObserver.observe(document.body, {childList:true, subtree:true, characterData:true, attributes:true, attributeFilter:['placeholder','title']});
+}
+function i18nApply(lang){
+  document.documentElement.lang = lang === 'en' ? 'en' : 'sw';
+  i18nStartObserver();
+  if(lang === 'en'){
+    i18nWalk(document.body, i18nProcessText);
+    i18nAttrsWalk(document.body);
+  } else {
+    i18nRestoreAll();
+  }
+}
+// alert/confirm/prompt pia zinatafsiriwa (ujumbe wa makosa, uthibitisho n.k.)
+(function(){
+  const _alert = window.alert.bind(window), _confirm = window.confirm.bind(window), _prompt = window.prompt.bind(window);
+  window.alert = function(m){ return _alert(currentLang === 'en' ? i18nTr(String(m)) : m); };
+  window.confirm = function(m){ return _confirm(currentLang === 'en' ? i18nTr(String(m)) : m); };
+  window.prompt = function(m, d){ return _prompt(currentLang === 'en' ? i18nTr(String(m)) : m, d); };
+})();
 
 function applyLang(lang){
   const dict = TRANSLATIONS[lang] || TRANSLATIONS.sw;
@@ -4642,6 +4841,7 @@ function setLang(lang){
   });
   applyLang(lang);
   if(typeof render === 'function' && games && games.length) render();
+  i18nApply(lang);
 }
 
 function setTheme(theme){
