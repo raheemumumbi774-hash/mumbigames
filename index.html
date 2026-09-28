@@ -327,6 +327,9 @@
   .chat-input-row{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg);align-items:center;}
   .chat-input-row input{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 14px;border-radius:20px;font-size:12.5px;}
   .mic-btn{width:42px;height:42px;border-radius:50%;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:16px;cursor:pointer;flex:none;}
+  .nav-badge{display:none;position:absolute;top:-5px;right:-9px;background:#ff3b30;color:#fff;font-size:9.5px;font-weight:800;min-width:16px;height:16px;border-radius:8px;line-height:16px;text-align:center;padding:0 4px;border:2px solid var(--bg);box-sizing:content-box;}
+  .img-btn{width:42px;height:42px;border-radius:50%;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:16px;cursor:pointer;flex:none;}
+  .msg .chat-img{display:block;max-width:100%;max-height:260px;border-radius:10px;margin-top:2px;}
   .mic-btn.recording{background:#e33;border-color:#e33;color:#fff;animation:mgPulse 1s infinite;}
   @keyframes mgPulse{0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}}
   .send-btn{width:42px;height:42px;border-radius:50%;background:var(--lime);border:none;color:var(--bg);font-size:14.5px;cursor:pointer;flex:none;}
@@ -543,6 +546,8 @@
     </div>
     <div class="chat-input-row">
       <input type="text" id="chatMsgInput" placeholder="Andika ujumbe..." maxlength="300" onkeydown="if(event.key==='Enter')sendMsg()">
+      <input type="file" id="chatImgInput" accept="image/*" style="display:none;" onchange="sendChatImage(this)">
+      <button class="img-btn" id="chatImgBtn" onclick="document.getElementById('chatImgInput').click()">📷</button>
       <button class="mic-btn" id="chatMicBtn" onclick="toggleVoiceRecording()">🎤</button>
       <button class="send-btn" onclick="sendMsg()">➤</button>
     </div>
@@ -1135,7 +1140,7 @@
 
 <div class="bottomnav">
   <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
-  <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic">💬</div><span data-i18n="nav_chat">Chat</span></div>
+  <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic" style="position:relative;">💬<span class="nav-badge" id="chatUnreadBadge">0</span></div><span data-i18n="nav_chat">Chat</span></div>
   <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5c0-1.2.4-2.3 1-3.3l.6-1c.2-.3.5-.5.9-.5h10c.4 0 .7.2.9.5l.6 1c.6 1 1 2.1 1 3.3"/><path d="M4.5 9.5c1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0"/><path d="M5.5 9.5V18a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.5"/><path d="M9.5 14c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5"/></svg></div><span data-i18n="nav_duka">Duka</span></div>
   <div class="nav-item" id="navAI" onclick="showAI()"><div class="ic">🤖</div><span data-i18n="nav_ai">AI</span></div>
   <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic">☺<span class="nav-dot" id="navMeDot"></span></div><span data-i18n="nav_me">Me</span></div>
@@ -2754,6 +2759,7 @@ function showChat(){
   hideAllViews();
   document.getElementById('chatView').style.display = 'flex';
   document.getElementById('navChat').classList.add('active');
+  markChatSeen();
   if(chatName){
     document.getElementById('nameGate').style.display = 'none';
     document.getElementById('chatBody').style.display = 'flex';
@@ -2776,9 +2782,11 @@ function showDuka(){
 // ============================================================
 const APP_CHANGELOG = [
   {id: 1, title: 'Mumbigames v1.0', body: 'Karibu mumbigames! Hii ndiyo toleo la kwanza la app.'},
-  {id: 2, title: 'Mumbigames AI - Update', body: 'AI Msaidizi sasa inaitwa "Mumbigames AI" na imeongezewa maarifa mengi zaidi — inaweza sasa kukusaidia kuhusu Tournament, jinsi tangazo za download zinavyofanya kazi, kikengele cha update, mandhari/lugha, kutafuta games, na profile yako.'}
+  {id: 2, title: 'Mumbigames AI - Update', body: 'AI Msaidizi sasa inaitwa "Mumbigames AI" na imeongezewa maarifa mengi zaidi — inaweza sasa kukusaidia kuhusu Tournament, jinsi tangazo za download zinavyofanya kazi, kikengele cha update, mandhari/lugha, kutafuta games, na profile yako.'},
+  {id: 3, title: 'Chat - Update', body: 'Sasa unaweza kutuma PICHA kwenye chat (bonyeza 📷) ili kusaidiwa kirahisi. Pia kitufe cha Chat kinaonyesha namba nyekundu ya ujumbe mpya ambao hujaufungua — ukifungua Chat inaondoka.'},
+  {id: 4, title: 'Kura kwenye Chat', body: 'Kura mpya sasa zinaonekana pia kwenye Chat kama ujumbe mpya — bonyeza ujumbe huo kwenda kupiga kura moja kwa moja.'},
   // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
-  // {id: 3, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  // {id: 5, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -4242,6 +4250,10 @@ function renderMessages(msgs){
     const quote = m.replyToName ? `<div class="quote"><b>${escapeHtml(m.replyToName)}</b><br>${escapeHtml(m.replyToText||'')}</div>` : '';
     const body = m.type === 'voice'
       ? `<div class="voice-player"><audio controls preload="none" src="${escapeHtml(m.audioUrl)}"></audio></div>`
+      : m.type === 'poll'
+      ? `<div class="txt"><b>🗳️ Kura mpya</b><br>${escapeHtml(m.text||'')}<br><span style="color:var(--lime);font-weight:700;" data-open-poll="1">Bonyeza kupiga kura →</span></div>`
+      : m.type === 'image'
+      ? `<img class="chat-img" src="${escapeHtml(m.imageUrl)}" alt="picha" loading="lazy" data-full="${escapeHtml(m.imageUrl)}">` + (m.text ? `<div class="txt">${escapeHtml(m.text)}</div>` : '')
       : `<div class="txt">${escapeHtml(m.text)}</div>`;
     return `<div class="msg ${mine?'me':''}" data-msg-idx="${idx}">
       <div class="who">${escapeHtml(m.name)}</div>
@@ -4260,12 +4272,15 @@ function renderMessages(msgs){
 let currentChatMsgs = [];
 let chatReplyTo = null; // {name, text}
 document.getElementById('chatMessages').addEventListener('click', (e)=>{
+  const img = e.target.closest('.chat-img');
+  if(img){ window.open(img.dataset.full, '_blank', 'noopener'); return; }
   const el = e.target.closest('.msg');
   if(!el) return;
   const idx = parseInt(el.dataset.msgIdx, 10);
   const m = currentChatMsgs[idx];
   if(!m) return;
-  chatReplyTo = { name: m.name, text: m.type === 'voice' ? '🎤 Ujumbe wa sauti' : (m.text||'').slice(0,80) };
+  if(m.type === 'poll'){ showPolls(); return; }
+  chatReplyTo = { name: m.name, text: m.type === 'voice' ? '🎤 Ujumbe wa sauti' : m.type === 'image' ? '📷 Picha' : (m.text||'').slice(0,80) };
   const banner = document.getElementById('chatReplyBanner');
   document.getElementById('chatReplyBannerText').innerHTML = 'Unamjibu <b>' + escapeHtml(chatReplyTo.name) + '</b>: ' + escapeHtml(chatReplyTo.text);
   banner.style.display = 'flex';
@@ -4331,6 +4346,88 @@ async function sendVoiceMessage(blob){
   }finally{
     micBtn.textContent = '🎤';
   }
+}
+
+// ---- Kutuma picha kwenye chat: picha inapunguzwa ukubwa kwanza (haraka
+// na nafuu), kisha inapakiwa Imgbb (ile ile inayotumika Duka) na link
+// yake inatumwa kama ujumbe wa aina ya "image". ----
+function compressChatImage(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = ()=>{
+        const max = 1280;
+        let w = img.width, h = img.height;
+        if(w > max || h > max){ const r = Math.min(max/w, max/h); w = Math.round(w*r); h = Math.round(h*r); }
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        cv.toBlob(b=> b ? resolve(b) : reject(new Error('compress failed')), 'image/jpeg', 0.78);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function sendChatImage(inputEl){
+  const file = inputEl.files && inputEl.files[0];
+  inputEl.value = '';
+  if(!file || !chatName) return;
+  if(!/^image\//.test(file.type)){ alert('Chagua picha tu.'); return; }
+  const btn = document.getElementById('chatImgBtn');
+  btn.textContent = '⏳';
+  btn.disabled = true;
+  try{
+    const blob = await compressChatImage(file);
+    const imageUrl = await uploadToImgbb(blob);
+    const msg = {name: chatName, type: 'image', imageUrl, time: Date.now()};
+    if(chatReplyTo){ msg.replyToName = chatReplyTo.name; msg.replyToText = chatReplyTo.text; cancelChatReply(); }
+    await db.collection('chat_messages').add(msg);
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kutuma picha. Angalia mtandao wako na ujaribu tena.');
+  }finally{
+    btn.textContent = '📷';
+    btn.disabled = false;
+  }
+}
+
+// ---- Namba ya ujumbe MPYA kwenye kitufe cha Chat (badge nyekundu).
+// Inahesabu ujumbe wote (wa wengine, wa admin, na majibu) uliotumwa
+// tangu mara ya mwisho mtu alipofungua Chat. Akifungua Chat, inarudi 0.
+// Ujumbe wako mwenyewe haujihesabu kwako. ----
+let chatUnreadUnsub = null;
+function getChatSeenTs(){
+  let v = 0;
+  try{ v = parseInt(localStorage.getItem('mg-chat-seen-ts') || '0', 10); }catch(e){}
+  if(!v){ v = Date.now(); try{ localStorage.setItem('mg-chat-seen-ts', String(v)); }catch(e){} }
+  return v;
+}
+function setChatBadge(n){
+  const b = document.getElementById('chatUnreadBadge');
+  if(!b) return;
+  if(n > 0){ b.style.display = 'block'; b.textContent = n > 99 ? '99+' : String(n); }
+  else { b.style.display = 'none'; }
+}
+function markChatSeen(){
+  try{ localStorage.setItem('mg-chat-seen-ts', String(Date.now())); }catch(e){}
+  setChatBadge(0);
+  startChatUnreadListener();
+}
+function startChatUnreadListener(){
+  if(chatUnreadUnsub){ try{ chatUnreadUnsub(); }catch(e){} chatUnreadUnsub = null; }
+  const since = getChatSeenTs();
+  chatUnreadUnsub = db.collection('chat_messages').where('time','>',since).orderBy('time').limit(100)
+    .onSnapshot(snap=>{
+      const chatOpen = document.getElementById('chatView').style.display === 'flex';
+      if(chatOpen){ if(snap.size > 0) markChatSeen(); return; }
+      let n = 0;
+      snap.forEach(d=>{ if(d.data().name !== chatName) n++; });
+      setChatBadge(n);
+    }, err=>{ console.error('chat unread listener', err); });
 }
 
 async function sendMsg(){
@@ -4571,6 +4668,7 @@ function initSettings(){
 }
 initSettings();
 updateChangelogBadge();
+startChatUnreadListener();
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(err => console.error('SW register failed', err));
