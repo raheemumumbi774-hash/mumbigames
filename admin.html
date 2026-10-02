@@ -225,7 +225,6 @@
     <div class="tab" data-view="bettips">🎫 Bet Tips</div>
     <div class="tab" data-view="feedback">💬 Maoni</div>
     <div class="tab" data-view="social">Social</div>
-    <div class="tab" data-view="polls">🗳️ Kura</div>
     <div class="tab" data-view="ads">Tangazo</div>
   </div>
 
@@ -501,26 +500,6 @@
       <p style="color:var(--sub);font-size:12px;margin-top:10px;">Hizi ndizo link zitakazowekwa kwenye nembo za bottom nav ya website/app kuu.</p>
     </div>
 
-    <!-- KURA (POLLS) -->
-    <div class="view" id="view-polls">
-      <div class="section-title"><h2>🗳️ Weka Kura Mpya</h2></div>
-      <p style="color:var(--sub);font-size:12px;margin-bottom:10px;">Ukichapisha, kura inaonekana kwenye ukurasa wa Kura na pia kwenye Chat kama ujumbe mpya (wote wataona namba nyekundu ya ujumbe mpya).</p>
-      <label>Swali</label>
-      <input type="text" id="pollQuestion" placeholder="mfano: Game gani mnataka niweke wiki hii?" maxlength="140">
-      <label>Machaguo (angalau 2, hadi 6)</label>
-      <input type="text" class="poll-opt-in" placeholder="Chaguo 1" maxlength="60">
-      <input type="text" class="poll-opt-in" placeholder="Chaguo 2" maxlength="60" style="margin-top:8px;">
-      <input type="text" class="poll-opt-in" placeholder="Chaguo 3 (si lazima)" maxlength="60" style="margin-top:8px;">
-      <input type="text" class="poll-opt-in" placeholder="Chaguo 4 (si lazima)" maxlength="60" style="margin-top:8px;">
-      <input type="text" class="poll-opt-in" placeholder="Chaguo 5 (si lazima)" maxlength="60" style="margin-top:8px;">
-      <input type="text" class="poll-opt-in" placeholder="Chaguo 6 (si lazima)" maxlength="60" style="margin-top:8px;">
-      <div class="form-actions">
-        <button class="btn btn-primary" style="flex:1" id="pollPublishBtn" onclick="publishPoll()">Chapisha Kura</button>
-      </div>
-      <div class="section-title"><h2>Kura zilizopo</h2></div>
-      <div id="pollsAdminList"></div>
-    </div>
-
     <div class="view" id="view-ads">
       <div class="section-title"><h2>📢 Weka Tangazo Jipya (Sponsored)</h2></div>
       <p style="color:var(--sub);font-size:12px;margin-bottom:14px;">Weka matangazo mengi hapa — mfumo utachagua LIMOJA KWA BAHATI NASIBU kila mtu akifungua game, hivyo watu wataona matangazo tofauti-tofauti kila wakiingia/kufungua tena. Mteja akikubali kulipia nafasi hii, jaza taarifa zake hapa chini kisha bonyeza "Ongeza Tangazo".</p>
@@ -724,7 +703,6 @@ document.querySelectorAll('.tab').forEach(tab=>{
     if(tab.dataset.view==='feedback') loadFeedbackAdmin();
     if(tab.dataset.view==='payment') loadPaymentRequests();
     if(tab.dataset.view==='ads') loadSponsoredAdsAdmin();
-    if(tab.dataset.view==='polls') loadPollsAdmin();
   });
 });
 
@@ -997,68 +975,6 @@ function loadBetTipsAdmin(){
 async function deleteBetTip(id){
   if(!confirm('Una uhakika unataka kufuta bet tip hii?')) return;
   try{ await db.collection('betTips').doc(id).delete(); showToast('Imefutwa.'); }
-  catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
-}
-
-// ---- Kura (Polls): unda, ona matokeo, funga/fungua, futa. Kura mpya
-// pia inatuma ujumbe kwenye Chat (chat_messages, type:'poll') ili watu
-// waione kama ujumbe mpya na wabonyeze kwenda kupiga kura. ----
-let pollsAdminUnsub = null;
-function loadPollsAdmin(){
-  if(pollsAdminUnsub) return;
-  pollsAdminUnsub = db.collection('polls').orderBy('createdAt','desc').limit(50).onSnapshot(snap=>{
-    const list = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    document.getElementById('pollsAdminList').innerHTML = list.length ? list.map(p=>{
-      const opts = p.options || [];
-      const counts = p.counts || {};
-      const total = opts.reduce((s,o)=>s+(counts[o]||0),0);
-      const rows = opts.map(o=>{
-        const n = counts[o]||0;
-        const pct = total ? Math.round(n/total*100) : 0;
-        return `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;"><span>${escapeHtml(o)}</span><span style="color:var(--sub);">${n} (${pct}%)</span></div>`;
-      }).join('');
-      const closed = p.active === false;
-      return `<div class="link-card" style="display:block;">
-        <div style="font-weight:700;font-size:13px;margin-bottom:6px;">${escapeHtml(p.question)} ${closed?'<span class="tag">Imefungwa</span>':''}</div>
-        ${rows}
-        <div style="font-size:11px;color:var(--sub);margin:6px 0;">Jumla ya kura: ${total}</div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-ghost" style="flex:1;" onclick="togglePollActive('${p.id}', ${closed})">${closed?'Fungua tena':'Funga kura'}</button>
-          <button class="btn btn-ghost" style="flex:1;" onclick="deletePoll('${p.id}')">🗑 Futa</button>
-        </div>
-      </div>`;
-    }).join('') : '<div class="empty">Hakuna kura bado. Chapisha moja hapo juu.</div>';
-  }, err=>console.error(err));
-}
-async function publishPoll(){
-  const q = document.getElementById('pollQuestion').value.trim();
-  const opts = Array.from(document.querySelectorAll('.poll-opt-in')).map(i=>i.value.trim()).filter(Boolean);
-  const uniq = Array.from(new Set(opts));
-  if(!q){ showToast('Andika swali kwanza.'); return; }
-  if(uniq.length < 2){ showToast('Weka angalau machaguo 2 tofauti.'); return; }
-  const btn = document.getElementById('pollPublishBtn');
-  btn.disabled = true;
-  try{
-    const now = Date.now();
-    const ref = await db.collection('polls').add({
-      question: q, options: uniq, counts: {}, voters: {}, active: true, createdAt: now
-    });
-    await db.collection('chat_messages').add({
-      name: 'Admin', type: 'poll', pollId: ref.id, text: q, time: now
-    });
-    document.getElementById('pollQuestion').value = '';
-    document.querySelectorAll('.poll-opt-in').forEach(i=>i.value='');
-    showToast('Kura imechapishwa na imetumwa kwenye Chat.');
-  }catch(e){ console.error(e); showToast('Imeshindwa kuchapisha kura.'); }
-  finally{ btn.disabled = false; }
-}
-async function togglePollActive(id, isClosed){
-  try{ await db.collection('polls').doc(id).update({active: !!isClosed}); showToast(isClosed?'Kura imefunguliwa tena.':'Kura imefungwa.'); }
-  catch(e){ console.error(e); showToast('Imeshindwa.'); }
-}
-async function deletePoll(id){
-  if(!confirm('Una uhakika unataka kufuta kura hii? Matokeo yote yatapotea.')) return;
-  try{ await db.collection('polls').doc(id).delete(); showToast('Imefutwa.'); }
   catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
 }
 
