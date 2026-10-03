@@ -210,6 +210,22 @@
   .fb-card .fb-reply{margin-top:10px;padding:10px 12px;background:rgba(166,255,0,0.08);border-left:2px solid var(--lime);border-radius:8px;font-size:11px;color:var(--text);line-height:1.5;}
   .fb-card .fb-reply b{color:var(--lime);}
   .qa-badge{display:none;position:absolute;top:6px;right:10px;width:10px;height:10px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
+  .qa-btn.qa-earn{background:linear-gradient(135deg,#f59e0b,#ef4444,#f59e0b);background-size:200% 200%;animation:earnGlow 2.2s ease infinite;color:#fff;}
+  @keyframes earnGlow{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+  .earn-dots{display:flex;justify-content:center;gap:14px;margin:18px 0;}
+  .earn-dot{width:40px;height:40px;border-radius:50%;background:var(--panel-2);border:3px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .35s;}
+  .earn-dot.done{background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#16a34a;transform:scale(1.08);}
+  .earn-dot.active{border-color:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,0.25);animation:earnPulse 1s infinite;}
+  @keyframes earnPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+  .earn-watch-btn{width:100%;padding:16px;border-radius:14px;border:none;font-weight:800;font-size:14.5px;cursor:pointer;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 6px 18px rgba(239,68,68,0.35);}
+  .earn-watch-btn:disabled{opacity:0.5;cursor:default;box-shadow:none;}
+  .earn-reward-pop{text-align:center;padding:10px 0;}
+  .earn-reward-pop .big{font-size:40px;font-weight:900;color:#f59e0b;animation:popIn .4s ease;}
+  @keyframes popIn{0%{transform:scale(0.3);opacity:0;}70%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}}
+  .earn-progress-bar{height:10px;border-radius:6px;background:var(--panel-2);overflow:hidden;margin:6px 0 2px;}
+  .earn-progress-bar .fill{height:100%;background:linear-gradient(90deg,#f59e0b,#ef4444);transition:width .5s;}
+  .game-locked-box{text-align:center;padding:26px 14px;}
+  .game-locked-box .lock-ic{font-size:44px;margin-bottom:10px;}
 
   /* Trending carousel */
   .trend-wrap{padding:18px 0 6px;}
@@ -500,6 +516,25 @@
   <a class="qa-btn qa-tiktok" href="https://www.tiktok.com/@iam_mumbi7" target="_blank" onclick="markSocialSeen('tiktok')"><span class="qa-badge" id="qaBadgeTiktok"></span><div class="qa-ic">🎵</div><span data-i18n="qa_tiktok">TikTok</span></a>
   <div class="qa-btn qa-kura" onclick="showTournaments()"><div class="qa-ic">🏆</div><span data-i18n="qa_tourn">Tournament</span></div>
   <a class="qa-btn qa-youtube" href="https://youtube.com/@mumbi_gaming" target="_blank" onclick="markSocialSeen('youtube')"><span class="qa-badge" id="qaBadgeYoutube"></span><div class="qa-ic">▶️</div><span data-i18n="qa_youtube">YouTube</span></a>
+  <div class="qa-btn qa-earn" onclick="showEarnTokens()"><div class="qa-ic">🎬</div><span data-i18n="qa_earn">Pata Token</span></div>
+</div>
+
+<div class="overlay" id="earnTokensOverlay" onclick="if(event.target===this) closeEarnTokens()">
+  <div class="modal" style="max-width:420px;text-align:center;">
+    <h3 style="margin-bottom:4px;">🎬 Pata Token</h3>
+    <p style="color:var(--sub);font-size:12px;margin-bottom:4px;" data-i18n="earn_sub">Tazama matangazo 3 upate token bure — unaweza kufanya mara kadhaa kwa siku!</p>
+    <div class="earn-dots" id="earnDots">
+      <div class="earn-dot" id="earnDot0">1</div>
+      <div class="earn-dot" id="earnDot1">2</div>
+      <div class="earn-dot" id="earnDot2">3</div>
+    </div>
+    <button type="button" class="earn-watch-btn" id="earnWatchBtn" onclick="watchAdForTokens()">▶️ <span data-i18n="earn_watch_btn">Tazama Tangazo</span> (0/3)</button>
+    <div id="earnRewardBox" style="display:none;" class="earn-reward-pop"></div>
+    <div style="margin-top:14px;font-size:11px;color:var(--sub);" id="earnRoundsLeft"></div>
+    <div class="earn-progress-bar"><div class="fill" id="earnStreakFill" style="width:0%;"></div></div>
+    <div style="font-size:10.5px;color:var(--sub);margin-bottom:12px;" id="earnStreakLabel"></div>
+    <button class="btn btn-ghost" style="width:100%;" onclick="closeEarnTokens()" data-i18n="close">Funga</button>
+  </div>
 </div>
 
 <div class="chips" id="chips">
@@ -1897,7 +1932,232 @@ function setPendingDownloadInUrl(i){
   }catch(e){}
 }
 
+// ============================================================
+// RE-LOCK YA GAMES ZA BURE ZILIZOKWISHA-DOWNLOADIWA KABISA
+// Mara tu mtumiaji akimaliza kudownload VITU VYOTE vya game ya bure
+// (game file + emulator yake n.k), game hiyo inafungwa kwa ajili yake
+// (per-account, inabaki hata akitoka app na kurudi siku nyingine).
+// Akitaka kuidownload tena, anatumia TOKEN alizopata kwa kutazama
+// matangazo (ona mfumo wa "Pata Token" chini) kufungua tena.
+// ============================================================
+const GAME_REUNLOCK_COST = 30;
+let myDownloadedGames = {}; // cache ya {gameId: true} ya mtumiaji aliyeingia
+
+function persistGameFullyDownloaded(gameId){
+  myDownloadedGames[gameId] = true;
+  if(!auth.currentUser) return;
+  try{
+    db.collection('users').doc(auth.currentUser.uid).set(
+      {downloadedGames: {[gameId]: true}}, {merge:true}
+    ).catch(e=>console.error('persistGameFullyDownloaded failed', e));
+  }catch(e){ console.error(e); }
+}
+
+function renderGameLockedScreen(g){
+  document.getElementById('modalPaySection').style.display = 'none';
+  document.getElementById('modalDownloadsSection').style.display = 'block';
+  document.getElementById('modalSetupHelper').innerHTML = '';
+  const pts = parseInt((document.getElementById('headerTokenCount')||{}).textContent || '0', 10) || 0;
+  const canUnlock = pts >= GAME_REUNLOCK_COST;
+  document.getElementById('modalDownloadsList').innerHTML = `
+    <div class="game-locked-box">
+      <div class="lock-ic">🔒</div>
+      <div style="font-weight:800;font-size:14px;margin-bottom:6px;">Umeshapakua "${escapeHtml(g.name)}" hapo awali</div>
+      <div style="color:var(--sub);font-size:12px;margin-bottom:16px;line-height:1.5;">Ili kuidownload tena, fungua kwa Token ${GAME_REUNLOCK_COST}, au pata token zaidi kwa kutazama matangazo machache.</div>
+      <button type="button" class="btn btn-primary" style="width:100%;margin-bottom:10px;" ${canUnlock?'':'disabled'} onclick="unlockGameWithTokens('${escapeHtml(g.id)}')">
+        🔓 Fungua kwa Token ${GAME_REUNLOCK_COST} (una ${pts})
+      </button>
+      <button type="button" class="btn btn-ghost" style="width:100%;" onclick="closeModal();showEarnTokens();">
+        🎬 Pata Token kwa Tangazo
+      </button>
+    </div>`;
+  document.getElementById('modalThanks').style.display = 'none';
+  const ad = document.getElementById('sponsoredAdBox'); if(ad) ad.style.display = 'none';
+}
+
+async function unlockGameWithTokens(gameId){
+  if(!auth.currentUser) return;
+  const g = games.find(x=>x.id === gameId);
+  if(!g) return;
+  const uid = auth.currentUser.uid;
+  const userRef = db.collection('users').doc(uid);
+  try{
+    await db.runTransaction(async (tx)=>{
+      const doc = await tx.get(userRef);
+      const data = doc.exists ? doc.data() : {};
+      const pts = data.points || 0;
+      if(pts < GAME_REUNLOCK_COST) throw new Error('not-enough-points');
+      tx.update(userRef, {points: pts - GAME_REUNLOCK_COST, ['downloadedGames.' + gameId]: false});
+    });
+    delete myDownloadedGames[gameId];
+    const newPts = Math.max(0, (parseInt(document.getElementById('pointsCount').textContent,10)||0) - GAME_REUNLOCK_COST);
+    document.getElementById('pointsCount').textContent = newPts;
+    const hc = document.getElementById('headerTokenCount'); if(hc) hc.textContent = newPts;
+    showModalDownloads(g); // fungua ukurasa wa kawaida wa download (tangazo litaonekana tena kama kawaida)
+  }catch(e){
+    if(e.message === 'not-enough-points'){ alert('Token zako hazitoshi. Tazama matangazo zaidi kupata token.'); }
+    else { console.error(e); alert('Imeshindwa. Jaribu tena.'); }
+  }
+}
+
+// ============================================================
+// "PATA TOKEN" — tazama matangazo 3, pata token bure. Mfumo huu
+// unahamasisha kutazama matangazo mengi: dots za maendeleo, bonasi
+// ya bahati (mara chache), bonus ya "streak" ya siku mfululizo, na
+// kikomo cha mizunguko kwa siku (ili kiwe na thamani, si "bila mwisho").
+// ============================================================
+const AD_EARN_PER_ROUND = 15;
+const AD_EARN_LUCKY_BONUS = 15;   // token za ziada ukiwa na bahati
+const AD_EARN_LUCKY_CHANCE = 0.15;
+const AD_EARN_DAILY_CAP = 5;      // mizunguko (ya tangazo 3) kwa siku
+const AD_EARN_STREAK_BONUS = 20;  // baada ya siku 3 mfululizo
+
+let earnRoundCount = 0;
+let earnBusy = false;
+
+function showEarnTokens(){
+  if(!auth.currentUser){ closeEarnTokens(); showProfile(); return; }
+  earnRoundCount = 0;
+  earnBusy = false;
+  document.getElementById('earnRewardBox').style.display = 'none';
+  for(let i=0;i<3;i++){
+    const d = document.getElementById('earnDot'+i);
+    d.className = 'earn-dot';
+  }
+  const btn = document.getElementById('earnWatchBtn');
+  btn.disabled = false;
+  btn.innerHTML = '▶️ <span>' + (currentLang==='en'?'Watch Ad':'Tazama Tangazo') + '</span> (0/3)';
+  renderEarnRoundsLeft();
+  renderEarnStreak();
+  document.getElementById('earnTokensOverlay').classList.add('show');
+}
+function closeEarnTokens(){
+  document.getElementById('earnTokensOverlay').classList.remove('show');
+}
+function earnTodayKey(){ return new Date().toDateString(); }
+
+function renderEarnRoundsLeft(){
+  const el = document.getElementById('earnRoundsLeft');
+  db.collection('users').doc(auth.currentUser.uid).get().then(doc=>{
+    const data = doc.exists ? doc.data() : {};
+    const used = (data.adEarnDate === earnTodayKey()) ? (data.adEarnRoundsToday || 0) : 0;
+    const left = Math.max(0, AD_EARN_DAILY_CAP - used);
+    el.textContent = currentLang === 'en'
+      ? `Rounds left today: ${left}/${AD_EARN_DAILY_CAP}`
+      : `Mizunguko iliyobaki leo: ${left}/${AD_EARN_DAILY_CAP}`;
+    const btn = document.getElementById('earnWatchBtn');
+    if(left <= 0){ btn.disabled = true; btn.innerHTML = currentLang==='en' ? "Come back tomorrow for more" : 'Rudi kesho upate zaidi'; }
+  }).catch(e=>console.error(e));
+}
+function renderEarnStreak(){
+  db.collection('users').doc(auth.currentUser.uid).get().then(doc=>{
+    const data = doc.exists ? doc.data() : {};
+    const streak = data.adEarnStreak || 0;
+    const pct = Math.min(100, (streak % 3) / 3 * 100) || (streak>0 && streak%3===0 ? 100 : 0);
+    document.getElementById('earnStreakFill').style.width = pct + '%';
+    document.getElementById('earnStreakLabel').textContent = currentLang === 'en'
+      ? `🔥 Streak: ${streak} day(s) — every 3 days in a row = +${AD_EARN_STREAK_BONUS} bonus tokens`
+      : `🔥 Mfululizo: siku ${streak} — kila siku 3 mfululizo = token ${AD_EARN_STREAK_BONUS} za ziada`;
+  }).catch(e=>console.error(e));
+}
+
+function watchAdForTokens(){
+  if(earnBusy || earnRoundCount >= 3) return;
+  earnBusy = true;
+  logAdImpression();
+  if(isAndroidUA()){ escapeToExternalBrowser(AD_GATE_DIRECT_LINK); }
+  else { try{ window.open(AD_GATE_DIRECT_LINK, '_blank', 'noopener'); }catch(e){} }
+
+  const dot = document.getElementById('earnDot'+earnRoundCount);
+  dot.className = 'earn-dot active';
+  setTimeout(()=>{
+    dot.className = 'earn-dot done';
+    dot.textContent = '✓';
+    earnRoundCount++;
+    earnBusy = false;
+    const btn = document.getElementById('earnWatchBtn');
+    if(earnRoundCount >= 3){
+      btn.disabled = true;
+      btn.innerHTML = '⏳ ' + (currentLang==='en' ? 'Finishing up...' : 'Inakamilisha...');
+      claimAdTokens();
+    } else {
+      btn.innerHTML = '▶️ <span>' + (currentLang==='en'?'Watch Ad':'Tazama Tangazo') + '</span> (' + earnRoundCount + '/3)';
+    }
+  }, 1500);
+}
+
+async function claimAdTokens(){
+  if(!auth.currentUser) return;
+  const uid = auth.currentUser.uid;
+  const userRef = db.collection('users').doc(uid);
+  const today = earnTodayKey();
+  let result = null;
+  try{
+    await db.runTransaction(async (tx)=>{
+      const doc = await tx.get(userRef);
+      const data = doc.exists ? doc.data() : {};
+      const usedToday = (data.adEarnDate === today) ? (data.adEarnRoundsToday || 0) : 0;
+      if(usedToday >= AD_EARN_DAILY_CAP) throw new Error('daily-cap');
+
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+      let streak = data.adEarnStreak || 0;
+      if(data.adEarnLastDay === today){ /* streak haibadiliki, siku hiyo hiyo */ }
+      else if(data.adEarnLastDay === yesterday){ streak += 1; }
+      else { streak = 1; }
+
+      const lucky = Math.random() < AD_EARN_LUCKY_CHANCE;
+      let reward = AD_EARN_PER_ROUND + (lucky ? AD_EARN_LUCKY_BONUS : 0);
+      const streakBonus = (streak > 0 && streak % 3 === 0 && data.adEarnLastDay !== today) ? AD_EARN_STREAK_BONUS : 0;
+      reward += streakBonus;
+
+      const newPoints = (data.points || 0) + reward;
+      tx.set(userRef, {
+        points: newPoints,
+        adEarnDate: today, adEarnRoundsToday: usedToday + 1,
+        adEarnLastDay: today, adEarnStreak: streak
+      }, {merge:true});
+      result = {reward, lucky, streak, streakBonus, newPoints};
+    });
+  }catch(e){
+    if(e.message === 'daily-cap'){
+      document.getElementById('earnRewardBox').style.display = 'block';
+      document.getElementById('earnRewardBox').innerHTML = `<div style="color:var(--sub);font-size:12.5px;">${currentLang==='en' ? "You've used today's rounds. Come back tomorrow!" : 'Umeshatumia mizunguko ya leo. Rudi kesho!'}</div>`;
+      return;
+    }
+    console.error(e);
+    alert('Imeshindwa. Jaribu tena.');
+    return;
+  }
+
+  document.getElementById('pointsCount').textContent = result.newPoints;
+  const hc = document.getElementById('headerTokenCount'); if(hc) hc.textContent = result.newPoints;
+
+  const box = document.getElementById('earnRewardBox');
+  box.style.display = 'block';
+  let html = `<div class="big">+${result.reward} 🪙</div>`;
+  if(result.lucky) html += `<div style="color:#f59e0b;font-weight:800;font-size:12.5px;">🎉 ${currentLang==='en'?'Lucky bonus!':'Bahati njema!'} +${AD_EARN_LUCKY_BONUS}</div>`;
+  if(result.streakBonus) html += `<div style="color:#22c55e;font-weight:800;font-size:12.5px;">🔥 ${currentLang==='en'?'Streak bonus!':'Bonasi ya mfululizo!'} +${result.streakBonus}</div>`;
+  box.innerHTML = html;
+
+  renderEarnRoundsLeft();
+  renderEarnStreak();
+  const btn = document.getElementById('earnWatchBtn');
+  setTimeout(()=>{
+    earnRoundCount = 0;
+    for(let i=0;i<3;i++){ const d = document.getElementById('earnDot'+i); d.className='earn-dot'; d.textContent = i+1; }
+    box.style.display = 'none';
+    btn.disabled = false;
+    btn.innerHTML = '▶️ <span>' + (currentLang==='en'?'Watch Ad':'Tazama Tangazo') + '</span> (0/3)';
+    renderEarnRoundsLeft();
+  }, 2600);
+}
+
 function showModalDownloads(g, restoreState){
+  if(!g.paid && !restoreState && myDownloadedGames[g.id]){
+    currentModalGame = g;
+    renderGameLockedScreen(g);
+    return;
+  }
   if(!g.paid && !restoreState){
     if(isAndroidUA()){
       logAdImpression();
@@ -2154,6 +2414,7 @@ function markDownloaded(i, gameId, gameName){
     downloadCounted = true;
     saveDownloadCounted(gameId);
     recordDownload(gameId, gameName);
+    if(currentModalGame && !currentModalGame.paid) persistGameFullyDownloaded(gameId);
   }
   if(downloadedSet.size >= totalDlItems && totalDlItems > 0){
     const thanks = document.getElementById('modalThanks');
@@ -2558,7 +2819,13 @@ const AI_KB = [
   {keys:['search','find a game','filter'], lang:'en', a:'Use the "Search games..." box above the game list to search by name directly. You can also filter using the "All / Free / Paid / Offline" tabs below the search bar.'},
 
   // --- Profile ---
-  {keys:['profile','wasifu','badilisha jina','edit profile'], a:'Nenda "Me" (kona ya chini kulia) kuona/kubadilisha taarifa zako za wasifu, kuona historia yako ya maoni, msimbo wako wa kualika marafiki, na Bet Tips.'}
+  {keys:['profile','wasifu','badilisha jina','edit profile'], a:'Nenda "Me" (kona ya chini kulia) kuona/kubadilisha taarifa zako za wasifu, kuona historia yako ya maoni, msimbo wako wa kualika marafiki, na Bet Tips.'},
+
+  // --- Pata Token (watch ads to earn) + game re-lock ---
+  {keys:['pata token','tazama tangazo pata token','earn token','jinsi ya kupata token'], a:'Bonyeza kitufe cha "🎬 Pata Token" kwenye Home kutazama matangazo 3 na kupata token bure (unaweza kufanya hadi mizunguko 5 kwa siku). Mara nyingine unapata bonasi ya bahati, na ukifanya siku 3 mfululizo unapata bonasi ya ziada ya "streak". Token hizo zinaweza kutumika kufungua tena games za bure ulizokwisha-zidownload, au kukusanya mpaka 500 upate game yoyote ya kulipia bure.'},
+  {keys:['earn tokens','watch ads earn','how to get tokens','free tokens'], lang:'en', a:'Tap the "🎬 Earn Tokens" button on Home to watch 3 ads and get free tokens (up to 5 rounds per day). Sometimes you get a lucky bonus, and playing 3 days in a row gives an extra streak bonus. Tokens can be used to unlock free games you already downloaded again, or saved up to 500 for any paid game for free.'},
+  {keys:['game imefungwa','umeshapakua','fungua tena game','locked game'], a:'Ukishamaliza kudownload vitu vyote vya game ya bure (mfano game file na emulator yake), game hiyo inafungwa kwa ajili yako — hii inatusaidia kuendelea kutoa huduma bure. Ukitaka kuidownload tena, fungua game hiyo utaona kitufe cha "Fungua kwa Token 30" (ukiwa na token za kutosha), au bonyeza "Pata Token kwa Tangazo" kupata zaidi.'},
+  {keys:['game is locked','already downloaded','unlock game again'], lang:'en', a:'Once you finish downloading everything for a free game (e.g. the game file and its emulator), that game locks for you — this is what keeps the service free. To download it again, open the game and tap "Unlock for 30 Tokens" (if you have enough), or tap "Earn Tokens via Ads" to get more.'}
 ];
 
 function initAI(){
@@ -2747,8 +3014,10 @@ const APP_CHANGELOG = [
   {id: 4, title: 'Kura kwenye Chat', body: 'Kura mpya sasa zinaonekana pia kwenye Chat kama ujumbe mpya — bonyeza ujumbe huo kwenda kupiga kura moja kwa moja.'},
   {id: 5, title: 'Lugha: Kiingereza / Kiswahili', body: 'Ukichagua Kiingereza kwenye Settings, sasa app nzima (fomu, ujumbe, orodha, na majibu ya Mumbigames AI) inabadilika papo hapo, na ukirudi Kiswahili inarudi kama ilivyokuwa. Mumbigames AI pia inajibu kwa Kiingereza.'},
   // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
-  {id: 6, title: 'Chat: Hariri na Futa Ujumbe', body: 'Sasa unaweza kushikilia (long-press) ujumbe wako wowote kwenye Chat ili "Kuhariri" au "Kufuta" — mtu mwingine hataona ujumbe uliofuta. Pia tumeondoa arifa ya kura iliyokuwa inatokea mara mbili.'},
-  // {id: 7, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 6, title: 'Chat: Hariri na Futa Ujumbe', body: 'Sasa unaweza kushikilia (long-press) ujumbe wako wowote kwenye Chat ili "Kuhariri" au "Kufuta" — mtu mwingine hataona ujumbe uliofuta. Pia tumeondoa arifa ya kura iliyokuwa inatokea mara mbili. Kura (Poll) imeondolewa kabisa kwenye app.'},
+  {id: 7, title: '🎬 Pata Token Mpya!', body: 'Bonyeza kitufe kipya cha "Pata Token" kwenye Home — tazama matangazo 3 upate token bure, hadi mizunguko 5 kwa siku, na bonasi za bahati/mfululizo! Kumbuka pia: games za bure ukishazidownload kikamilifu, zinafungwa kwa ajili yako — zitumie token zako kuzifungua tena wakati mwingine.'},
+  // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
+  // {id: 8, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -4505,7 +4774,8 @@ const TRANSLATIONS = {
     settings_share:'Shea na Marafiki', settings_share_sub:'Waambie wenzako kuhusu mumbigames',
     nav_home:'Home', nav_chat:'Chat', nav_me:'Me', nav_duka:'Duka', nav_ai:'AI',
     search_placeholder:'Tafuta games...',
-    qa_tiktok:'TikTok', qa_kura:'Kura', qa_youtube:'YouTube', qa_tourn:'Tournament',
+    qa_tiktok:'TikTok', qa_kura:'Kura', qa_youtube:'YouTube', qa_tourn:'Tournament', qa_earn:'Pata Token',
+    earn_sub:'Tazama matangazo 3 upate token bure — unaweza kufanya mara kadhaa kwa siku!', earn_watch_btn:'Tazama Tangazo', close:'Funga',
     tourn_title:'Tournaments', tourn_sub:'Unda ligi yako, alika marafiki',
     tourn_search:'Tafuta tournaments...', tourn_create_btn:'+ Unda Tournament Mpya',
     tourn_create_title:'Unda Tournament', tourn_f_name:'Jina la Tournament',
@@ -4593,7 +4863,8 @@ const TRANSLATIONS = {
     settings_share:'Share with Friends', settings_share_sub:'Tell your friends about mumbigames',
     nav_home:'Home', nav_chat:'Chat', nav_me:'Me', nav_duka:'Shop', nav_ai:'AI',
     search_placeholder:'Search games...',
-    qa_tiktok:'TikTok', qa_kura:'Poll', qa_youtube:'YouTube', qa_tourn:'Tournament',
+    qa_tiktok:'TikTok', qa_kura:'Poll', qa_youtube:'YouTube', qa_tourn:'Tournament', qa_earn:'Earn Tokens',
+    earn_sub:'Watch 3 ads to earn free tokens — you can do this several times a day!', earn_watch_btn:'Watch Ad', close:'Close',
     tourn_title:'Tournaments', tourn_sub:'Create your league, invite friends',
     tourn_search:'Search tournaments...', tourn_create_btn:'+ Create New Tournament',
     tourn_create_title:'Create Tournament', tourn_f_name:'Tournament Name',
@@ -4965,6 +5236,7 @@ try{
         if(data.username) document.getElementById('avatarInitial').textContent = data.username.charAt(0).toUpperCase();
         if(data.photoURL){ setAvatarPhoto(data.photoURL); myChatPhotoURL = data.photoURL; }
         else { myChatPhotoURL = ''; }
+        myDownloadedGames = data.downloadedGames || {};
         // Account tab (Overview) view + edit fields
         document.getElementById('acctCountryView').textContent = data.nationality || '—';
         document.getElementById('acctEmailView').textContent = user.email || '—';
@@ -5011,6 +5283,7 @@ try{
       const headerPill = document.getElementById('headerTokenPill');
       if(headerPill) headerPill.style.display = 'none';
       myChatPhotoURL = '';
+      myDownloadedGames = {};
     }
   });
 }catch(e){ console.error('Auth listener failed', e); }
