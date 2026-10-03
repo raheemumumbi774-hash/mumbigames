@@ -580,6 +580,19 @@
       <input type="text" id="chatMsgInput" placeholder="Andika ujumbe..." maxlength="300" onkeydown="if(event.key==='Enter')sendMsg()">
       <input type="file" id="chatImgInput" accept="image/*" style="display:none;" onchange="sendChatImage(this)">
       <button class="img-btn" id="chatImgBtn" onclick="document.getElementById('chatImgInput').click()">📷</button>
+
+      <div class="overlay" id="chatImgPreviewOverlay" style="align-items:center;">
+        <div class="modal" style="max-width:420px;padding:0;overflow:hidden;">
+          <img id="chatImgPreviewImg" style="display:block;width:100%;max-height:60vh;object-fit:contain;background:#000;">
+          <div style="padding:12px;">
+            <input type="text" id="chatImgCaptionInput" placeholder="Ongeza maelezo (hiari)..." maxlength="300" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--text);font-size:13px;margin-bottom:10px;">
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost" style="flex:1;" onclick="cancelChatImagePreview()">Ghairi</button>
+              <button class="btn btn-primary" style="flex:1;" id="chatImgSendBtn" onclick="confirmSendChatImage()">➤ Tuma</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <button class="mic-btn" id="chatMicBtn" onclick="toggleVoiceRecording()">🎤</button>
       <button class="send-btn" onclick="sendMsg()">➤</button>
     </div>
@@ -1354,6 +1367,20 @@ function checkNewBetTipNotification(){
 
 function escapeHtml(s){
   return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// Inabadilisha link (http/https/www) ndani ya maandishi ya chat
+// (yaliyoshaepukwa HTML tayari) kuwa <a> inayobofyeka, inayofungua
+// tab mpya. Kwa kuwa maandishi tayari yameshapitia escapeHtml, ni
+// salama kuongeza HTML hapa.
+function linkifyChat(escapedText){
+  return escapedText.replace(/((?:https?:\/\/|www\.)[^\s<]+)/gi, (match)=>{
+    let url = match, trail = '';
+    const t = url.match(/[),.!?;:'"]+$/);
+    if(t){ trail = t[0]; url = url.slice(0, -trail.length); }
+    const href = /^https?:\/\//i.test(url) ? url : 'https://' + url;
+    return `<a href="${href}" target="_blank" rel="noopener" style="color:var(--lime);text-decoration:underline;word-break:break-all;">${url}</a>${trail}`;
+  });
 }
 
 function render(){
@@ -4479,8 +4506,8 @@ function renderMessages(msgs){
       : m.type === 'voice'
       ? `<div class="voice-player"><audio controls preload="none" src="${escapeHtml(m.audioUrl)}"></audio></div>`
       : m.type === 'image'
-      ? `<img class="chat-img" src="${escapeHtml(m.imageUrl)}" alt="picha" loading="lazy" data-full="${escapeHtml(m.imageUrl)}">` + (m.text ? `<div class="txt">${escapeHtml(m.text)}${editedTag}</div>` : '')
-      : `<div class="txt">${escapeHtml(m.text)}${editedTag}</div>`;
+      ? `<img class="chat-img" src="${escapeHtml(m.imageUrl)}" alt="picha" loading="lazy" data-full="${escapeHtml(m.imageUrl)}">` + (m.text ? `<div class="txt">${linkifyChat(escapeHtml(m.text))}${editedTag}</div>` : '')
+      : `<div class="txt">${linkifyChat(escapeHtml(m.text))}${editedTag}</div>`;
     const initial = (m.name||'?').trim().charAt(0).toUpperCase() || '?';
     const avatar = m.photoURL
       ? `<div class="msg-avatar" data-avatar-full="${escapeHtml(m.photoURL)}" style="background-image:url('${escapeHtml(m.photoURL)}')"></div>`
@@ -4558,6 +4585,7 @@ function closeChatMsgMenu(){
 }
 
 document.getElementById('chatMessages').addEventListener('click', (e)=>{
+  if(e.target.closest('a')) return; // acha link ifungue yenyewe, isianzishe "reply"
   const img = e.target.closest('.chat-img');
   if(img){ window.open(img.dataset.full, '_blank', 'noopener'); return; }
   const av = e.target.closest('.msg-avatar');
@@ -4682,27 +4710,58 @@ function compressChatImage(file){
     reader.readAsDataURL(file);
   });
 }
+// ---- Picha + maelezo (kama WhatsApp status): mtu akichagua picha,
+// kwanza anaona preview kubwa na sehemu ya kuandika maelezo chini yake,
+// kisha anabofya "Tuma". Compression inafanyika mara moja (haraka),
+// upload halisi unasubiri mpaka abofye Tuma. ----
+let pendingChatImageBlob = null;
+let pendingChatImagePreviewUrl = null;
+
 async function sendChatImage(inputEl){
   const file = inputEl.files && inputEl.files[0];
   inputEl.value = '';
   if(!file || !chatName) return;
   if(!/^image\//.test(file.type)){ alert('Chagua picha tu.'); return; }
-  const btn = document.getElementById('chatImgBtn');
-  btn.textContent = '⏳';
-  btn.disabled = true;
   try{
-    const blob = await compressChatImage(file);
-    const imageUrl = await uploadToImgbb(blob);
+    pendingChatImageBlob = await compressChatImage(file);
+    if(pendingChatImagePreviewUrl) URL.revokeObjectURL(pendingChatImagePreviewUrl);
+    pendingChatImagePreviewUrl = URL.createObjectURL(pendingChatImageBlob);
+    document.getElementById('chatImgPreviewImg').src = pendingChatImagePreviewUrl;
+    document.getElementById('chatImgCaptionInput').value = '';
+    document.getElementById('chatImgPreviewOverlay').classList.add('show');
+    setTimeout(()=>document.getElementById('chatImgCaptionInput').focus(), 150);
+  }catch(e){
+    console.error(e);
+    alert('Imeshindwa kusoma picha. Jaribu tena.');
+  }
+}
+
+function cancelChatImagePreview(){
+  document.getElementById('chatImgPreviewOverlay').classList.remove('show');
+  if(pendingChatImagePreviewUrl){ URL.revokeObjectURL(pendingChatImagePreviewUrl); pendingChatImagePreviewUrl = null; }
+  pendingChatImageBlob = null;
+}
+
+async function confirmSendChatImage(){
+  if(!pendingChatImageBlob) return;
+  const caption = document.getElementById('chatImgCaptionInput').value.trim();
+  const btn = document.getElementById('chatImgSendBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Inatuma...';
+  try{
+    const imageUrl = await uploadToImgbb(pendingChatImageBlob);
     const msg = {name: chatName, type: 'image', imageUrl, time: Date.now()};
+    if(caption) msg.text = caption;
     if(myChatPhotoURL) msg.photoURL = myChatPhotoURL;
     if(chatReplyTo){ msg.replyToName = chatReplyTo.name; msg.replyToText = chatReplyTo.text; cancelChatReply(); }
     await db.collection('chat_messages').add(msg);
+    cancelChatImagePreview();
   }catch(e){
     console.error(e);
     alert('Imeshindwa kutuma picha. Angalia mtandao wako na ujaribu tena.');
   }finally{
-    btn.textContent = '📷';
     btn.disabled = false;
+    btn.textContent = '➤ Tuma';
   }
 }
 
