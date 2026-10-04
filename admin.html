@@ -330,6 +330,10 @@
       <div class="price-box" id="priceBox">
         <label>Bei (TZS)</label>
         <input type="number" id="gPrice" placeholder="mfano: 1000">
+        <div class="switch-row" style="margin-top:12px;">
+          <span>Usiruhusu kufungua kwa Token (lazima alipe pesa tu)</span>
+          <div class="switch" id="tokenLockedSwitch" onclick="toggleTokenLocked()"><div class="knob"></div></div>
+        </div>
       </div>
 
       <div class="switch-row">
@@ -577,6 +581,11 @@
 let games = [];
 let editingId = null;
 let paidOn = false;
+let tokenLockedOn = false;
+function toggleTokenLocked(){
+  tokenLockedOn = !tokenLockedOn;
+  document.getElementById('tokenLockedSwitch').classList.toggle('on', tokenLockedOn);
+}
 let trendOn = false;
 let setupOn = false;
 
@@ -753,7 +762,8 @@ function resetForm(){
   document.getElementById('gSetupSteps').value='';
   document.getElementById('downloadRows').innerHTML='';
   addDownloadRow();
-  paidOn=false; trendOn=false; setupOn=false;
+  paidOn=false; trendOn=false; setupOn=false; tokenLockedOn=false;
+  document.getElementById('tokenLockedSwitch').classList.remove('on');
   document.getElementById('paidSwitch').classList.remove('on');
   document.getElementById('priceBox').classList.remove('show');
   document.getElementById('trendSwitch').classList.remove('on');
@@ -1077,6 +1087,7 @@ async function saveGame(){
     downloads: collectDownloads(),
     paid: paidOn,
     price: paidOn ? (document.getElementById('gPrice').value || '0') : '0',
+    tokenLocked: paidOn ? tokenLockedOn : false,
     trending: trendOn,
     performance: document.getElementById('gPerformance').value,
     needsSetup: setupOn,
@@ -1129,6 +1140,8 @@ function editGame(id){
   document.getElementById('setupSwitch').classList.toggle('on', setupOn);
   document.getElementById('setupBox').classList.toggle('show', setupOn);
   paidOn = !!g.paid;
+  tokenLockedOn = !!g.tokenLocked;
+  document.getElementById('tokenLockedSwitch').classList.toggle('on', tokenLockedOn);
   trendOn = !!g.trending;
   document.getElementById('paidSwitch').classList.toggle('on', paidOn);
   document.getElementById('priceBox').classList.toggle('show', paidOn);

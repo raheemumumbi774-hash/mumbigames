@@ -1628,6 +1628,7 @@ function renderPaySection(g, req, restoreState){
   const wasRejected = req && req.status === 'rejected';
   el.innerHTML = `
     ${wasRejected ? `<div class="pay-status rejected">⚠️ Admin hakuweza kuthibitisha malipo yaliyotangulia (huenda picha hazikuonekana wazi au kiasi hakikulingana). Tuma tena picha sahihi za muamala hapa chini.</div>` : ''}
+    <div id="tokenUnlockBox"></div>
     <p>Hii ni game ya kulipia. Tuma malipo kwa maelezo hapa chini, kisha PAKIA PICHA MBILI za uthibitisho wa muamala (screenshot ya ujumbe wa Tigo Pesa) na bonyeza "Nimelipa" — admin ataangalia picha na kuthibitisha, download itafunguka.</p>
     <div class="pay-card">
       <div class="pay-line"><span>Mtandao</span><b>Tigo Pesa</b></div>
@@ -1651,6 +1652,37 @@ function renderPaySection(g, req, restoreState){
       <button class="btn btn-ghost" onclick="closeModal()">Funga</button>
       <button class="btn btn-primary" onclick="submitPaymentClaim()">Nimelipa ✓</button>
     </div>`;
+  renderTokenUnlockBox(g);
+}
+
+// ---- Njia mbadala ya kulipa: badala ya pesa, tumia Token 500
+// (zinazopatikana kwa kutazama matangazo — bonyeza "Pata Token kwa
+// Tangazo") kufungua game hii bure. Haionekani kabisa kwa games
+// zilizowekwa "tokenLocked" na admin (mfano ETS2 Mobile — lazima
+// zilipiwe kwa pesa tu). Fursa hii ni MARA MOJA tu kwa kila akaunti.
+async function renderTokenUnlockBox(g){
+  const box = document.getElementById('tokenUnlockBox');
+  if(!box || g.tokenLocked || !auth.currentUser) return;
+  try{
+    const doc = await db.collection('users').doc(auth.currentUser.uid).get();
+    if(!doc.exists) return;
+    if(currentModalGame !== g) return; // mtumiaji ameshabadili game
+    const data = doc.data();
+    if(data.freeGameRedeemed) return; // ameshatumia fursa hii huko nyuma
+    const pts = data.points || 0;
+    const canRedeem = pts >= POINTS_REQUIRED;
+    box.innerHTML = `
+      <div class="pay-card" style="border-color:#f59e0b;background:rgba(245,158,11,0.08);margin-bottom:12px;">
+        <div style="font-weight:800;font-size:13px;margin-bottom:6px;">🪙 Au fungua BURE kwa Token — hauitaji pesa!</div>
+        <div style="color:var(--sub);font-size:11.5px;margin-bottom:10px;line-height:1.5;">Ukifikisha Token ${POINTS_REQUIRED}, unaweza kufungua game hii bila kulipa chochote (mara moja tu kwa kila akaunti). Una Token ${pts} sasa hivi.</div>
+        <button type="button" class="btn btn-primary" style="width:100%;margin-bottom:8px;" ${canRedeem?'':'disabled'} onclick='redeemPointsForGame(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
+          🔓 Fungua kwa Token ${POINTS_REQUIRED} (una ${pts})
+        </button>
+        <button type="button" class="btn btn-ghost" style="width:100%;" onclick="closeModal();showEarnTokens();">
+          🎬 Pata Token kwa Tangazo
+        </button>
+      </div>`;
+  }catch(e){ console.error('renderTokenUnlockBox failed', e); }
 }
 
 // ---- Timed AI escalation while a payment is pending ----
@@ -1960,74 +1992,6 @@ function setPendingDownloadInUrl(i){
 }
 
 // ============================================================
-// RE-LOCK YA GAMES ZA BURE ZILIZOKWISHA-DOWNLOADIWA KABISA
-// Mara tu mtumiaji akimaliza kudownload VITU VYOTE vya game ya bure
-// (game file + emulator yake n.k), game hiyo inafungwa kwa ajili yake
-// (per-account, inabaki hata akitoka app na kurudi siku nyingine).
-// Akitaka kuidownload tena, anatumia TOKEN alizopata kwa kutazama
-// matangazo (ona mfumo wa "Pata Token" chini) kufungua tena.
-// ============================================================
-const GAME_REUNLOCK_COST = 30;
-let myDownloadedGames = {}; // cache ya {gameId: true} ya mtumiaji aliyeingia
-
-function persistGameFullyDownloaded(gameId){
-  myDownloadedGames[gameId] = true;
-  if(!auth.currentUser) return;
-  try{
-    db.collection('users').doc(auth.currentUser.uid).set(
-      {downloadedGames: {[gameId]: true}}, {merge:true}
-    ).catch(e=>console.error('persistGameFullyDownloaded failed', e));
-  }catch(e){ console.error(e); }
-}
-
-function renderGameLockedScreen(g){
-  document.getElementById('modalPaySection').style.display = 'none';
-  document.getElementById('modalDownloadsSection').style.display = 'block';
-  document.getElementById('modalSetupHelper').innerHTML = '';
-  const pts = parseInt((document.getElementById('headerTokenCount')||{}).textContent || '0', 10) || 0;
-  const canUnlock = pts >= GAME_REUNLOCK_COST;
-  document.getElementById('modalDownloadsList').innerHTML = `
-    <div class="game-locked-box">
-      <div class="lock-ic">🔒</div>
-      <div style="font-weight:800;font-size:14px;margin-bottom:6px;">Umeshapakua "${escapeHtml(g.name)}" hapo awali</div>
-      <div style="color:var(--sub);font-size:12px;margin-bottom:16px;line-height:1.5;">Ili kuidownload tena, fungua kwa Token ${GAME_REUNLOCK_COST}, au pata token zaidi kwa kutazama matangazo machache.</div>
-      <button type="button" class="btn btn-primary" style="width:100%;margin-bottom:10px;" ${canUnlock?'':'disabled'} onclick="unlockGameWithTokens('${escapeHtml(g.id)}')">
-        🔓 Fungua kwa Token ${GAME_REUNLOCK_COST} (una ${pts})
-      </button>
-      <button type="button" class="btn btn-ghost" style="width:100%;" onclick="closeModal();showEarnTokens();">
-        🎬 Pata Token kwa Tangazo
-      </button>
-    </div>`;
-  document.getElementById('modalThanks').style.display = 'none';
-  const ad = document.getElementById('sponsoredAdBox'); if(ad) ad.style.display = 'none';
-}
-
-async function unlockGameWithTokens(gameId){
-  if(!auth.currentUser) return;
-  const g = games.find(x=>x.id === gameId);
-  if(!g) return;
-  const uid = auth.currentUser.uid;
-  const userRef = db.collection('users').doc(uid);
-  try{
-    await db.runTransaction(async (tx)=>{
-      const doc = await tx.get(userRef);
-      const data = doc.exists ? doc.data() : {};
-      const pts = data.points || 0;
-      if(pts < GAME_REUNLOCK_COST) throw new Error('not-enough-points');
-      tx.update(userRef, {points: pts - GAME_REUNLOCK_COST, ['downloadedGames.' + gameId]: false});
-    });
-    delete myDownloadedGames[gameId];
-    const newPts = Math.max(0, (parseInt(document.getElementById('pointsCount').textContent,10)||0) - GAME_REUNLOCK_COST);
-    document.getElementById('pointsCount').textContent = newPts;
-    const hc = document.getElementById('headerTokenCount'); if(hc) hc.textContent = newPts;
-    showModalDownloads(g); // fungua ukurasa wa kawaida wa download (tangazo litaonekana tena kama kawaida)
-  }catch(e){
-    if(e.message === 'not-enough-points'){ alert('Token zako hazitoshi. Tazama matangazo zaidi kupata token.'); }
-    else { console.error(e); alert('Imeshindwa. Jaribu tena.'); }
-  }
-}
-
-// ============================================================
 // "PATA TOKEN" — tazama matangazo 3, pata token bure. Mfumo huu
 // unahamasisha kutazama matangazo mengi: dots za maendeleo, bonasi
 // ya bahati (mara chache), bonus ya "streak" ya siku mfululizo, na
@@ -2180,11 +2144,6 @@ async function claimAdTokens(){
 }
 
 function showModalDownloads(g, restoreState){
-  if(!g.paid && !restoreState && myDownloadedGames[g.id]){
-    currentModalGame = g;
-    renderGameLockedScreen(g);
-    return;
-  }
   if(!g.paid && !restoreState){
     if(isAndroidUA()){
       logAdImpression();
@@ -2441,7 +2400,6 @@ function markDownloaded(i, gameId, gameName){
     downloadCounted = true;
     saveDownloadCounted(gameId);
     recordDownload(gameId, gameName);
-    if(currentModalGame && !currentModalGame.paid) persistGameFullyDownloaded(gameId);
   }
   if(downloadedSet.size >= totalDlItems && totalDlItems > 0){
     const thanks = document.getElementById('modalThanks');
@@ -2851,8 +2809,8 @@ const AI_KB = [
   // --- Pata Token (watch ads to earn) + game re-lock ---
   {keys:['pata token','tazama tangazo pata token','earn token','jinsi ya kupata token'], a:'Bonyeza kitufe cha "🎬 Pata Token" kwenye Home kutazama matangazo 3 na kupata token bure (unaweza kufanya hadi mizunguko 5 kwa siku). Mara nyingine unapata bonasi ya bahati, na ukifanya siku 3 mfululizo unapata bonasi ya ziada ya "streak". Token hizo zinaweza kutumika kufungua tena games za bure ulizokwisha-zidownload, au kukusanya mpaka 500 upate game yoyote ya kulipia bure.'},
   {keys:['earn tokens','watch ads earn','how to get tokens','free tokens'], lang:'en', a:'Tap the "🎬 Earn Tokens" button on Home to watch 3 ads and get free tokens (up to 5 rounds per day). Sometimes you get a lucky bonus, and playing 3 days in a row gives an extra streak bonus. Tokens can be used to unlock free games you already downloaded again, or saved up to 500 for any paid game for free.'},
-  {keys:['game imefungwa','umeshapakua','fungua tena game','locked game'], a:'Ukishamaliza kudownload vitu vyote vya game ya bure (mfano game file na emulator yake), game hiyo inafungwa kwa ajili yako — hii inatusaidia kuendelea kutoa huduma bure. Ukitaka kuidownload tena, fungua game hiyo utaona kitufe cha "Fungua kwa Token 30" (ukiwa na token za kutosha), au bonyeza "Pata Token kwa Tangazo" kupata zaidi.'},
-  {keys:['game is locked','already downloaded','unlock game again'], lang:'en', a:'Once you finish downloading everything for a free game (e.g. the game file and its emulator), that game locks for you — this is what keeps the service free. To download it again, open the game and tap "Unlock for 30 Tokens" (if you have enough), or tap "Earn Tokens via Ads" to get more.'}
+  {keys:['game imefungwa','fungua kwa token','token 500','kulipia bure'], a:'Games za BURE hazina kizuizi chochote — zidownload wakati wowote bila mpangilio wa token. Kwa games za KULIPIA, badala ya kutuma pesa, unaweza kuzifungua bure ukiwa na Token 500 — fungua game ya kulipia, utaona chaguo la "Fungua kwa Token 500" ndani ya ukurasa wa malipo (fursa hii ni mara moja tu kwa kila akaunti, na baadhi ya games maalum kama ETS2 Mobile haziruhusu njia hii — lazima zilipiwe kwa pesa). Pata token kwa kubonyeza "Pata Token" kwenye Home na kutazama matangazo.'},
+  {keys:['unlock with tokens','token 500','pay with tokens'], lang:'en', a:'Free games have no restrictions at all — download them anytime. For PAID games, instead of sending money, you can unlock most of them for free with 500 Tokens — open the paid game and you\'ll see an "Unlock for 500 Tokens" option on the payment screen (this is a once-per-account perk, and a few specific games like ETS2 Mobile don\'t allow this — they must be paid for in cash). Earn tokens by tapping "Earn Tokens" on Home and watching ads.'}
 ];
 
 function initAI(){
@@ -3042,9 +3000,11 @@ const APP_CHANGELOG = [
   {id: 5, title: 'Lugha: Kiingereza / Kiswahili', body: 'Ukichagua Kiingereza kwenye Settings, sasa app nzima (fomu, ujumbe, orodha, na majibu ya Mumbigames AI) inabadilika papo hapo, na ukirudi Kiswahili inarudi kama ilivyokuwa. Mumbigames AI pia inajibu kwa Kiingereza.'},
   // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
   {id: 6, title: 'Chat: Hariri na Futa Ujumbe', body: 'Sasa unaweza kushikilia (long-press) ujumbe wako wowote kwenye Chat ili "Kuhariri" au "Kufuta" — mtu mwingine hataona ujumbe uliofuta. Pia tumeondoa arifa ya kura iliyokuwa inatokea mara mbili. Kura (Poll) imeondolewa kabisa kwenye app.'},
-  {id: 7, title: '🎬 Pata Token Mpya!', body: 'Bonyeza kitufe kipya cha "Pata Token" kwenye Home — tazama matangazo 3 upate token bure, hadi mizunguko 5 kwa siku, na bonasi za bahati/mfululizo! Kumbuka pia: games za bure ukishazidownload kikamilifu, zinafungwa kwa ajili yako — zitumie token zako kuzifungua tena wakati mwingine.'},
+  {id: 7, title: '🎬 Pata Token Mpya!', body: 'Bonyeza kitufe kipya cha "Pata Token" kwenye Home — tazama matangazo 3 upate token bure, hadi mizunguko 5 kwa siku, na bonasi za bahati/mfululizo!'},
+  {id: 8, title: 'Token kwa Games za Kulipia', body: 'Sasa unaweza kufungua games NYINGI za kulipia BURE kwa Token 500 (badala ya kulipa pesa) — tafuta chaguo hilo ndani ya ukurasa wa malipo wa game husika. Games za bure hazina kizuizi chochote — zidownload bila mpangilio wowote wa token.'},
+  {id: 9, title: '🚀 Update v1.1 Inakuja Hivi Karibuni!', body: 'Tunaandaa maboresho mapya kwa mumbigames — subiri hapa kuona yatakayobadilika!'},
   // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
-  // {id: 8, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  // {id: 10, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -5295,7 +5255,6 @@ try{
         if(data.username) document.getElementById('avatarInitial').textContent = data.username.charAt(0).toUpperCase();
         if(data.photoURL){ setAvatarPhoto(data.photoURL); myChatPhotoURL = data.photoURL; }
         else { myChatPhotoURL = ''; }
-        myDownloadedGames = data.downloadedGames || {};
         // Account tab (Overview) view + edit fields
         document.getElementById('acctCountryView').textContent = data.nationality || '—';
         document.getElementById('acctEmailView').textContent = user.email || '—';
@@ -5342,7 +5301,6 @@ try{
       const headerPill = document.getElementById('headerTokenPill');
       if(headerPill) headerPill.style.display = 'none';
       myChatPhotoURL = '';
-      myDownloadedGames = {};
     }
   });
 }catch(e){ console.error('Auth listener failed', e); }
