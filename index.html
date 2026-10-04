@@ -1672,15 +1672,16 @@ async function renderTokenUnlockBox(g){
     const pts = data.points || 0;
     const canRedeem = pts >= POINTS_REQUIRED;
     box.innerHTML = `
-      <div class="pay-card" style="border-color:#f59e0b;background:rgba(245,158,11,0.08);margin-bottom:12px;">
-        <div style="font-weight:800;font-size:13px;margin-bottom:6px;">🪙 Au fungua BURE kwa Token — hauitaji pesa!</div>
-        <div style="color:var(--sub);font-size:11.5px;margin-bottom:10px;line-height:1.5;">Ukifikisha Token ${POINTS_REQUIRED}, unaweza kufungua game hii bila kulipa chochote (mara moja tu kwa kila akaunti). Una Token ${pts} sasa hivi.</div>
-        <button type="button" class="btn btn-primary" style="width:100%;margin-bottom:8px;" ${canRedeem?'':'disabled'} onclick='redeemPointsForGame(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
-          🔓 Fungua kwa Token ${POINTS_REQUIRED} (una ${pts})
-        </button>
-        <button type="button" class="btn btn-ghost" style="width:100%;" onclick="closeModal();showEarnTokens();">
-          🎬 Pata Token kwa Tangazo
-        </button>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-left:3px solid #f59e0b;border-radius:10px;padding:10px 12px;margin-bottom:12px;">
+        <div style="font-size:20px;line-height:1;">🪙</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:700;">Au tumia Token badala ya pesa</div>
+          <div style="color:var(--sub);font-size:10.5px;">Una ${pts}/${POINTS_REQUIRED} — mara moja kwa kila akaunti</div>
+        </div>
+        ${canRedeem
+          ? `<button type="button" class="btn btn-ghost" style="flex:none;font-size:11px;padding:8px 10px;" onclick='redeemPointsForGame(${JSON.stringify(g).replace(/'/g,"&#39;")})'>Fungua</button>`
+          : `<button type="button" class="btn btn-ghost" style="flex:none;font-size:11px;padding:8px 10px;" onclick="closeModal();showEarnTokens();">Pata Token</button>`
+        }
       </div>`;
   }catch(e){ console.error('renderTokenUnlockBox failed', e); }
 }
