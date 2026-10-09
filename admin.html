@@ -502,6 +502,10 @@
         <div><div class="name">TikTok</div><div class="url">tiktok.com/@iam_mumbi7</div></div>
       </div>
       <p style="color:var(--sub);font-size:12px;margin-top:10px;">Hizi ndizo link zitakazowekwa kwenye nembo za bottom nav ya website/app kuu.</p>
+      <div class="section-title" style="margin-top:26px;"><h2>Chat ya Jamii</h2></div>
+      <p style="color:var(--sub);font-size:12px;">Futa ujumbe wote wa chat ya jamii ili chat ianze upya. Hatua hii HAIRUDISHWI.</p>
+      <button class="btn btn-ghost" id="wipeChatBtn" style="color:#ff5a4d;border-color:#ff5a4d;" onclick="wipeAllChat()">🗑️ Futa Chat Zote</button>
+      <div id="wipeChatMsg" style="font-size:12px;color:var(--sub);margin-top:8px;"></div>
     </div>
 
     <div class="view" id="view-ads">
@@ -1753,6 +1757,29 @@ async function saveSponsoredAd(){
 
 // initialize form with one empty download row
 addDownloadRow();
+
+async function wipeAllChat(){
+  if(!confirm('Una uhakika unataka kufuta ujumbe WOTE wa chat ya jamii? Haurudishwi.')) return;
+  const word = prompt('Andika FUTA (herufi kubwa) kuthibitisha:');
+  if(word !== 'FUTA'){ alert('Imesitishwa. Hakuna kilichofutwa.'); return; }
+  const btn = document.getElementById('wipeChatBtn'), msg = document.getElementById('wipeChatMsg');
+  btn.disabled = true; let total = 0;
+  try{
+    while(true){
+      const snap = await db.collection('chat_messages').limit(400).get();
+      if(snap.empty) break;
+      const batch = db.batch();
+      snap.docs.forEach(d=>batch.delete(d.ref));
+      await batch.commit();
+      total += snap.size;
+      msg.textContent = 'Imefutwa: ' + total + ' ...';
+    }
+    msg.textContent = '✅ Imekamilika. Ujumbe ' + total + ' umefutwa. Chat imeanza upya.';
+  }catch(e){
+    console.error(e);
+    msg.textContent = '❌ Imeshindwa: ' + (e.code || e.message || e) + ' (Firestore rules lazima ziruhusu delete kwenye chat_messages). Zilizofutwa: ' + total;
+  }finally{ btn.disabled = false; }
+}
 </script>
 </body>
 </html>
