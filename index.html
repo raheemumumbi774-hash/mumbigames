@@ -222,6 +222,9 @@
   .ch-sub{font-size:10.5px;color:var(--sub);}
   .ch-follow-btn{flex:none;background:var(--lime);color:#06240a;border:none;border-radius:20px;padding:8px 16px;font-weight:800;font-size:11.5px;cursor:pointer;}
   .ch-follow-btn.following{background:var(--panel-2);color:var(--text);border:1px solid var(--line);}
+  .ch-wa-btn{flex:none;width:34px;height:34px;border-radius:50%;background:#25D366;color:#06240a;display:flex;align-items:center;justify-content:center;font-size:16px;text-decoration:none;}
+  .ch-lock{text-align:center;padding:50px 20px;color:var(--sub);font-size:13px;line-height:1.6;}
+  .ch-lock .big{font-size:46px;margin-bottom:8px;}
   .ch-wa-row{display:block;text-align:center;padding:9px;font-size:11.5px;font-weight:700;color:#06240a;background:#25D366;text-decoration:none;}
   .ch-posts{flex:1;overflow-y:auto;padding:14px 14px 90px;display:flex;flex-direction:column;gap:16px;}
   .ch-post{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
@@ -234,7 +237,7 @@
   .ch-reactions{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 12px;align-items:center;}
   .ch-react-pill{display:flex;align-items:center;gap:4px;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:4px 9px;font-size:12px;cursor:pointer;}
   .ch-react-pill.mine{border-color:var(--lime);background:rgba(166,255,0,0.12);}
-  .ch-react-add{background:var(--panel-2);border:1px solid var(--line);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;}
+  .ch-react-add{background:var(--panel-2);border:1px solid var(--line);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;}
   .ch-palette{display:none;flex-wrap:wrap;gap:6px;padding:10px 12px;border-top:1px dashed var(--line);}
   .ch-palette.show{display:flex;}
   .ch-palette span{font-size:19px;cursor:pointer;padding:3px;}
@@ -922,9 +925,9 @@
       <div class="ch-title">Mumbigames Chat</div>
       <div class="ch-sub" id="chFollowerCount">0 followers</div>
     </div>
+    <a class="ch-wa-btn" href="https://whatsapp.com/channel/0029VbDjDDrCnA7s1aPmcR3b" target="_blank" rel="noopener" title="WhatsApp Channel">💬</a>
     <button type="button" class="ch-follow-btn" id="chFollowBtn" onclick="toggleFollowChannel()">+ Follow</button>
   </div>
-  <a class="ch-wa-row" href="https://whatsapp.com/channel/0029VbDjDDrCnA7s1aPmcR3b" target="_blank">💬 Jiunge na Channel yetu rasmi ya WhatsApp</a>
 
   <div class="ch-posts" id="channelPosts"></div>
   <button type="button" class="ch-scrolldown-btn" id="chScrollBtn" onclick="scrollChannelToBottom()">↓</button>
@@ -3094,6 +3097,8 @@ function showChannel(){
   document.getElementById('channelComposer').style.display = isSuperAdmin() ? 'block' : 'none';
   document.getElementById('channelReadOnlyNotice').style.display = isSuperAdmin() ? 'none' : 'block';
   renderChStickerPalette();
+  channelFollowing = false;
+  renderChannelPosts();
   subscribeChannelPosts();
   subscribeChannelFollowers();
   const nc=document.getElementById('navChat'); if(nc) nc.classList.add('active');
@@ -3195,8 +3200,24 @@ function subscribeChannelPosts(){
     }, err=>console.error('channel posts', err));
 }
 
+let chOpenPalettes = new Set();
+let channelFollowing = false;
+function toggleChPalette(id, force){
+  const open = force === undefined ? !chOpenPalettes.has(id) : force;
+  if(open) chOpenPalettes.add(id); else chOpenPalettes.delete(id);
+  const el = document.getElementById('chPalette-'+id);
+  if(el) el.classList.toggle('show', open);
+}
 function renderChannelPosts(){
   const box = document.getElementById('channelPosts');
+  if(!isSuperAdmin() && !channelFollowing){
+    box.innerHTML = '<div class="ch-lock"><div class="big">🔒</div>' +
+      (auth.currentUser
+        ? 'Bonyeza <b>+ Follow</b> juu ili kufungua jumbe zote za Mumbigames Chat.'
+        : 'Ingia kwenye akaunti yako kisha bonyeza <b>+ Follow</b> kufungua jumbe za Mumbigames Chat.') + '</div>';
+    document.getElementById('chScrollBtn').style.display = 'none';
+    return;
+  }
   const wasNearBottom = (box.scrollHeight - box.scrollTop - box.clientHeight) < 80;
   const uid = auth.currentUser ? auth.currentUser.uid : null;
   box.innerHTML = currentChannelPosts.map(p=>{
@@ -3220,9 +3241,9 @@ function renderChannelPosts(){
       <div class="ch-post-time">${hh}:${mm}</div>
       <div class="ch-reactions" id="chReact-${p._id}">
         ${pills}
-        <div class="ch-react-add" onclick="document.getElementById('chPalette-${p._id}').classList.toggle('show')">+</div>
+        <div class="ch-react-add" onclick="toggleChPalette('${p._id}')" title="React">🙂</div>
       </div>
-      <div class="ch-palette" id="chPalette-${p._id}">${CHANNEL_EMOJIS.map(e=>`<span onclick="reactToChannelPost('${p._id}','${e}');document.getElementById('chPalette-${p._id}').classList.remove('show')">${e}</span>`).join('')}</div>
+      <div class="ch-palette ${chOpenPalettes.has(p._id)?'show':''}" id="chPalette-${p._id}">${CHANNEL_EMOJIS.map(e=>`<span onclick="reactToChannelPost('${p._id}','${e}');toggleChPalette('${p._id}',false)">${e}</span>`).join('')}</div>
     </div>`;
   }).join('') || '<div class="empty" style="text-align:center;color:var(--sub);padding:30px 10px;">Bado hakuna chochote. Rudi baadaye 👀</div>';
   if(wasNearBottom) box.scrollTop = box.scrollHeight;
@@ -3250,7 +3271,7 @@ async function reactToChannelPost(postId, emoji){
       }
       tx.update(ref, {reactions, reactedBy});
     });
-  }catch(e){ console.error('reactToChannelPost failed', e); }
+  }catch(e){ console.error('reactToChannelPost failed', e); alert('Reaction imeshindwa: ' + (e.code || e.message || e) + (String(e.code).includes('permission') ? '\n(Firestore rules hazijaruhusu reactions kwenye channelPosts)' : '')); }
 }
 
 function subscribeChannelFollowers(){
@@ -3262,7 +3283,9 @@ function subscribeChannelFollowers(){
   }
   if(auth.currentUser){
     db.collection('users').doc(auth.currentUser.uid).get().then(doc=>{
-      const following = doc.exists && doc.data().followingChannel;
+      const following = doc.exists && !!doc.data().followingChannel;
+      channelFollowing = following;
+      renderChannelPosts();
       const btn = document.getElementById('chFollowBtn');
       btn.textContent = following ? '✓ Following' : '+ Follow';
       btn.classList.toggle('following', !!following);
@@ -3281,9 +3304,11 @@ async function toggleFollowChannel(){
     const alreadyFollowing = userDoc.exists && userDoc.data().followingChannel;
     await userRef.set({followingChannel: !alreadyFollowing}, {merge:true});
     await statsRef.set({followers: firebase.firestore.FieldValue.increment(alreadyFollowing ? -1 : 1)}, {merge:true});
+    channelFollowing = !alreadyFollowing;
     btn.textContent = alreadyFollowing ? '+ Follow' : '✓ Following';
     btn.classList.toggle('following', !alreadyFollowing);
-  }catch(e){ console.error('toggleFollowChannel failed', e); }
+    renderChannelPosts();
+  }catch(e){ console.error('toggleFollowChannel failed', e); alert('Imeshindwa: ' + (e.code || e.message || e)); }
 }
 
 function scrollChannelToBottom(){
@@ -3322,7 +3347,8 @@ const APP_CHANGELOG = [
   {id: 11, title: '📢 Mumbigames Chat (Channel) Mpya!', body: 'Bonyeza kitufe kipya cha "Channel" kwenye Home kuona matangazo rasmi ya mumbigames — picha, stika, na link kutoka kwa admin. Gusa emoji chini ya kila post kuonyesha hisia zako, na bonyeza "Follow" kuwa mfuasi!'},
   // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
   {id: 12, title: '💬 Chat sasa ni Channel', body: 'Kitufe cha "Chat" chini sasa kinafungua Mumbigames Chat (Channel). Admin akipost kitu kipya, utaona alama nyekundu juu ya Chat ili ujue kuna jipya.'},
-  // {id: 13, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 13, title: '✨ Channel: Follow ili kusoma + Reaction mpya', body: 'Sasa unahitaji Kufollow Mumbigames Chat ili kufungua jumbe. Kitufe cha WhatsApp kimehamia juu, na kitufe cha reaction kimekuwa 🙂.'},
+  // {id: 14, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
