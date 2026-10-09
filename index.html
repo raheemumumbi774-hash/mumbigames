@@ -357,7 +357,14 @@
   .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text);}
 
   /* Community chat */
-  #chatView{display:none;flex-direction:column;height:calc(100vh - 78px);}
+  #chatView{display:none;flex-direction:column;height:calc(100vh - 78px);position:relative;overflow:hidden;}
+  #chatBgCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+  #chatView>.chat-header,#chatView>#nameGate,#chatView>#chatBody{position:relative;z-index:1;}
+  #chatView>.chat-header{position:relative;}
+  .chat-theme-btn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--panel);border:1px solid var(--line);font-size:14px;cursor:pointer;}
+  #chatView .msg{background:rgba(14,18,16,0.78);backdrop-filter:blur(3px);}
+  #chatView .msg.me{background:rgba(40,60,10,0.82);}
+  #chatView .chat-input-row,#chatView .chat-reply-banner{background:rgba(10,13,10,0.85);}
   .chat-header{position:sticky;top:0;z-index:10;background:rgba(10,13,10,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;gap:10px;}
   .chat-header .back{width:30px;height:30px;border-radius:8px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14.5px;color:var(--sub);}
   .chat-header .title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13.5px;}
@@ -592,12 +599,14 @@
 </div>
 
 <div id="chatView">
+  <canvas id="chatBgCanvas"></canvas>
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
       <div class="title" data-i18n="chat_title">Jumuiya ya mumbigames</div>
       <div class="sub" id="chatOnlineLabel" data-i18n="chat_sub">Chati ya wachezaji wote</div>
     </div>
+    <button type="button" class="chat-theme-btn" onclick="nextChatTheme()" title="Wallpaper">🎨</button>
     <a class="wa-btn" href="https://whatsapp.com/channel/0029VbDjDDrCnA7s1aPmcR3b" target="_blank">WhatsApp</a>
   </div>
 
@@ -917,37 +926,6 @@
   </div>
 </div>
 
-<div id="channelView">
-  <div class="ch-header">
-    <div class="back" onclick="showHome()" style="cursor:pointer;font-size:18px;">←</div>
-    <img class="ch-logo" id="chLogoImg" alt="mumbigames">
-    <div class="ch-head-info">
-      <div class="ch-title">Mumbigames Chat</div>
-      <div class="ch-sub" id="chFollowerCount">0 followers</div>
-    </div>
-    <a class="ch-wa-btn" href="https://whatsapp.com/channel/0029VbDjDDrCnA7s1aPmcR3b" target="_blank" rel="noopener" title="WhatsApp Channel">💬</a>
-    <button type="button" class="ch-follow-btn" id="chFollowBtn" onclick="toggleFollowChannel()">+ Follow</button>
-  </div>
-
-  <div class="ch-posts" id="channelPosts"></div>
-  <button type="button" class="ch-scrolldown-btn" id="chScrollBtn" onclick="scrollChannelToBottom()">↓</button>
-
-  <div class="ch-composer" id="channelComposer" style="display:none;">
-    <input type="file" id="chImgInput" accept="image/*" style="display:none;" onchange="chPickImage(this)">
-    <div id="chImgPreviewRow" style="display:none;" class="ch-img-preview"><img id="chImgPreviewThumb"><span onclick="chClearImage()">✕</span></div>
-    <div id="chStickerPreviewRow" style="display:none;" class="ch-sticker-preview"><span id="chStickerPreviewEmoji"></span><span onclick="chClearSticker()">✕</span></div>
-    <input type="text" id="chLinkInput" placeholder="Link (hiari) — mfano https://...">
-    <textarea id="chTextInput" placeholder="Andika ujumbe au maelezo ya picha/link..."></textarea>
-    <div class="ch-composer-row">
-      <button type="button" class="ch-tool-btn" onclick="document.getElementById('chImgInput').click()">📷</button>
-      <button type="button" class="ch-tool-btn" onclick="document.getElementById('chStickerPalette').classList.toggle('show')">😊</button>
-      <button type="button" class="btn btn-primary" style="flex:1;" id="chPostBtn" onclick="postChannelMessage()">Tuma</button>
-    </div>
-    <div class="ch-palette" id="chStickerPalette"></div>
-  </div>
-  <div class="ch-readonly-notice" id="channelReadOnlyNotice" style="display:none;">Admin pekee anaweza kuposti hapa. Gusa emoji chini ya ujumbe kuonyesha hisia zako.</div>
-</div>
-
 <div id="settingsView">
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
@@ -1248,7 +1226,7 @@
 
 <div class="bottomnav">
   <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
-  <div class="nav-item" id="navChat" onclick="showChannel()"><div class="ic" style="position:relative;">💬<span class="nav-badge" id="chatUnreadBadge">0</span></div><span data-i18n="nav_chat">Chat</span></div>
+  <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic" style="position:relative;">💬<span class="nav-badge" id="chatUnreadBadge">0</span></div><span data-i18n="nav_chat">Chat</span></div>
   <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5c0-1.2.4-2.3 1-3.3l.6-1c.2-.3.5-.5.9-.5h10c.4 0 .7.2.9.5l.6 1c.6 1 1 2.1 1 3.3"/><path d="M4.5 9.5c1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0"/><path d="M5.5 9.5V18a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.5"/><path d="M9.5 14c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5"/></svg></div><span data-i18n="nav_duka">Duka</span></div>
   <div class="nav-item" id="navAI" onclick="showAI()"><div class="ic">🤖</div><span data-i18n="nav_ai">AI</span></div>
   <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic">☺<span class="nav-dot" id="navMeDot"></span></div><span data-i18n="nav_me">Me</span></div>
@@ -2862,8 +2840,8 @@ const AI_KB = [
   {keys:['tiktok'], a:'Bonyeza button ya "TikTok" (icon ya 🎵) kwenye Home kufungua channel yetu ya TikTok moja kwa moja, kuona video za hivi karibuni za games. Ukiona kitone chekundu juu ya button hiyo, maana yake kuna video mpya.'},
   {keys:['youtube'], a:'Bonyeza button ya "YouTube" (icon nyekundu ▶️) kwenye Home kufungua channel yetu ya YouTube: ' + YT_CHANNEL + ' — humo kuna video za maelekezo ya jinsi ya kuseti games kwa emulator mbalimbali, pamoja na maudhui mengine ya games.'},
   {keys:['chat','ujumbe','mazungumzo'], a:'Ukurasa wa "Chat" (icon ya 💬 kwenye menu ya chini) ni sehemu ya mazungumzo ya jamii ya mumbigames na channel ya WhatsApp ya admin kwa msaada wa moja kwa moja.'},
-  {keys:['mumbigames chat','channel','follow','followers'], a:'Bonyeza kitufe cha "💬 Chat" chini kuona "Mumbigames Chat" — hapa admin pekee anaposti matangazo rasmi (picha, sticka, maandishi, na link). Wewe huwezi kuandika ujumbe hapa, lakini unaweza kugusa emoji chini ya kila post kuonyesha hisia zako, na kubonyeza "Follow" kuwa mfuasi rasmi.'},
-  {keys:['mumbigames chat','channel','follow','followers'], lang:'en', a:'Tap the "💬 Chat" tab at the bottom to see "Mumbigames Chat" — a page where only admin posts official announcements (images, stickers, text, and links). You cannot type messages here, but you can tap an emoji under any post to react, and tap "Follow" to become an official follower.'},
+  {keys:['mumbigames chat','chat','soga','ongea'], a:'Bonyeza kitufe cha "💬 Chat" chini kuingia kwenye chat ya jamii — andika jina lako, kisha unaweza kuchati na watu wote, kutuma picha na link, na kuedit au kufuta ujumbe wako.'},
+  {keys:['mumbigames chat','chat','talk'], lang:'en', a:'Tap the "💬 Chat" tab at the bottom to join the community chat — enter your name, then talk with everyone, send photos and links, and edit or delete your own messages.'},
   {keys:['token','pointi','point','alika','referral','mwaliko','msimbo'], a:'Mfumo wa Token: kila ukimwalika rafiki kwa kutumia msimbo wako wa kipekee (unaupata Profile → "Alika Marafiki"), akijisajili na kuweka msimbo wako, unapata token 50. Ukifikisha token 500, unaweza kupata game LOLOTE la kulipia BURE kabisa, mara moja tu kwa akaunti yako (Profile → "Chagua Game la Kupata Bure"). Msimbo wako unaonekana kwenye Profile, na kuna button ya "Shea APK + Msimbo Wangu" ya kutuma kwa rafiki yako moja kwa moja.'},
   {keys:['bet','betting','bet tips','betpawa','1win','msimbo wa bet','booking code'], a:'Bet Tips ipo ndani ya Profile yako (Me → Bet Tips). Ni sehemu ya bure kabisa yenye misimbo (booking codes) ya bet inayowekwa na admin — kila kadi inaonyesha Bookmaker (mfano BetPawa au 1Win), odds, maelezo ya mechi, na msimbo wenyewe. Bonyeza "📋 Nakili" kuunakili msimbo, kisha nenda ufungue app ya bet uliyotaja (mfano BetPawa au 1Win) na ubandike msimbo huo pale kwenye sehemu ya "Booking Code" ili uone mechi zilizochaguliwa. Unaweza pia ku-like tip unayoipenda. Kumbuka: hizi ni maoni tu kwa taarifa, si uhakika wa kushinda — cheza bet kwa busara, ni kwa watu wenye miaka 18+.'},
   {keys:['download','pakua','haifunguki','tatizo'], a:'Kama download haifanyi kazi, hakikisha una mtandao mzuri na jaribu tena. Kumbuka: baada ya kubonyeza download, subiri hesabu ya sekunde ipite kabla faili halijafunguka — hii ni ya kawaida. Kama tatizo linaendelea, wasiliana na admin kupitia WhatsApp kwenye ukurasa wa Chat.'},
@@ -3038,7 +3016,7 @@ let chatName = localStorage.getItem('mg-chat-name') || '';
 let myChatPhotoURL = ''; // picha ya profile ya mtumiaji aliyeingia, inatumwa na kila ujumbe wake
 let chatUnsub = null;
 
-const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','aiView','tournamentView','tournDetailView','channelView'];
+const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','aiView','tournamentView','tournDetailView'];
 const ALL_NAVS = ['navHome','navChat','navGames','navAI','navMe'];
 function hideAllViews(){
   if(tournDetailUnsub){ tournDetailUnsub(); tournDetailUnsub = null; }
@@ -3056,11 +3034,75 @@ function showHome(){
   document.getElementById('homeView').style.display = 'block';
   document.getElementById('navHome').classList.add('active');
 }
+
+// ===== Chat live wallpaper (Bahari / Radi / Aurora) =====
+let chatTheme = 0, chatBgRunning = false, chatBgT = 0, chatBgObjs = null, chatFlash = 0, chatBolt = null;
+try{ chatTheme = parseInt(localStorage.getItem('mg-chat-theme')||'0',10)||0; }catch(e){}
+function nextChatTheme(){ chatTheme = (chatTheme+1)%3; try{localStorage.setItem('mg-chat-theme',String(chatTheme));}catch(e){} chatBgObjs=null; }
+function startChatBg(){ if(chatBgRunning) return; chatBgRunning = true; requestAnimationFrame(chatBgFrame); }
+function chatBgInit(w,h){
+  chatBgObjs = {bubbles:[],drops:[],blobs:[],turtle:{x:-60,y:h*0.55,v:0.35},fish:[]};
+  for(let i=0;i<22;i++) chatBgObjs.bubbles.push({x:Math.random()*w,y:Math.random()*h,r:2+Math.random()*7,v:0.3+Math.random()*0.9,ph:Math.random()*6});
+  for(let i=0;i<90;i++) chatBgObjs.drops.push({x:Math.random()*w,y:Math.random()*h,l:8+Math.random()*14,v:9+Math.random()*7});
+  const cols=['#00e5a0','#3b82f6','#a855f7','#ec4899'];
+  for(let i=0;i<4;i++) chatBgObjs.blobs.push({x:Math.random()*w,y:Math.random()*h,r:120+Math.random()*100,c:cols[i],ph:Math.random()*6,sp:0.003+Math.random()*0.004});
+  for(let i=0;i<4;i++) chatBgObjs.fish.push({x:Math.random()*w,y:h*(0.2+Math.random()*0.5),v:0.4+Math.random()*0.6,s:14+Math.random()*8});
+}
+function chatBoltPath(w){
+  let x=w*(0.15+Math.random()*0.7), y=0; const pts=[[x,y]];
+  while(y<w*1.2){ y+=18+Math.random()*30; x+=(Math.random()-0.5)*50; pts.push([x,y]); }
+  return pts;
+}
+function chatBgFrame(){
+  const view = document.getElementById('chatView');
+  if(!view || view.style.display !== 'flex'){ chatBgRunning = false; return; }
+  const cv = document.getElementById('chatBgCanvas');
+  const w = view.clientWidth, h = view.clientHeight;
+  if(cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; chatBgObjs = null; }
+  if(!chatBgObjs) chatBgInit(w,h);
+  const o = chatBgObjs, ctx = cv.getContext('2d'); chatBgT++;
+  if(chatTheme === 0){
+    const g = ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,'#04243a'); g.addColorStop(0.55,'#065a6b'); g.addColorStop(1,'#0a8a7a');
+    ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+    // light rays
+    ctx.fillStyle='rgba(255,255,255,0.04)';
+    for(let i=0;i<4;i++){ const x=w*(0.1+i*0.25)+Math.sin(chatBgT*0.01+i)*30; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x+60,0); ctx.lineTo(x+160,h); ctx.lineTo(x-40,h); ctx.fill(); }
+    o.bubbles.forEach(b=>{ b.y-=b.v; b.x+=Math.sin(chatBgT*0.03+b.ph)*0.4; if(b.y<-10){ b.y=h+10; b.x=Math.random()*w; }
+      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,7); ctx.strokeStyle='rgba(200,255,255,0.35)'; ctx.lineWidth=1.2; ctx.stroke(); ctx.fillStyle='rgba(200,255,255,0.07)'; ctx.fill(); });
+    ctx.font='20px serif'; ctx.textBaseline='middle';
+    o.fish.forEach(f=>{ f.x+=f.v; if(f.x>w+30){ f.x=-30; f.y=h*(0.2+Math.random()*0.5); } ctx.font=f.s+'px serif'; ctx.fillText('🐟',f.x,f.y+Math.sin(chatBgT*0.04+f.x*0.02)*6); });
+    const t=o.turtle; t.x+=t.v; if(t.x>w+60){ t.x=-60; t.y=h*(0.35+Math.random()*0.35); }
+    ctx.font='38px serif'; ctx.fillText('🐢',t.x,t.y+Math.sin(chatBgT*0.025)*14);
+    for(let k=0;k<3;k++){ ctx.beginPath(); ctx.moveTo(0,h);
+      for(let x=0;x<=w;x+=8) ctx.lineTo(x,h-18-k*10+Math.sin(x*0.02+chatBgT*0.03*(k+1)+k)*(7+k*2));
+      ctx.lineTo(w,h); ctx.fillStyle='rgba(10,140,150,'+(0.22-k*0.05)+')'; ctx.fill(); }
+  } else if(chatTheme === 1){
+    const g = ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,'#0b0b1e'); g.addColorStop(1,'#1d1d3a');
+    ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='rgba(60,60,100,0.35)';
+    for(let i=0;i<5;i++){ const cx=((chatBgT*0.2+i*w/4)%(w+200))-100; ctx.beginPath(); ctx.arc(cx,40+i%2*25,60,0,7); ctx.arc(cx+50,48+i%2*25,48,0,7); ctx.arc(cx-50,50+i%2*25,44,0,7); ctx.fill(); }
+    ctx.strokeStyle='rgba(170,200,255,0.35)'; ctx.lineWidth=1; ctx.beginPath();
+    o.drops.forEach(d=>{ d.y+=d.v; d.x-=1.5; if(d.y>h){ d.y=-20; d.x=Math.random()*w+40; } ctx.moveTo(d.x,d.y); ctx.lineTo(d.x+1.5,d.y-d.l); }); ctx.stroke();
+    if(!chatBolt && Math.random()<0.006){ chatBolt={pts:chatBoltPath(w),life:14}; chatFlash=0.35; }
+    if(chatBolt){ chatBolt.life--; ctx.save(); ctx.strokeStyle='rgba(255,255,255,'+Math.min(1,chatBolt.life/8)+')'; ctx.shadowColor='#9bbcff'; ctx.shadowBlur=18; ctx.lineWidth=2.5; ctx.beginPath();
+      chatBolt.pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); ctx.restore(); if(chatBolt.life<=0) chatBolt=null; }
+    if(chatFlash>0){ ctx.fillStyle='rgba(200,215,255,'+chatFlash+')'; ctx.fillRect(0,0,w,h); chatFlash-=0.03; }
+  } else {
+    ctx.fillStyle='#070a14'; ctx.fillRect(0,0,w,h);
+    ctx.globalCompositeOperation='lighter';
+    o.blobs.forEach(b=>{ b.ph+=b.sp; const x=b.x+Math.sin(b.ph*3)*w*0.25, y=b.y+Math.cos(b.ph*2)*h*0.2;
+      const g=ctx.createRadialGradient(x,y,0,x,y,b.r); g.addColorStop(0,b.c+'66'); g.addColorStop(1,b.c+'00'); ctx.fillStyle=g; ctx.fillRect(x-b.r,y-b.r,b.r*2,b.r*2); });
+    ctx.globalCompositeOperation='source-over';
+    for(let i=0;i<30;i++){ const sx=(i*97)%w, sy=(i*53)%h; ctx.fillStyle='rgba(255,255,255,'+(0.25+0.25*Math.sin(chatBgT*0.05+i))+')'; ctx.fillRect(sx,sy,1.5,1.5); }
+  }
+  requestAnimationFrame(chatBgFrame);
+}
 function showChat(){
   hideAllViews();
   document.getElementById('chatView').style.display = 'flex';
   document.getElementById('navChat').classList.add('active');
   markChatSeen();
+  startChatBg();
   if(chatName){
     document.getElementById('nameGate').style.display = 'none';
     document.getElementById('chatBody').style.display = 'flex';
@@ -3344,11 +3386,9 @@ const APP_CHANGELOG = [
   {id: 8, title: 'Token kwa Games za Kulipia', body: 'Sasa unaweza kufungua games NYINGI za kulipia BURE kwa Token 500 (badala ya kulipa pesa) — tafuta chaguo hilo ndani ya ukurasa wa malipo wa game husika. Games za bure hazina kizuizi chochote — zidownload bila mpangilio wowote wa token.'},
   {id: 9, title: '🚀 Update v1.1 Inakuja Hivi Karibuni!', body: 'Tunaandaa maboresho mapya kwa mumbigames — subiri hapa kuona yatakayobadilika!'},
   {id: 10, title: 'Duka: Stempu ya "Imeuzwa"', body: 'Bidhaa za Duka zilizoisha sasa zinaonyesha stempu kubwa ya "Imeuzwa" juu ya picha, ili wanunuzi waone papo hapo bidhaa haipatikani tena.'},
-  {id: 11, title: '📢 Mumbigames Chat (Channel) Mpya!', body: 'Bonyeza kitufe kipya cha "Channel" kwenye Home kuona matangazo rasmi ya mumbigames — picha, stika, na link kutoka kwa admin. Gusa emoji chini ya kila post kuonyesha hisia zako, na bonyeza "Follow" kuwa mfuasi!'},
   // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
-  {id: 12, title: '💬 Chat sasa ni Channel', body: 'Kitufe cha "Chat" chini sasa kinafungua Mumbigames Chat (Channel). Admin akipost kitu kipya, utaona alama nyekundu juu ya Chat ili ujue kuna jipya.'},
-  {id: 13, title: '✨ Channel: Follow ili kusoma + Reaction mpya', body: 'Sasa unahitaji Kufollow Mumbigames Chat ili kufungua jumbe. Kitufe cha WhatsApp kimehamia juu, na kitufe cha reaction kimekuwa 🙂.'},
-  // {id: 14, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 11, title: '🎨 Chat ina Wallpaper Hai!', body: 'Chat sasa ina background inayosogea: Bahari (kobe na samaki), Radi (mvua na umeme) na Aurora. Gusa kitufe cha 🎨 juu ya chat kubadilisha.'},
+  // {id: 12, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -5480,7 +5520,7 @@ function initSettings(){
 }
 initSettings();
 updateChangelogBadge();
-startChannelUnreadListener();
+startChatUnreadListener();
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(err => console.error('SW register failed', err));
