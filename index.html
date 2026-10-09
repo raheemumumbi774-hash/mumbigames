@@ -358,6 +358,11 @@
 
   /* Community chat */
   #chatView{display:none;flex-direction:column;height:calc(100vh - 78px);position:relative;overflow:hidden;}
+  #chatMsgPopup{display:none;position:absolute;z-index:20;min-width:120px;background:#2b2d31;border:1px solid #4a4d55;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.55);padding:6px 0;overflow:hidden;}
+  #chatMsgPopup .cm-item{padding:11px 18px;font-size:14px;color:#f1f1f1;cursor:pointer;white-space:nowrap;}
+  #chatMsgPopup .cm-item:active{background:rgba(255,255,255,0.1);}
+  #chatMsgPopup .cm-del{color:#ff6b5e;}
+  .msg.msg-picked{outline:2px solid var(--lime-dim);}
   #chatBgCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
   #chatView>.chat-header,#chatView>#nameGate,#chatView>#chatBody{position:relative;z-index:1;}
   #chatView>.chat-header{position:relative;}
@@ -3412,7 +3417,8 @@ const APP_CHANGELOG = [
   // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
   {id: 11, title: '🎨 Chat ina Wallpaper Hai!', body: 'Chat sasa ina background inayosogea: Bahari (kobe na samaki), Radi (mvua na umeme) na Aurora. Gusa kitufe cha 🎨 juu ya chat kubadilisha.'},
   {id: 12, title: '🎲 Wallpaper ya Chat inabadilika yenyewe', body: 'Kila ukifungua chat unakuta wallpaper tofauti: Bahari, Radi, Aurora, Moto au Nyota. Bado unaweza kubadilisha mwenyewe kwa kitufe cha 🎨. Pia chat imeanza upya na ujumbe wa zamani umefutwa.'},
-  // {id: 13, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 13, title: '✏️ Menu ndogo ya ujumbe', body: 'Shikilia ujumbe wako kwenye chat — menu ndogo inafunguka pembeni ikiwa na Jibu, Hariri na Futa. Ukigusa Futa, ujumbe unafutwa papo hapo.'},
+  // {id: 14, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -4927,7 +4933,6 @@ function cancelChatEdit(){
   document.getElementById('chatMsgInput').value = '';
 }
 async function deleteChatMsg(id){
-  if(!confirm('Una uhakika unataka kufuta ujumbe huu? Hataonekana tena kwa mtu yeyote.')) return;
   try{
     await db.collection('chat_messages').doc(id).update({
       deleted: true, text: '',
@@ -4939,19 +4944,42 @@ async function deleteChatMsg(id){
 function openChatMsgMenu(idx){
   const m = currentChatMsgs[idx];
   if(!m || m.deleted) return;
+  window._chatMenuTs = Date.now();
   const mine = m.name === chatName;
   const isTextEditable = mine && (!m.type || m.type === 'text');
+  const bubble = document.querySelector('#chatMessages .msg[data-msg-idx="'+idx+'"]');
+  const view = document.getElementById('chatView');
+  if(!bubble || !view) return;
   const rows = [];
-  rows.push(`<button class="btn btn-ghost" style="width:100%;margin-bottom:6px;" onclick="closeChatMsgMenu();doChatReply(currentChatMsgs[${idx}])">↩ Jibu</button>`);
-  if(isTextEditable) rows.push(`<button class="btn btn-ghost" style="width:100%;margin-bottom:6px;" onclick="closeChatMsgMenu();startChatEdit(currentChatMsgs[${idx}])">✏️ Hariri</button>`);
-  if(mine) rows.push(`<button class="btn btn-ghost" style="width:100%;margin-bottom:6px;color:#ff4d4d;" onclick="closeChatMsgMenu();deleteChatMsg('${m._id}')">🗑 Futa</button>`);
-  rows.push(`<button class="btn btn-ghost" style="width:100%;" onclick="closeChatMsgMenu()">Ghairi</button>`);
-  document.getElementById('chatMsgMenuOptions').innerHTML = rows.join('');
-  document.getElementById('chatMsgMenuOverlay').classList.add('show');
+  rows.push('<div class="cm-item" onclick="closeChatMsgMenu();doChatReply(currentChatMsgs['+idx+'])">↩ Jibu</div>');
+  if(isTextEditable) rows.push('<div class="cm-item" onclick="closeChatMsgMenu();startChatEdit(currentChatMsgs['+idx+'])">✏️ Hariri</div>');
+  if(mine) rows.push('<div class="cm-item cm-del" onclick="closeChatMsgMenu();deleteChatMsg(\''+m._id+'\')">🗑 Futa</div>');
+  let pop = document.getElementById('chatMsgPopup');
+  if(!pop){ pop = document.createElement('div'); pop.id = 'chatMsgPopup'; view.appendChild(pop); }
+  pop.innerHTML = rows.join('');
+  pop.style.display = 'block';
+  const vr = view.getBoundingClientRect(), br = bubble.getBoundingClientRect();
+  const pw = pop.offsetWidth, ph = pop.offsetHeight;
+  let left, top;
+  const roomLeft = br.left - vr.left, roomRight = vr.right - br.right;
+  if(mine && roomLeft >= pw + 8){ left = br.left - vr.left - pw - 6; top = br.top - vr.top; }
+  else if(!mine && roomRight >= pw + 8){ left = br.right - vr.left + 6; top = br.top - vr.top; }
+  else { left = mine ? (br.right - vr.left - pw) : (br.left - vr.left); top = br.bottom - vr.top + 6; }
+  left = Math.max(8, Math.min(left, vr.width - pw - 8));
+  if(top + ph > vr.height - 70) top = Math.max(60, br.top - vr.top - ph - 6);
+  top = Math.max(60, Math.min(top, vr.height - ph - 70));
+  pop.style.left = left + 'px'; pop.style.top = top + 'px';
+  bubble.classList.add('msg-picked');
 }
 function closeChatMsgMenu(){
+  const pop = document.getElementById('chatMsgPopup');
+  if(pop) pop.style.display = 'none';
+  document.querySelectorAll('#chatMessages .msg-picked').forEach(el=>el.classList.remove('msg-picked'));
   document.getElementById('chatMsgMenuOverlay').classList.remove('show');
 }
+document.addEventListener('mousedown', e=>{ const pop=document.getElementById('chatMsgPopup'); if(pop && pop.style.display==='block' && !pop.contains(e.target)) closeChatMsgMenu(); });
+document.addEventListener('touchstart', e=>{ const pop=document.getElementById('chatMsgPopup'); if(pop && pop.style.display==='block' && !pop.contains(e.target)) closeChatMsgMenu(); }, {passive:true});
+document.getElementById('chatMessages').addEventListener('scroll', closeChatMsgMenu, {passive:true});
 
 document.getElementById('chatMessages').addEventListener('click', (e)=>{
   if(e.target.closest('a')) return; // acha link ifungue yenyewe, isianzishe "reply"
@@ -4961,6 +4989,7 @@ document.getElementById('chatMessages').addEventListener('click', (e)=>{
   if(av){ if(av.dataset.avatarFull) window.open(av.dataset.avatarFull, '_blank', 'noopener'); return; }
   const el = e.target.closest('.msg');
   if(!el) return;
+  if(Date.now() - (window._chatMenuTs||0) < 700) return;
   const idx = parseInt(el.dataset.msgIdx, 10);
   const m = currentChatMsgs[idx];
   if(!m || m.deleted) return;
