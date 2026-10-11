@@ -158,7 +158,7 @@
   .quick-actions .qa-btn{flex:1 1 auto;min-width:64px;}
   .qa-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--lime);color:#fff;border:none;border-radius:14px;padding:12px 6px;font-size:10.5px;font-weight:700;cursor:pointer;position:relative;}
   .qa-btn .qa-ic{font-size:18px;}
-  .qa-logo{width:26px;height:26px;display:block;margin:0 auto;}
+  .qa-logo{width:22px;height:22px;display:block;margin:0 auto;}
   .qa-logo-tt{filter:drop-shadow(-1.5px -1px 0 #25f4ee) drop-shadow(1.5px 1px 0 #fe2c55);}
   .qa-btn.alt{background:var(--panel);color:var(--text);border:1px solid var(--line);}
   .qa-btn.qa-tiktok{background:linear-gradient(135deg,#25f4ee,#000000 55%,#fe2c55);color:#fff;}
@@ -492,6 +492,34 @@
 
   /* Settings */
   #settingsView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
+  #myDownloadsView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
+  .md-hero{margin:12px 14px 0;padding:16px;border-radius:18px;background:linear-gradient(135deg,rgba(168,85,247,.22),rgba(34,211,238,.14) 55%,rgba(166,255,0,.12));border:1px solid var(--line);display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
+  .md-hero::after{content:'';position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(34,211,238,.35),transparent 70%);}
+  .md-ring{flex:none;width:64px;height:64px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:conic-gradient(var(--lime) var(--pct,0%),rgba(255,255,255,.08) 0);position:relative;}
+  .md-ring::before{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--bg);}
+  .md-ring b{position:relative;font-size:19px;font-family:'Baloo 2',sans-serif;line-height:1;}
+  .md-ring span{position:relative;font-size:8px;color:var(--sub);}
+  .md-hero-t{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:15px;}
+  .md-hero-s{font-size:10.5px;color:var(--sub);margin-top:3px;line-height:1.45;}
+  .md-tools{display:flex;gap:8px;align-items:center;padding:12px 14px 4px;}
+  .md-search{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:9px 13px;border-radius:18px;font-size:12px;min-width:0;}
+  .md-chips{display:flex;gap:6px;padding:6px 14px 2px;overflow-x:auto;}
+  .md-chip{flex:none;padding:5px 12px;border-radius:14px;font-size:10.5px;font-weight:700;background:var(--panel);border:1px solid var(--line);color:var(--sub);cursor:pointer;}
+  .md-chip.active{background:var(--lime);color:#06240a;border-color:var(--lime);}
+  .md-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px 14px 24px;}
+  .md-tile{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:1/1.08;background:var(--panel);border:1px solid var(--line);cursor:pointer;display:flex;align-items:flex-end;}
+  .md-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .md-tile::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.86));}
+  .md-info{position:relative;z-index:1;padding:10px;width:100%;}
+  .md-name{font-size:12px;font-weight:800;line-height:1.25;color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .md-when{font-size:9.5px;color:rgba(255,255,255,.7);margin-top:3px;}
+  .md-open{margin-top:7px;display:inline-block;background:var(--lime);color:#06240a;font-size:10px;font-weight:800;padding:4px 11px;border-radius:12px;}
+  .md-tag{position:absolute;z-index:2;top:8px;left:8px;background:linear-gradient(135deg,#ff3d81,#ffb400);color:#fff;font-size:8.5px;font-weight:800;padding:3px 8px;border-radius:10px;letter-spacing:.5px;}
+  .md-times{position:absolute;z-index:2;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;font-weight:700;padding:3px 7px;border-radius:10px;}
+  .md-gone{opacity:.55;}
+  .md-empty{grid-column:1/-1;text-align:center;color:var(--sub);padding:40px 16px;font-size:12.5px;line-height:1.6;}
+  .md-statlink{cursor:pointer;position:relative;}
+  .md-statlink .md-go{position:absolute;right:9px;bottom:7px;font-size:9px;color:var(--lime);font-weight:800;}
   #profileView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   .settings-body{padding:16px;padding-bottom:90px;}
   .settings-section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;}
@@ -1050,6 +1078,33 @@
   </div>
 </div>
 
+<div id="myDownloadsView">
+  <div class="chat-header">
+    <div class="back" onclick="showProfile()">←</div>
+    <div style="flex:1;">
+      <div class="title" data-i18n="md_title">Maktaba Yangu</div>
+      <div class="sub" data-i18n="md_sub">Games ulizodownload</div>
+    </div>
+  </div>
+  <div class="md-hero">
+    <div class="md-ring" id="mdRing"><b id="mdCount">0</b><span data-i18n="md_games_lbl">games</span></div>
+    <div style="position:relative;z-index:1;">
+      <div class="md-hero-t" id="mdHeroTitle">—</div>
+      <div class="md-hero-s" id="mdHeroSub"></div>
+    </div>
+  </div>
+  <div class="md-tools">
+    <input class="md-search" id="mdSearch" type="text" placeholder="Tafuta game uliyodownload..." data-i18n-placeholder="md_search_ph" oninput="renderMyDownloads()">
+  </div>
+  <div class="md-chips" id="mdChips">
+    <div class="md-chip active" data-mf="all" onclick="setMdFilter('all')" data-i18n="md_f_all">Zote</div>
+    <div class="md-chip" data-mf="week" onclick="setMdFilter('week')" data-i18n="md_f_week">Wiki hii</div>
+    <div class="md-chip" data-mf="month" onclick="setMdFilter('month')" data-i18n="md_f_month">Mwezi huu</div>
+    <div class="md-chip" data-mf="many" onclick="setMdFilter('many')" data-i18n="md_f_many">Zilizorudiwa</div>
+  </div>
+  <div class="md-grid" id="mdGrid"></div>
+</div>
+
 <div id="settingsView">
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
@@ -1158,10 +1213,11 @@
               <div style="font-size:18px;font-weight:800;margin-top:4px;" id="profileReferralCount">0</div>
               <div style="font-size:10px;color:var(--sub);margin-top:2px;" data-i18n="profile_referrals_lbl">Marafiki walioalikwa</div>
             </div>
-            <div style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;">
+            <div class="md-statlink" onclick="showMyDownloads()" style="flex:1;background:var(--panel-2);border:1px solid var(--lime-dim);border-radius:12px;padding:16px;text-align:center;">
               <div style="font-size:20px;">⬇️</div>
               <div style="font-size:18px;font-weight:800;margin-top:4px;" id="profileDownloadsCount">0</div>
               <div style="font-size:10px;color:var(--sub);margin-top:2px;" data-i18n="profile_downloads_lbl">Downloads zako</div>
+              <div class="md-go" data-i18n="md_open_hint">Gusa kuona ›</div>
             </div>
           </div>
         </div>
@@ -3140,7 +3196,7 @@ let chatName = localStorage.getItem('mg-chat-name') || '';
 let myChatPhotoURL = ''; // picha ya profile ya mtumiaji aliyeingia, inatumwa na kila ujumbe wake
 let chatUnsub = null;
 
-const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','aiView','tournamentView','tournDetailView'];
+const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','myDownloadsView','aiView','tournamentView','tournDetailView'];
 const ALL_NAVS = ['navHome','navChat','navGames','navAI','navMe'];
 function hideAllViews(){
   if(tournDetailUnsub){ tournDetailUnsub(); tournDetailUnsub = null; }
@@ -3541,7 +3597,8 @@ const APP_CHANGELOG = [
   {id: 12, title: '🎲 Wallpaper ya Chat inabadilika yenyewe', body: 'Kila ukifungua chat unakuta wallpaper tofauti: Bahari, Radi, Aurora, Moto au Nyota. Bado unaweza kubadilisha mwenyewe kwa kitufe cha 🎨. Pia chat imeanza upya na ujumbe wa zamani umefutwa.'},
   {id: 13, title: '✏️ Menu ndogo ya ujumbe', body: 'Shikilia ujumbe wako kwenye chat — menu ndogo inafunguka pembeni ikiwa na Jibu, Hariri na Futa. Ukigusa Futa, ujumbe unafutwa papo hapo.'},
   {id: 14, title: 'ℹ️ Kuhusu App & Mawasiliano', body: 'Chini kabisa ya orodha ya games sasa kuna "from mumbigames". Juu yake kuna alama za TikTok, WhatsApp, Facebook na YouTube. Ukigusa jina utaona taarifa za app, namba za msaada na email ya biashara — kwa Kiswahili na English.'},
-  // {id: 15, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 15, title: '📚 Maktaba Yangu — Downloads Zako Zote', body: 'Sasa kwenye Me (Profile) ukigusa kadi ya "Downloads zako" unafungua Maktaba yako: games zote ulizowahi kudownload zikiwa na picha, tarehe, alama ya MPYA, idadi ya mara ulizorudia, utafutaji na vichujio (Wiki hii, Mwezi huu, Zilizorudiwa). Gusa game yoyote kuidownload tena.'},
+  // {id: 16, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -3585,6 +3642,99 @@ function showSettings(){
   hideAllViews();
   document.getElementById('settingsView').style.display = 'flex';
 }
+
+// ===== Maktaba Yangu (My Downloads) =====
+let mdItems = [], mdFilter = 'all', mdUnsub = null;
+function showMyDownloads(){
+  if(!auth.currentUser){ alert(currentLang==='en' ? 'Please log in first.' : 'Ingia kwenye akaunti yako kwanza.'); return; }
+  hideAllViews();
+  document.getElementById('myDownloadsView').style.display = 'flex';
+  document.getElementById('navMe').classList.add('active');
+  mdFilter = 'all';
+  document.querySelectorAll('#mdChips .md-chip').forEach(c=>c.classList.toggle('active', c.dataset.mf==='all'));
+  const si = document.getElementById('mdSearch'); if(si) si.value = '';
+  document.getElementById('mdGrid').innerHTML = '<div class="md-empty">' + (currentLang==='en' ? 'Loading...' : 'Inapakia...') + '</div>';
+  if(mdUnsub){ try{mdUnsub();}catch(e){} mdUnsub = null; }
+  mdUnsub = db.collection('purchases').where('uid','==',auth.currentUser.uid).onSnapshot(snap=>{
+    const map = {};
+    snap.docs.forEach(d=>{
+      const it = d.data(); if(!it.gameId) return;
+      const m = map[it.gameId] || (map[it.gameId] = {gameId: it.gameId, gameName: it.gameName||'', last: 0, first: Infinity, times: 0});
+      m.times++; m.last = Math.max(m.last, it.time||0); m.first = Math.min(m.first, it.time||0);
+      if(it.gameName) m.gameName = it.gameName;
+    });
+    mdItems = Object.values(map).sort((a,b)=>b.last-a.last);
+    renderMyDownloads();
+  }, err=>{ console.error(err); document.getElementById('mdGrid').innerHTML = '<div class="md-empty">' + (currentLang==='en' ? 'Could not load. Try again.' : 'Imeshindwa kupakia. Jaribu tena.') + '</div>'; });
+}
+function setMdFilter(f){
+  mdFilter = f;
+  document.querySelectorAll('#mdChips .md-chip').forEach(c=>c.classList.toggle('active', c.dataset.mf===f));
+  renderMyDownloads();
+}
+function mdAgo(ts){
+  const en = currentLang === 'en';
+  if(!ts) return '';
+  const d = Math.floor((Date.now()-ts)/86400000);
+  if(d <= 0) return en ? 'Today' : 'Leo';
+  if(d === 1) return en ? 'Yesterday' : 'Jana';
+  if(d < 30) return en ? d+' days ago' : 'Siku '+d+' zilizopita';
+  const mo = Math.floor(d/30);
+  return en ? mo+' mo ago' : 'Miezi '+mo+' iliyopita';
+}
+function renderMyDownloads(){
+  const en = currentLang === 'en';
+  const grid = document.getElementById('mdGrid'); if(!grid) return;
+  const q = (document.getElementById('mdSearch').value||'').trim().toLowerCase();
+  const now = Date.now();
+  let list = mdItems.filter(it=>{
+    if(q && !(it.gameName||'').toLowerCase().includes(q)) return false;
+    if(mdFilter==='week') return now - it.last < 7*86400000;
+    if(mdFilter==='month') return now - it.last < 30*86400000;
+    if(mdFilter==='many') return it.times > 1;
+    return true;
+  });
+  // Hero summary
+  document.getElementById('mdCount').textContent = mdItems.length;
+  const total = Math.max(games.length, mdItems.length, 1);
+  document.getElementById('mdRing').style.setProperty('--pct', Math.min(100, Math.round(mdItems.length/total*100)) + '%');
+  const hero = document.getElementById('mdHeroTitle'), sub = document.getElementById('mdHeroSub');
+  if(mdItems.length){
+    hero.textContent = en ? 'Your game library' : 'Maktaba yako ya games';
+    sub.textContent = (en ? 'Latest: ' : 'Ya mwisho: ') + (mdItems[0].gameName||'') + ' · ' + mdAgo(mdItems[0].last) +
+      '\n' + (en ? mdItems.length + ' of ' + total + ' games in the app' : 'Umedownload ' + mdItems.length + ' kati ya games ' + total + ' za app');
+    sub.style.whiteSpace = 'pre-line';
+  } else {
+    hero.textContent = en ? 'Nothing here yet' : 'Bado hujadownload game';
+    sub.textContent = en ? 'Games you download will show up here.' : 'Games utakazodownload zitaonekana hapa.';
+  }
+  if(!list.length){
+    grid.innerHTML = '<div class="md-empty">' + (mdItems.length
+      ? (en ? 'No games match this filter.' : 'Hakuna game inayolingana na kichujio hiki.')
+      : (en ? '🎮 You have not downloaded any game yet.<br>Go to Home and pick one!' : '🎮 Bado hujadownload game yoyote.<br>Rudi Home uchague moja!')) + '</div>';
+    return;
+  }
+  grid.innerHTML = list.map(it=>{
+    const g = games.find(x=>x.id===it.gameId);
+    const img = g && g.image ? '<img src="'+g.image.replace(/"/g,'&quot;')+'" alt="" loading="lazy">' : '';
+    const isNew = now - it.last < 3*86400000;
+    const gone = !g;
+    return '<div class="md-tile'+(gone?' md-gone':'')+'" onclick="mdOpenGame(\''+it.gameId.replace(/'/g,"\\'")+'\')">'+
+      img + (isNew?'<span class="md-tag">'+(en?'NEW':'MPYA')+'</span>':'') +
+      (it.times>1?'<span class="md-times">×'+it.times+'</span>':'') +
+      '<div class="md-info"><div class="md-name">'+escapeHtml(it.gameName||(g?g.name:''))+'</div>'+
+      '<div class="md-when">'+mdAgo(it.last)+'</div>'+
+      (gone?'<div class="md-when">'+(en?'No longer available':'Haipatikani tena')+'</div>':'<span class="md-open">⬇ '+(en?'Download again':'Download tena')+'</span>')+
+      '</div></div>';
+  }).join('');
+}
+function mdOpenGame(id){
+  const g = games.find(x=>x.id===id);
+  if(!g){ alert(currentLang==='en' ? 'This game is no longer available.' : 'Game hii haipatikani tena.'); return; }
+  showHome();
+  handleDownload(g);
+}
+
 function showProfile(){
   hideAllViews();
   document.getElementById('profileView').style.display = 'flex';
@@ -5347,6 +5497,8 @@ async function sendMsg(){
 // ---- Settings: Theme + Language ----
 const TRANSLATIONS = {
   sw: {
+    md_title:'Maktaba Yangu', md_sub:'Games ulizodownload', md_games_lbl:'games', md_open_hint:'Gusa kuona ›',
+    md_search_ph:'Tafuta game uliyodownload...', md_f_all:'Zote', md_f_week:'Wiki hii', md_f_month:'Mwezi huu', md_f_many:'Zilizorudiwa',
     about_fb:'Facebook', about_support_short:'Msaada / changamoto', about_tap:'', about_title:'Kuhusu Mumbigames',
     about_desc:'Games za simu, emulator, Duka, mashindano na jumuiya ya wachezaji — sehemu moja, kwa lugha unayoielewa.',
     about_follow:'Tufuate', about_yt:'Subscribe YouTube', about_tt:'Follow TikTok', about_wach:'WhatsApp Channel',
@@ -5441,6 +5593,8 @@ const TRANSLATIONS = {
     tourn_f_photo:'Picha ya Tournament (hiari)', tourn_f_photo_pick:'Chagua picha kutoka simu yako'
   },
   en: {
+    md_title:'My Library', md_sub:'Games you downloaded', md_games_lbl:'games', md_open_hint:'Tap to view ›',
+    md_search_ph:'Search your downloaded games...', md_f_all:'All', md_f_week:'This week', md_f_month:'This month', md_f_many:'Re-downloaded',
     about_fb:'Facebook', about_support_short:'Help / issues', about_tap:'', about_title:'About Mumbigames',
     about_desc:'Mobile games, emulators, a Shop, tournaments and a player community — all in one place, in the language you understand.',
     about_follow:'Follow us', about_yt:'Subscribe on YouTube', about_tt:'Follow on TikTok', about_wach:'WhatsApp Channel',
