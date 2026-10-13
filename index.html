@@ -620,6 +620,25 @@
   .nav-center.active span{color:var(--lime);}
 
 
+  /* AI floating button */
+  #aiFab{position:fixed;z-index:25;width:56px;height:56px;border-radius:50%;display:none;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;}
+  #aiFab.show{display:flex;}
+  #aiFab::before{content:'';position:absolute;inset:-3px;border-radius:50%;background:conic-gradient(from 0deg,#f5a623,#ff5e62,#6d5efc,#22d3ee,#f5a623);animation:aiSpin 3s linear infinite;filter:blur(.4px);}
+  #aiFab::after{content:'';position:absolute;inset:-3px;border-radius:50%;box-shadow:0 0 18px 4px rgba(245,166,35,.55),0 0 30px 8px rgba(109,94,252,.35);animation:aiGlow 1.8s ease-in-out infinite;pointer-events:none;}
+  #aiFab .aif-in{position:relative;z-index:1;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 30% 25%,#2a2350,#0a0a16 75%);display:flex;align-items:center;justify-content:center;font-size:27px;animation:aiBob 2.4s ease-in-out infinite;}
+  #aiFab.drag{cursor:grabbing;transform:scale(1.1);}
+  #aiFab.drag .aif-in{animation:none;}
+  @keyframes aiSpin{to{transform:rotate(360deg);}}
+  @keyframes aiGlow{0%,100%{opacity:.55;}50%{opacity:1;}}
+  @keyframes aiBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-2px) scale(1.06);}}
+  /* TV coming soon */
+  #tvView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
+  .tv-soon{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 24px;gap:12px;}
+  .tv-ico{width:120px;height:120px;border-radius:32px;background:linear-gradient(135deg,rgba(245,166,35,.18),rgba(109,94,252,.18));border:1px solid var(--lime-dim);display:flex;align-items:center;justify-content:center;color:var(--lime);box-shadow:0 0 30px rgba(245,166,35,.25);animation:aiGlow 2s ease-in-out infinite;}
+  .tv-badge{background:var(--lime);color:#241300;font-weight:800;font-size:13px;padding:6px 18px;border-radius:20px;letter-spacing:.5px;}
+  .tv-t{font-size:22px;font-weight:800;}
+  .tv-s{font-size:12.5px;color:var(--sub);line-height:1.6;max-width:280px;}
+
   /* AI assistant view */
   #aiView{display:none;flex-direction:column;height:calc(100vh - 78px);}
   .ai-quick{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap;}
@@ -1062,6 +1081,19 @@
 </div>
 
 
+<div id="tvView">
+  <div class="chat-header">
+    <div class="back" onclick="showHome()">←</div>
+    <div style="flex:1;"><div class="title">📺 TV</div></div>
+  </div>
+  <div class="tv-soon">
+    <div class="tv-ico"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5l4 3 4-3"/><rect x="3" y="7" width="18" height="13" rx="4"/></svg></div>
+    <div class="tv-badge" data-i18n="tv_soon">Karibuni</div>
+    <div class="tv-t" data-i18n="tv_title">Mumbigames TV</div>
+    <div class="tv-s" data-i18n="tv_sub">Tunaandaa kitu kizuri hapa. Endelea kuwa nasi!</div>
+  </div>
+</div>
+
 <div id="aiView">
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
@@ -1404,11 +1436,13 @@
   </div>
 </div>
 
+<div id="aiFab" onclick="" aria-label="AI"><div class="aif-in">🤖</div></div>
+
 <div class="bottomnav">
   <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
   <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic" style="position:relative;">💬<span class="nav-badge" id="chatUnreadBadge">0</span></div><span data-i18n="nav_chat">Chat</span></div>
   <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5c0-1.2.4-2.3 1-3.3l.6-1c.2-.3.5-.5.9-.5h10c.4 0 .7.2.9.5l.6 1c.6 1 1 2.1 1 3.3"/><path d="M4.5 9.5c1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0"/><path d="M5.5 9.5V18a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.5"/><path d="M9.5 14c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5"/></svg></div><span data-i18n="nav_duka">Duka</span></div>
-  <div class="nav-item" id="navAI" onclick="showAI()"><div class="ic">🤖</div><span data-i18n="nav_ai">AI</span></div>
+  <div class="nav-item" id="navTV" onclick="showTV()"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5l4 3 4-3"/><rect x="3" y="7" width="18" height="13" rx="4"/></svg></div><span data-i18n="nav_tv">TV</span></div>
   <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic">☺<span class="nav-dot" id="navMeDot"></span></div><span data-i18n="nav_me">Me</span></div>
 </div>
 
@@ -3196,8 +3230,8 @@ let chatName = localStorage.getItem('mg-chat-name') || '';
 let myChatPhotoURL = ''; // picha ya profile ya mtumiaji aliyeingia, inatumwa na kila ujumbe wake
 let chatUnsub = null;
 
-const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','myDownloadsView','aiView','tournamentView','tournDetailView'];
-const ALL_NAVS = ['navHome','navChat','navGames','navAI','navMe'];
+const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','myDownloadsView','aiView','tvView','tournamentView','tournDetailView'];
+const ALL_NAVS = ['navHome','navChat','navGames','navTV','navMe'];
 function hideAllViews(){
   if(tournDetailUnsub){ tournDetailUnsub(); tournDetailUnsub = null; }
   ALL_VIEWS.forEach(id=>{
@@ -3208,6 +3242,7 @@ function hideAllViews(){
     const el = document.getElementById(id);
     if(el) el.classList.remove('active');
   });
+  try{ updateAiFab(); }catch(e){}
 }
 function showHome(){
   hideAllViews();
@@ -3598,7 +3633,8 @@ const APP_CHANGELOG = [
   {id: 13, title: '✏️ Menu ndogo ya ujumbe', body: 'Shikilia ujumbe wako kwenye chat — menu ndogo inafunguka pembeni ikiwa na Jibu, Hariri na Futa. Ukigusa Futa, ujumbe unafutwa papo hapo.'},
   {id: 14, title: 'ℹ️ Kuhusu App & Mawasiliano', body: 'Chini kabisa ya orodha ya games sasa kuna "from mumbigames". Juu yake kuna alama za TikTok, WhatsApp, Facebook na YouTube. Ukigusa jina utaona taarifa za app, namba za msaada na email ya biashara — kwa Kiswahili na English.'},
   {id: 15, title: '📚 Maktaba Yangu — Downloads Zako Zote', body: 'Sasa kwenye Me (Profile) ukigusa kadi ya "Downloads zako" unafungua Maktaba yako: games zote ulizowahi kudownload zikiwa na picha, tarehe, alama ya MPYA, idadi ya mara ulizorudia, utafutaji na vichujio (Wiki hii, Mwezi huu, Zilizorudiwa). Gusa game yoyote kuidownload tena.'},
-  // {id: 16, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 16, title: '🤖 AI Sasa Inaelea + 📺 TV Inakuja', body: 'Mumbigames AI sasa ni kitufe kinachong\'aa kinachoelea pembeni — kiburute popote unapopenda, kisha kigusa kuongea na AI. Kitafichwa ukiwa kwenye ukurasa wa download na kurudi ukitoka. Kwenye menu ya chini, nafasi ya AI sasa ina TV (inakuja karibuni!).'},
+  // {id: 17, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -3734,6 +3770,7 @@ function mdOpenGame(id){
   showHome();
   handleDownload(g);
 }
+
 
 function showProfile(){
   hideAllViews();
@@ -4793,11 +4830,86 @@ function shareTournament(id, name){
     alert(text);
   }
 }
+function showTV(){
+  hideAllViews();
+  document.getElementById('tvView').style.display = 'flex';
+  document.getElementById('navTV').classList.add('active');
+  updateAiFab();
+}
+
+// ===== Kitufe cha AI kinachoelea (kinaburutwa) =====
+(function(){
+  const fab = document.getElementById('aiFab');
+  if(!fab) return;
+  const KEY = 'mg-aifab-pos';
+  const SZ = 56;
+  let pos = null;
+  try{ pos = JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+  function clamp(x,y){
+    const w = window.innerWidth, h = window.innerHeight;
+    return {x: Math.min(Math.max(6,x), w-SZ-6), y: Math.min(Math.max(80,y), h-SZ-92)};
+  }
+  function place(p){
+    const c = clamp(p.x,p.y); pos = c;
+    fab.style.left = c.x+'px'; fab.style.top = c.y+'px';
+  }
+  function init(){
+    if(!pos) pos = {x: window.innerWidth-SZ-10, y: window.innerHeight*0.55};
+    place(pos);
+  }
+  init();
+  window.addEventListener('resize', ()=>place(pos));
+  let sx=0, sy=0, ox=0, oy=0, moved=false, down=false;
+  fab.addEventListener('pointerdown', e=>{
+    down = true; moved = false; sx = e.clientX; sy = e.clientY; ox = pos.x; oy = pos.y;
+    try{ fab.setPointerCapture(e.pointerId); }catch(_){}
+  });
+  fab.addEventListener('pointermove', e=>{
+    if(!down) return;
+    const dx = e.clientX-sx, dy = e.clientY-sy;
+    if(!moved && Math.abs(dx)+Math.abs(dy) > 8){ moved = true; fab.classList.add('drag'); }
+    if(moved){ place({x: ox+dx, y: oy+dy}); }
+  });
+  function end(e){
+    if(!down) return;
+    down = false; fab.classList.remove('drag');
+    if(moved){
+      // inaganda upande wa karibu (kushoto au kulia)
+      const mid = pos.x + SZ/2 < window.innerWidth/2;
+      place({x: mid ? 10 : window.innerWidth-SZ-10, y: pos.y});
+      try{ localStorage.setItem(KEY, JSON.stringify(pos)); }catch(_){}
+    } else if(e.type === 'pointerup'){
+      showAI();
+    }
+  }
+  fab.addEventListener('pointerup', end);
+  fab.addEventListener('pointercancel', end);
+})();
+function updateAiFab(){
+  const fab = document.getElementById('aiFab');
+  if(!fab) return;
+  const hide = ['overlay','commentsOverlay','changelogOverlay','earnTokensOverlay','aboutOverlay','listingDetailOverlay'].some(id=>{
+    const el = document.getElementById(id);
+    return el && (el.classList.contains('show') || el.style.display==='flex' || el.style.display==='block');
+  });
+  const ai = document.getElementById('aiView');
+  const inAI = ai && ai.style.display === 'flex';
+  fab.classList.toggle('show', !hide && !inAI);
+}
+(function(){
+  const mo = new MutationObserver(updateAiFab);
+  ['overlay','commentsOverlay','changelogOverlay','earnTokensOverlay','aboutOverlay','listingDetailOverlay','aiView'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) mo.observe(el, {attributes:true, attributeFilter:['class','style']});
+  });
+  updateAiFab();
+})();
+
 function showAI(){
   hideAllViews();
   document.getElementById('aiView').style.display = 'flex';
-  document.getElementById('navAI').classList.add('active');
   initAI();
+  updateAiFab();
 }
 
 function setDukaTab(t){
@@ -5497,6 +5609,7 @@ async function sendMsg(){
 // ---- Settings: Theme + Language ----
 const TRANSLATIONS = {
   sw: {
+    nav_tv:'TV', tv_soon:'Karibuni', tv_title:'Mumbigames TV', tv_sub:'Tunaandaa kitu kizuri hapa. Endelea kuwa nasi!',
     md_title:'Maktaba Yangu', md_sub:'Games ulizodownload', md_games_lbl:'games', md_open_hint:'Gusa kuona ›',
     md_search_ph:'Tafuta game uliyodownload...', md_f_all:'Zote', md_f_week:'Wiki hii', md_f_month:'Mwezi huu', md_f_many:'Zilizorudiwa',
     about_fb:'Facebook', about_support_short:'Msaada / changamoto', about_tap:'', about_title:'Kuhusu Mumbigames',
@@ -5593,6 +5706,7 @@ const TRANSLATIONS = {
     tourn_f_photo:'Picha ya Tournament (hiari)', tourn_f_photo_pick:'Chagua picha kutoka simu yako'
   },
   en: {
+    nav_tv:'TV', tv_soon:'Coming Soon', tv_title:'Mumbigames TV', tv_sub:"We're cooking up something great here. Stay tuned!",
     md_title:'My Library', md_sub:'Games you downloaded', md_games_lbl:'games', md_open_hint:'Tap to view ›',
     md_search_ph:'Search your downloaded games...', md_f_all:'All', md_f_week:'This week', md_f_month:'This month', md_f_many:'Re-downloaded',
     about_fb:'Facebook', about_support_short:'Help / issues', about_tap:'', about_title:'About Mumbigames',
