@@ -621,11 +621,12 @@
 
 
   /* AI floating button */
-  #aiFab{position:fixed;z-index:25;width:56px;height:56px;border-radius:50%;display:none;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;}
+  #aiFab{position:fixed;z-index:25;width:44px;height:44px;opacity:.32;transition:opacity .7s ease,transform .2s;border-radius:50%;display:none;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;}
   #aiFab.show{display:flex;}
+  #aiFab.awake{opacity:1;transition:opacity .15s ease;}
   #aiFab::before{content:'';position:absolute;inset:-3px;border-radius:50%;background:conic-gradient(from 0deg,#f5a623,#ff5e62,#6d5efc,#22d3ee,#f5a623);animation:aiSpin 3s linear infinite;filter:blur(.4px);}
   #aiFab::after{content:'';position:absolute;inset:-3px;border-radius:50%;box-shadow:0 0 18px 4px rgba(245,166,35,.55),0 0 30px 8px rgba(109,94,252,.35);animation:aiGlow 1.8s ease-in-out infinite;pointer-events:none;}
-  #aiFab .aif-in{position:relative;z-index:1;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 30% 25%,#2a2350,#0a0a16 75%);display:flex;align-items:center;justify-content:center;font-size:27px;animation:aiBob 2.4s ease-in-out infinite;}
+  #aiFab .aif-in{position:relative;z-index:1;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 30% 25%,#2a2350,#0a0a16 75%);display:flex;align-items:center;justify-content:center;font-size:21px;animation:aiBob 2.4s ease-in-out infinite;}
   #aiFab.drag{cursor:grabbing;transform:scale(1.1);}
   #aiFab.drag .aif-in{animation:none;}
   @keyframes aiSpin{to{transform:rotate(360deg);}}
@@ -640,7 +641,25 @@
   .tv-s{font-size:12.5px;color:var(--sub);line-height:1.6;max-width:280px;}
 
   /* AI assistant view */
-  #aiView{display:none;flex-direction:column;height:calc(100vh - 78px);}
+  #aiView{display:none;flex-direction:column;height:calc(100vh - 78px);position:relative;overflow:hidden;background:#120a2e;}
+  #aiBg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+  #aiView>*:not(#aiBg){position:relative;z-index:1;}
+  #aiView .chat-header{background:rgba(18,10,46,.55);border-bottom:1px solid rgba(160,130,255,.22);}
+  #aiView .chat-messages{background:transparent;}
+  #aiView .chat-input-row{background:rgba(18,10,46,.6);border-top:1px solid rgba(160,130,255,.22);backdrop-filter:blur(8px);}
+  .ai-hd{display:flex;align-items:center;gap:11px;flex:1;min-width:0;}
+  .ai-av{position:relative;flex:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#22d3ee,#6d5efc 60%,#a855f7);display:flex;align-items:center;justify-content:center;color:#fff;}
+  .ai-dot{position:absolute;right:-1px;bottom:-1px;width:13px;height:13px;border-radius:50%;background:#22e55a;border:2.5px solid #120a2e;animation:aiLamp 1.4s ease-in-out infinite;}
+  @keyframes aiLamp{0%,100%{box-shadow:0 0 3px 1px rgba(34,229,90,.45);opacity:.55;}50%{box-shadow:0 0 11px 4px rgba(34,229,90,.95);opacity:1;}}
+  .ai-nm{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:17px;display:flex;align-items:center;gap:6px;line-height:1.1;}
+  .ai-sp{color:#ffd24a;filter:drop-shadow(0 0 5px rgba(255,210,74,.8));animation:aiGlow 2s ease-in-out infinite;}
+  .ai-sb{font-size:11px;color:#a9a5d6;margin-top:2px;}
+  .ai-welcome{margin:auto;text-align:center;padding:26px 22px;max-width:320px;display:flex;flex-direction:column;align-items:center;gap:12px;}
+  .ai-wic{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,rgba(34,211,238,.22),rgba(168,85,247,.28));display:flex;align-items:center;justify-content:center;color:#5fe9ff;box-shadow:0 0 28px rgba(109,94,252,.45);}
+  .ai-wt{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:22px;}
+  .ai-wd{font-size:13px;line-height:1.6;color:#b8b4e0;}
+  #aiView .ai-msg{background:rgba(32,22,74,.78);border-color:rgba(160,130,255,.25);backdrop-filter:blur(4px);}
+  #aiView .ai-msg.user{background:rgba(245,166,35,.18);border-color:var(--lime-dim);}
   .ai-quick{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap;}
   .ai-chip{background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:10.5px;padding:8px 12px;border-radius:20px;cursor:pointer;}
   .ai-msg{max-width:82%;padding:10px 13px;border-radius:14px;background:var(--panel);border:1px solid var(--line);font-size:12px;line-height:1.5;white-space:pre-line;}
@@ -1095,17 +1114,26 @@
 </div>
 
 <div id="aiView">
+  <canvas id="aiBg"></canvas>
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
-    <div style="flex:1;">
-      <div class="title" data-i18n="ai_title">🤖 Mumbigames AI</div>
-      <div class="sub" data-i18n="ai_sub">Uliza kuhusu malipo, kuseti game, na zaidi</div>
+    <div class="ai-hd">
+      <div class="ai-av"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="4"/><path d="M12 8V4.5"/><circle cx="12" cy="3.6" r="1" fill="currentColor"/><circle cx="9" cy="14" r="1.2" fill="currentColor"/><circle cx="15" cy="14" r="1.2" fill="currentColor"/></svg><span class="ai-dot"></span></div>
+      <div>
+        <div class="ai-nm">mumbiBot <svg class="ai-sp" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5c.6 4.6 2.2 7.6 4.6 9 1.5.9 3.3 1.3 6 1.5-4.6.6-7.6 2.2-9 4.6-.9 1.5-1.3 3.3-1.6 6-.6-4.6-2.2-7.6-4.6-9-1.5-.9-3.3-1.3-6-1.5 4.6-.6 7.6-2.2 9-4.6.9-1.5 1.3-3.3 1.6-6z"/></svg></div>
+        <div class="ai-sb" data-i18n="ai_sub">Msaidizi wa mumbigames • Online</div>
+      </div>
     </div>
   </div>
-  <div class="ai-quick" id="aiQuick"></div>
-  <div class="chat-messages" id="aiMessages"></div>
+  <div class="chat-messages" id="aiMessages">
+    <div class="ai-welcome" id="aiWelcome">
+      <div class="ai-wic"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h4M8 9v4"/><circle cx="15" cy="10" r=".6" fill="currentColor"/><circle cx="17.5" cy="12.5" r=".6" fill="currentColor"/><path d="M17.3 5H6.7a4 4 0 0 0-3.9 3.2l-1.3 6.1A3 3 0 0 0 4.4 18c.9 0 1.7-.4 2.2-1.1L8 15h8l1.4 1.9c.5.7 1.3 1.1 2.2 1.1a3 3 0 0 0 2.9-3.7l-1.3-6.1A4 4 0 0 0 17.3 5z"/></svg></div>
+      <div class="ai-wt" data-i18n="ai_w_t">Karibu! 👋</div>
+      <div class="ai-wd" data-i18n="ai_w_d">Mimi ni mumbiBot. Naweza kukusaidia kuhusu malipo, kuseti games, duka, tokens na zaidi. Uliza chochote!</div>
+    </div>
+  </div>
   <div class="chat-input-row">
-    <input type="text" id="aiMsgInput" placeholder="Andika swali lako..." onkeydown="if(event.key==='Enter')aiSend()">
+    <input type="text" id="aiMsgInput" placeholder="Andika swali lako..." data-i18n-placeholder="ai_ph" onkeydown="if(event.key==='Enter')aiSend()">
     <button class="send-btn" onclick="aiSend()">➤</button>
   </div>
 </div>
@@ -3094,14 +3122,49 @@ const AI_KB = [
   {keys:['unlock with tokens','token 500','pay with tokens'], lang:'en', a:'Free games have no restrictions at all — download them anytime. For PAID games, instead of sending money, you can unlock most of them for free with 500 Tokens — open the paid game and you\'ll see an "Unlock for 500 Tokens" option on the payment screen (this is a once-per-account perk, and a few specific games like ETS2 Mobile don\'t allow this — they must be paid for in cash). Earn tokens by tapping "Earn Tokens" on Home and watching ads.'}
 ];
 
-function initAI(){
-  const quick = document.getElementById('aiQuick');
-  if(quick.dataset.init) return;
-  quick.dataset.init = '1';
-  const topics = ['Jinsi ya kulipia','Kuseti Winlator','Kuseti PPSSPP','Kuseti MoBox','Kuseti AetherSX2','Kuseti Yuzu/Skyline','Kuseti Dolphin','Duka linafanyaje kazi','Mfumo wa Points'];
-  quick.innerHTML = topics.map(t=>`<div class="ai-chip" onclick="aiAsk(${JSON.stringify(t)})">${t}</div>`).join('');
-  const box = document.getElementById('aiMessages');
-  box.innerHTML = `<div class="ai-msg bot">Habari! Mimi ni Mumbigames AI 🤖 Niulize chochote — malipo, kuseti games (Winlator, PPSSPP, MoBox, AetherSX2, Yuzu/Skyline/Suyu, Dolphin), duka, kura, tournament, matangazo, token, chat, au hata ukitaka tu kuongea, niko hapa kwa ajili yako.</div>`;
+function initAI(){ /* hakuna chips wala ujumbe wa awali — ukurasa wa Karibu unatosha */ }
+
+// ===== Wallpaper ya mumbiBot (rangi moja ya zambarau, inaishi) =====
+let aiBgRun = false, aiBgT = 0, aiBgObj = null;
+function startAiBg(){ if(aiBgRun) return; aiBgRun = true; requestAnimationFrame(aiBgFrame); }
+function aiBgFrame(){
+  const view = document.getElementById('aiView');
+  if(!view || view.style.display !== 'flex'){ aiBgRun = false; return; }
+  const cv = document.getElementById('aiBg');
+  const w = cv.clientWidth, h = cv.clientHeight;
+  if(!w || !h){ requestAnimationFrame(aiBgFrame); return; }
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  if(cv.width !== Math.round(w*dpr) || cv.height !== Math.round(h*dpr)){ cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr); aiBgObj = null; }
+  const c = cv.getContext('2d');
+  c.setTransform(dpr,0,0,dpr,0,0);
+  if(!aiBgObj){
+    aiBgObj = {stars:[], orbs:[], motes:[]};
+    for(let i=0;i<60;i++) aiBgObj.stars.push({x:Math.random()*w,y:Math.random()*h,r:.5+Math.random()*1.4,ph:Math.random()*6.28,sp:.6+Math.random()*1.6});
+    for(let i=0;i<4;i++) aiBgObj.orbs.push({x:Math.random()*w,y:Math.random()*h,r:110+Math.random()*120,ax:20+Math.random()*40,ay:20+Math.random()*40,ph:Math.random()*6.28,sp:.15+Math.random()*.2});
+    for(let i=0;i<26;i++) aiBgObj.motes.push({x:Math.random()*w,y:Math.random()*h,r:1+Math.random()*2.6,v:.15+Math.random()*.4,ph:Math.random()*6.28});
+  }
+  aiBgT += 0.016;
+  const g = c.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,'#2a1566'); g.addColorStop(.55,'#1a0f4a'); g.addColorStop(1,'#0f0a30');
+  c.fillStyle = g; c.fillRect(0,0,w,h);
+  aiBgObj.orbs.forEach(o=>{
+    const x = o.x + Math.sin(aiBgT*o.sp+o.ph)*o.ax, y = o.y + Math.cos(aiBgT*o.sp*1.3+o.ph)*o.ay;
+    const rg = c.createRadialGradient(x,y,0,x,y,o.r);
+    rg.addColorStop(0,'rgba(150,110,255,.30)'); rg.addColorStop(1,'rgba(150,110,255,0)');
+    c.fillStyle = rg; c.beginPath(); c.arc(x,y,o.r,0,6.283); c.fill();
+  });
+  aiBgObj.stars.forEach(st=>{
+    const a = .25 + .65*Math.abs(Math.sin(aiBgT*st.sp+st.ph));
+    c.fillStyle = 'rgba(220,210,255,'+a.toFixed(2)+')';
+    c.beginPath(); c.arc(st.x,st.y,st.r,0,6.283); c.fill();
+  });
+  aiBgObj.motes.forEach(m=>{
+    m.y -= m.v; if(m.y < -6){ m.y = h+6; m.x = Math.random()*w; }
+    const x = m.x + Math.sin(aiBgT*.8+m.ph)*8;
+    c.fillStyle = 'rgba(190,160,255,.35)';
+    c.beginPath(); c.arc(x,m.y,m.r,0,6.283); c.fill();
+  });
+  requestAnimationFrame(aiBgFrame);
 }
 
 // Rahisi kutambua kama swali limeandikwa kwa Kiingereza au Kiswahili, ili
@@ -3205,6 +3268,7 @@ function aiRespond(text){
 
 function aiAddMsg(text, who){
   const box = document.getElementById('aiMessages');
+  const wl = document.getElementById('aiWelcome'); if(wl) wl.style.display = 'none';
   const div = document.createElement('div');
   div.className = 'ai-msg ' + who;
   div.textContent = text;
@@ -3634,7 +3698,8 @@ const APP_CHANGELOG = [
   {id: 14, title: 'ℹ️ Kuhusu App & Mawasiliano', body: 'Chini kabisa ya orodha ya games sasa kuna "from mumbigames". Juu yake kuna alama za TikTok, WhatsApp, Facebook na YouTube. Ukigusa jina utaona taarifa za app, namba za msaada na email ya biashara — kwa Kiswahili na English.'},
   {id: 15, title: '📚 Maktaba Yangu — Downloads Zako Zote', body: 'Sasa kwenye Me (Profile) ukigusa kadi ya "Downloads zako" unafungua Maktaba yako: games zote ulizowahi kudownload zikiwa na picha, tarehe, alama ya MPYA, idadi ya mara ulizorudia, utafutaji na vichujio (Wiki hii, Mwezi huu, Zilizorudiwa). Gusa game yoyote kuidownload tena.'},
   {id: 16, title: '🤖 AI Sasa Inaelea + 📺 TV Inakuja', body: 'Mumbigames AI sasa ni kitufe kinachong\'aa kinachoelea pembeni — kiburute popote unapopenda, kisha kigusa kuongea na AI. Kitafichwa ukiwa kwenye ukurasa wa download na kurudi ukitoka. Kwenye menu ya chini, nafasi ya AI sasa ina TV (inakuja karibuni!).'},
-  // {id: 17, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 17, title: '✨ mumbiBot — Muonekano Mpya', body: 'AI sasa inaitwa mumbiBot, ikiwa na wallpaper hai ya zambarau, taa ya kijani ya "Online" na ukurasa wa Karibu. Kitufe chake cha kuelea ni kidogo, kinaonekana kwenye Home tu, na kinafifia kikikaa sekunde 5 bila kuguswa — kigusa kikawake tena.'},
+  // {id: 18, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -4842,7 +4907,7 @@ function showTV(){
   const fab = document.getElementById('aiFab');
   if(!fab) return;
   const KEY = 'mg-aifab-pos';
-  const SZ = 56;
+  const SZ = 44;
   let pos = null;
   try{ pos = JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
   function clamp(x,y){
@@ -4859,8 +4924,14 @@ function showTV(){
   }
   init();
   window.addEventListener('resize', ()=>place(pos));
-  let sx=0, sy=0, ox=0, oy=0, moved=false, down=false;
+  let sx=0, sy=0, ox=0, oy=0, moved=false, down=false, dimT=null;
+  function wake(){
+    fab.classList.add('awake');
+    clearTimeout(dimT);
+    dimT = setTimeout(()=>{ if(!down) fab.classList.remove('awake'); }, 5000);
+  }
   fab.addEventListener('pointerdown', e=>{
+    wake();
     down = true; moved = false; sx = e.clientX; sy = e.clientY; ox = pos.x; oy = pos.y;
     try{ fab.setPointerCapture(e.pointerId); }catch(_){}
   });
@@ -4868,11 +4939,11 @@ function showTV(){
     if(!down) return;
     const dx = e.clientX-sx, dy = e.clientY-sy;
     if(!moved && Math.abs(dx)+Math.abs(dy) > 8){ moved = true; fab.classList.add('drag'); }
-    if(moved){ place({x: ox+dx, y: oy+dy}); }
+    if(moved){ place({x: ox+dx, y: oy+dy}); wake(); }
   });
   function end(e){
     if(!down) return;
-    down = false; fab.classList.remove('drag');
+    down = false; fab.classList.remove('drag'); wake();
     if(moved){
       // inaganda upande wa karibu (kushoto au kulia)
       const mid = pos.x + SZ/2 < window.innerWidth/2;
@@ -4888,17 +4959,17 @@ function showTV(){
 function updateAiFab(){
   const fab = document.getElementById('aiFab');
   if(!fab) return;
-  const hide = ['overlay','commentsOverlay','changelogOverlay','earnTokensOverlay','aboutOverlay','listingDetailOverlay'].some(id=>{
+  const hv = document.getElementById('homeView');
+  const onHome = hv && hv.style.display !== 'none';
+  const hide = !onHome || ['overlay','commentsOverlay','changelogOverlay','earnTokensOverlay','aboutOverlay','listingDetailOverlay'].some(id=>{
     const el = document.getElementById(id);
     return el && (el.classList.contains('show') || el.style.display==='flex' || el.style.display==='block');
   });
-  const ai = document.getElementById('aiView');
-  const inAI = ai && ai.style.display === 'flex';
-  fab.classList.toggle('show', !hide && !inAI);
+  fab.classList.toggle('show', !hide);
 }
 (function(){
   const mo = new MutationObserver(updateAiFab);
-  ['overlay','commentsOverlay','changelogOverlay','earnTokensOverlay','aboutOverlay','listingDetailOverlay','aiView'].forEach(id=>{
+  ['overlay','commentsOverlay','changelogOverlay','earnTokensOverlay','aboutOverlay','listingDetailOverlay','homeView'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) mo.observe(el, {attributes:true, attributeFilter:['class','style']});
   });
@@ -4910,6 +4981,7 @@ function showAI(){
   document.getElementById('aiView').style.display = 'flex';
   initAI();
   updateAiFab();
+  startAiBg();
 }
 
 function setDukaTab(t){
@@ -5636,7 +5708,7 @@ const TRANSLATIONS = {
     tourn_min_teams:'Angalau timu 4 zinahitajika.', tourn_finish:'Unda Tournament',
     chip_all:'Zote', chip_free:'Bure', chip_paid:'Kulipia', chip_offline:'Offline',
     poll_title:'Kura (Poll)', poll_sub:'Piga kura, ona matokeo',
-    ai_title:'🤖 Mumbigames AI', ai_sub:'Uliza kuhusu malipo, kuseti game, na zaidi',
+    ai_title:'mumbiBot', ai_sub:'Msaidizi wa mumbigames • Online', ai_w_t:'Karibu! 👋', ai_w_d:'Mimi ni mumbiBot. Naweza kukusaidia kuhusu malipo, kuseti games, duka, tokens na zaidi. Uliza chochote!', ai_ph:'Andika swali lako...',
     profile_title:'Profile Yangu', profile_sub:'Akaunti yako mumbigames',
     duka_title:'Duka la Wachezaji', duka_sub:'Vifaa vya games — vilivyothibitishwa na admin',
     duka_sub_home:'Nunua/uza vifaa vya games — vilivyothibitishwa na admin',
@@ -5733,7 +5805,7 @@ const TRANSLATIONS = {
     tourn_min_teams:'Min 4 teams required.', tourn_finish:'Create Tournament',
     chip_all:'All', chip_free:'Free', chip_paid:'Paid', chip_offline:'Offline',
     poll_title:'Poll', poll_sub:'Vote and see results',
-    ai_title:'🤖 Mumbigames AI', ai_sub:'Ask about payments, game setup, and more',
+    ai_title:'mumbiBot', ai_sub:'mumbigames assistant • Online', ai_w_t:'Welcome! 👋', ai_w_d:"I'm mumbiBot. I can help with payments, game setup, the shop, tokens and more. Ask me anything!", ai_ph:'Type your question...',
     profile_title:'My Profile', profile_sub:'Your mumbigames account',
     duka_title:'Player Marketplace', duka_sub:'Gaming gear — verified by admin',
     duka_sub_home:'Buy/sell gaming gear — verified by admin',
