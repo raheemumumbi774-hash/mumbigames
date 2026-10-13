@@ -1239,7 +1239,11 @@ function loadListings(){
 function escapeHtml2(s){
   return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
+function isSoldOut(l){
+  return !(l.stock===undefined || l.stock===null || l.stock==='') && parseInt(l.stock,10) <= 0;
+}
 function listingCard(l){
+  const sold = isSoldOut(l);
   const thumbStyle = l.image ? `style="background-image:url('${l.image.replace(/'/g,"")}')"` : '';
   const delBtn = `<button class="btn-sm btn-remove" onclick="deleteListing('${l.id}')">🗑️ Futa Kabisa</button>`;
   let actions = '';
@@ -1250,6 +1254,9 @@ function listingCard(l){
     </div>`;
   } else if(l.status==='approved'){
     actions = `<div class="listing-actions">
+      ${sold
+        ? `<button class="btn-sm btn-approve" onclick="restockListing('${l.id}')">🔓 Rudisha (Ipo Tena)</button>`
+        : `<button class="btn-sm btn-reject" onclick="markListingSold('${l.id}')">🔒 Weka Imeuzwa</button>`}
       <button class="btn-sm btn-remove" onclick="setListingStatus('${l.id}','rejected')">Ondoa (matapeli)</button>
     </div>`;
   } else {
@@ -1261,11 +1268,11 @@ function listingCard(l){
   return `<div class="listing-card">
     <div class="lthumb" ${thumbStyle}>${l.image?'':'IMG'}</div>
     <div class="linfo">
-      <div class="lname">${escapeHtml2(l.title)}</div>
+      <div class="lname">${escapeHtml2(l.title)}${sold ? ' <span style="background:#ef4444;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;vertical-align:middle;">IMEUZWA</span>' : ''}</div>
       <div class="ldesc">${escapeHtml2(l.desc)}</div>
       <div class="lmeta">Bei: <b>TZS ${escapeHtml2(l.price)}</b>${l.wasPrice?` <span style="text-decoration:line-through;color:var(--sub);">TZS ${escapeHtml2(l.wasPrice)}</span>`:''}</div>
       ${(l.brand || l.category) ? `<div class="lmeta">${l.brand?`Brand: ${escapeHtml2(l.brand)}`:''}${l.brand && l.category?' · ':''}${l.category?`Category: ${escapeHtml2(l.category)}`:''}</div>` : ''}
-      ${(l.condition || l.stock !== undefined) ? `<div class="lmeta">${l.condition?`Hali: ${escapeHtml2(l.condition)}`:''}${l.condition && l.stock?' · ':''}${l.stock?`Stock: ${escapeHtml2(l.stock)}`:''}${l.sku?` · SKU: ${escapeHtml2(l.sku)}`:''}</div>` : ''}
+      ${(l.condition || l.stock !== undefined) ? `<div class="lmeta">${l.condition?`Hali: ${escapeHtml2(l.condition)}`:''}${l.condition && l.stock!==undefined && l.stock!==''?' · ':''}${(l.stock!==undefined && l.stock!=='' && l.stock!==null)?`Stock: ${escapeHtml2(String(l.stock))}`:''}${l.sku?` · SKU: ${escapeHtml2(l.sku)}`:''}</div>` : ''}
       ${l.tags && l.tags.length ? `<div class="lmeta">Tags: ${l.tags.map(t=>escapeHtml2(t)).join(', ')}</div>` : ''}
       <div class="lseller">Muuzaji: ${escapeHtml2(l.sellerName)} · ${escapeHtml2(l.sellerPhone)}</div>
       ${l.ownerEmail ? `<div class="lseller">Akaunti: ${escapeHtml2(l.ownerEmail)}</div>` : ''}
@@ -1282,6 +1289,29 @@ async function setListingStatus(id, status){
     return;
   }
   showToast(status==='approved' ? 'Bidhaa imethibitishwa!' : 'Imekataliwa/imeondolewa.');
+}
+async function markListingSold(id){
+  if(!confirm('Weka bidhaa hii kama IMEUZWA (Sold Out)? Wanunuzi wataona alama ya "Imeuzwa" na kitufe cha Nunua kitafungwa.')) return;
+  try{
+    await db.collection('listings').doc(id).update({stock: 0});
+    showToast('Bidhaa imewekwa Imeuzwa ✅');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kuweka Imeuzwa.');
+  }
+}
+async function restockListing(id){
+  const v = prompt('Weka idadi iliyopo sasa (mfano 1):', '1');
+  if(v === null) return;
+  const n = parseInt(v,10);
+  if(isNaN(n) || n < 1){ showToast('Weka namba kuanzia 1.'); return; }
+  try{
+    await db.collection('listings').doc(id).update({stock: String(n)});
+    showToast('Bidhaa imerudishwa — inapatikana tena ✅');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kurudisha.');
+  }
 }
 async function deleteListing(id){
   if(!confirm('Una uhakika unataka kufuta tangazo hili KABISA? Halitaonekana tena popote.')) return;
