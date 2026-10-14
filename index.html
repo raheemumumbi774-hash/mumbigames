@@ -5250,14 +5250,14 @@ function tvEnded(c){
   if(ms.length < 2){ tvHint(tvT('Movie imeisha ✓','Movie finished ✓')); return; }
   tvHint(tvT('▶ Inayofuata: ','▶ Up next: ') + (ms[nx].n || ''));
   clearTimeout(tvNextTimer);
-  tvNextTimer = setTimeout(()=>{ if(tvCurId === c.id) tvLoadFrame(); }, 2800);
+  tvNextTimer = setTimeout(()=>{ if(tvCurId === c.id) tvLoadFrame(true); }, 2800);
 }
 function tvJump(i){
   const c = tvChannels.find(x=>x.id === tvCurId); if(!tvIsMovie(c)) return;
   const n = tvMovies(c).length; i = ((i % n) + n) % n;
   tvProgSet(c.id, {i:i, t:0, ts:Date.now()});
   document.getElementById('tvpSlL').classList.remove('show'); document.getElementById('tvbL').classList.remove('on');
-  tvLoadFrame();
+  tvLoadFrame(true);
 }
 function tvListRender(c){
   const ms = tvMovies(c), box = document.getElementById('tvpSlL');
@@ -5288,33 +5288,87 @@ document.addEventListener('visibilitychange', ()=>{
     wrap.innerHTML = '';
   } else if(!wrap.firstChild){ tvLoadFrame(); }
 });
-function tvLoadFrame(){
-  const c = tvChannels.find(x=>x.id===tvCurId); if(!c) return;
-  const wrap = document.getElementById('tvpFrameWrap');
-  wrap.innerHTML = '';
-  const movie = tvIsMovie(c);
-  tvPos = movie ? tvVirtualPos(c) : {i:0, t:0};
+// YouTube IFrame API (ya kuaminika kutambua video imeisha)
+let ytApiState = 0, ytApiQ = [], tvPlayer = null, tvLoadTok = 0;
+function tvYtApi(cb){
+  if(window.YT && YT.Player){ cb(false); return; }
+  ytApiQ.push(cb);
+  if(ytApiState) return; ytApiState = 1;
+  const prev = window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady = function(){ ytApiState = 2; try{ prev && prev(); }catch(e){} ytApiQ.splice(0).forEach(f=>{ try{ f(false); }catch(e){} }); };
+  const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api';
+  sc.onerror = ()=>{ ytApiState = 0; ytApiQ.splice(0).forEach(f=>{ try{ f(true); }catch(e){} }); };
+  document.head.appendChild(sc);
+  setTimeout(()=>{ if(ytApiState === 1){ ytApiState = 0; ytApiQ.splice(0).forEach(f=>{ try{ f(true); }catch(e){} }); } }, 8000);
+}
+function tvPlainFrame(c, pos, host){
   const f = document.createElement('iframe');
   f.id = 'tvpFrame';
   f.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
   f.allowFullscreen = true;
   f.referrerPolicy = 'strict-origin-when-cross-origin';
-  f.src = tvEmbedUrl(c, tvPos);
-  wrap.appendChild(f);
+  f.src = tvEmbedUrl(c, pos);
+  if(host && host.parentNode) host.parentNode.replaceChild(f, host); else document.getElementById('tvpFrameWrap').appendChild(f);
+  return f;
+}
+function tvPoll(c){
+  if(!tvPlayer || tvCurId !== c.id) return;
+  try{
+    const t = tvPlayer.getCurrentTime(), dd = tvPlayer.getDuration(), st = tvPlayer.getPlayerState();
+    if(typeof t === 'number' && t >= 0) tvLast.t = t;
+    if(dd > 0){ tvLast.d = dd; const m = tvMovies(c)[tvPos.i]; if(m) tvDurSet(m.id, dd); }
+    if(tvLast.t > 5 && Date.now() - tvLast.saved > 3000){ tvLast.saved = Date.now(); tvProgSet(c.id, {i:tvPos.i, t:Math.floor(tvLast.t), ts:Date.now()}); }
+    if(st === 0 || (dd > 60 && t >= dd - 1)) tvEnded(c);
+  }catch(e){}
+}
+function tvLoadFrame(keep){
+  const c = tvChannels.find(x=>x.id===tvCurId); if(!c) return;
+  const wrap = document.getElementById('tvpFrameWrap');
+  const movie = tvIsMovie(c);
+  tvPos = movie ? tvVirtualPos(c) : {i:0, t:0};
   tvLast = {t:0, d:0, saved:0, ended:false};
   clearInterval(tvListenTimer); clearTimeout(tvNextTimer);
+  const tok = ++tvLoadTok;
   const bl = document.getElementById('tvbL');
   const dot = document.querySelector('#tvPlayer .tvp-sb i'); if(dot) dot.style.display = movie ? 'none' : '';
-  if(movie){
-    const ms = tvMovies(c), m = ms[tvPos.i];
-    document.getElementById('tvpCat').textContent = '🎬 ' + (m.n || 'Movie') + (ms.length > 1 ? ' · ' + (tvPos.i+1) + '/' + ms.length : '');
-    if(bl) bl.style.display = ms.length > 1 ? '' : 'none';
-    tvListRender(c);
-    tvHint(tvPos.t > 10 ? tvT('▶ Inaendelea kutoka ','▶ Resuming from ') + tvFmt(tvPos.t) : '▶ ' + (m.n || ''));
+  if(!movie){
+    tvPlayer = null; wrap.innerHTML = ''; tvPlainFrame(c, tvPos);
+    if(bl) bl.style.display = 'none';
+    return;
+  }
+  const ms = tvMovies(c), m = ms[tvPos.i];
+  document.getElementById('tvpCat').textContent = '🎬 ' + (m.n || 'Movie') + (ms.length > 1 ? ' · ' + (tvPos.i+1) + '/' + ms.length : '');
+  if(bl) bl.style.display = ms.length > 1 ? '' : 'none';
+  tvListRender(c);
+  tvHint(tvPos.t > 10 ? tvT('▶ Inaendelea kutoka ','▶ Resuming from ') + tvFmt(tvPos.t) : '▶ ' + (m.n || ''));
+  const startPoll = ()=>{ clearInterval(tvListenTimer); tvListenTimer = setInterval(()=>tvPoll(c), 1000); };
+  // movie inayofuata: tumia player ile ile (inaendelea kucheza bila kuguswa tena)
+  if(keep && tvPlayer && typeof tvPlayer.loadVideoById === 'function' && document.getElementById('tvpFrame')){
+    try{ tvPlayer.loadVideoById({videoId:m.id, startSeconds: tvPos.t > 10 ? tvPos.t : 0}); startPoll(); return; }catch(e){}
+  }
+  tvPlayer = null; wrap.innerHTML = '';
+  const host = document.createElement('div'); host.id = 'tvpFrame'; wrap.appendChild(host);
+  const fallback = ()=>{
+    const f = tvPlainFrame(c, tvPos, document.getElementById('tvpFrame'));
     const hello = ()=>{ try{ f.contentWindow.postMessage(JSON.stringify({event:'listening', id:1, channel:'widget'}), '*'); }catch(e){} };
     f.addEventListener('load', hello);
-    let n = 0; tvListenTimer = setInterval(()=>{ hello(); if(++n > 12) clearInterval(tvListenTimer); }, 1000);
-  } else if(bl) bl.style.display = 'none';
+    let n = 0; clearInterval(tvListenTimer); tvListenTimer = setInterval(()=>{ hello(); if(++n > 20) clearInterval(tvListenTimer); }, 1000);
+  };
+  tvYtApi(fail=>{
+    if(tok !== tvLoadTok) return;
+    if(fail || !(window.YT && YT.Player)){ fallback(); return; }
+    try{
+      tvPlayer = new YT.Player('tvpFrame', {
+        videoId: m.id,
+        playerVars: {autoplay:1, playsinline:1, rel:0, modestbranding:1, enablejsapi:1, start: tvPos.t > 10 ? tvPos.t : 0, origin: (location.protocol.indexOf('http') === 0 ? location.origin : undefined)},
+        events: {
+          onReady: ()=>{ if(tok === tvLoadTok) startPoll(); },
+          onStateChange: ev=>{ if(tok === tvLoadTok && ev.data === 0) tvEnded(c); },
+          onError: ()=>{ if(tok === tvLoadTok){ tvHint(tvT('Video hii haichezeki, inaruka…','This video can\'t play, skipping…')); tvLast.ended = false; setTimeout(()=>{ if(tvCurId === c.id && tok === tvLoadTok) tvEnded(c); }, 1500); } }
+        }
+      });
+    }catch(e){ fallback(); }
+  });
 }
 function playTv(id){
   const c = tvChannels.find(x=>x.id===id); if(!c) return;
@@ -5335,7 +5389,7 @@ function closeTvPlayer(){
   document.getElementById('tvpFrameWrap').innerHTML = ''; // inasimamisha video
   tvCurId = null;
 }
-function tvRefresh(){ tvLoadFrame(); }
+function tvRefresh(){ tvLoadFrame(false); }
 function tvPanel(w){
   const ids = {B:['tvpSlB','tvbB'], V:['tvpSlV','tvbV'], L:['tvpSlL','tvbL']};
   const wasOpen = document.getElementById(ids[w][0]).classList.contains('show');
