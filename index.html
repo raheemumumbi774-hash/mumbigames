@@ -3907,7 +3907,8 @@ const APP_CHANGELOG = [
   {id: 19, title: '📺 TV Imefunguka — Channels za Live', body: 'Ukurasa wa TV sasa unaonyesha channel za live kwenye kadi kubwa moja moja zenye nembo na maelezo. Gusa channel, tangazo linafunguka, kisha video inacheza kwenye skrini ndogo yenye kuongeza sauti, mwanga, Full screen (simu inalala), na Refresh. Bonyeza ✕ kurudi kwenye orodha na uchague nyingine.'},
   {id: 20, title: '🔴 Alama ya LIVE kwenye TV', body: 'Kukiwa na channel, utaona alama nyekundu ya LIVE kwenye ikoni ya TV chini na kwenye kadi ya channel ili uguse utazame. Kusipokuwa na channel yoyote, alama haionekani.'},
   {id: 21, title: '🎁 Boksi la zawadi (Tangazo)', body: 'Kitufe cha Pata Token kimehamia juu karibu na token balance na kuwa boksi dogo la zawadi linalotingisika na kufunguka kuonyesha neno Tangazo/Ads. Gusa boksi kutazama tangazo na kupata token.'},
-  // {id: 22, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 22, title: '🎬 Movie inaendelea kama TV', body: 'Movie inaendelea kama TV hata ukiondoka: ukiishia dakika 15 kisha ukakaa nje dakika 20, ukirudi inaanzia dakika 35. Sauti inanyamaza ukiwa nje. Movie ikiisha, inayofuata inacheza yenyewe.'},
+  // {id: 23, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -5110,7 +5111,7 @@ const TV_CAT_COLORS = {Habari:['#4aa8ff','#6d5efc'],Muziki:['#ff5fa2','#a855f7']
 function tvT(sw,en){ return currentLang === 'en' ? en : sw; }
 function tvRender(){
   const list = document.getElementById('tvList'), soon = document.getElementById('tvSoon'), sub = document.getElementById('tvSub');
-  const isLive = c => c.liveUntil === undefined || c.liveUntil === null || c.liveUntil > Date.now();
+  const isLive = c => (c.liveUntil === undefined || c.liveUntil === null) ? c.cat !== 'Movie' : c.liveUntil > Date.now();
   const items = tvChannels.filter(c=>c.active !== false).sort((a,b)=> (isLive(b)?1:0) - (isLive(a)?1:0) || (a.order||0) - (b.order||0));
   const liveN = items.filter(isLive).length;
   const lb = document.getElementById('tvLiveBadge'); if(lb) lb.style.display = liveN ? 'block' : 'none';
@@ -5174,8 +5175,91 @@ function tvEmbedUrl(c){
   const base = c.ytType === 'channel'
     ? 'https://www.youtube.com/embed/live_stream?channel=' + encodeURIComponent(c.ytId) + '&'
     : 'https://www.youtube.com/embed/' + encodeURIComponent(c.ytId) + '?';
-  return base + 'autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1';
+  let extra = '';
+  if(tvIsMovie(c)){ const v = tvVirtualPos(c); if(v.t > 10) extra = '&start=' + v.t; }
+  return base + 'autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1' + extra;
 }
+// ---- Movie: endelea ulipoishia + movie inayofuata ----
+const TV_PROG_KEY = 'mg-tv-prog';
+function tvIsMovie(c){ return !!c && c.cat === 'Movie' && c.ytType === 'video'; }
+// Muda ambao mtu hayupo, movie "inaendelea" kama TV: nafasi = dakika aliyoishia + muda aliokaa nje (hadi saa 12)
+function tvVirtualPos(c){
+  const p = tvProgGet()[c.id];
+  if(!p || !(p.t > 0)) return {t:0, ended:false, away:0};
+  let away = Math.max(0, (Date.now() - (p.ts||Date.now())) / 1000);
+  if(away > 12*3600) away = 0;
+  const vt = p.t + away;
+  if(p.d && vt >= p.d - 20) return {t:0, ended:true, away:away};
+  return {t:Math.floor(vt), ended:false, away:away};
+}
+function tvNextMovie(c){
+  const list = tvChannels.filter(x=>x.active !== false && tvIsMovie(x)).sort((a,b)=>(a.order||0)-(b.order||0));
+  if(list.length < 2) return null;
+  const i = list.findIndex(x=>x.id === c.id);
+  return list[(i + 1) % list.length];
+}
+function tvProgGet(){ try{ return JSON.parse(localStorage.getItem(TV_PROG_KEY)||'{}') || {}; }catch(e){ return {}; } }
+function tvProgSet(id, t, d){
+  try{
+    const m = tvProgGet();
+    if(t == null) delete m[id]; else m[id] = {t:Math.floor(t), d:Math.floor(d||0), ts:Date.now()};
+    const ks = Object.keys(m);
+    if(ks.length > 60){ ks.sort((a,b)=>m[a].ts - m[b].ts).slice(0, ks.length - 60).forEach(k=>delete m[k]); }
+    localStorage.setItem(TV_PROG_KEY, JSON.stringify(m));
+  }catch(e){}
+}
+let tvLast = {t:0, d:0, saved:0, ended:false}, tvListenTimer = null, tvNextTimer = null;
+function tvHint(txt){
+  let h = document.getElementById('tvpHint');
+  if(!h){
+    h = document.createElement('div'); h.id = 'tvpHint';
+    h.style.cssText = 'position:absolute;left:50%;bottom:70px;transform:translateX(-50%);background:rgba(0,0,0,.78);color:#fff;font-size:12px;font-weight:700;padding:7px 14px;border-radius:20px;z-index:5;pointer-events:none;transition:opacity .4s;max-width:80%;text-align:center;';
+    document.getElementById('tvPlayer').appendChild(h);
+  }
+  h.textContent = txt; h.style.opacity = '1';
+  clearTimeout(h._t); h._t = setTimeout(()=>{ h.style.opacity = '0'; }, 3500);
+}
+function tvFmt(t){ t = Math.floor(t); const m = Math.floor(t/60), s2 = t % 60; return m + ':' + String(s2).padStart(2,'0'); }
+function tvEnded(c){
+  if(tvLast.ended) return; tvLast.ended = true;
+  tvProgSet(c.id, null);
+  const nx = tvNextMovie(c);
+  if(!nx){ tvHint(tvT('Movie imeisha ✓','Movie finished ✓')); return; }
+  tvHint(tvT('▶ Inayofuata: ','▶ Up next: ') + (nx.name || ''));
+  clearTimeout(tvNextTimer);
+  tvNextTimer = setTimeout(()=>{ if(tvCurId === c.id) playTv(nx.id); }, 2800);
+}
+function tvSaveNow(){
+  const c = tvChannels.find(x=>x.id === tvCurId);
+  if(tvIsMovie(c) && !tvLast.ended && tvLast.t > 5) tvProgSet(c.id, tvLast.t, tvLast.d);
+}
+window.addEventListener('message', e=>{
+  if(typeof e.origin !== 'string' || e.origin.indexOf('youtube') < 0) return;
+  const c = tvChannels.find(x=>x.id === tvCurId);
+  if(!tvIsMovie(c)) return;
+  let d = e.data; try{ if(typeof d === 'string') d = JSON.parse(d); }catch(_){ return; }
+  if(!d) return;
+  if(d.event === 'infoDelivery' && d.info){
+    if(typeof d.info.currentTime === 'number') tvLast.t = d.info.currentTime;
+    if(d.info.duration) tvLast.d = d.info.duration;
+    if(tvLast.t > 5 && Date.now() - tvLast.saved > 3000){ tvLast.saved = Date.now(); tvProgSet(c.id, tvLast.t, tvLast.d); }
+    if(d.info.playerState === 0) tvEnded(c);
+  } else if(d.event === 'onStateChange' && d.info === 0){ tvEnded(c); }
+});
+window.addEventListener('pagehide', tvSaveNow);
+// Mtu akiondoka kwenye app (mf. kwenda kudownload), sauti inanyamaza lakini movie "inaendelea" kimya; akirudi inaanza pale ilipofika
+document.addEventListener('visibilitychange', ()=>{
+  const box = document.getElementById('tvPlayer');
+  if(!box || !box.classList.contains('show') || !tvCurId) return;
+  const wrap = document.getElementById('tvpFrameWrap');
+  if(document.hidden){
+    tvSaveNow(); clearInterval(tvListenTimer); clearTimeout(tvNextTimer);
+    wrap.innerHTML = '';
+  } else if(!wrap.firstChild){
+    const c = tvChannels.find(x=>x.id === tvCurId);
+    if(c && tvIsMovie(c) && tvVirtualPos(c).ended){ playTv(c.id); } else { tvLoadFrame(); }
+  }
+});
 function tvLoadFrame(){
   const c = tvChannels.find(x=>x.id===tvCurId); if(!c) return;
   const wrap = document.getElementById('tvpFrameWrap');
@@ -5187,12 +5271,26 @@ function tvLoadFrame(){
   f.referrerPolicy = 'strict-origin-when-cross-origin';
   f.src = tvEmbedUrl(c);
   wrap.appendChild(f);
+  tvLast = {t:0, d:0, saved:0, ended:false};
+  clearInterval(tvListenTimer); clearTimeout(tvNextTimer);
+  if(tvIsMovie(c)){
+    const v = tvVirtualPos(c);
+    if(v.t > 10) tvHint(tvT('▶ Inaendelea kutoka ','▶ Resuming from ') + tvFmt(v.t));
+    const hello = ()=>{ try{ f.contentWindow.postMessage(JSON.stringify({event:'listening', id:1, channel:'widget'}), '*'); }catch(e){} };
+    f.addEventListener('load', hello);
+    let n = 0; tvListenTimer = setInterval(()=>{ hello(); if(++n > 12) clearInterval(tvListenTimer); }, 1000);
+  }
 }
 function playTv(id){
-  const c = tvChannels.find(x=>x.id===id); if(!c) return;
+  let c = tvChannels.find(x=>x.id===id); if(!c) return;
+  if(tvIsMovie(c) && tvVirtualPos(c).ended){
+    tvProgSet(c.id, null);
+    const nx = tvNextMovie(c);
+    if(nx){ c = nx; id = nx.id; tvProgSet(id, null); }
+  }
   tvCurId = id;
   document.getElementById('tvpName').textContent = c.name || '';
-  document.getElementById('tvpCat').textContent = ((c.liveUntil === undefined || c.liveUntil === null || c.liveUntil > Date.now()) ? 'LIVE · ' : '') + (c.cat || 'TV');
+  document.getElementById('tvpCat').textContent = (((c.liveUntil === undefined || c.liveUntil === null) ? c.cat !== 'Movie' : c.liveUntil > Date.now()) ? 'LIVE · ' : '') + (c.cat || 'TV');
   document.getElementById('tvpLogo').innerHTML = (c.logo && /^https?:/i.test(c.logo)) ? '<img src="'+escapeHtml(c.logo)+'" alt="">' : '<span style="font-size:22px;">📺</span>';
   tvBright(100); tvVolUi(100);
   document.querySelectorAll('.tvp-sl').forEach(e=>e.classList.remove('show'));
@@ -5201,6 +5299,7 @@ function playTv(id){
   document.getElementById('tvPlayer').classList.add('show');
 }
 function closeTvPlayer(){
+  tvSaveNow(); clearInterval(tvListenTimer); clearTimeout(tvNextTimer);
   tvExitFull();
   document.getElementById('tvPlayer').classList.remove('show');
   document.getElementById('tvpFrameWrap').innerHTML = ''; // inasimamisha video
