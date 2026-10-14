@@ -611,6 +611,8 @@
   .bottomnav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,14,26,0.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 6px calc(10px + env(safe-area-inset-bottom));z-index:15;}
   .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--sub);font-size:9px;flex:1;cursor:pointer;}
   .nav-item .ic{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:15.5px;position:relative;}
+  .nav-live{display:none;position:absolute;top:-7px;right:-16px;background:#ff2d46;color:#fff;font-size:7.5px;font-weight:800;letter-spacing:.4px;padding:2px 5px;border-radius:8px;border:1.5px solid var(--bg);animation:aiGlow 1s ease-in-out infinite;}
+  .tvc-live.off{display:none;}
   .nav-dot{display:none;position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
   .ptab-dot{display:none;position:absolute;top:-4px;right:-4px;width:9px;height:9px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
   .nav-item.active{color:var(--lime);}
@@ -1546,7 +1548,7 @@
   <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
   <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic" style="position:relative;">💬<span class="nav-badge" id="chatUnreadBadge">0</span></div><span data-i18n="nav_chat">Chat</span></div>
   <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5c0-1.2.4-2.3 1-3.3l.6-1c.2-.3.5-.5.9-.5h10c.4 0 .7.2.9.5l.6 1c.6 1 1 2.1 1 3.3"/><path d="M4.5 9.5c1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0"/><path d="M5.5 9.5V18a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.5"/><path d="M9.5 14c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5"/></svg></div><span data-i18n="nav_duka">Duka</span></div>
-  <div class="nav-item" id="navTV" onclick="showTV()"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5l4 3 4-3"/><rect x="3" y="7" width="18" height="13" rx="4"/></svg></div><span data-i18n="nav_tv">TV</span></div>
+  <div class="nav-item" id="navTV" onclick="showTV()"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5l4 3 4-3"/><rect x="3" y="7" width="18" height="13" rx="4"/></svg><span class="nav-live" id="tvLiveBadge">LIVE</span></div><span data-i18n="nav_tv">TV</span></div>
   <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic">☺<span class="nav-dot" id="navMeDot"></span></div><span data-i18n="nav_me">Me</span></div>
 </div>
 
@@ -3892,7 +3894,8 @@ const APP_CHANGELOG = [
   {id: 17, title: '✨ mumbiBot — Muonekano Mpya', body: 'AI sasa inaitwa mumbiBot, ikiwa na wallpaper hai ya zambarau, taa ya kijani ya "Online" na ukurasa wa Karibu. Kitufe chake cha kuelea ni kidogo, kinaonekana kwenye Home tu, na kinafifia kikikaa sekunde 5 bila kuguswa — kigusa kikawake tena.'},
   {id: 18, title: '🧠 mumbiBot Sasa Anajua Mengi Zaidi', body: 'mumbiBot ameongezewa maarifa mengi: kuseti games za APK, OBB na DATA, emulator zote (Winlator, Mobox, PPSSPP, PS2, Dolphin, PS1, 3DS na nyingine), matatizo ya kawaida (game inafunga, lag, parse error, download), pamoja na ushauri wa simu, processor na RAM. Ukiuliza video, anakupa link ya kutafuta kwenye channel ya Mumbi na YouTube nzima.'},
   {id: 19, title: '📺 TV Imefunguka — Channels za Live', body: 'Ukurasa wa TV sasa unaonyesha channel za live kwenye kadi kubwa moja moja zenye nembo na maelezo. Gusa channel, tangazo linafunguka, kisha video inacheza kwenye skrini ndogo yenye kuongeza sauti, mwanga, Full screen (simu inalala), na Refresh. Bonyeza ✕ kurudi kwenye orodha na uchague nyingine.'},
-  // {id: 20, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 20, title: '🔴 Alama ya LIVE kwenye TV', body: 'Kukiwa na channel, utaona alama nyekundu ya LIVE kwenye ikoni ya TV chini na kwenye kadi ya channel ili uguse utazame. Kusipokuwa na channel yoyote, alama haionekani.'},
+  // {id: 21, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -5095,15 +5098,18 @@ const TV_CAT_COLORS = {Habari:['#4aa8ff','#6d5efc'],Muziki:['#ff5fa2','#a855f7']
 function tvT(sw,en){ return currentLang === 'en' ? en : sw; }
 function tvRender(){
   const list = document.getElementById('tvList'), soon = document.getElementById('tvSoon'), sub = document.getElementById('tvSub');
-  const items = tvChannels.filter(c=>c.active !== false);
-  if(!items.length){ list.style.display = 'none'; soon.style.display = 'flex'; sub.textContent = ''; return; }
+  const isLive = c => c.liveUntil === undefined || c.liveUntil === null || c.liveUntil > Date.now();
+  const items = tvChannels.filter(c=>c.active !== false).sort((a,b)=> (isLive(b)?1:0) - (isLive(a)?1:0) || (a.order||0) - (b.order||0));
+  const liveN = items.filter(isLive).length;
+  const lb = document.getElementById('tvLiveBadge'); if(lb) lb.style.display = liveN ? 'block' : 'none';
+  if(!items.length){ list.style.display = 'none'; soon.style.display = 'flex'; sub.textContent = ''; const lb0 = document.getElementById('tvLiveBadge'); if(lb0) lb0.style.display = 'none'; return; }
   soon.style.display = 'none'; list.style.display = 'flex';
-  sub.textContent = items.length + tvT(' channel zinapatikana',' channels available');
+  sub.textContent = (liveN ? '🔴 ' + liveN + tvT(' live sasa · ',' live now · ') : '') + items.length + tvT(' channel',' channels');
   list.innerHTML = items.map(c=>{
     const col = TV_CAT_COLORS[c.cat] || TV_CAT_COLORS.Nyingine;
     const logo = (c.logo && /^https?:/i.test(c.logo)) ? '<img src="'+escapeHtml(c.logo)+'" alt="">' : '<span>📺</span>';
     return '<div class="tvc" style="--c1:'+col[0]+';--c2:'+col[1]+'" onclick="openTvChannel(\''+c.id+'\')">'
-      + '<div class="tvc-screen"><div class="tvc-live"><i></i>LIVE</div><div class="tvc-cat">'+escapeHtml(c.cat||'')+'</div><div class="tvc-logo">'+logo+'</div></div>'
+      + '<div class="tvc-screen"><div class="tvc-live'+(isLive(c)?'':' off')+'"><i></i>LIVE</div><div class="tvc-cat">'+escapeHtml(c.cat||'')+'</div><div class="tvc-logo">'+logo+'</div></div>'
       + '<div class="tvc-body"><div class="tvc-t"><div class="tvc-n">'+escapeHtml(c.name||'')+'</div>'+(c.desc?'<div class="tvc-d">'+escapeHtml(c.desc)+'</div>':'')+'</div><div class="tvc-go">▶</div></div>'
       + '</div>';
   }).join('');
@@ -5174,7 +5180,7 @@ function playTv(id){
   const c = tvChannels.find(x=>x.id===id); if(!c) return;
   tvCurId = id;
   document.getElementById('tvpName').textContent = c.name || '';
-  document.getElementById('tvpCat').textContent = 'LIVE · ' + (c.cat || 'TV');
+  document.getElementById('tvpCat').textContent = ((c.liveUntil === undefined || c.liveUntil === null || c.liveUntil > Date.now()) ? 'LIVE · ' : '') + (c.cat || 'TV');
   document.getElementById('tvpLogo').innerHTML = (c.logo && /^https?:/i.test(c.logo)) ? '<img src="'+escapeHtml(c.logo)+'" alt="">' : '<span style="font-size:22px;">📺</span>';
   tvBright(100); tvVolUi(100);
   document.querySelectorAll('.tvp-sl').forEach(e=>e.classList.remove('show'));
@@ -5243,6 +5249,8 @@ document.addEventListener('fullscreenchange', ()=>{
   if(!document.fullscreenElement && box.classList.contains('full')) tvExitFull();
 });
 setTimeout(()=>{ try{ if(localStorage.getItem('mg-tv-pending')) tvResumePending(); }catch(e){} }, 800);
+setTimeout(()=>{ try{ loadTvChannels(); }catch(e){} }, 1500);   // ili alama ya LIVE ionekane hata kabla ya kufungua TV
+setInterval(()=>{ try{ tvRender(); }catch(e){} }, 60000);       // alama ya Live inaisha yenyewe muda ukiisha
 
 function showTV(){
   hideAllViews();

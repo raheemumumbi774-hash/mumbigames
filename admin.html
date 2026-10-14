@@ -444,6 +444,16 @@
       <label>Link ya YouTube live</label>
       <input type="text" id="tvYt" placeholder="https://www.youtube.com/watch?v=...  au  UCxxxxxxxxxxxxxxxxxxxxxx">
       <div style="font-size:11px;color:var(--sub);margin:-6px 0 10px;">Inakubali: youtube.com/watch?v=… · youtu.be/… · youtube.com/live/… · youtube.com/channel/UC… · au ID ya channel (UC…) kwa live inayoendelea kila wakati.</div>
+      <label>Alama ya LIVE (inaonekana kwa watumiaji kwa muda huo)</label>
+      <select id="tvLive">
+        <option value="keep">Live otomatiki (channel ikiwepo)</option>
+        <option value="1">🔴 Live — saa 1</option>
+        <option value="3">🔴 Live — saa 3</option>
+        <option value="6">🔴 Live — saa 6</option>
+        <option value="24">🔴 Live — saa 24</option>
+        <option value="inf">🔴 Live daima (masaa 24 kila siku)</option>
+        <option value="0">⚪ Zima alama ya Live</option>
+      </select>
       <label>Mpangilio (namba ndogo inatangulia)</label>
       <input type="number" id="tvOrder" placeholder="0" value="0">
       <label>Nembo ya channel</label>
@@ -931,6 +941,24 @@ function loadBannersAdmin(){
 
 // ---- TV channels (YouTube live) ----
 let tvEditId = null, tvListening = false, tvItems = [];
+const TV_INF = 9999999999999;
+function tvLiveValue(v){
+  if(v === 'inf') return TV_INF;
+  const h = parseFloat(v);
+  return h > 0 ? Date.now() + h*3600*1000 : 0;
+}
+function tvIsLive(c){ return c.liveUntil === undefined || c.liveUntil === null || c.liveUntil > Date.now(); }
+function tvLiveLabel(c){
+  if(!tvIsLive(c)) return '⚪ Haipo Live';
+  if(c.liveUntil >= TV_INF) return '🔴 Live daima';
+  const d = new Date(c.liveUntil);
+  return '🔴 Live hadi ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+async function setTvLive(id, v){
+  if(v === 'keep') return;
+  try{ await db.collection('tvChannels').doc(id).update({liveUntil: tvLiveValue(v)}); showToast(v==='0' ? 'Alama ya Live imezimwa.' : 'Alama ya Live imewashwa 🔴'); }
+  catch(e){ console.error(e); showToast('Imeshindwa kubadilisha Live.'); }
+}
 function parseYouTubeInput(raw){
   raw = (raw||'').trim();
   if(!raw) return null;
@@ -964,6 +992,7 @@ async function handleTvLogoSelect(){
 }
 function resetTvForm(){
   tvEditId = null;
+  document.getElementById('tvLive').value = 'keep';
   ['tvName','tvDesc','tvYt','tvLogo'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('tvOrder').value = '0';
   document.getElementById('tvCat').value = 'Habari';
@@ -984,6 +1013,9 @@ async function saveTvChannel(){
   if(!name){ showToast('Weka jina la channel kwanza.'); return; }
   if(!yt){ showToast('Weka link sahihi ya YouTube live (au ID ya channel inayoanza na UC).'); return; }
   const data = {name, desc, cat, order, logo, ytType: yt.type, ytId: yt.id};
+  const lv = document.getElementById('tvLive').value;
+  if(lv !== 'keep'){ data.liveUntil = tvLiveValue(lv); }
+
   try{
     if(tvEditId){
       await db.collection('tvChannels').doc(tvEditId).update(data);
@@ -1006,6 +1038,10 @@ function loadTvAdmin(){
         <div class="g-info">
           <div class="name">${escapeHtmlAdmin(c.name)}</div>
           <div class="g-tags"><span class="tag">${escapeHtmlAdmin(c.cat||'')}</span><span class="tag">order: ${c.order||0}</span>${c.active===false?'<span class="tag paid">Imefichwa</span>':''}</div>
+          <select style="margin-top:6px;padding:6px 8px;font-size:12px;" onchange="setTvLive('${c.id}',this.value);this.value='keep'">
+            <option value="keep">${tvLiveLabel(c)} — badilisha…</option>
+            <option value="1">🔴 Live saa 1</option><option value="3">🔴 Live saa 3</option><option value="6">🔴 Live saa 6</option><option value="24">🔴 Live saa 24</option><option value="inf">🔴 Live daima</option><option value="0">⚪ Zima Live</option>
+          </select>
         </div>
         <div class="g-actions">
           <button class="icon-btn" title="${c.active===false?'Onyesha':'Ficha'}" onclick="toggleTvChannel('${c.id}')">${c.active===false?'👁️':'🙈'}</button>
