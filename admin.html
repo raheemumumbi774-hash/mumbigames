@@ -465,10 +465,9 @@
       <div id="tvLogoStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
       <input type="hidden" id="tvLogo" value="">
       <div style="margin:14px 0 4px;padding:12px;border:1px dashed var(--line);border-radius:12px;">
-        <label style="margin-top:0;">🎬 Weka movie nyingi kwa mara moja</label>
-        <div style="font-size:11.5px;color:var(--sub);margin-bottom:6px;">Kila mstari mmoja: <b>Jina | link ya YouTube</b>. Zinaingia kama kategoria ya Movie, kwa mpangilio uliouandika. Zikiisha moja, inayofuata inacheza yenyewe kwenye app.</div>
-        <textarea id="tvBulk" rows="5" placeholder="Movie ya kwanza | https://www.youtube.com/watch?v=...&#10;Movie ya pili | https://youtu.be/..." style="width:100%;"></textarea>
-        <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="saveTvBulk()" id="tvBulkBtn">Hifadhi Movie Zote</button>
+        <label style="margin-top:0;">🎬 Orodha ya movie ndani ya channel hii (si lazima)</label>
+        <div style="font-size:11.5px;color:var(--sub);margin-bottom:6px;">Kwa channel ya <b>Movie</b>: andika movie moja kila mstari, <b>Jina | link ya YouTube</b>. Zinacheza moja baada ya nyingine ndani ya channel hii hii. Ukijaza hapa, sehemu ya "YouTube link" juu si lazima.</div>
+        <textarea id="tvPl" rows="6" placeholder="Movie ya kwanza | https://www.youtube.com/watch?v=...&#10;Movie ya pili | https://youtu.be/..." style="width:100%;"></textarea>
       </div>
       <div class="form-actions">
         <button class="btn btn-primary" style="flex:1" onclick="saveTvChannel()" id="tvSaveBtn">Hifadhi Channel</button>
@@ -1000,7 +999,7 @@ async function handleTvLogoSelect(){
 function resetTvForm(){
   tvEditId = null;
   document.getElementById('tvLive').value = 'keep';
-  ['tvName','tvDesc','tvYt','tvLogo'].forEach(id=>document.getElementById(id).value='');
+  ['tvName','tvDesc','tvYt','tvLogo','tvPl'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('tvOrder').value = '0';
   document.getElementById('tvCat').value = 'Habari';
   document.getElementById('tvLogoFile').value = '';
@@ -1016,10 +1015,20 @@ async function saveTvChannel(){
   const cat = document.getElementById('tvCat').value;
   const order = parseInt(document.getElementById('tvOrder').value) || 0;
   const logo = document.getElementById('tvLogo').value.trim();
-  const yt = parseYouTubeInput(document.getElementById('tvYt').value);
+  let yt = parseYouTubeInput(document.getElementById('tvYt').value);
+  const playlist = [], bad = [];
+  document.getElementById('tvPl').value.split('\n').map(x=>x.trim()).filter(Boolean).forEach((l,k)=>{
+    const p = l.indexOf('|');
+    const nm = (p > -1 ? l.slice(0,p).trim() : '') || ('Movie ' + (k+1));
+    const y = parseYouTubeInput(p > -1 ? l.slice(p+1) : l);
+    if(!y || y.type !== 'video') bad.push(l.slice(0,40)); else playlist.push({n:nm, id:y.id});
+  });
   if(!name){ showToast('Weka jina la channel kwanza.'); return; }
-  if(!yt){ showToast('Weka link sahihi ya YouTube live (au ID ya channel inayoanza na UC).'); return; }
-  const data = {name, desc, cat, order, logo, ytType: yt.type, ytId: yt.id};
+  if(bad.length){ showToast('Mistari ' + bad.length + ' ya movie si sahihi (hakikisha: Jina | link ya video).'); return; }
+  if(playlist.length){ yt = {type:'video', id:playlist[0].id}; }
+  if(!yt){ showToast('Weka link sahihi ya YouTube live (au ID ya channel inayoanza na UC), au orodha ya movie.'); return; }
+  if(playlist.length && cat !== 'Movie'){ showToast('Orodha ya movie inahitaji kategoria ya 🎬 Movie.'); return; }
+  const data = {name, desc, cat, order, logo, ytType: yt.type, ytId: yt.id, playlist: playlist};
   const lv = document.getElementById('tvLive').value;
   if(lv !== 'keep'){ data.liveUntil = tvLiveValue(lv); }
 
@@ -1034,31 +1043,6 @@ async function saveTvChannel(){
     resetTvForm();
   }catch(e){ console.error(e); showToast('Imeshindwa kuhifadhi channel.'); }
 }
-async function saveTvBulk(){
-  const lines = document.getElementById('tvBulk').value.split('\n').map(x=>x.trim()).filter(Boolean);
-  if(!lines.length){ showToast('Weka angalau mstari mmoja.'); return; }
-  const rows = [], bad = [];
-  lines.forEach(l=>{
-    const i = l.indexOf('|');
-    const name = (i > -1 ? l.slice(0,i) : '').trim(), link = (i > -1 ? l.slice(i+1) : l).trim();
-    const yt = parseYouTubeInput(link);
-    if(!yt || yt.type !== 'video' || !name){ bad.push(l.slice(0,40)); return; }
-    rows.push({name, yt});
-  });
-  if(bad.length){ showToast('Mistari ' + bad.length + ' si sahihi (hakikisha: Jina | link ya video). Hakuna kilichohifadhiwa.'); return; }
-  const btn = document.getElementById('tvBulkBtn'); btn.disabled = true;
-  try{
-    let max = 0; tvItems.forEach(c=>{ if((c.order||0) > max) max = c.order||0; });
-    const batch = db.batch();
-    rows.forEach((r,k)=>{
-      batch.set(db.collection('tvChannels').doc(), {name:r.name, desc:'', cat:'Movie', order:max+1+k, logo:'', ytType:'video', ytId:r.yt.id, active:true, createdAt:Date.now()});
-    });
-    await batch.commit();
-    document.getElementById('tvBulk').value = '';
-    showToast('Movie ' + rows.length + ' zimehifadhiwa ✓');
-  }catch(e){ console.error(e); showToast('Imeshindwa kuhifadhi movie.'); }
-  btn.disabled = false;
-}
 function loadTvAdmin(){
   if(tvListening) return;
   tvListening = true;
@@ -1069,7 +1053,7 @@ function loadTvAdmin(){
         <div class="thumb" style="${c.logo?`background-image:url('${String(c.logo).replace(/'/g,"")}');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#fff;`:''}">${c.logo?'':'📺'}</div>
         <div class="g-info">
           <div class="name">${escapeHtmlAdmin(c.name)}</div>
-          <div class="g-tags"><span class="tag">${escapeHtmlAdmin(c.cat||'')}</span><span class="tag">order: ${c.order||0}</span>${c.active===false?'<span class="tag paid">Imefichwa</span>':''}</div>
+          <div class="g-tags"><span class="tag">${escapeHtmlAdmin(c.cat||'')}</span><span class="tag">order: ${c.order||0}</span>${(c.playlist&&c.playlist.length)?'<span class="tag">🎬 '+c.playlist.length+' movie</span>':''}${c.active===false?'<span class="tag paid">Imefichwa</span>':''}</div>
           <select style="margin-top:6px;padding:6px 8px;font-size:12px;" onchange="setTvLive('${c.id}',this.value);this.value='keep'">
             <option value="keep">${tvLiveLabel(c)} — badilisha…</option>
             <option value="1">🔴 Live saa 1</option><option value="3">🔴 Live saa 3</option><option value="6">🔴 Live saa 6</option><option value="24">🔴 Live saa 24</option><option value="inf">🔴 Live daima</option><option value="0">⚪ Zima Live</option>
@@ -1094,7 +1078,8 @@ function editTvChannel(id){
   document.getElementById('tvName').value = c.name||'';
   document.getElementById('tvDesc').value = c.desc||'';
   document.getElementById('tvCat').value = c.cat||'Nyingine';
-  document.getElementById('tvYt').value = c.ytType==='channel' ? c.ytId : 'https://www.youtube.com/watch?v=' + c.ytId;
+  document.getElementById('tvYt').value = (c.playlist && c.playlist.length) ? '' : (c.ytType==='channel' ? c.ytId : 'https://www.youtube.com/watch?v=' + c.ytId);
+  document.getElementById('tvPl').value = (c.playlist||[]).map(m=>m.n + ' | https://www.youtube.com/watch?v=' + m.id).join('\n');
   document.getElementById('tvOrder').value = c.order||0;
   document.getElementById('tvLogo').value = c.logo||'';
   if(c.logo){ document.getElementById('tvLogoPreview').src = c.logo; document.getElementById('tvLogoPreviewWrap').style.display='block'; }

@@ -1544,7 +1544,9 @@
     </div>
     <div class="tvp-sl" id="tvpSlB"><span>☀️</span><input type="range" min="40" max="160" value="100" oninput="tvBright(this.value)"><b id="tvpBv">100%</b></div>
     <div class="tvp-sl" id="tvpSlV"><span>🔊</span><input type="range" min="0" max="100" value="100" oninput="tvVol(this.value)"><b id="tvpVv">100%</b></div>
+    <div class="tvp-sl" id="tvpSlL" style="flex-direction:column;align-items:stretch;max-height:190px;overflow-y:auto;"></div>
     <div class="tvp-bar">
+      <button id="tvbL" onclick="tvPanel('L')" style="display:none;"><span>🎬</span><b>Movie</b></button>
       <button id="tvbB" onclick="tvPanel('B')"><span>☀️</span><b data-i18n="tvp_bright">Mwanga</b></button>
       <button id="tvbV" onclick="tvPanel('V')"><span>🔊</span><b data-i18n="tvp_vol">Sauti</b></button>
       <button onclick="tvFull()" id="tvbF"><span>⛶</span><b data-i18n="tvp_full">Full screen</b></button>
@@ -3907,7 +3909,7 @@ const APP_CHANGELOG = [
   {id: 19, title: '📺 TV Imefunguka — Channels za Live', body: 'Ukurasa wa TV sasa unaonyesha channel za live kwenye kadi kubwa moja moja zenye nembo na maelezo. Gusa channel, tangazo linafunguka, kisha video inacheza kwenye skrini ndogo yenye kuongeza sauti, mwanga, Full screen (simu inalala), na Refresh. Bonyeza ✕ kurudi kwenye orodha na uchague nyingine.'},
   {id: 20, title: '🔴 Alama ya LIVE kwenye TV', body: 'Kukiwa na channel, utaona alama nyekundu ya LIVE kwenye ikoni ya TV chini na kwenye kadi ya channel ili uguse utazame. Kusipokuwa na channel yoyote, alama haionekani.'},
   {id: 21, title: '🎁 Boksi la zawadi (Tangazo)', body: 'Kitufe cha Pata Token kimehamia juu karibu na token balance na kuwa boksi dogo la zawadi linalotingisika na kufunguka kuonyesha neno Tangazo/Ads. Gusa boksi kutazama tangazo na kupata token.'},
-  {id: 22, title: '🎬 Movie inaendelea kama TV', body: 'Movie inaendelea kama TV hata ukiondoka: ukiishia dakika 15 kisha ukakaa nje dakika 20, ukirudi inaanzia dakika 35. Sauti inanyamaza ukiwa nje. Movie ikiisha, inayofuata inacheza yenyewe.'},
+  {id: 22, title: '🎬 Movie inaendelea kama TV', body: 'Channel ya Movie sasa ina movie nyingi ndani yake na inaendelea kama TV hata ukiondoka: ukiishia dakika 15 kisha ukakaa nje dakika 20, ukirudi inaanzia dakika 35. Sauti inanyamaza ukiwa nje. Movie ikiisha, inayofuata inacheza yenyewe. Unaweza kurudisha nyuma kwenye video, au kuchagua movie kwenye kitufe cha 🎬 Movie.'},
   // {id: 23, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
@@ -5171,44 +5173,61 @@ document.addEventListener('visibilitychange', ()=>{
   if(tvAdLeft){ tvAdLeft = false; setTimeout(tvResumePending, 300); }
 });
 window.addEventListener('pageshow', ()=>{ setTimeout(tvResumePending, 400); });
-function tvEmbedUrl(c){
-  const base = c.ytType === 'channel'
-    ? 'https://www.youtube.com/embed/live_stream?channel=' + encodeURIComponent(c.ytId) + '&'
-    : 'https://www.youtube.com/embed/' + encodeURIComponent(c.ytId) + '?';
-  let extra = '';
-  if(tvIsMovie(c)){ const v = tvVirtualPos(c); if(v.t > 10) extra = '&start=' + v.t; }
+function tvMovies(c){
+  if(!c || c.cat !== 'Movie') return [];
+  if(Array.isArray(c.playlist) && c.playlist.length) return c.playlist.filter(m=>m && /^[\w-]{11}$/.test(m.id));
+  if(c.ytType === 'video' && c.ytId) return [{n:c.name||'Movie', id:c.ytId}];
+  return [];
+}
+function tvIsMovie(c){ return tvMovies(c).length > 0; }
+function tvEmbedUrl(c, pos){
+  let base;
+  if(tvIsMovie(c)){
+    const m = tvMovies(c)[pos ? pos.i : 0];
+    base = 'https://www.youtube.com/embed/' + encodeURIComponent(m.id) + '?';
+  } else {
+    base = c.ytType === 'channel'
+      ? 'https://www.youtube.com/embed/live_stream?channel=' + encodeURIComponent(c.ytId) + '&'
+      : 'https://www.youtube.com/embed/' + encodeURIComponent(c.ytId) + '?';
+  }
+  const extra = (pos && pos.t > 10) ? '&start=' + pos.t : '';
   return base + 'autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1' + extra;
 }
-// ---- Movie: endelea ulipoishia + movie inayofuata ----
-const TV_PROG_KEY = 'mg-tv-prog';
-function tvIsMovie(c){ return !!c && c.cat === 'Movie' && c.ytType === 'video'; }
-// Muda ambao mtu hayupo, movie "inaendelea" kama TV: nafasi = dakika aliyoishia + muda aliokaa nje (hadi saa 12)
-function tvVirtualPos(c){
-  const p = tvProgGet()[c.id];
-  if(!p || !(p.t > 0)) return {t:0, ended:false, away:0};
-  let away = Math.max(0, (Date.now() - (p.ts||Date.now())) / 1000);
-  if(away > 12*3600) away = 0;
-  const vt = p.t + away;
-  if(p.d && vt >= p.d - 20) return {t:0, ended:true, away:away};
-  return {t:Math.floor(vt), ended:false, away:away};
-}
-function tvNextMovie(c){
-  const list = tvChannels.filter(x=>x.active !== false && tvIsMovie(x)).sort((a,b)=>(a.order||0)-(b.order||0));
-  if(list.length < 2) return null;
-  const i = list.findIndex(x=>x.id === c.id);
-  return list[(i + 1) % list.length];
-}
-function tvProgGet(){ try{ return JSON.parse(localStorage.getItem(TV_PROG_KEY)||'{}') || {}; }catch(e){ return {}; } }
-function tvProgSet(id, t, d){
+// ---- Channel ya Movie: movie nyingi ndani ya channel moja, zinaendelea kama TV hata mtu akiwa nje ----
+const TV_PROG_KEY = 'mg-tv-prog', TV_DUR_KEY = 'mg-tv-dur';
+function tvJget(k){ try{ return JSON.parse(localStorage.getItem(k)||'{}') || {}; }catch(e){ return {}; } }
+function tvProgGet(){ return tvJget(TV_PROG_KEY); }
+function tvProgSet(id, o){
   try{
     const m = tvProgGet();
-    if(t == null) delete m[id]; else m[id] = {t:Math.floor(t), d:Math.floor(d||0), ts:Date.now()};
+    if(!o) delete m[id]; else m[id] = o;
     const ks = Object.keys(m);
-    if(ks.length > 60){ ks.sort((a,b)=>m[a].ts - m[b].ts).slice(0, ks.length - 60).forEach(k=>delete m[k]); }
+    if(ks.length > 60){ ks.sort((x,y)=>(m[x].ts||0)-(m[y].ts||0)).slice(0, ks.length - 60).forEach(k=>delete m[k]); }
     localStorage.setItem(TV_PROG_KEY, JSON.stringify(m));
   }catch(e){}
 }
-let tvLast = {t:0, d:0, saved:0, ended:false}, tvListenTimer = null, tvNextTimer = null;
+function tvDurSet(ytId, d){
+  try{ const m = tvJget(TV_DUR_KEY); if(m[ytId] === Math.floor(d)) return; m[ytId] = Math.floor(d); localStorage.setItem(TV_DUR_KEY, JSON.stringify(m)); }catch(e){}
+}
+// Nafasi ya sasa: ulipoishia + muda uliokaa nje (hadi saa 12). Movie ikiisha ukiwa nje, inaendelea kwenye inayofuata.
+function tvVirtualPos(c){
+  const ms = tvMovies(c), p = tvProgGet()[c.id];
+  if(!ms.length || !p) return {i:0, t:0};
+  let i = Math.min(Math.max(p.i||0, 0), ms.length - 1), t = p.t || 0;
+  let away = (Date.now() - (p.ts || Date.now())) / 1000;
+  if(away < 0 || away > 12*3600) away = 0;
+  t += away;
+  const dur = tvJget(TV_DUR_KEY);
+  let g = 0;
+  while(g++ <= ms.length){
+    const d = dur[ms[i].id];
+    if(d && t >= d - 20){ t -= d; i = (i + 1) % ms.length; } else break;
+  }
+  const dd = dur[ms[i].id];
+  if(dd && t >= dd - 20) t = 0;
+  return {i:i, t:Math.floor(t)};
+}
+let tvPos = {i:0, t:0}, tvLast = {t:0, d:0, saved:0, ended:false}, tvListenTimer = null, tvNextTimer = null;
 function tvHint(txt){
   let h = document.getElementById('tvpHint');
   if(!h){
@@ -5220,18 +5239,30 @@ function tvHint(txt){
   clearTimeout(h._t); h._t = setTimeout(()=>{ h.style.opacity = '0'; }, 3500);
 }
 function tvFmt(t){ t = Math.floor(t); const m = Math.floor(t/60), s2 = t % 60; return m + ':' + String(s2).padStart(2,'0'); }
-function tvEnded(c){
-  if(tvLast.ended) return; tvLast.ended = true;
-  tvProgSet(c.id, null);
-  const nx = tvNextMovie(c);
-  if(!nx){ tvHint(tvT('Movie imeisha ✓','Movie finished ✓')); return; }
-  tvHint(tvT('▶ Inayofuata: ','▶ Up next: ') + (nx.name || ''));
-  clearTimeout(tvNextTimer);
-  tvNextTimer = setTimeout(()=>{ if(tvCurId === c.id) playTv(nx.id); }, 2800);
-}
 function tvSaveNow(){
   const c = tvChannels.find(x=>x.id === tvCurId);
-  if(tvIsMovie(c) && !tvLast.ended && tvLast.t > 5) tvProgSet(c.id, tvLast.t, tvLast.d);
+  if(tvIsMovie(c) && !tvLast.ended && tvLast.t > 5) tvProgSet(c.id, {i:tvPos.i, t:Math.floor(tvLast.t), ts:Date.now()});
+}
+function tvEnded(c){
+  if(tvLast.ended) return; tvLast.ended = true;
+  const ms = tvMovies(c), nx = (tvPos.i + 1) % ms.length;
+  tvProgSet(c.id, {i:nx, t:0, ts:Date.now()});
+  if(ms.length < 2){ tvHint(tvT('Movie imeisha ✓','Movie finished ✓')); return; }
+  tvHint(tvT('▶ Inayofuata: ','▶ Up next: ') + (ms[nx].n || ''));
+  clearTimeout(tvNextTimer);
+  tvNextTimer = setTimeout(()=>{ if(tvCurId === c.id) tvLoadFrame(); }, 2800);
+}
+function tvJump(i){
+  const c = tvChannels.find(x=>x.id === tvCurId); if(!tvIsMovie(c)) return;
+  const n = tvMovies(c).length; i = ((i % n) + n) % n;
+  tvProgSet(c.id, {i:i, t:0, ts:Date.now()});
+  document.getElementById('tvpSlL').classList.remove('show'); document.getElementById('tvbL').classList.remove('on');
+  tvLoadFrame();
+}
+function tvListRender(c){
+  const ms = tvMovies(c), box = document.getElementById('tvpSlL');
+  box.innerHTML = '<div style="display:flex;gap:8px;margin-bottom:6px;"><button type="button" onclick="tvJump(tvPos.i-1)" style="flex:1;padding:7px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--text);font-weight:700;font-size:12px;">⏮ ' + tvT('Iliyopita','Previous') + '</button><button type="button" onclick="tvJump(tvPos.i+1)" style="flex:1;padding:7px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--text);font-weight:700;font-size:12px;">' + tvT('Inayofuata','Next') + ' ⏭</button></div>' +
+    ms.map((m,k)=>'<div onclick="tvJump('+k+')" style="padding:8px 10px;border-radius:9px;font-size:12.5px;font-weight:'+(k===tvPos.i?'800':'600')+';cursor:pointer;background:'+(k===tvPos.i?'rgba(255,176,46,.18)':'transparent')+';color:'+(k===tvPos.i?'#ffb02e':'var(--text)')+';">'+(k===tvPos.i?'▶ ':(k+1)+'. ')+escapeHtml(m.n||('Movie '+(k+1)))+'</div>').join('');
 }
 window.addEventListener('message', e=>{
   if(typeof e.origin !== 'string' || e.origin.indexOf('youtube') < 0) return;
@@ -5241,8 +5272,8 @@ window.addEventListener('message', e=>{
   if(!d) return;
   if(d.event === 'infoDelivery' && d.info){
     if(typeof d.info.currentTime === 'number') tvLast.t = d.info.currentTime;
-    if(d.info.duration) tvLast.d = d.info.duration;
-    if(tvLast.t > 5 && Date.now() - tvLast.saved > 3000){ tvLast.saved = Date.now(); tvProgSet(c.id, tvLast.t, tvLast.d); }
+    if(d.info.duration){ tvLast.d = d.info.duration; const m = tvMovies(c)[tvPos.i]; if(m) tvDurSet(m.id, d.info.duration); }
+    if(tvLast.t > 5 && Date.now() - tvLast.saved > 3000){ tvLast.saved = Date.now(); tvProgSet(c.id, {i:tvPos.i, t:Math.floor(tvLast.t), ts:Date.now()}); }
     if(d.info.playerState === 0) tvEnded(c);
   } else if(d.event === 'onStateChange' && d.info === 0){ tvEnded(c); }
 });
@@ -5255,39 +5286,38 @@ document.addEventListener('visibilitychange', ()=>{
   if(document.hidden){
     tvSaveNow(); clearInterval(tvListenTimer); clearTimeout(tvNextTimer);
     wrap.innerHTML = '';
-  } else if(!wrap.firstChild){
-    const c = tvChannels.find(x=>x.id === tvCurId);
-    if(c && tvIsMovie(c) && tvVirtualPos(c).ended){ playTv(c.id); } else { tvLoadFrame(); }
-  }
+  } else if(!wrap.firstChild){ tvLoadFrame(); }
 });
 function tvLoadFrame(){
   const c = tvChannels.find(x=>x.id===tvCurId); if(!c) return;
   const wrap = document.getElementById('tvpFrameWrap');
   wrap.innerHTML = '';
+  const movie = tvIsMovie(c);
+  tvPos = movie ? tvVirtualPos(c) : {i:0, t:0};
   const f = document.createElement('iframe');
   f.id = 'tvpFrame';
   f.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
   f.allowFullscreen = true;
   f.referrerPolicy = 'strict-origin-when-cross-origin';
-  f.src = tvEmbedUrl(c);
+  f.src = tvEmbedUrl(c, tvPos);
   wrap.appendChild(f);
   tvLast = {t:0, d:0, saved:0, ended:false};
   clearInterval(tvListenTimer); clearTimeout(tvNextTimer);
-  if(tvIsMovie(c)){
-    const v = tvVirtualPos(c);
-    if(v.t > 10) tvHint(tvT('▶ Inaendelea kutoka ','▶ Resuming from ') + tvFmt(v.t));
+  const bl = document.getElementById('tvbL');
+  const dot = document.querySelector('#tvPlayer .tvp-sb i'); if(dot) dot.style.display = movie ? 'none' : '';
+  if(movie){
+    const ms = tvMovies(c), m = ms[tvPos.i];
+    document.getElementById('tvpCat').textContent = '🎬 ' + (m.n || 'Movie') + (ms.length > 1 ? ' · ' + (tvPos.i+1) + '/' + ms.length : '');
+    if(bl) bl.style.display = ms.length > 1 ? '' : 'none';
+    tvListRender(c);
+    tvHint(tvPos.t > 10 ? tvT('▶ Inaendelea kutoka ','▶ Resuming from ') + tvFmt(tvPos.t) : '▶ ' + (m.n || ''));
     const hello = ()=>{ try{ f.contentWindow.postMessage(JSON.stringify({event:'listening', id:1, channel:'widget'}), '*'); }catch(e){} };
     f.addEventListener('load', hello);
     let n = 0; tvListenTimer = setInterval(()=>{ hello(); if(++n > 12) clearInterval(tvListenTimer); }, 1000);
-  }
+  } else if(bl) bl.style.display = 'none';
 }
 function playTv(id){
-  let c = tvChannels.find(x=>x.id===id); if(!c) return;
-  if(tvIsMovie(c) && tvVirtualPos(c).ended){
-    tvProgSet(c.id, null);
-    const nx = tvNextMovie(c);
-    if(nx){ c = nx; id = nx.id; tvProgSet(id, null); }
-  }
+  const c = tvChannels.find(x=>x.id===id); if(!c) return;
   tvCurId = id;
   document.getElementById('tvpName').textContent = c.name || '';
   document.getElementById('tvpCat').textContent = (((c.liveUntil === undefined || c.liveUntil === null) ? c.cat !== 'Movie' : c.liveUntil > Date.now()) ? 'LIVE · ' : '') + (c.cat || 'TV');
@@ -5307,13 +5337,10 @@ function closeTvPlayer(){
 }
 function tvRefresh(){ tvLoadFrame(); }
 function tvPanel(w){
-  const b = document.getElementById('tvpSlB'), v = document.getElementById('tvpSlV');
-  const target = w === 'B' ? b : v, other = w === 'B' ? v : b;
-  other.classList.remove('show');
-  target.classList.toggle('show');
-  document.getElementById('tvbB').classList.toggle('on', w === 'B' && target.classList.contains('show'));
-  document.getElementById('tvbV').classList.toggle('on', w === 'V' && target.classList.contains('show'));
-  if(w === 'B') document.getElementById('tvbV').classList.remove('on'); else document.getElementById('tvbB').classList.remove('on');
+  const ids = {B:['tvpSlB','tvbB'], V:['tvpSlV','tvbV'], L:['tvpSlL','tvbL']};
+  const wasOpen = document.getElementById(ids[w][0]).classList.contains('show');
+  Object.keys(ids).forEach(k=>{ document.getElementById(ids[k][0]).classList.remove('show'); document.getElementById(ids[k][1]).classList.remove('on'); });
+  if(!wasOpen){ document.getElementById(ids[w][0]).classList.add('show'); document.getElementById(ids[w][1]).classList.add('on'); }
 }
 function tvBright(val){
   document.getElementById('tvpFrameWrap').style.filter = 'brightness(' + (val/100) + ')';
