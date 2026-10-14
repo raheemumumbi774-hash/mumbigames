@@ -465,8 +465,8 @@
       <div id="tvLogoStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
       <input type="hidden" id="tvLogo" value="">
       <div style="margin:14px 0 4px;padding:12px;border:1px dashed var(--line);border-radius:12px;">
-        <label style="margin-top:0;">🎬 Orodha ya movie ndani ya channel hii (si lazima)</label>
-        <div style="font-size:11.5px;color:var(--sub);margin-bottom:6px;">Kwa channel ya <b>Movie</b>: andika movie moja kila mstari, <b>Jina | link ya YouTube</b>. Zinacheza moja baada ya nyingine ndani ya channel hii hii. Ukijaza hapa, sehemu ya "YouTube link" juu si lazima.</div>
+        <label style="margin-top:0;">🎬🎵 Orodha ya movie au nyimbo ndani ya channel hii (si lazima)</label>
+        <div style="font-size:11.5px;color:var(--sub);margin-bottom:6px;">Kwa channel ya <b>Movie</b> au <b>Muziki</b>: andika kimoja kila mstari, <b>Jina | link ya YouTube</b>. Zinacheza moja baada ya nyingine ndani ya channel hii hii (nyimbo zikiisha, inayofuata inaanza yenyewe). Ukijaza hapa, sehemu ya "YouTube link" juu si lazima.</div>
         <textarea id="tvPl" rows="6" placeholder="Movie ya kwanza | https://www.youtube.com/watch?v=...&#10;Movie ya pili | https://youtu.be/..." style="width:100%;"></textarea>
       </div>
       <div class="form-actions">
@@ -953,7 +953,7 @@ function tvLiveValue(v){
   const h = parseFloat(v);
   return h > 0 ? Date.now() + h*3600*1000 : 0;
 }
-function tvIsLive(c){ return (c.liveUntil === undefined || c.liveUntil === null) ? c.cat !== 'Movie' : c.liveUntil > Date.now(); }
+function tvIsLive(c){ return (c.liveUntil === undefined || c.liveUntil === null) ? !(c.cat === 'Movie' || (Array.isArray(c.playlist) && c.playlist.length > 0)) : c.liveUntil > Date.now(); }
 function tvLiveLabel(c){
   if(!tvIsLive(c)) return '⚪ Haipo Live';
   if(c.liveUntil >= TV_INF) return '🔴 Live daima';
@@ -1027,7 +1027,7 @@ async function saveTvChannel(){
   if(bad.length){ showToast('Mistari ' + bad.length + ' ya movie si sahihi (hakikisha: Jina | link ya video).'); return; }
   if(playlist.length){ yt = {type:'video', id:playlist[0].id}; }
   if(!yt){ showToast('Weka link sahihi ya YouTube live (au ID ya channel inayoanza na UC), au orodha ya movie.'); return; }
-  if(playlist.length && cat !== 'Movie'){ showToast('Orodha ya movie inahitaji kategoria ya 🎬 Movie.'); return; }
+  if(playlist.length && cat !== 'Movie' && cat !== 'Muziki'){ showToast('Orodha inahitaji kategoria ya 🎬 Movie au Muziki.'); return; }
   const data = {name, desc, cat, order, logo, ytType: yt.type, ytId: yt.id, playlist: playlist};
   const lv = document.getElementById('tvLive').value;
   if(lv !== 'keep'){ data.liveUntil = tvLiveValue(lv); }
