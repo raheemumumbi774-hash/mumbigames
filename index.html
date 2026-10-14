@@ -212,6 +212,17 @@
   .fb-card .fb-reply{margin-top:10px;padding:10px 12px;background:rgba(166,255,0,0.08);border-left:2px solid var(--lime);border-radius:8px;font-size:11px;color:var(--text);line-height:1.5;}
   .fb-card .fb-reply b{color:var(--lime);}
   .qa-badge{display:none;position:absolute;top:6px;right:10px;width:10px;height:10px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
+  /* ---- Gift box (Ads / Pata Token) ---- */
+  .gift{position:relative;width:28px;height:30px;flex:none;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-right:2px;}
+  .gift-box{position:absolute;left:3px;bottom:2px;width:22px;height:22px;overflow:visible;animation:giftShake 9s ease-in-out infinite;transform-origin:50% 100%;filter:drop-shadow(0 0 5px rgba(255,170,40,.55));}
+  .g-lid{transform-origin:3px 16.5px;animation:giftLid 9s ease-in-out infinite;}
+  .g-in{opacity:0;animation:giftIn 9s ease-in-out infinite;}
+  .gift-txt{position:absolute;left:50%;top:-12px;transform:translate(-50%,10px) scale(.4);opacity:0;font-size:8px;font-weight:800;letter-spacing:.3px;padding:1px 6px;border-radius:8px;background:linear-gradient(135deg,#ffc83d,#f59a1b);color:#1b1f2e;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4);animation:giftTxt 9s ease-in-out infinite;pointer-events:none;z-index:2;}
+  @keyframes giftShake{0%,38%{transform:rotate(0);}40%{transform:rotate(-7deg);}42%{transform:rotate(7deg);}44%{transform:rotate(-9deg) scale(1.04);}46%{transform:rotate(9deg) scale(1.04);}48%{transform:rotate(-10deg) scale(1.06);}50%{transform:rotate(10deg) scale(1.06);}52%{transform:rotate(-5deg);}54%,100%{transform:rotate(0);}}
+  @keyframes giftLid{0%,52%{transform:rotate(0);}58%{transform:rotate(-40deg);}60%,88%{transform:rotate(-36deg);}94%,100%{transform:rotate(0);}}
+  @keyframes giftIn{0%,53%{opacity:0;}57%,90%{opacity:1;}94%,100%{opacity:0;}}
+  @keyframes giftTxt{0%,55%{opacity:0;transform:translate(-50%,10px) scale(.4);}62%{opacity:1;transform:translate(-50%,-1px) scale(1.1);}66%,86%{opacity:1;transform:translate(-50%,0) scale(1);}92%,100%{opacity:0;transform:translate(-50%,8px) scale(.4);}}
+  .gift:active .gift-box{transform:scale(.9);}
   .qa-btn.qa-earn{background:linear-gradient(135deg,#f59e0b,#ef4444,#f59e0b);background-size:200% 200%;animation:earnGlow 2.2s ease infinite;color:#fff;}
   .qa-btn.qa-channel{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;}
 
@@ -729,6 +740,7 @@
   <div class="mark"></div>
   <span>mumbigames</span>
   <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+    <div class="gift" id="giftBtn" onclick="showEarnTokens()" aria-label="Ads"><span class="gift-txt" data-i18n="gift_txt">Tangazo</span><svg class="gift-box" viewBox="0 0 32 32" width="22" height="22"><defs><linearGradient id="gW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc83d"/><stop offset="1" stop-color="#f59a1b"/></linearGradient></defs><rect class="g-in" x="6" y="14" width="20" height="4" rx="1.5" fill="#262b3d"/><rect x="5" y="15" width="22" height="14" rx="3" fill="url(#gW)"/><rect x="14.5" y="15" width="3" height="14" fill="#7c5cff"/><g class="g-lid"><rect x="3" y="10" width="26" height="6.5" rx="2.5" fill="#ffd25e"/><rect x="14.5" y="10" width="3" height="6.5" fill="#7c5cff"/><path d="M16 10C13 4.5 8.5 6.5 11 9.5C12 10.5 14.5 10.3 16 10Z" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round"/><path d="M16 10C19 4.5 23.5 6.5 21 9.5C20 10.5 17.5 10.3 16 10Z" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round"/></g></svg></div>
     <div class="token-pill" id="headerTokenPill" onclick="showProfile()" style="display:none;margin-left:0;"><span class="coin">🪙</span><span id="headerTokenCount">0</span></div>
     <div class="search" onclick="showChangelog()" style="margin-left:0;position:relative;">🔔<span id="changelogBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#e0342c;color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:8px;line-height:16px;text-align:center;padding:0 3px;">0</span></div>
     <div class="search" onclick="showSettings()" style="margin-left:0;">☰</div>
@@ -761,7 +773,6 @@
   <a class="qa-btn qa-tiktok" href="https://www.tiktok.com/@iam_mumbi7" target="_blank" onclick="markSocialSeen('tiktok')"><span class="qa-badge" id="qaBadgeTiktok"></span><div class="qa-ic"><svg class="qa-logo qa-logo-tt" viewBox="0 0 24 24" fill="#fff"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></div><span data-i18n="qa_tiktok">TikTok</span></a>
   <div class="qa-btn qa-kura" onclick="showTournaments()"><div class="qa-ic">🏆</div><span data-i18n="qa_tourn">Tournament</span></div>
   <a class="qa-btn qa-youtube" href="https://youtube.com/@mumbi_gaming" target="_blank" onclick="markSocialSeen('youtube')"><span class="qa-badge" id="qaBadgeYoutube"></span><div class="qa-ic"><svg class="qa-logo" viewBox="0 0 24 24" fill="#fff"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div><span data-i18n="qa_youtube">YouTube</span></a>
-  <div class="qa-btn qa-earn" onclick="showEarnTokens()"><div class="qa-ic">🎬</div><span data-i18n="qa_earn">Pata Token</span></div>
   </div>
 
 <div class="overlay" id="earnTokensOverlay" onclick="if(event.target===this) closeEarnTokens()">
@@ -3895,7 +3906,8 @@ const APP_CHANGELOG = [
   {id: 18, title: '🧠 mumbiBot Sasa Anajua Mengi Zaidi', body: 'mumbiBot ameongezewa maarifa mengi: kuseti games za APK, OBB na DATA, emulator zote (Winlator, Mobox, PPSSPP, PS2, Dolphin, PS1, 3DS na nyingine), matatizo ya kawaida (game inafunga, lag, parse error, download), pamoja na ushauri wa simu, processor na RAM. Ukiuliza video, anakupa link ya kutafuta kwenye channel ya Mumbi na YouTube nzima.'},
   {id: 19, title: '📺 TV Imefunguka — Channels za Live', body: 'Ukurasa wa TV sasa unaonyesha channel za live kwenye kadi kubwa moja moja zenye nembo na maelezo. Gusa channel, tangazo linafunguka, kisha video inacheza kwenye skrini ndogo yenye kuongeza sauti, mwanga, Full screen (simu inalala), na Refresh. Bonyeza ✕ kurudi kwenye orodha na uchague nyingine.'},
   {id: 20, title: '🔴 Alama ya LIVE kwenye TV', body: 'Kukiwa na channel, utaona alama nyekundu ya LIVE kwenye ikoni ya TV chini na kwenye kadi ya channel ili uguse utazame. Kusipokuwa na channel yoyote, alama haionekani.'},
-  // {id: 21, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 21, title: '🎁 Boksi la zawadi (Tangazo)', body: 'Kitufe cha Pata Token kimehamia juu karibu na token balance na kuwa boksi dogo la zawadi linalotingisika na kufunguka kuonyesha neno Tangazo/Ads. Gusa boksi kutazama tangazo na kupata token.'},
+  // {id: 22, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -5094,7 +5106,7 @@ function shareTournament(id, name){
 // ===== TV (YouTube live — channel zinawekwa kutoka admin) =====
 let tvChannels = [], tvLoaded = false, tvListening = false, tvCurId = null, tvAdLeft = false, tvAdTimer = null, tvResumeId = null;
 const TV_AD_GAP = 3*60*1000; // tangazo kila baada ya dakika 3 tu, ili kubadili channel kusiwe kero
-const TV_CAT_COLORS = {Habari:['#4aa8ff','#6d5efc'],Muziki:['#ff5fa2','#a855f7'],Michezo:['#3ddc84','#22d3ee'],Burudani:['#ffb02e','#ff5e62'],Games:['#22d3ee','#6d5efc'],Dini:['#b794ff','#6d5efc'],Watoto:['#ffd24a','#ff8a3d'],Nyingine:['#5fe9ff','#3ddc84']};
+const TV_CAT_COLORS = {Habari:['#4aa8ff','#6d5efc'],Muziki:['#ff5fa2','#a855f7'],Michezo:['#3ddc84','#22d3ee'],Burudani:['#ffb02e','#ff5e62'],Movie:['#ff4d6d','#7c3aed'],Games:['#22d3ee','#6d5efc'],Dini:['#b794ff','#6d5efc'],Watoto:['#ffd24a','#ff8a3d'],Nyingine:['#5fe9ff','#3ddc84']};
 function tvT(sw,en){ return currentLang === 'en' ? en : sw; }
 function tvRender(){
   const list = document.getElementById('tvList'), soon = document.getElementById('tvSoon'), sub = document.getElementById('tvSub');
@@ -6054,7 +6066,7 @@ const TRANSLATIONS = {
     settings_share:'Shea na Marafiki', settings_share_sub:'Waambie wenzako kuhusu mumbigames',
     nav_home:'Home', nav_chat:'Chat', nav_me:'Me', nav_duka:'Duka', nav_ai:'AI',
     search_placeholder:'Tafuta games...',
-    qa_tiktok:'TikTok', qa_kura:'Kura', qa_youtube:'YouTube', qa_tourn:'Tournament', qa_earn:'Pata Token', qa_channel:'Channel',
+    qa_tiktok:'TikTok', qa_kura:'Kura', qa_youtube:'YouTube', qa_tourn:'Tournament', qa_earn:'Pata Token', gift_txt:'Tangazo', qa_channel:'Channel',
     earn_sub:'Tazama matangazo 3 upate token bure — unaweza kufanya mara kadhaa kwa siku!', earn_watch_btn:'Tazama Tangazo', close:'Funga',
     tourn_title:'Tournaments', tourn_sub:'Unda ligi yako, alika marafiki',
     tourn_search:'Tafuta tournaments...', tourn_create_btn:'+ Unda Tournament Mpya',
@@ -6151,7 +6163,7 @@ const TRANSLATIONS = {
     settings_share:'Share with Friends', settings_share_sub:'Tell your friends about mumbigames',
     nav_home:'Home', nav_chat:'Chat', nav_me:'Me', nav_duka:'Shop', nav_ai:'AI',
     search_placeholder:'Search games...',
-    qa_tiktok:'TikTok', qa_kura:'Poll', qa_youtube:'YouTube', qa_tourn:'Tournament', qa_earn:'Earn Tokens', qa_channel:'Channel',
+    qa_tiktok:'TikTok', qa_kura:'Poll', qa_youtube:'YouTube', qa_tourn:'Tournament', qa_earn:'Earn Tokens', gift_txt:'Ads', qa_channel:'Channel',
     earn_sub:'Watch 3 ads to earn free tokens — you can do this several times a day!', earn_watch_btn:'Watch Ad', close:'Close',
     tourn_title:'Tournaments', tourn_sub:'Create your league, invite friends',
     tourn_search:'Search tournaments...', tourn_create_btn:'+ Create New Tournament',
