@@ -632,6 +632,57 @@
   @keyframes aiSpin{to{transform:rotate(360deg);}}
   @keyframes aiGlow{0%,100%{opacity:.55;}50%{opacity:1;}}
   @keyframes aiBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-2px) scale(1.06);}}
+  /* TV channels */
+  .tv-list{padding:14px 16px 24px;display:flex;flex-direction:column;gap:18px;}
+  .tvc{position:relative;border-radius:22px;overflow:hidden;background:var(--panel);border:1px solid var(--line);cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.35);transition:transform .15s;}
+  .tvc:active{transform:scale(.98);}
+  .tvc-screen{position:relative;height:150px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 25% 20%,var(--c1),transparent 60%),radial-gradient(circle at 80% 85%,var(--c2),transparent 55%),#0c0c1c;}
+  .tvc-screen::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 4px);pointer-events:none;animation:tvScan 6s linear infinite;}
+  @keyframes tvScan{to{background-position:0 40px;}}
+  .tvc-logo{position:relative;z-index:1;width:104px;height:104px;border-radius:26px;background:#fff;display:flex;align-items:center;justify-content:center;padding:10px;box-shadow:0 0 0 3px rgba(255,255,255,.12),0 8px 26px var(--c1);}
+  .tvc-logo img{max-width:100%;max-height:100%;object-fit:contain;}
+  .tvc-logo span{font-size:42px;}
+  .tvc-live{position:absolute;z-index:2;top:12px;left:12px;display:flex;align-items:center;gap:6px;background:rgba(255,45,70,.92);color:#fff;font-size:10px;font-weight:800;letter-spacing:.8px;padding:4px 10px;border-radius:20px;}
+  .tvc-live i{width:7px;height:7px;border-radius:50%;background:#fff;animation:aiGlow 1s ease-in-out infinite;}
+  .tvc-cat{position:absolute;z-index:2;top:12px;right:12px;background:rgba(10,10,22,.6);backdrop-filter:blur(4px);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.18);}
+  .tvc-body{display:flex;align-items:center;gap:12px;padding:14px 16px 16px;border-top:3px solid var(--c1);}
+  .tvc-t{flex:1;min-width:0;}
+  .tvc-n{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:17px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tvc-d{font-size:11.5px;color:var(--sub);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .tvc-go{flex:none;width:46px;height:46px;border-radius:50%;background:var(--c1);color:#10101c;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px var(--c1);}
+  /* TV player */
+  #tvPlayer{position:fixed;inset:0;z-index:40;background:rgba(5,5,14,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:14px;}
+  #tvPlayer.show{display:flex;}
+  .tvp-card{width:100%;max-width:520px;background:var(--panel);border:1px solid var(--line);border-radius:26px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+  .tvp-head{display:flex;align-items:center;gap:12px;padding:12px 14px;}
+  .tvp-logo{width:46px;height:46px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;padding:4px;flex:none;}
+  .tvp-logo img{max-width:100%;max-height:100%;object-fit:contain;}
+  .tvp-nm{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:16px;line-height:1.1;}
+  .tvp-sb{font-size:11px;color:var(--sub);display:flex;align-items:center;gap:6px;}
+  .tvp-sb i{width:7px;height:7px;border-radius:50%;background:#ff2d46;animation:aiGlow 1s ease-in-out infinite;}
+  .tvp-x{margin-left:auto;width:40px;height:40px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;}
+  .tvp-stage{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;}
+  .tvp-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .tvp-load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+  .tvp-spin{width:46px;height:46px;border-radius:50%;border:4px solid rgba(255,255,255,.18);border-top-color:var(--lime);animation:aiSpin 1s linear infinite;}
+  .tvp-sl{display:none;align-items:center;gap:10px;padding:10px 16px;background:var(--panel-2);border-top:1px solid var(--line);}
+  .tvp-sl.show{display:flex;}
+  .tvp-sl input[type=range]{flex:1;accent-color:var(--lime);}
+  .tvp-sl b{font-size:12px;min-width:42px;text-align:right;}
+  .tvp-bar{display:flex;justify-content:space-around;padding:10px 6px 14px;}
+  .tvp-bar button{background:none;border:0;color:var(--sub);font-family:inherit;font-size:10.5px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:4px 10px;}
+  .tvp-bar button.on{color:var(--lime);}
+  .tvp-bar button span{font-size:22px;line-height:1;}
+  #tvPlayer.full{padding:0;background:#000;}
+  #tvPlayer.full .tvp-card{max-width:none;width:100%;height:100%;border:0;border-radius:0;background:#000;position:relative;}
+  #tvPlayer.full .tvp-head{display:none;}
+  #tvPlayer.full .tvp-stage{position:absolute;inset:0;aspect-ratio:auto;}
+  #tvPlayer.full .tvp-bar{position:absolute;top:10px;right:10px;z-index:5;background:rgba(10,10,22,.6);backdrop-filter:blur(6px);border-radius:30px;padding:4px 6px;gap:2px;opacity:.6;}
+  #tvPlayer.full .tvp-bar button{padding:4px 8px;}
+  #tvPlayer.full .tvp-bar button b{display:none;}
+  #tvPlayer.full .tvp-bar button span{font-size:19px;}
+  #tvPlayer.full .tvp-sl{position:absolute;top:60px;right:10px;z-index:5;border-radius:16px;width:230px;border:1px solid var(--line);}
+  #tvPlayer.rot .tvp-card{position:fixed;top:0;left:0;width:100vh;height:100vw;transform-origin:top left;transform:translateX(100vw) rotate(90deg);}
   /* TV coming soon */
   #tvView{display:none;flex-direction:column;min-height:calc(100vh - 78px);}
   .tv-soon{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 24px;gap:12px;}
@@ -1105,9 +1156,10 @@
 <div id="tvView">
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
-    <div style="flex:1;"><div class="title">📺 TV</div></div>
+    <div style="flex:1;"><div class="title">📺 TV</div><div class="sub" id="tvSub"></div></div>
   </div>
-  <div class="tv-soon">
+  <div class="tv-list" id="tvList" style="display:none;"></div>
+  <div class="tv-soon" id="tvSoon">
     <div class="tv-ico"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5l4 3 4-3"/><rect x="3" y="7" width="18" height="13" rx="4"/></svg></div>
     <div class="tv-badge" data-i18n="tv_soon">Karibuni</div>
     <div class="tv-t" data-i18n="tv_title">Mumbigames TV</div>
@@ -1462,6 +1514,28 @@
     <div class="comment-input-row">
       <input type="text" id="commentInput" placeholder="Andika maoni yako..." onkeydown="if(event.key==='Enter') submitComment()">
       <button onclick="submitComment()">Tuma</button>
+    </div>
+  </div>
+</div>
+
+<div id="tvPlayer" onclick="if(event.target===this) closeTvPlayer()">
+  <div class="tvp-card">
+    <div class="tvp-head">
+      <div class="tvp-logo" id="tvpLogo"></div>
+      <div style="min-width:0;"><div class="tvp-nm" id="tvpName"></div><div class="tvp-sb"><i></i><span id="tvpCat">Live TV</span></div></div>
+      <div class="tvp-x" onclick="closeTvPlayer()">✕</div>
+    </div>
+    <div class="tvp-stage" id="tvpStage">
+      <div class="tvp-load"><div class="tvp-spin"></div></div>
+      <div id="tvpFrameWrap" style="position:absolute;inset:0;"></div>
+    </div>
+    <div class="tvp-sl" id="tvpSlB"><span>☀️</span><input type="range" min="40" max="160" value="100" oninput="tvBright(this.value)"><b id="tvpBv">100%</b></div>
+    <div class="tvp-sl" id="tvpSlV"><span>🔊</span><input type="range" min="0" max="100" value="100" oninput="tvVol(this.value)"><b id="tvpVv">100%</b></div>
+    <div class="tvp-bar">
+      <button id="tvbB" onclick="tvPanel('B')"><span>☀️</span><b data-i18n="tvp_bright">Mwanga</b></button>
+      <button id="tvbV" onclick="tvPanel('V')"><span>🔊</span><b data-i18n="tvp_vol">Sauti</b></button>
+      <button onclick="tvFull()" id="tvbF"><span>⛶</span><b data-i18n="tvp_full">Full screen</b></button>
+      <button onclick="tvRefresh()"><span>⟳</span><b data-i18n="tvp_refresh">Refresh</b></button>
     </div>
   </div>
 </div>
@@ -3817,7 +3891,8 @@ const APP_CHANGELOG = [
   {id: 16, title: '🤖 AI Sasa Inaelea + 📺 TV Inakuja', body: 'Mumbigames AI sasa ni kitufe kinachong\'aa kinachoelea pembeni — kiburute popote unapopenda, kisha kigusa kuongea na AI. Kitafichwa ukiwa kwenye ukurasa wa download na kurudi ukitoka. Kwenye menu ya chini, nafasi ya AI sasa ina TV (inakuja karibuni!).'},
   {id: 17, title: '✨ mumbiBot — Muonekano Mpya', body: 'AI sasa inaitwa mumbiBot, ikiwa na wallpaper hai ya zambarau, taa ya kijani ya "Online" na ukurasa wa Karibu. Kitufe chake cha kuelea ni kidogo, kinaonekana kwenye Home tu, na kinafifia kikikaa sekunde 5 bila kuguswa — kigusa kikawake tena.'},
   {id: 18, title: '🧠 mumbiBot Sasa Anajua Mengi Zaidi', body: 'mumbiBot ameongezewa maarifa mengi: kuseti games za APK, OBB na DATA, emulator zote (Winlator, Mobox, PPSSPP, PS2, Dolphin, PS1, 3DS na nyingine), matatizo ya kawaida (game inafunga, lag, parse error, download), pamoja na ushauri wa simu, processor na RAM. Ukiuliza video, anakupa link ya kutafuta kwenye channel ya Mumbi na YouTube nzima.'},
-  // {id: 19, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
+  {id: 19, title: '📺 TV Imefunguka — Channels za Live', body: 'Ukurasa wa TV sasa unaonyesha channel za live kwenye kadi kubwa moja moja zenye nembo na maelezo. Gusa channel, tangazo linafunguka, kisha video inacheza kwenye skrini ndogo yenye kuongeza sauti, mwanga, Full screen (simu inalala), na Refresh. Bonyeza ✕ kurudi kwenye orodha na uchague nyingine.'},
+  // {id: 20, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
 ];
 
 function renderChangelogList(){
@@ -5013,11 +5088,168 @@ function shareTournament(id, name){
     alert(text);
   }
 }
+// ===== TV (YouTube live — channel zinawekwa kutoka admin) =====
+let tvChannels = [], tvLoaded = false, tvListening = false, tvCurId = null, tvAdLeft = false, tvAdTimer = null, tvResumeId = null;
+const TV_AD_GAP = 3*60*1000; // tangazo kila baada ya dakika 3 tu, ili kubadili channel kusiwe kero
+const TV_CAT_COLORS = {Habari:['#4aa8ff','#6d5efc'],Muziki:['#ff5fa2','#a855f7'],Michezo:['#3ddc84','#22d3ee'],Burudani:['#ffb02e','#ff5e62'],Games:['#22d3ee','#6d5efc'],Dini:['#b794ff','#6d5efc'],Watoto:['#ffd24a','#ff8a3d'],Nyingine:['#5fe9ff','#3ddc84']};
+function tvT(sw,en){ return currentLang === 'en' ? en : sw; }
+function tvRender(){
+  const list = document.getElementById('tvList'), soon = document.getElementById('tvSoon'), sub = document.getElementById('tvSub');
+  const items = tvChannels.filter(c=>c.active !== false);
+  if(!items.length){ list.style.display = 'none'; soon.style.display = 'flex'; sub.textContent = ''; return; }
+  soon.style.display = 'none'; list.style.display = 'flex';
+  sub.textContent = items.length + tvT(' channel zinapatikana',' channels available');
+  list.innerHTML = items.map(c=>{
+    const col = TV_CAT_COLORS[c.cat] || TV_CAT_COLORS.Nyingine;
+    const logo = (c.logo && /^https?:/i.test(c.logo)) ? '<img src="'+escapeHtml(c.logo)+'" alt="">' : '<span>📺</span>';
+    return '<div class="tvc" style="--c1:'+col[0]+';--c2:'+col[1]+'" onclick="openTvChannel(\''+c.id+'\')">'
+      + '<div class="tvc-screen"><div class="tvc-live"><i></i>LIVE</div><div class="tvc-cat">'+escapeHtml(c.cat||'')+'</div><div class="tvc-logo">'+logo+'</div></div>'
+      + '<div class="tvc-body"><div class="tvc-t"><div class="tvc-n">'+escapeHtml(c.name||'')+'</div>'+(c.desc?'<div class="tvc-d">'+escapeHtml(c.desc)+'</div>':'')+'</div><div class="tvc-go">▶</div></div>'
+      + '</div>';
+  }).join('');
+}
+function loadTvChannels(){
+  if(tvListening) return;
+  tvListening = true;
+  try{
+    const cached = JSON.parse(localStorage.getItem('mg-tv-cache')||'null');
+    if(cached && cached.length){ tvChannels = cached; tvRender(); }
+  }catch(e){}
+  db.collection('tvChannels').orderBy('order','asc').onSnapshot(snap=>{
+    tvChannels = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    tvLoaded = true;
+    try{ localStorage.setItem('mg-tv-cache', JSON.stringify(tvChannels)); }catch(e){}
+    tvRender();
+    if(tvResumeId){ const id = tvResumeId; tvResumeId = null; playTv(id); }
+  }, err=>{ console.error(err); tvListening = false; });
+}
+function openTvChannel(id){
+  const c = tvChannels.find(x=>x.id===id); if(!c) return;
+  let last = 0; try{ last = parseInt(localStorage.getItem('mg-tv-lastad')||'0',10) || 0; }catch(e){}
+  if(Date.now() - last < TV_AD_GAP){ playTv(id); return; }
+  try{
+    localStorage.setItem('mg-tv-pending', JSON.stringify({id:id, t:Date.now()}));
+    localStorage.setItem('mg-tv-lastad', String(Date.now()));
+  }catch(e){}
+  tvAdLeft = false;
+  if(isAndroidUA()){ logAdImpression(); escapeToExternalBrowser(AD_GATE_DIRECT_LINK); }
+  else { openAdTab(); }
+  clearTimeout(tvAdTimer);
+  // ikiwa tangazo halikufunguka (mf. popup imezuiwa), cheza channel baada ya sekunde 5
+  tvAdTimer = setTimeout(()=>{ if(!document.hidden && !tvAdLeft) tvResumePending(); }, 5000);
+}
+function tvResumePending(){
+  let p = null;
+  try{ p = JSON.parse(localStorage.getItem('mg-tv-pending')||'null'); }catch(e){}
+  if(!p || !p.id || Date.now() - p.t > 15*60*1000){ try{ localStorage.removeItem('mg-tv-pending'); }catch(e){} return; }
+  try{ localStorage.removeItem('mg-tv-pending'); }catch(e){}
+  clearTimeout(tvAdTimer);
+  showTV();
+  if(tvChannels.find(x=>x.id===p.id)) playTv(p.id); else tvResumeId = p.id;
+}
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden){ tvAdLeft = true; return; }
+  if(tvAdLeft){ tvAdLeft = false; setTimeout(tvResumePending, 300); }
+});
+window.addEventListener('pageshow', ()=>{ setTimeout(tvResumePending, 400); });
+function tvEmbedUrl(c){
+  const base = c.ytType === 'channel'
+    ? 'https://www.youtube.com/embed/live_stream?channel=' + encodeURIComponent(c.ytId) + '&'
+    : 'https://www.youtube.com/embed/' + encodeURIComponent(c.ytId) + '?';
+  return base + 'autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1';
+}
+function tvLoadFrame(){
+  const c = tvChannels.find(x=>x.id===tvCurId); if(!c) return;
+  const wrap = document.getElementById('tvpFrameWrap');
+  wrap.innerHTML = '';
+  const f = document.createElement('iframe');
+  f.id = 'tvpFrame';
+  f.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+  f.allowFullscreen = true;
+  f.referrerPolicy = 'strict-origin-when-cross-origin';
+  f.src = tvEmbedUrl(c);
+  wrap.appendChild(f);
+}
+function playTv(id){
+  const c = tvChannels.find(x=>x.id===id); if(!c) return;
+  tvCurId = id;
+  document.getElementById('tvpName').textContent = c.name || '';
+  document.getElementById('tvpCat').textContent = 'LIVE · ' + (c.cat || 'TV');
+  document.getElementById('tvpLogo').innerHTML = (c.logo && /^https?:/i.test(c.logo)) ? '<img src="'+escapeHtml(c.logo)+'" alt="">' : '<span style="font-size:22px;">📺</span>';
+  tvBright(100); tvVolUi(100);
+  document.querySelectorAll('.tvp-sl').forEach(e=>e.classList.remove('show'));
+  document.querySelectorAll('.tvp-bar button').forEach(e=>e.classList.remove('on'));
+  tvLoadFrame();
+  document.getElementById('tvPlayer').classList.add('show');
+}
+function closeTvPlayer(){
+  tvExitFull();
+  document.getElementById('tvPlayer').classList.remove('show');
+  document.getElementById('tvpFrameWrap').innerHTML = ''; // inasimamisha video
+  tvCurId = null;
+}
+function tvRefresh(){ tvLoadFrame(); }
+function tvPanel(w){
+  const b = document.getElementById('tvpSlB'), v = document.getElementById('tvpSlV');
+  const target = w === 'B' ? b : v, other = w === 'B' ? v : b;
+  other.classList.remove('show');
+  target.classList.toggle('show');
+  document.getElementById('tvbB').classList.toggle('on', w === 'B' && target.classList.contains('show'));
+  document.getElementById('tvbV').classList.toggle('on', w === 'V' && target.classList.contains('show'));
+  if(w === 'B') document.getElementById('tvbV').classList.remove('on'); else document.getElementById('tvbB').classList.remove('on');
+}
+function tvBright(val){
+  document.getElementById('tvpFrameWrap').style.filter = 'brightness(' + (val/100) + ')';
+  document.getElementById('tvpBv').textContent = val + '%';
+  const r = document.querySelector('#tvpSlB input'); if(r) r.value = val;
+}
+function tvVolUi(val){
+  document.getElementById('tvpVv').textContent = val + '%';
+  const r = document.querySelector('#tvpSlV input'); if(r) r.value = val;
+}
+function tvVol(val){
+  tvVolUi(val);
+  const f = document.getElementById('tvpFrame');
+  if(!f || !f.contentWindow) return;
+  const send = (func,args)=>{ try{ f.contentWindow.postMessage(JSON.stringify({event:'command', func:func, args:args||[]}), '*'); }catch(e){} };
+  send('setVolume', [parseInt(val,10)]);
+  send(parseInt(val,10) === 0 ? 'mute' : 'unMute');
+}
+function tvFixRot(){
+  const box = document.getElementById('tvPlayer');
+  if(!box.classList.contains('full')) return;
+  box.classList.toggle('rot', window.innerHeight > window.innerWidth);
+}
+function tvFull(){
+  const box = document.getElementById('tvPlayer');
+  box.classList.add('full');
+  document.getElementById('tvbF').onclick = tvExitFull;
+  let p = null;
+  try{ p = (box.requestFullscreen || box.webkitRequestFullscreen || function(){}).call(box); }catch(e){}
+  Promise.resolve(p).then(()=>{ try{ return screen.orientation.lock('landscape'); }catch(e){} }).catch(()=>{}).then(()=>setTimeout(tvFixRot, 350));
+  setTimeout(tvFixRot, 150);
+}
+function tvExitFull(){
+  const box = document.getElementById('tvPlayer');
+  box.classList.remove('full','rot');
+  document.getElementById('tvbF').onclick = tvFull;
+  try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){}
+  try{ screen.orientation.unlock(); }catch(e){}
+}
+window.addEventListener('resize', tvFixRot);
+window.addEventListener('orientationchange', ()=>setTimeout(tvFixRot, 300));
+document.addEventListener('fullscreenchange', ()=>{
+  const box = document.getElementById('tvPlayer');
+  if(!document.fullscreenElement && box.classList.contains('full')) tvExitFull();
+});
+setTimeout(()=>{ try{ if(localStorage.getItem('mg-tv-pending')) tvResumePending(); }catch(e){} }, 800);
+
 function showTV(){
   hideAllViews();
   document.getElementById('tvView').style.display = 'flex';
   document.getElementById('navTV').classList.add('active');
   updateAiFab();
+  loadTvChannels();
 }
 
 // ===== Kitufe cha AI kinachoelea (kinaburutwa) =====
@@ -5799,7 +6031,7 @@ async function sendMsg(){
 // ---- Settings: Theme + Language ----
 const TRANSLATIONS = {
   sw: {
-    nav_tv:'TV', tv_soon:'Karibuni', tv_title:'Mumbigames TV', tv_sub:'Tunaandaa kitu kizuri hapa. Endelea kuwa nasi!',
+    nav_tv:'TV', tvp_bright:'Mwanga', tvp_vol:'Sauti', tvp_full:'Full screen', tvp_refresh:'Refresh', tv_soon:'Karibuni', tv_title:'Mumbigames TV', tv_sub:'Tunaandaa kitu kizuri hapa. Endelea kuwa nasi!',
     md_title:'Maktaba Yangu', md_sub:'Games ulizodownload', md_games_lbl:'games', md_open_hint:'Gusa kuona ›',
     md_search_ph:'Tafuta game uliyodownload...', md_f_all:'Zote', md_f_week:'Wiki hii', md_f_month:'Mwezi huu', md_f_many:'Zilizorudiwa',
     about_fb:'Facebook', about_support_short:'Msaada / changamoto', about_tap:'', about_title:'Kuhusu Mumbigames',
@@ -5896,7 +6128,7 @@ const TRANSLATIONS = {
     tourn_f_photo:'Picha ya Tournament (hiari)', tourn_f_photo_pick:'Chagua picha kutoka simu yako'
   },
   en: {
-    nav_tv:'TV', tv_soon:'Coming Soon', tv_title:'Mumbigames TV', tv_sub:"We're cooking up something great here. Stay tuned!",
+    nav_tv:'TV', tvp_bright:'Brightness', tvp_vol:'Volume', tvp_full:'Full screen', tvp_refresh:'Refresh', tv_soon:'Coming Soon', tv_title:'Mumbigames TV', tv_sub:"We're cooking up something great here. Stay tuned!",
     md_title:'My Library', md_sub:'Games you downloaded', md_games_lbl:'games', md_open_hint:'Tap to view ›',
     md_search_ph:'Search your downloaded games...', md_f_all:'All', md_f_week:'This week', md_f_month:'This month', md_f_many:'Re-downloaded',
     about_fb:'Facebook', about_support_short:'Help / issues', about_tap:'', about_title:'About Mumbigames',

@@ -221,10 +221,10 @@
     <div class="tab" data-view="payment">Malipo</div>
     <div class="tab" data-view="duka">Duka</div>
     <div class="tab" data-view="tournaments">Tournaments</div>
+    <div class="tab" data-view="tv">📺 TV</div>
     <div class="tab" data-view="banners">Banner</div>
     <div class="tab" data-view="bettips">🎫 Bet Tips</div>
     <div class="tab" data-view="feedback">💬 Maoni</div>
-    <div class="tab" data-view="social">Social</div>
     <div class="tab" data-view="ads">Tangazo</div>
   </div>
 
@@ -253,10 +253,6 @@
         <div class="mini-stat"><div class="num" id="statAdsMonth">0</div><div class="lbl">Matangazo (Mwezi Huu)</div></div>
       </div>
       <div style="display:none;"><span id="statUnique">0</span></div>
-      <div class="section-title"><h2>Trending sasa</h2></div>
-      <div id="trendingList"></div>
-      <div class="section-title"><h2>Zilizoongezwa hivi karibuni</h2></div>
-      <div id="recentList"></div>
       <div class="section-title"><h2>📢 Tangaza machapisho mapya</h2></div>
       <p style="font-size:12px;color:var(--sub);margin-bottom:10px;">Ukiweka video mpya TikTok au YouTube, bonyeza hapa ili watumiaji waone alama ya "kipya" kwenye website.</p>
       <div style="display:flex;gap:10px;margin-bottom:20px;">
@@ -426,6 +422,45 @@
     </div>
 
     <!-- BANNERS -->
+    <!-- TV CHANNELS -->
+    <div class="view" id="view-tv">
+      <div class="section-title"><h2 id="tvFormTitle">Ongeza Channel ya TV</h2></div>
+      <p style="color:var(--sub);font-size:12px;margin-bottom:12px;">Kwa sasa TV inakubali <b>link za YouTube live rasmi tu</b> (video ya live, au ID ya channel inayoanza na <b>UC</b>). Channel itaonekana kwenye ukurasa wa TV wa app.</p>
+      <label>Jina la channel</label>
+      <input type="text" id="tvName" placeholder="mfano: Mumbi Gaming Live">
+      <label>Maelezo mafupi (si lazima)</label>
+      <input type="text" id="tvDesc" placeholder="mfano: Live za games kila Ijumaa">
+      <label>Kundi</label>
+      <select id="tvCat">
+        <option value="Habari">Habari</option>
+        <option value="Muziki">Muziki</option>
+        <option value="Michezo">Michezo</option>
+        <option value="Burudani">Burudani</option>
+        <option value="Games">Games</option>
+        <option value="Dini">Dini</option>
+        <option value="Watoto">Watoto</option>
+        <option value="Nyingine">Nyingine</option>
+      </select>
+      <label>Link ya YouTube live</label>
+      <input type="text" id="tvYt" placeholder="https://www.youtube.com/watch?v=...  au  UCxxxxxxxxxxxxxxxxxxxxxx">
+      <div style="font-size:11px;color:var(--sub);margin:-6px 0 10px;">Inakubali: youtube.com/watch?v=… · youtu.be/… · youtube.com/live/… · youtube.com/channel/UC… · au ID ya channel (UC…) kwa live inayoendelea kila wakati.</div>
+      <label>Mpangilio (namba ndogo inatangulia)</label>
+      <input type="number" id="tvOrder" placeholder="0" value="0">
+      <label>Nembo ya channel</label>
+      <div id="tvLogoPreviewWrap" style="display:none;margin-bottom:10px;">
+        <img id="tvLogoPreview" src="" style="width:110px;height:110px;object-fit:contain;background:#fff;border-radius:14px;border:1px solid var(--line);padding:6px;">
+      </div>
+      <input type="file" id="tvLogoFile" accept="image/*" onchange="handleTvLogoSelect()">
+      <div id="tvLogoStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
+      <input type="hidden" id="tvLogo" value="">
+      <div class="form-actions">
+        <button class="btn btn-primary" style="flex:1" onclick="saveTvChannel()" id="tvSaveBtn">Hifadhi Channel</button>
+        <button class="btn btn-ghost" style="flex:0 0 auto;display:none;" id="tvCancelBtn" onclick="resetTvForm()">Ghairi</button>
+      </div>
+      <div class="section-title"><h2>Channel zilizopo</h2></div>
+      <div id="tvAdminList"></div>
+    </div>
+
     <div class="view" id="view-banners">
       <div class="section-title"><h2>Ongeza Banner Mpya</h2></div>
       <label>Kichwa (title)</label>
@@ -490,20 +525,6 @@
     </div>
 
     <!-- SOCIAL -->
-    <div class="view" id="view-social">
-      <div class="section-title"><h2>Social media links</h2></div>
-      <div class="link-card">
-        <div><div class="name">YouTube</div><div class="url">youtube.com/@mumbi_gaming</div></div>
-      </div>
-      <div class="link-card">
-        <div><div class="name">WhatsApp Channel</div><div class="url">whatsapp.com/channel/0029VbDjDDrCnA7s1aPmcR3b</div></div>
-      </div>
-      <div class="link-card">
-        <div><div class="name">TikTok</div><div class="url">tiktok.com/@iam_mumbi7</div></div>
-      </div>
-      <p style="color:var(--sub);font-size:12px;margin-top:10px;">Hizi ndizo link zitakazowekwa kwenye nembo za bottom nav ya website/app kuu.</p>
-    </div>
-
     <div class="view" id="view-ads">
       <div class="section-title"><h2>📢 Weka Tangazo Jipya (Sponsored)</h2></div>
       <p style="color:var(--sub);font-size:12px;margin-bottom:14px;">Weka matangazo mengi hapa — mfumo utachagua LIMOJA KWA BAHATI NASIBU kila mtu akifungua game, hivyo watu wataona matangazo tofauti-tofauti kila wakiingia/kufungua tena. Mteja akikubali kulipia nafasi hii, jaza taarifa zake hapa chini kisha bonyeza "Ongeza Tangazo".</p>
@@ -708,6 +729,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
     if(tab.dataset.view==='duka'){ loadListings(); loadListingReports(); }
     if(tab.dataset.view==='tournaments'){ loadTournamentsAdmin(); }
     if(tab.dataset.view==='banners') loadBannersAdmin();
+    if(tab.dataset.view==='tv') loadTvAdmin();
     if(tab.dataset.view==='bettips') loadBetTipsAdmin();
     if(tab.dataset.view==='feedback') loadFeedbackAdmin();
     if(tab.dataset.view==='payment') loadPaymentRequests();
@@ -905,6 +927,118 @@ function loadBannersAdmin(){
         </div>
       </div>`).join('') : '<div class="empty">Hakuna banner bado. Ongeza moja hapo juu.</div>';
   }, err=>console.error(err));
+}
+
+// ---- TV channels (YouTube live) ----
+let tvEditId = null, tvListening = false, tvItems = [];
+function parseYouTubeInput(raw){
+  raw = (raw||'').trim();
+  if(!raw) return null;
+  if(/^UC[\w-]{22}$/.test(raw)) return {type:'channel', id:raw};
+  if(/^[\w-]{11}$/.test(raw)) return {type:'video', id:raw};
+  let u;
+  try{ u = new URL(/^https?:\/\//i.test(raw) ? raw : 'https://' + raw); }catch(e){ return null; }
+  const host = u.hostname.replace(/^www\.|^m\./,'');
+  if(host === 'youtu.be'){ const id = u.pathname.slice(1).split('/')[0]; return /^[\w-]{11}$/.test(id) ? {type:'video', id} : null; }
+  if(host !== 'youtube.com' && host !== 'youtube-nocookie.com') return null;
+  const v = u.searchParams.get('v');
+  if(v && /^[\w-]{11}$/.test(v)) return {type:'video', id:v};
+  let m = u.pathname.match(/^\/(?:live|embed|shorts)\/([\w-]{11})/);
+  if(m) return {type:'video', id:m[1]};
+  m = u.pathname.match(/^\/channel\/(UC[\w-]{22})/);
+  if(m) return {type:'channel', id:m[1]};
+  return null;
+}
+async function handleTvLogoSelect(){
+  const file = document.getElementById('tvLogoFile').files[0];
+  if(!file) return;
+  const st = document.getElementById('tvLogoStatus');
+  st.textContent = 'Inapakia nembo...';
+  try{
+    const url = await uploadToImgbb(file);
+    document.getElementById('tvLogo').value = url;
+    document.getElementById('tvLogoPreview').src = url;
+    document.getElementById('tvLogoPreviewWrap').style.display = 'block';
+    st.textContent = 'Nembo imepakiwa ✓';
+  }catch(e){ console.error(e); st.textContent = 'Imeshindwa kupakia nembo. Jaribu tena.'; }
+}
+function resetTvForm(){
+  tvEditId = null;
+  ['tvName','tvDesc','tvYt','tvLogo'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('tvOrder').value = '0';
+  document.getElementById('tvCat').value = 'Habari';
+  document.getElementById('tvLogoFile').value = '';
+  document.getElementById('tvLogoPreviewWrap').style.display = 'none';
+  document.getElementById('tvLogoStatus').textContent = '';
+  document.getElementById('tvFormTitle').textContent = 'Ongeza Channel ya TV';
+  document.getElementById('tvSaveBtn').textContent = 'Hifadhi Channel';
+  document.getElementById('tvCancelBtn').style.display = 'none';
+}
+async function saveTvChannel(){
+  const name = document.getElementById('tvName').value.trim();
+  const desc = document.getElementById('tvDesc').value.trim();
+  const cat = document.getElementById('tvCat').value;
+  const order = parseInt(document.getElementById('tvOrder').value) || 0;
+  const logo = document.getElementById('tvLogo').value.trim();
+  const yt = parseYouTubeInput(document.getElementById('tvYt').value);
+  if(!name){ showToast('Weka jina la channel kwanza.'); return; }
+  if(!yt){ showToast('Weka link sahihi ya YouTube live (au ID ya channel inayoanza na UC).'); return; }
+  const data = {name, desc, cat, order, logo, ytType: yt.type, ytId: yt.id};
+  try{
+    if(tvEditId){
+      await db.collection('tvChannels').doc(tvEditId).update(data);
+      showToast('Channel imesasishwa ✓');
+    } else {
+      await db.collection('tvChannels').add({...data, active:true, createdAt: Date.now()});
+      showToast('Channel imehifadhiwa ✓');
+    }
+    resetTvForm();
+  }catch(e){ console.error(e); showToast('Imeshindwa kuhifadhi channel.'); }
+}
+function loadTvAdmin(){
+  if(tvListening) return;
+  tvListening = true;
+  db.collection('tvChannels').orderBy('order','asc').onSnapshot(snap=>{
+    tvItems = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    document.getElementById('tvAdminList').innerHTML = tvItems.length ? tvItems.map(c=>`
+      <div class="game-card" style="${c.active===false?'opacity:.55;':''}">
+        <div class="thumb" style="${c.logo?`background-image:url('${String(c.logo).replace(/'/g,"")}');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#fff;`:''}">${c.logo?'':'📺'}</div>
+        <div class="g-info">
+          <div class="name">${escapeHtmlAdmin(c.name)}</div>
+          <div class="g-tags"><span class="tag">${escapeHtmlAdmin(c.cat||'')}</span><span class="tag">order: ${c.order||0}</span>${c.active===false?'<span class="tag paid">Imefichwa</span>':''}</div>
+        </div>
+        <div class="g-actions">
+          <button class="icon-btn" title="${c.active===false?'Onyesha':'Ficha'}" onclick="toggleTvChannel('${c.id}')">${c.active===false?'👁️':'🙈'}</button>
+          <button class="icon-btn" title="Hariri" onclick="editTvChannel('${c.id}')">✏️</button>
+          <button class="icon-btn del" onclick="deleteTvChannel('${c.id}')">🗑</button>
+        </div>
+      </div>`).join('') : '<div class="empty">Hakuna channel bado. Ongeza moja hapo juu.</div>';
+  }, err=>{ console.error(err); tvListening = false; showToast('Imeshindwa kupakia channel za TV.'); });
+}
+async function toggleTvChannel(id){
+  const c = tvItems.find(x=>x.id===id); if(!c) return;
+  try{ await db.collection('tvChannels').doc(id).update({active: c.active===false}); }
+  catch(e){ console.error(e); showToast('Imeshindwa kubadilisha.'); }
+}
+function editTvChannel(id){
+  const c = tvItems.find(x=>x.id===id); if(!c) return;
+  tvEditId = id;
+  document.getElementById('tvName').value = c.name||'';
+  document.getElementById('tvDesc').value = c.desc||'';
+  document.getElementById('tvCat').value = c.cat||'Nyingine';
+  document.getElementById('tvYt').value = c.ytType==='channel' ? c.ytId : 'https://www.youtube.com/watch?v=' + c.ytId;
+  document.getElementById('tvOrder').value = c.order||0;
+  document.getElementById('tvLogo').value = c.logo||'';
+  if(c.logo){ document.getElementById('tvLogoPreview').src = c.logo; document.getElementById('tvLogoPreviewWrap').style.display='block'; }
+  document.getElementById('tvFormTitle').textContent = 'Hariri Channel';
+  document.getElementById('tvSaveBtn').textContent = 'Hifadhi Mabadiliko';
+  document.getElementById('tvCancelBtn').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+async function deleteTvChannel(id){
+  if(!confirm('Una uhakika unataka kufuta channel hii?')) return;
+  try{ await db.collection('tvChannels').doc(id).delete(); showToast('Imefutwa.'); }
+  catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
 }
 
 async function deleteBanner(id){
@@ -1198,16 +1332,6 @@ function renderAll(){
   document.getElementById('statTotal').textContent = games.length;
   document.getElementById('statFree').textContent = games.filter(g=>!g.paid).length;
   document.getElementById('statPaid').textContent = games.filter(g=>g.paid).length;
-
-  const trending = games.filter(g=>g.trending);
-  document.getElementById('trendingList').innerHTML = trending.length
-    ? trending.map(gameCardHtml).join('')
-    : '<div class="empty">Hakuna game ya trending kwa sasa</div>';
-
-  const recent = [...games].sort((a,b)=>b.createdAt-a.createdAt).slice(0,3);
-  document.getElementById('recentList').innerHTML = recent.length
-    ? recent.map(gameCardHtml).join('')
-    : '<div class="empty">Bado hujaongeza game yoyote</div>';
 
   document.getElementById('allGamesList').innerHTML = games.length
     ? games.map(gameCardHtml).join('')
