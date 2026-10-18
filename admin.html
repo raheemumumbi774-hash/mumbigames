@@ -222,6 +222,7 @@
     <div class="tab" data-view="duka">Duka</div>
     <div class="tab" data-view="tournaments">Tournaments</div>
     <div class="tab" data-view="tv">📺 TV</div>
+    <div class="tab" data-view="notices">🔔 Taarifa</div>
     <div class="tab" data-view="banners">Banner</div>
     <div class="tab" data-view="bettips">🎫 Bet Tips</div>
     <div class="tab" data-view="feedback">💬 Maoni</div>
@@ -541,6 +542,24 @@
     </div>
 
     <!-- SOCIAL -->
+    <div class="view" id="view-notices">
+      <div class="section-title"><h2>🔔 Andika Taarifa Mpya</h2></div>
+      <p style="color:var(--sub);font-size:12px;margin-bottom:12px;">Taarifa unayoandika hapa inaonekana kwenye <b>kengele 🔔</b> ya app kwa watumiaji wote: picha pembeni, kichwa juu, maelezo chini yake. Watumiaji wanapata namba nyekundu kuwajulisha kuna taarifa mpya.</p>
+      <label>Kichwa cha habari</label>
+      <input type="text" id="nTitle" placeholder="mfano: Games Mpya Zimeongezwa 🎮" maxlength="90">
+      <label>Maelezo</label>
+      <textarea id="nBody" rows="5" placeholder="Andika maelezo hapa..." maxlength="1200"></textarea>
+      <label>Picha (si lazima)</label>
+      <input type="file" id="nImgFile" accept="image/*" onchange="handleNoticeImg()">
+      <div id="nImgStatus" style="font-size:11.5px;color:var(--sub);margin:4px 0;"></div>
+      <input type="hidden" id="nImgUrl">
+      <div id="nImgPreviewWrap" style="display:none;margin:6px 0;"><img id="nImgPreview" style="width:80px;height:80px;border-radius:12px;object-fit:cover;border:1px solid var(--line);"></div>
+      <button class="btn" id="nPostBtn" onclick="postNotice()" style="width:100%;margin-top:10px;">📣 Tuma Taarifa</button>
+      <div class="section-title" style="margin-top:22px;"><h2>Taarifa Zilizotumwa</h2></div>
+      <button class="btn btn-ghost" onclick="deleteAllNotices()" style="margin-bottom:10px;">🗑 Futa taarifa zote</button>
+      <div id="noticeAdminList"></div>
+    </div>
+
     <div class="view" id="view-ads">
       <div class="section-title"><h2>📢 Weka Tangazo Jipya (Sponsored)</h2></div>
       <p style="color:var(--sub);font-size:12px;margin-bottom:14px;">Weka matangazo mengi hapa — mfumo utachagua LIMOJA KWA BAHATI NASIBU kila mtu akifungua game, hivyo watu wataona matangazo tofauti-tofauti kila wakiingia/kufungua tena. Mteja akikubali kulipia nafasi hii, jaza taarifa zake hapa chini kisha bonyeza "Ongeza Tangazo".</p>
@@ -746,6 +765,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
     if(tab.dataset.view==='tournaments'){ loadTournamentsAdmin(); }
     if(tab.dataset.view==='banners') loadBannersAdmin();
     if(tab.dataset.view==='tv') loadTvAdmin();
+    if(tab.dataset.view==='notices') loadNoticesAdmin();
     if(tab.dataset.view==='bettips') loadBetTipsAdmin();
     if(tab.dataset.view==='feedback') loadFeedbackAdmin();
     if(tab.dataset.view==='payment') loadPaymentRequests();
@@ -1067,6 +1087,69 @@ function loadTvAdmin(){
       </div>`).join('') : '<div class="empty">Hakuna channel bado. Ongeza moja hapo juu.</div>';
   }, err=>{ console.error(err); tvListening = false; showToast('Imeshindwa kupakia channel za TV.'); });
 }
+
+// ---- Taarifa (kengele ya app) ----
+let noticesListening = false, noticeItems = [];
+async function handleNoticeImg(){
+  const file = document.getElementById('nImgFile').files[0];
+  if(!file) return;
+  const st = document.getElementById('nImgStatus');
+  st.textContent = 'Inapakia picha...';
+  try{
+    const url = await uploadToImgbb(file);
+    document.getElementById('nImgUrl').value = url;
+    document.getElementById('nImgPreview').src = url;
+    document.getElementById('nImgPreviewWrap').style.display = 'block';
+    st.textContent = 'Picha imepakiwa ✓';
+  }catch(e){ console.error(e); st.textContent = 'Imeshindwa kupakia picha. Jaribu tena.'; }
+}
+async function postNotice(){
+  const title = document.getElementById('nTitle').value.trim();
+  const body = document.getElementById('nBody').value.trim();
+  const imageUrl = document.getElementById('nImgUrl').value.trim();
+  if(!title){ showToast('Andika kichwa cha habari.'); return; }
+  if(!body){ showToast('Andika maelezo.'); return; }
+  const btn = document.getElementById('nPostBtn'); btn.disabled = true;
+  try{
+    await db.collection('appNotices').add({title, body, imageUrl, createdAt: Date.now()});
+    document.getElementById('nTitle').value = ''; document.getElementById('nBody').value = '';
+    document.getElementById('nImgUrl').value = ''; document.getElementById('nImgFile').value = '';
+    document.getElementById('nImgPreviewWrap').style.display = 'none'; document.getElementById('nImgStatus').textContent = '';
+    showToast('Taarifa imetumwa ✓');
+  }catch(e){ console.error(e); showToast('Imeshindwa kutuma (angalia Firestore rules).'); }
+  btn.disabled = false;
+}
+function loadNoticesAdmin(){
+  if(noticesListening) return;
+  noticesListening = true;
+  db.collection('appNotices').orderBy('createdAt','desc').onSnapshot(snap=>{
+    noticeItems = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    document.getElementById('noticeAdminList').innerHTML = noticeItems.length ? noticeItems.map(n=>`
+      <div class="game-card">
+        <div class="thumb" style="${n.imageUrl?`background-image:url('${String(n.imageUrl).replace(/['"]/g,'')}');background-size:cover;background-position:center;`:''}"></div>
+        <div class="g-info">
+          <div class="name">${escapeHtmlAdmin(n.title)}</div>
+          <div style="font-size:11.5px;color:var(--sub);white-space:pre-line;">${escapeHtmlAdmin((n.body||'').slice(0,140))}${(n.body||'').length>140?'…':''}</div>
+          <div style="font-size:10px;color:var(--sub);margin-top:3px;">${new Date(n.createdAt||0).toLocaleString('sw-TZ')}</div>
+        </div>
+        <div class="g-actions"><button class="icon-btn del" onclick="deleteNotice('${n.id}')">🗑</button></div>
+      </div>`).join('') : '<div class="empty">Hakuna taarifa bado.</div>';
+  }, err=>{ console.error(err); noticesListening = false; showToast('Imeshindwa kupakia taarifa.'); });
+}
+async function deleteNotice(id){
+  if(!confirm('Futa taarifa hii?')) return;
+  try{ await db.collection('appNotices').doc(id).delete(); showToast('Imefutwa.'); }catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
+}
+async function deleteAllNotices(){
+  if(!noticeItems.length){ showToast('Hakuna za kufuta.'); return; }
+  if(!confirm('Futa taarifa ZOTE ('+noticeItems.length+')? Haitarudi.')) return;
+  try{
+    const batch = db.batch();
+    noticeItems.forEach(n=>batch.delete(db.collection('appNotices').doc(n.id)));
+    await batch.commit(); showToast('Zote zimefutwa.');
+  }catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
+}
+
 async function toggleTvChannel(id){
   const c = tvItems.find(x=>x.id===id); if(!c) return;
   try{ await db.collection('tvChannels').doc(id).update({active: c.active===false}); }

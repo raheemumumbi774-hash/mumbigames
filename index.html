@@ -753,9 +753,17 @@
   </div>
 </header>
 
+<div class="overlay" id="pwHelpOverlay" onclick="if(event.target===this) closePwHelp()">
+  <div class="modal">
+    <h3 id="pwHelpTitle">🔑 Umesahau password?</h3>
+    <div id="pwHelpBody" style="max-height:62vh;overflow-y:auto;"></div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:12px;" onclick="closePwHelp()">Funga</button>
+  </div>
+</div>
+
 <div class="overlay" id="changelogOverlay" onclick="if(event.target===this) closeChangelog()">
   <div class="modal">
-    <h3>🔔 Mabadiliko ya App</h3>
+    <h3>🔔 Taarifa</h3>
     <div id="changelogList" style="max-height:60vh;overflow-y:auto;"></div>
     <button class="btn btn-ghost" style="width:100%;margin-top:12px;" onclick="closeChangelog()">Funga</button>
   </div>
@@ -1307,6 +1315,7 @@
         </div>
         <input type="email" id="authEmail" placeholder="Email yako" class="auth-input">
         <input type="password" id="authPass" placeholder="Password" class="auth-input">
+        <div id="forgotPwLink" style="display:none;text-align:right;margin-top:8px;"><span style="color:var(--lime);font-size:11.5px;cursor:pointer;text-decoration:underline;" onclick="openPwHelp()">Umesahau password?</span></div>
         <div id="authError" style="color:#ff5c5c;font-size:10.5px;margin-top:8px;"></div>
         <button class="post-btn" id="authSubmitBtn" onclick="submitAuth()" style="margin-top:14px;">Unda Akaunti</button>
         <p style="text-align:center;font-size:11px;color:var(--sub);margin-top:12px;">
@@ -3329,11 +3338,11 @@ E(['tiktok','tik tok','video fupi','mumbi tiktok','iam_mumbi7'],
  ['🎵 **TikTok:** gusa kitufe cha **TikTok** kwenye Home kufungua https://www.tiktok.com/@iam_mumbi7 — video fupi za games na habari za app. Kitone chekundu juu ya kitufe = video mpya (utapata pia arifa ndani ya app).'],
  ['🎵 **TikTok:** tap the **TikTok** button on Home to open https://www.tiktok.com/@iam_mumbi7 — short game videos and app news. A red dot on the button = a new video (you also get an in-app notice).']);
 E(['update','mabadiliko','version','toleo','kikengele','notification','arifa','kengele','changelog','notification bell','what\'s new','bell','kitone chekundu','red dot','badge nyekundu','nimepata arifa','arifa za app','push notification','arifa za simu','notification za simu'],
- ['🔔 **Kengele ya Mabadiliko:** juu ya Home kuna icon ya kengele. Inaonyesha **update mpya za app** (features mpya, marekebisho). Namba nyekundu = bado hujasoma. Gusa kengele kusoma, na namba inaondoka yenyewe.\n\n**Arifa nyingine ndani ya app:** kitone chekundu kwenye TikTok/YouTube (video mpya), namba nyekundu kwenye Chat (ujumbe mpya), vitone kwenye Profile (jibu la maoni au Bet Tip mpya), na ujumbe unaoruka juu ukiwa ndani ya app.\n\n📲 Kwa arifa za nje ya app (kama WhatsApp), admin hutumia mfumo wa APK kutuma. Ruhusu notifications kwenye mipangilio ya simu ili uzipate.'],
- ['🔔 **Updates bell:** at the top of Home there\'s a bell icon. It shows **new app updates** (new features, fixes). A red number = unread. Tap the bell to read, and the number clears by itself.\n\n**Other in-app alerts:** a red dot on TikTok/YouTube (new video), a red number on Chat (new messages), dots on Profile (reply to feedback or a new Bet Tip), and banners that pop up while you\'re in the app.\n\n📲 For alerts outside the app (like WhatsApp), admin uses the APK system to send them. Allow notifications in your phone settings to receive them.']);
+ ['🔔 **Kengele ya Taarifa:** juu ya Home kuna icon ya kengele. Inaonyesha **taarifa zinazoandikwa na admin** (zikiwa na picha, kichwa na maelezo). Namba nyekundu = bado hujasoma. Gusa kengele kusoma, na namba inaondoka yenyewe.\n\n**Arifa nyingine ndani ya app:** kitone chekundu kwenye TikTok/YouTube (video mpya), namba nyekundu kwenye Chat (ujumbe mpya), vitone kwenye Profile (jibu la maoni au Bet Tip mpya), na ujumbe unaoruka juu ukiwa ndani ya app.\n\n📲 Kwa arifa za nje ya app (kama WhatsApp), admin hutumia mfumo wa APK kutuma. Ruhusu notifications kwenye mipangilio ya simu ili uzipate.'],
+ ['🔔 **Notifications bell:** at the top of Home there\'s a bell icon. It shows **announcements written by admin** (with a picture, a title and details). A red number = unread. Tap the bell to read, and the number clears by itself.\n\n**Other in-app alerts:** a red dot on TikTok/YouTube (new video), a red number on Chat (new messages), dots on Profile (reply to feedback or a new Bet Tip), and banners that pop up while you\'re in the app.\n\n📲 For alerts outside the app (like WhatsApp), admin uses the APK system to send them. Allow notifications in your phone settings to receive them.']);
 E(['akaunti','login','ingia','jisajili','password','sign up','register','forgot password','nimesahau password','reset password','jinsi ya kuingia','kujisajili','kufungua akaunti','unda akaunti','email','nimesahau','akaunti yangu','logout','toka','ondoka'],
- ['👤 **Akaunti:**\n• **Kufungua:** gusa **☺ Me** → "Jisajili" → jaza email, password (angalau herufi 6), jina la mtumiaji, taifa na namba ya simu → Unda Akaunti. Kuna sehemu ya **msimbo wa mwaliko (hiari)** kama una wa rafiki\n• **Kuingia:** email + password → Ingia\n• **Faida:** game ulizonunua zinabaki hata ukibadili simu, token, maoni, alika marafiki, kuunda tournament na kuuza dukani\n• **Kutoka:** Profile → "Toka (Logout)"\n• **Umesahau password?** Mwandikie admin WhatsApp **0611153086** akusaidie.\n\n[[nav:profile|☺ Fungua Profile]]'],
- ['👤 **Account:**\n• **Creating:** tap **☺ Me** → "Sign up" → enter email, password (at least 6 characters), username, nationality and phone number → Create Account. There\'s an **invite code (optional)** field if a friend gave you one\n• **Logging in:** email + password → Log in\n• **Benefits:** games you bought stay even if you change phones, tokens, feedback, inviting friends, creating tournaments and selling in the shop\n• **Logging out:** Profile → "Log out"\n• **Forgot password?** Message admin on WhatsApp **0611153086** for help.\n\n[[nav:profile|☺ Open Profile]]']);
+ ['👤 **Akaunti:**\n• **Kufungua:** gusa **☺ Me** → "Jisajili" → jaza email, password (angalau herufi 6), jina la mtumiaji, taifa na namba ya simu → Unda Akaunti. Kuna sehemu ya **msimbo wa mwaliko (hiari)** kama una wa rafiki\n• **Kuingia:** email + password → Ingia\n• **Faida:** game ulizonunua zinabaki hata ukibadili simu, token, maoni, alika marafiki, kuunda tournament na kuuza dukani\n• **Kutoka:** Profile → "Toka (Logout)"\n• **Umesahau password?** Kwenye skrini ya Ingia gusa **"Umesahau password?"** → andika email yako, utapata link ya kuunda password mpya. Hupati email? Angalia Spam, au mwandikie admin WhatsApp 0611153086.\n\n[[nav:profile|☺ Fungua Profile]]'],
+ ['👤 **Account:**\n• **Creating:** tap **☺ Me** → "Sign up" → enter email, password (at least 6 characters), username, nationality and phone number → Create Account. There\'s an **invite code (optional)** field if a friend gave you one\n• **Logging in:** email + password → Log in\n• **Benefits:** games you bought stay even if you change phones, tokens, feedback, inviting friends, creating tournaments and selling in the shop\n• **Logging out:** Profile → "Log out"\n• **Forgot password?** On the Log in screen tap **"Forgot password?"** → enter your email and you get a link to create a new password. No email? Check Spam, or message admin on WhatsApp 0611153086.\n\n[[nav:profile|☺ Open Profile]]']);
 E(['profile','wasifu','badilisha jina','edit profile','me','profile yangu','picha ya profile','badilisha picha','historia yangu','profile ina nini'],
  ['☺ **Profile (Me):** chini kulia. Humo unaona/kubadilisha **taarifa zako** na picha, **token balance**, **msimbo wa kualika marafiki**, tab ya **💬 Maoni** (historia na majibu ya admin), **🎫 Bet Tips**, **📚 Maktaba Yangu** (games ulizodownload) na kuchagua **game la kupata bure** ukifika token 500. Pia kuingia/kutoka akaunti.\n\n[[nav:profile|☺ Fungua Profile]]'],
  ['☺ **Profile (Me):** bottom-right. There you see/edit **your details** and photo, your **token balance**, **invite code**, the **💬 Feedback** tab (history and admin replies), **🎫 Bet Tips**, **📚 My Library** (games you downloaded) and claim a **free game** at 500 tokens. Also log in/out.\n\n[[nav:profile|☺ Open Profile]]']);
@@ -3614,7 +3623,9 @@ function aiListGames(lower, lang){
 }
 
 // ---- Majibu makuu ----
+let aiLastConf = 'weak';
 function aiRespond(text){
+  aiLastConf = 'weak';
   const lower = aiNorm(text);
   const lang = detectAiLang(text);
   const en = lang === 'en';
@@ -3623,7 +3634,7 @@ function aiRespond(text){
   // 1) Ombi la namba/mawasiliano ya admin -> WhatsApp moja kwa moja
   if(/(namba|nambari|number|whats ?app|wasiliana|contact|piga|call|mpigie|msimamizi|mtumie ujumbe|message).{0,25}(admin|mumbi|mmiliki|owner|msimamizi|support|boss)|(admin|mumbi|mmiliki|owner|msimamizi).{0,25}(namba|nambari|number|whats ?app|simu|phone|contact)|nataka kuongea na (admin|mumbi|binadamu|mtu)|nataka admin|nipe admin|speak (to|with) (admin|a human|someone)|talk to (admin|a human|someone)|human support|customer care|huduma kwa wateja/.test(lower)){
     const adm = AI_KB.find(k=>k.keys.indexOf('namba ya admin') !== -1);
-    if(adm) return pickA(adm);
+    if(adm){ aiLastConf = 'strong'; return pickA(adm); }
   }
 
   const kb = aiFindScored(lower);
@@ -3633,7 +3644,7 @@ function aiRespond(text){
 
   // 2) Orodha ya games
   if(wantsList && (/game|michezo|mchezo/.test(lower))){
-    const r = aiListGames(lower, lang); if(r) return r;
+    const r = aiListGames(lower, lang); if(r){ aiLastConf = 'strong'; return r; }
   }
   // 3) Kutafuta game maalum
   const gameWord = /\bgame\b|games|mchezo|michezo/.test(lower);
@@ -3641,11 +3652,12 @@ function aiRespond(text){
   const strongGame = found.length && found[0].s >= 6;
   if(found.length && ((searchVerb && !setupWord) || (strongGame && kb.score < 7) || (strongGame && !setupWord && aiTokens(text).length <= 3))){
     const r = aiGameReply(text, lang, true);
-    if(r) return r;
+    if(r){ aiLastConf = 'strong'; return r; }
   }
-  if(searchVerb && gameWord && !found.length && !setupWord && kb.score < 12) return aiNoGameReply(text, lang);
+  if(searchVerb && gameWord && !found.length && !setupWord && kb.score < 12){ aiLastConf = 'strong'; return aiNoGameReply(text, lang); }
   // 4) Maarifa
   if(kb.entry && kb.score >= 2){
+    if(kb.score >= 5) aiLastConf = 'strong';
     let out = pickA(kb.entry);
     const wantsVideo = /video|tutorial|youtube|maelekezo/.test(lower);
     if(wantsVideo && out.indexOf('search?query=') === -1){
@@ -3655,7 +3667,7 @@ function aiRespond(text){
     return out;
   }
   // 5) Neno moja la jumla lenye alama dhaifu (mf. "game") au tahajia
-  if(kb.entry && kb.score >= 1 && lower.split(' ').length <= 2) return pickA(kb.entry);
+  if(kb.entry && kb.score >= 1 && lower.split(' ').length <= 2){ aiLastConf = 'strong'; return pickA(kb.entry); }
   const fz = aiFuzzy(lower);
   if(fz) return pickA(fz);
   if(found.length){ const r = aiGameReply(text, lang, true); if(r) return r; }
@@ -3718,6 +3730,41 @@ function aiRich(text){
 // Weka hapa URL ya Worker yako (mf. 'https://mumbibot.jina.workers.dev'). Ikiwa tupu au ikishindwa,
 // app inatumia maarifa ya zamani (AI_KB) kama jibu la dharura.
 const MUMBIBOT_API = '';
+
+// ===== AI ya kweli ya BURE (bila ufunguo, bila malipo) — inasaidia pale maarifa ya ndani hayatoshi =====
+// Ikishindikana (mtandao, kikomo, huduma imezimwa) app inarudi kwenye maarifa ya ndani bila mtu kuona hitilafu.
+const AI_FREE_ON = true;
+const AI_FREE_URL = 'https://text.pollinations.ai/openai';
+let aiFreeFails = 0;
+function aiSystemPrompt(){
+  let list = '';
+  try{ list = (games||[]).slice(0,70).map(g=>g.id+'='+g.name+(g.paid?' (kulipia TZS '+(g.price||'?')+')':' (bure)')).join('; '); }catch(e){}
+  return 'Wewe ni "Mumbigames AI", msaidizi wa app ya mumbigames (Tanzania), mmiliki ni Mumbi. Jibu KWA LUGHA ALIYOTUMIA MTU (Kiswahili au English), kwa upole, ufupi na maneno rahisi, ukitumia emoji chache. '
+  + 'Kuhusu app: games za kupakua (bure na kulipia), TV (YouTube rasmi), chat, duka la wachezaji, tournament, token (tazama matangazo 3 = token 15; alika rafiki = token 50; token 500 = game moja ya kulipia bure mara moja kwa akaunti), maoni/omba game (Profile → Maoni), bet tips, Maktaba Yangu. '
+  + 'Malipo ya game: ingia akaunti, tuma Tigo Pesa 0703504270 (Josh Abdallahman) kiasi cha bei, picha 2 tofauti za muamala, bonyeza "Nimelipa", subiri kama dakika 5-15, download inafunguka. Admin WhatsApp: 0611153086. Channel ya YouTube: youtube.com/@mumbi_gaming. '
+  + 'Unaweza kusaidia kuseti games (APK, OBB, DATA, PPSSPP, Winlator, GameHub, Dolphin, AetherSX2), kushauri simu/processor (Snapdragon bora kwa PC games), na maswali ya kawaida ya games. '
+  + 'SHERIA: usibuni link, bei, majina ya games wala video; kama huna uhakika sema hujui na umwelekeze admin WhatsApp 0611153086. Usisaidie piracy (movie/games zilizoibwa, IPTV), kamari kwa ahadi za ushindi, wala kuuliza password/PIN. Usitaje kuwa wewe ni modeli ya kampuni nyingine — wewe ni Mumbigames AI. '
+  + 'Ukipendekeza game kutoka kwenye orodha hii pekee, andika kitufe hivi: [[game:ID|Jina]]. Orodha (id=jina): ' + list;
+}
+async function aiFreeAsk(text){
+  if(!AI_FREE_ON || aiFreeFails >= 3 || !navigator.onLine) return '';
+  try{
+    const ctrl = new AbortController();
+    const to = setTimeout(()=>ctrl.abort(), 20000);
+    const msgs = [{role:'system', content: aiSystemPrompt()}].concat(aiHistory.slice(-8).map(m=>({role:m.role, content:String(m.content).slice(0,600)})));
+    const r = await fetch(AI_FREE_URL, {method:'POST', headers:{'Content-Type':'application/json'}, signal: ctrl.signal,
+      body: JSON.stringify({model:'openai', messages: msgs, temperature:0.6, private:true})});
+    clearTimeout(to);
+    if(!r.ok){ aiFreeFails++; return ''; }
+    const d = await r.json();
+    let out = (d && d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content) || '';
+    out = String(out).split('\n').filter(l=>!/pollinations|sponsor|support our mission|ad\)/i.test(l)).join('\n').trim();
+    if(!out || out.length < 2){ aiFreeFails++; return ''; }
+    aiFreeFails = 0;
+    return out.slice(0,1800);
+  }catch(e){ aiFreeFails++; return ''; }
+}
+
 let aiHistory = [];
 let aiBusy = false;
 
@@ -3752,7 +3799,10 @@ async function aiAsk(text){
       if(r.ok){ const d = await r.json(); reply = (d && d.reply) || ''; }
     }catch(e){ console.warn('mumbiBot API failed', e); }
   }
-  if(!reply) reply = aiRespond(text); // jibu la dharura
+  const local = aiRespond(text);
+  const conf = aiLastConf;
+  if(!reply && conf !== 'strong') reply = await aiFreeAsk(text);
+  if(!reply) reply = local; // jibu la ndani / dharura
   typing.classList.remove('ai-typing');
   typing.innerHTML = aiRich(reply);
   aiHistory.push({role:'assistant', content:reply});
@@ -4159,54 +4209,39 @@ function scrollChannelToBottom(){
 // Muundo: {id: namba ya kipekee inayoongezeka kila wakati, title, body}
 // MUHIMU: id lazima iwe kubwa kuliko lililopita kila wakati unapoongeza.
 // ============================================================
-const APP_CHANGELOG = [
-  {id: 1, title: 'Mumbigames v1.0', body: 'Karibu mumbigames! Hii ndiyo toleo la kwanza la app.'},
-  {id: 2, title: 'Mumbigames AI - Update', body: 'AI Msaidizi sasa inaitwa "Mumbigames AI" na imeongezewa maarifa mengi zaidi — inaweza sasa kukusaidia kuhusu Tournament, jinsi tangazo za download zinavyofanya kazi, kikengele cha update, mandhari/lugha, kutafuta games, na profile yako.'},
-  {id: 3, title: 'Chat - Update', body: 'Sasa unaweza kutuma PICHA kwenye chat (bonyeza 📷) ili kusaidiwa kirahisi. Pia kitufe cha Chat kinaonyesha namba nyekundu ya ujumbe mpya ambao hujaufungua — ukifungua Chat inaondoka.'},
-  {id: 4, title: 'Kura kwenye Chat', body: 'Kura mpya sasa zinaonekana pia kwenye Chat kama ujumbe mpya — bonyeza ujumbe huo kwenda kupiga kura moja kwa moja.'},
-  {id: 5, title: 'Lugha: Kiingereza / Kiswahili', body: 'Ukichagua Kiingereza kwenye Settings, sasa app nzima (fomu, ujumbe, orodha, na majibu ya Mumbigames AI) inabadilika papo hapo, na ukirudi Kiswahili inarudi kama ilivyokuwa. Mumbigames AI pia inajibu kwa Kiingereza.'},
-  // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
-  {id: 6, title: 'Chat: Hariri na Futa Ujumbe', body: 'Sasa unaweza kushikilia (long-press) ujumbe wako wowote kwenye Chat ili "Kuhariri" au "Kufuta" — mtu mwingine hataona ujumbe uliofuta. Pia tumeondoa arifa ya kura iliyokuwa inatokea mara mbili. Kura (Poll) imeondolewa kabisa kwenye app.'},
-  {id: 7, title: '🎬 Pata Token Mpya!', body: 'Bonyeza kitufe kipya cha "Pata Token" kwenye Home — tazama matangazo 3 upate token bure, hadi mizunguko 5 kwa siku, na bonasi za bahati/mfululizo!'},
-  {id: 8, title: 'Token kwa Games za Kulipia', body: 'Sasa unaweza kufungua games NYINGI za kulipia BURE kwa Token 500 (badala ya kulipa pesa) — tafuta chaguo hilo ndani ya ukurasa wa malipo wa game husika. Games za bure hazina kizuizi chochote — zidownload bila mpangilio wowote wa token.'},
-  {id: 9, title: '🚀 Update v1.1 Inakuja Hivi Karibuni!', body: 'Tunaandaa maboresho mapya kwa mumbigames — subiri hapa kuona yatakayobadilika!'},
-  {id: 10, title: 'Duka: Stempu ya "Imeuzwa"', body: 'Bidhaa za Duka zilizoisha sasa zinaonyesha stempu kubwa ya "Imeuzwa" juu ya picha, ili wanunuzi waone papo hapo bidhaa haipatikani tena.'},
-  // Ongeza entries mpya HAPA CHINI (id ikiongezeka kila mara):
-  {id: 11, title: '🎨 Chat ina Wallpaper Hai!', body: 'Chat sasa ina background inayosogea: Bahari (kobe na samaki), Radi (mvua na umeme) na Aurora. Gusa kitufe cha 🎨 juu ya chat kubadilisha.'},
-  {id: 12, title: '🎲 Wallpaper ya Chat inabadilika yenyewe', body: 'Kila ukifungua chat unakuta wallpaper tofauti: Bahari, Radi, Aurora, Moto au Nyota. Bado unaweza kubadilisha mwenyewe kwa kitufe cha 🎨. Pia chat imeanza upya na ujumbe wa zamani umefutwa.'},
-  {id: 13, title: '✏️ Menu ndogo ya ujumbe', body: 'Shikilia ujumbe wako kwenye chat — menu ndogo inafunguka pembeni ikiwa na Jibu, Hariri na Futa. Ukigusa Futa, ujumbe unafutwa papo hapo.'},
-  {id: 14, title: 'ℹ️ Kuhusu App & Mawasiliano', body: 'Chini kabisa ya orodha ya games sasa kuna "from mumbigames". Juu yake kuna alama za TikTok, WhatsApp, Facebook na YouTube. Ukigusa jina utaona taarifa za app, namba za msaada na email ya biashara — kwa Kiswahili na English.'},
-  {id: 15, title: '📚 Maktaba Yangu — Downloads Zako Zote', body: 'Sasa kwenye Me (Profile) ukigusa kadi ya "Downloads zako" unafungua Maktaba yako: games zote ulizowahi kudownload zikiwa na picha, tarehe, alama ya MPYA, idadi ya mara ulizorudia, utafutaji na vichujio (Wiki hii, Mwezi huu, Zilizorudiwa). Gusa game yoyote kuidownload tena.'},
-  {id: 16, title: '🤖 AI Sasa Inaelea + 📺 TV Inakuja', body: 'Mumbigames AI sasa ni kitufe kinachong\'aa kinachoelea pembeni — kiburute popote unapopenda, kisha kigusa kuongea na AI. Kitafichwa ukiwa kwenye ukurasa wa download na kurudi ukitoka. Kwenye menu ya chini, nafasi ya AI sasa ina TV (inakuja karibuni!).'},
-  {id: 17, title: '✨ mumbiBot — Muonekano Mpya', body: 'AI sasa inaitwa mumbiBot, ikiwa na wallpaper hai ya zambarau, taa ya kijani ya "Online" na ukurasa wa Karibu. Kitufe chake cha kuelea ni kidogo, kinaonekana kwenye Home tu, na kinafifia kikikaa sekunde 5 bila kuguswa — kigusa kikawake tena.'},
-  {id: 18, title: '🧠 mumbiBot Sasa Anajua Mengi Zaidi', body: 'mumbiBot ameongezewa maarifa mengi: kuseti games za APK, OBB na DATA, emulator zote (Winlator, Mobox, PPSSPP, PS2, Dolphin, PS1, 3DS na nyingine), matatizo ya kawaida (game inafunga, lag, parse error, download), pamoja na ushauri wa simu, processor na RAM. Ukiuliza video, anakupa link ya kutafuta kwenye channel ya Mumbi na YouTube nzima.'},
-  {id: 19, title: '📺 TV Imefunguka — Channels za Live', body: 'Ukurasa wa TV sasa unaonyesha channel za live kwenye kadi kubwa moja moja zenye nembo na maelezo. Gusa channel, tangazo linafunguka, kisha video inacheza kwenye skrini ndogo yenye kuongeza sauti, mwanga, Full screen (simu inalala), na Refresh. Bonyeza ✕ kurudi kwenye orodha na uchague nyingine.'},
-  {id: 20, title: '🔴 Alama ya LIVE kwenye TV', body: 'Kukiwa na channel, utaona alama nyekundu ya LIVE kwenye ikoni ya TV chini na kwenye kadi ya channel ili uguse utazame. Kusipokuwa na channel yoyote, alama haionekani.'},
-  {id: 21, title: '🎁 Boksi la zawadi (Tangazo)', body: 'Kitufe cha Pata Token kimehamia juu karibu na token balance na kuwa boksi dogo la zawadi linalotingisika na kufunguka kuonyesha neno Tangazo/Ads. Gusa boksi kutazama tangazo na kupata token.'},
-  {id: 22, title: '🎬 Movie inaendelea kama TV', body: 'Channel ya Movie na Muziki sasa zinaweza kuwa na movie/nyimbo nyingi ndani yake na inaendelea kama TV hata ukiondoka: ukiishia dakika 15 kisha ukakaa nje dakika 20, ukirudi inaanzia dakika 35. Sauti inanyamaza ukiwa nje. Movie ikiisha, inayofuata inacheza yenyewe. Unaweza kurudisha nyuma kwenye video, au kuchagua movie kwenye kitufe cha 🎬 Movie.'},
-  {id: 23, title: '🤖 Mumbigames AI Mpya Kabisa', body: 'AI imejengwa upya: inaelewa Kiswahili na Kiingereza, inakutafutia game ndani ya app na kukufungulia kwa kitufe, inaelekeza malipo hatua kwa hatua hadi upate game, kuseti APK/OBB/DATA, emulator (PPSSPP, Winlator, GameHub, Dolphin, AetherSX2), ushauri wa simu na processor, na kueleza kila sehemu ya app. Ukihitaji admin, inakupa WhatsApp moja kwa moja.'},
-  // {id: 24, title: 'Mumbigames v1.1', body: 'Maelezo ya update...'},
-];
-
+const APP_CHANGELOG = []; // Taarifa za zamani zimefutwa. Sasa taarifa zinaandikwa na admin kwenye dashibodi (tab ya 🔔 Taarifa).
+let APP_NOTICES = [];
+let noticesLoaded = false;
+function noticeSafeUrl(u){ u = String(u||''); return /^https?:\/\//i.test(u) ? u.replace(/["'<>\s]/g,'') : ''; }
 function renderChangelogList(){
   const el = document.getElementById('changelogList');
-  const sorted = APP_CHANGELOG.slice().sort((a,b)=>b.id - a.id);
-  el.innerHTML = sorted.map(c => `
-    <div style="border-bottom:1px solid var(--line);padding:12px 2px;">
-      <div style="font-weight:800;font-size:13px;margin-bottom:4px;">${escapeHtml(c.title)}</div>
-      <div style="color:var(--sub);font-size:12px;line-height:1.5;white-space:pre-line;">${escapeHtml(c.body)}</div>
-    </div>
-  `).join('');
+  if(!noticesLoaded){ el.innerHTML = '<div style="padding:18px 4px;color:var(--sub);font-size:12px;text-align:center;">…</div>'; return; }
+  if(!APP_NOTICES.length){
+    el.innerHTML = '<div style="padding:26px 6px;color:var(--sub);font-size:12.5px;text-align:center;line-height:1.6;">🔔<br>' + escapeHtml(tvT('Hakuna taarifa kwa sasa.', 'No notifications yet.')) + '</div>';
+    return;
+  }
+  el.innerHTML = APP_NOTICES.map(n => {
+    const img = noticeSafeUrl(n.imageUrl);
+    const d = n.createdAt ? new Date(n.createdAt).toLocaleDateString(currentLang==='en'?'en-GB':'sw-TZ',{day:'numeric',month:'short',year:'numeric'}) : '';
+    return `
+    <div style="display:flex;gap:11px;border-bottom:1px solid var(--line);padding:12px 2px;align-items:flex-start;">
+      ${img ? `<div style="flex:0 0 62px;width:62px;height:62px;border-radius:12px;background:#222 center/cover no-repeat url('${img}');border:1px solid var(--line);"></div>` : ''}
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:800;font-size:13px;margin-bottom:4px;word-break:break-word;">${escapeHtml(n.title||'')}</div>
+        <div style="color:var(--sub);font-size:12px;line-height:1.5;white-space:pre-line;word-break:break-word;">${escapeHtml(n.body||'')}</div>
+        ${d ? `<div style="color:var(--sub);opacity:.7;font-size:10px;margin-top:5px;">${d}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
 }
-
-function getChangelogLastSeenId(){
-  try{ return parseInt(localStorage.getItem('mg-changelog-seen') || '0', 10); }catch(e){ return 0; }
+function getNoticeLastSeen(){
+  try{ return parseInt(localStorage.getItem('mg-notice-seen') || '0', 10) || 0; }catch(e){ return 0; }
 }
 function updateChangelogBadge(){
-  const lastSeen = getChangelogLastSeenId();
-  const maxId = APP_CHANGELOG.reduce((m,c)=>Math.max(m,c.id), 0);
-  const unread = APP_CHANGELOG.filter(c => c.id > lastSeen).length;
+  const lastSeen = getNoticeLastSeen();
+  const unread = APP_NOTICES.filter(n => (n.createdAt||0) > lastSeen).length;
   const badge = document.getElementById('changelogBadge');
+  if(!badge) return;
   if(unread > 0){
     badge.style.display = 'block';
     badge.textContent = unread > 9 ? '9+' : String(unread);
@@ -4214,12 +4249,26 @@ function updateChangelogBadge(){
     badge.style.display = 'none';
   }
 }
+function listenNotices(){
+  try{
+    db.collection('appNotices').orderBy('createdAt','desc').limit(40).onSnapshot(snap=>{
+      APP_NOTICES = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      noticesLoaded = true;
+      updateChangelogBadge();
+      const ov = document.getElementById('changelogOverlay');
+      if(ov && ov.classList.contains('show')){ renderChangelogList(); markNoticesSeen(); }
+    }, err=>{ console.error('notices', err); noticesLoaded = true; });
+  }catch(e){ console.error(e); }
+}
+function markNoticesSeen(){
+  const mx = APP_NOTICES.reduce((m,n)=>Math.max(m, n.createdAt||0), 0);
+  try{ if(mx) localStorage.setItem('mg-notice-seen', String(mx)); }catch(e){}
+  updateChangelogBadge();
+}
 function showChangelog(){
   renderChangelogList();
   document.getElementById('changelogOverlay').classList.add('show');
-  const maxId = APP_CHANGELOG.reduce((m,c)=>Math.max(m,c.id), 0);
-  try{ localStorage.setItem('mg-changelog-seen', String(maxId)); }catch(e){}
-  updateChangelogBadge(); // itaonyesha 0 sasa mpaka update mpya iongezwe
+  markNoticesSeen();
 }
 function closeChangelog(){
   document.getElementById('changelogOverlay').classList.remove('show');
@@ -5789,7 +5838,7 @@ function updateAiFab(){
   if(!fab) return;
   const hv = document.getElementById('homeView');
   const onHome = hv && hv.style.display !== 'none';
-  const hide = !onHome || ['overlay','commentsOverlay','changelogOverlay','earnTokensOverlay','aboutOverlay','listingDetailOverlay'].some(id=>{
+  const hide = !onHome || ['overlay','commentsOverlay','changelogOverlay','pwHelpOverlay','earnTokensOverlay','aboutOverlay','listingDetailOverlay'].some(id=>{
     const el = document.getElementById(id);
     return el && (el.classList.contains('show') || el.style.display==='flex' || el.style.display==='block');
   });
@@ -5797,7 +5846,7 @@ function updateAiFab(){
 }
 (function(){
   const mo = new MutationObserver(updateAiFab);
-  ['overlay','commentsOverlay','changelogOverlay','earnTokensOverlay','aboutOverlay','listingDetailOverlay','homeView'].forEach(id=>{
+  ['overlay','commentsOverlay','changelogOverlay','pwHelpOverlay','earnTokensOverlay','aboutOverlay','listingDetailOverlay','homeView'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) mo.observe(el, {attributes:true, attributeFilter:['class','style']});
   });
@@ -6874,6 +6923,7 @@ function initSettings(){
 }
 initSettings();
 updateChangelogBadge();
+try{ listenNotices(); }catch(e){ console.error(e); }
 startChatUnreadListener();
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
@@ -6892,6 +6942,7 @@ function toggleAuthMode(){
   document.getElementById('authToggleText').textContent = authMode === 'signup' ? 'Ingia hapa' : 'Jisajili hapa';
   document.getElementById('signupExtraFields').style.display = authMode === 'signup' ? 'block' : 'none';
   document.getElementById('authError').textContent = '';
+  document.getElementById('forgotPwLink').style.display = authMode === 'login' ? 'block' : 'none';
 }
 try{
   const savedRef = localStorage.getItem('mg_ref');
@@ -6974,6 +7025,42 @@ function authErrorMessage(e){
   if(e.code === 'auth/user-not-found') return 'Hakuna akaunti na email hii. Jaribu "Jisajili" badala yake.';
   if(e.code === 'auth/invalid-email') return 'Email si sahihi.';
   return 'Hitilafu: ' + e.message;
+}
+
+
+// ---- Umesahau password ----
+function pwEsc(v){ return escapeHtml(v||''); }
+function openPwHelp(){
+  const em = (document.getElementById('authEmail')||{}).value || '';
+  renderPwHelpStep1(em.trim());
+  document.getElementById('pwHelpOverlay').classList.add('show');
+}
+function closePwHelp(){ document.getElementById('pwHelpOverlay').classList.remove('show'); }
+function renderPwHelpStep1(email){
+  document.getElementById('pwHelpTitle').textContent = tvT('🔑 Umesahau password?', '🔑 Forgot password?');
+  document.getElementById('pwHelpBody').innerHTML = `
+    <div style="font-size:12px;color:var(--sub);line-height:1.55;margin-bottom:10px;">${pwEsc(tvT('Andika email uliyotumia kufungua akaunti. Tutakutumia link — ukibonyeza utaweka password mpya.','Enter the email you used to sign up. We will send you a link to create a new password.'))}</div>
+    <input type="email" id="pwHelpEmail" class="auth-input" placeholder="${pwEsc(tvT('Email yako','Your email'))}" value="${pwEsc(email)}">
+    <div id="pwHelpMsg" style="font-size:11.5px;margin:8px 0;line-height:1.5;"></div>
+    <button class="post-btn" id="pwHelpSendBtn" onclick="sendPwReset()">${pwEsc(tvT('Tuma link kwenye email','Send link to my email'))}</button>`;
+}
+async function sendPwReset(){
+  const email = document.getElementById('pwHelpEmail').value.trim();
+  const msg = document.getElementById('pwHelpMsg');
+  if(!email){ msg.style.color='#ff5c5c'; msg.textContent = tvT('Andika email yako.','Enter your email.'); return; }
+  const btn = document.getElementById('pwHelpSendBtn'); btn.disabled = true;
+  try{
+    await auth.sendPasswordResetEmail(email);
+    msg.style.color = '#3ddc84';
+    msg.textContent = tvT('✓ Tumetuma link kwenye email yako. Fungua Inbox (angalia pia Spam), bonyeza link, kisha weka password mpya. Ukimaliza rudi hapa uingie.','✓ We sent a link to your email. Open your Inbox (check Spam too), tap the link, then set a new password. Then come back here and log in.');
+  }catch(e){
+    msg.style.color = '#ff5c5c';
+    if(e.code === 'auth/user-not-found') msg.textContent = tvT('Hakuna akaunti yenye email hii. Hakiki tahajia.','No account with this email. Check the spelling.');
+    else if(e.code === 'auth/invalid-email') msg.textContent = tvT('Email si sahihi.','Invalid email.');
+    else if(e.code === 'auth/too-many-requests') msg.textContent = tvT('Umejaribu mara nyingi. Subiri dakika chache kisha ujaribu tena.','Too many attempts. Wait a few minutes and try again.');
+    else msg.textContent = tvT('Imeshindwa kutuma. Hakiki mtandao kisha ujaribu tena.','Could not send. Check your connection and try again.');
+  }
+  btn.disabled = false;
 }
 
 function logoutUser(){
