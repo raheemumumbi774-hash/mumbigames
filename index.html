@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a16">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,17 +17,19 @@
 <title>mumbigames</title>
 <meta name="description" content="mumbigames — pakua games za simu za bure na za kulipia (PC/PSP/PS/Android), tazama Bet Tips, uze/nunue vifaa vya games, na ujiunge na jumuiya ya wachezaji Tanzania.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://raheemumumbi774-hash.github.io/">
+<meta property="og:url" content="https://raheemumumbi774-hash.github.io/mumbigames/">
+<link rel="canonical" href="https://raheemumumbi774-hash.github.io/mumbigames/">
 <meta property="og:title" content="mumbigames — Pakua Games za Bure na za Kulipia">
 <meta property="og:description" content="Pakua games za simu za bure na za kulipia, tazama Bet Tips, uze/nunue vifaa vya games, na ujiunge na jumuiya ya wachezaji Tanzania.">
-<meta property="og:image" content="https://raheemumumbi774-hash.github.io/og-image.jpg">
-<meta property="og:image:width" content="1024">
-<meta property="og:image:height" content="1024">
+<meta property="og:image" content="https://raheemumumbi774-hash.github.io/mumbigames/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
 <meta property="og:site_name" content="mumbigames">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mumbigames — Pakua Games za Bure na za Kulipia">
 <meta name="twitter:description" content="Pakua games za simu za bure na za kulipia, tazama Bet Tips, uze/nunue vifaa vya games, na ujiunge na jumuiya ya wachezaji Tanzania.">
-<meta name="twitter:image" content="https://raheemumumbi774-hash.github.io/og-image.jpg">
+<meta name="twitter:image" content="https://raheemumumbi774-hash.github.io/mumbigames/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://www.gstatic.com">
@@ -5435,7 +5438,7 @@ function shareTournament(id, name){
 // ===== TV (YouTube live — channel zinawekwa kutoka admin) =====
 let tvChannels = [], tvLoaded = false, tvListening = false, tvCurId = null, tvAdLeft = false, tvAdTimer = null, tvResumeId = null;
 const TV_AD_GAP = 3*60*1000; // tangazo kila baada ya dakika 3 tu, ili kubadili channel kusiwe kero
-const TV_CAT_COLORS = {Habari:['#4aa8ff','#6d5efc'],Muziki:['#ff5fa2','#a855f7'],Michezo:['#3ddc84','#22d3ee'],Burudani:['#ffb02e','#ff5e62'],Movie:['#ff4d6d','#7c3aed'],Games:['#22d3ee','#6d5efc'],Dini:['#b794ff','#6d5efc'],Watoto:['#ffd24a','#ff8a3d'],Nyingine:['#5fe9ff','#3ddc84']};
+const TV_CAT_COLORS = {Habari:['#4aa8ff','#6d5efc'],Muziki:['#ff5fa2','#a855f7'],Michezo:['#3ddc84','#22d3ee'],Burudani:['#ffb02e','#ff5e62'],Movie:['#ff4d6d','#7c3aed'],Highlights:['#3ddc84','#f59e0b'],Games:['#22d3ee','#6d5efc'],Dini:['#b794ff','#6d5efc'],Watoto:['#ffd24a','#ff8a3d'],Nyingine:['#5fe9ff','#3ddc84']};
 function tvT(sw,en){ return currentLang === 'en' ? en : sw; }
 function tvRender(){
   const list = document.getElementById('tvList'), soon = document.getElementById('tvSoon'), sub = document.getElementById('tvSub');
@@ -5500,12 +5503,12 @@ document.addEventListener('visibilitychange', ()=>{
 });
 window.addEventListener('pageshow', ()=>{ setTimeout(tvResumePending, 400); });
 function tvMovies(c){
-  if(!c || (c.cat !== 'Movie' && c.cat !== 'Muziki')) return [];
+  if(!c || (c.cat !== 'Movie' && c.cat !== 'Muziki' && c.cat !== 'Highlights')) return [];
   if(Array.isArray(c.playlist) && c.playlist.length) return c.playlist.filter(m=>m && /^[\w-]{11}$/.test(m.id));
   if(c.cat === 'Movie' && c.ytType === 'video' && c.ytId) return [{n:c.name||'Movie', id:c.ytId}];
   return [];
 }
-function tvKind(c){ return c && c.cat === 'Muziki' ? {ic:'🎵', w:tvT('Nyimbo','Songs'), one:tvT('Wimbo','Song')} : {ic:'🎬', w:'Movie', one:'Movie'}; }
+function tvKind(c){ if(c && c.cat === 'Highlights') return {ic:'⚽', w:'Highlights', one:'Highlight'}; return c && c.cat === 'Muziki' ? {ic:'🎵', w:tvT('Nyimbo','Songs'), one:tvT('Wimbo','Song')} : {ic:'🎬', w:'Movie', one:'Movie'}; }
 function tvDefaultLive(c){ return !(c.cat === 'Movie' || (Array.isArray(c.playlist) && c.playlist.length > 0)); }
 function tvIsMovie(c){ return tvMovies(c).length > 0; }
 function tvEmbedUrl(c, pos){
@@ -6992,10 +6995,19 @@ async function submitAuth(){
         points: 100, referrals: 0, refCode: myRefCode, signupBonus: true
       });
       await db.collection('referralCodes').doc(myRefCode).set({uid: cred.user.uid});
+      try{
+        var _pc=document.getElementById('pointsCount'); if(_pc) _pc.textContent=100;
+        var _hp=document.getElementById('headerTokenPill'); if(_hp) _hp.style.display='flex';
+        var _hc=document.getElementById('headerTokenCount'); if(_hc) _hc.textContent=100;
+        var _rc=document.getElementById('referralCount'); if(_rc) _rc.textContent=0;
+        // doc was written after onAuthStateChanged fired: refresh once more from Firestore
+        setTimeout(async function(){ try{ var d=await db.collection('users').doc(cred.user.uid).get(); if(d.exists){ var pt=d.data().points||0; document.getElementById('pointsCount').textContent=pt; document.getElementById('headerTokenCount').textContent=pt; } }catch(e){} },1200);
+      }catch(e){}
 
       const typedCode = document.getElementById('authRefCode').value.trim().toUpperCase();
       const savedCode = (localStorage.getItem('mg_ref')||'').toUpperCase();
       const enteredCode = typedCode || savedCode;
+      let refBonus = false;
       if(enteredCode && enteredCode !== myRefCode){
         try{
           const codeDoc = await db.collection('referralCodes').doc(enteredCode).get();
@@ -7004,6 +7016,9 @@ async function submitAuth(){
             if(refUid && refUid !== cred.user.uid){
               await db.collection('users').doc(cred.user.uid).set({referredBy: refUid}, {merge:true});
               await creditPointsCapped(refUid, 50);
+              await creditPointsCapped(cred.user.uid, 50); // rafiki aliyealikwa pia anapata 50
+              refBonus = true;
+              try{ document.getElementById('pointsCount').textContent=150; document.getElementById('headerTokenCount').textContent=150; }catch(e){}
               await db.collection('users').doc(refUid).set({
                 referrals: firebase.firestore.FieldValue.increment(1)
               }, {merge:true});
@@ -7012,7 +7027,7 @@ async function submitAuth(){
         }catch(e){ console.error('referral lookup failed', e); }
       }
       localStorage.removeItem('mg_ref');
-      try{ showAppNotification(tvT('🎁 Karibu mumbigames!','🎁 Welcome to mumbigames!'), tvT('Umepata token 100 za zawadi ya kujisajili.','You got 100 tokens as a sign-up gift.'), '🪙'); }catch(e){}
+      try{ showAppNotification(tvT('🎁 Karibu mumbigames!','🎁 Welcome to mumbigames!'), (refBonus ? tvT('Umepata token 150: 100 za kujisajili + 50 za mwaliko wa rafiki.','You got 150 tokens: 100 sign-up + 50 friend invite bonus.') : tvT('Umepata token 100 za zawadi ya kujisajili.','You got 100 tokens as a sign-up gift.')), '🪙'); }catch(e){}
     }catch(e){
       errEl.textContent = authErrorMessage(e);
     }

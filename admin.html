@@ -438,6 +438,7 @@
         <option value="Michezo">Michezo</option>
         <option value="Burudani">Burudani</option>
         <option value="Movie">🎬 Movie</option>
+        <option value="Highlights">⚽ Highlights za Mipira</option>
         <option value="Games">Games</option>
         <option value="Dini">Dini</option>
         <option value="Watoto">Watoto</option>
@@ -1047,7 +1048,7 @@ async function saveTvChannel(){
   if(bad.length){ showToast('Mistari ' + bad.length + ' ya movie si sahihi (hakikisha: Jina | link ya video).'); return; }
   if(playlist.length){ yt = {type:'video', id:playlist[0].id}; }
   if(!yt){ showToast('Weka link sahihi ya YouTube live (au ID ya channel inayoanza na UC), au orodha ya movie.'); return; }
-  if(playlist.length && cat !== 'Movie' && cat !== 'Muziki'){ showToast('Orodha inahitaji kategoria ya 🎬 Movie au Muziki.'); return; }
+  if(playlist.length && cat !== 'Movie' && cat !== 'Muziki' && cat !== 'Highlights'){ showToast('Orodha inahitaji kategoria ya 🎬 Movie, Muziki au ⚽ Highlights.'); return; }
   const data = {name, desc, cat, order, logo, ytType: yt.type, ytId: yt.id, playlist: playlist};
   const lv = document.getElementById('tvLive').value;
   if(lv !== 'keep'){ data.liveUntil = tvLiveValue(lv); }
