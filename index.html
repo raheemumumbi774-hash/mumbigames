@@ -1315,7 +1315,7 @@
         <div id="signupExtraFields">
           <input type="text" id="authUsername" placeholder="Jina la mtumiaji (username)" class="auth-input">
           <select id="authNationality" class="auth-input"></select>
-          <input type="tel" id="authPhone" placeholder="Namba ya simu (07XXXXXXXX)" class="auth-input">
+          <input type="tel" id="authPhone" placeholder="Namba ya simu / Phone number" class="auth-input">
           <input type="text" id="authRefCode" placeholder="Msimbo wa mwaliko (hiari)" class="auth-input">
         </div>
         <input type="email" id="authEmail" placeholder="Email yako" class="auth-input">
@@ -4415,6 +4415,7 @@ function mdOpenGame(id){
 
 
 function showProfile(){
+  try{ mgSortProfileTabs(); }catch(e){}
   hideAllViews();
   document.getElementById('profileView').style.display = 'flex';
   document.getElementById('navMe').classList.add('active');
@@ -4429,12 +4430,18 @@ const DAILY_THEMES = [
   ['#0b4f3c','#3ddc84','#eaffd0'], ['#3a1c71','#d76d77','#ffe0b0'], ['#2b1055','#ff8008','#fff0a0'],
   ['#8e0e00','#f5a623','#fff6c0']
 ];
+var DEFAULT_AVATAR = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#cdd1d6"/><circle cx="50" cy="38" r="17" fill="#f6f4f7"/><path d="M14 100c0-22 16-36 36-36s36 14 36 36z" fill="#f6f4f7"/></svg>');
+function setAvatarDefault(){
+  const el = document.getElementById('avatarInitial'); if(!el) return;
+  el.style.backgroundImage = 'url("' + DEFAULT_AVATAR + '")'; el.textContent = '';
+}
 let dailyState = {last:'', streak:0};
-function dailyStateFromUser(d){ dailyState = {last: d.dailyLast||'', streak: d.dailyStreak||0}; }
-function dailyClaimedToday(){ return dailyState.last === new Date().toDateString(); }
+const DAILY_EPOCH = 2; // ukiongeza namba hii, kila mtu anaanza upya
+function dayKey(off){ return new Date(Date.now() + 3*3600000 - (off||0)*86400000).toISOString().slice(0,10); } // siku inabadilika saa 6 usiku (EAT)
+function dailyStateFromUser(d){ dailyState = (d.dailyEpoch === DAILY_EPOCH) ? {last: d.dailyLast||'', streak: d.dailyStreak||0} : {last:'', streak:0}; }
+function dailyClaimedToday(){ return dailyState.last === dayKey(0); }
 function dailyNextDay(){
-  const y = new Date(Date.now()-86400000).toDateString();
-  const st = (dailyState.last === y) ? dailyState.streak : 0;
+  const st = (dailyState.last === dayKey(1)) ? dailyState.streak : 0;
   return (st % 7) + 1;
 }
 function dailyInjectCss(){
@@ -4538,8 +4545,9 @@ async function dailyPopClaim(){
 async function claimDaily(){
   if(!auth.currentUser){ alert(tvT('Ingia kwanza.','Please log in first.')); return null; }
   const uid = auth.currentUser.uid, ref = db.collection('users').doc(uid);
-  const today = new Date().toDateString(), y = new Date(Date.now()-86400000).toDateString();
-  const calc = d=>{
+  const today = dayKey(0), y = dayKey(1);
+  const calc = d0=>{
+    const d = (d0.dailyEpoch === DAILY_EPOCH) ? d0 : {points: d0.points};
     if(d.dailyLast === today) throw new Error('already');
     const streak = (d.dailyLast === y) ? (d.dailyStreak||0) + 1 : 1;
     const reward = DAILY_REWARDS[(streak-1) % 7];
@@ -4551,14 +4559,14 @@ async function claimDaily(){
       await db.runTransaction(async tx=>{
         const doc = await tx.get(ref);
         res = calc(doc.exists ? doc.data() : {});
-        tx.set(ref, {points: res.np, dailyLast: today, dailyStreak: res.streak}, {merge:true});
+        tx.set(ref, {points: res.np, dailyLast: today, dailyStreak: res.streak, dailyEpoch: DAILY_EPOCH}, {merge:true});
       });
     }catch(e){
       if(e && e.message === 'already') throw e;
       console.error('daily txn failed, trying plain write', e);
       const doc = await ref.get();
       res = calc(doc.exists ? doc.data() : {});
-      await ref.set({points: res.np, dailyLast: today, dailyStreak: res.streak}, {merge:true});
+      await ref.set({points: res.np, dailyLast: today, dailyStreak: res.streak, dailyEpoch: DAILY_EPOCH}, {merge:true});
     }
   }catch(e){
     if(e && e.message === 'already'){ dailyState = {last: today, streak: dailyState.streak}; dailyPopClose(); return null; }
@@ -4586,10 +4594,9 @@ function lbSync(points, force, uname, photo){
   }catch(e){}
 }
 function lbAvatar(x, size){
-  const init = escapeHtml(((x.username||'?').trim().charAt(0)||'?').toUpperCase());
-  const base = 'width:'+size+'px;height:'+size+'px;border-radius:50%;flex:0 0 auto;';
-  if(x.photoURL) return '<img src="'+escapeHtml(x.photoURL)+'" alt="" style="'+base+'object-fit:cover;border:2px solid rgba(255,255,255,.35);background:#222;" onerror="this.outerHTML=\'<div style=&quot;'+base+'background:#f5a623;color:#2a1a00;display:flex;align-items:center;justify-content:center;font-weight:800;&quot;>'+init+'</div>\'">';
-  return '<div style="'+base+'background:linear-gradient(135deg,#f5a623,#ff6b6b);color:#2a1a00;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:'+Math.round(size*0.42)+'px;">'+init+'</div>';
+  const base = 'width:'+size+'px;height:'+size+'px;border-radius:50%;flex:0 0 auto;object-fit:cover;background:#cdd1d6;border:2px solid rgba(255,255,255,.3);';
+  const src = x.photoURL ? escapeHtml(x.photoURL) : DEFAULT_AVATAR;
+  return '<img src="'+src+'" alt="" style="'+base+'" onerror="this.onerror=null;this.src=DEFAULT_AVATAR">';
 }
 function lbRow(rank, x, mine, kind){
   const medals = ['🥇','🥈','🥉'];
@@ -4785,10 +4792,24 @@ async function saveAccountEdit(){
   const nationality = document.getElementById('acctCountryInput').value.trim();
   const phone = document.getElementById('acctPhoneInput').value.trim();
   if(!username){ alert('Weka jina lako.'); return; }
+  const pf = mgPhoneParse(nationality, phone);
+  const orig = window.__acctOrig || {};
+  const userChanged = username.toLowerCase() !== String(orig.username||'').toLowerCase();
+  const phoneChanged = phone !== (orig.phone||'');
+  if(phoneChanged && !pf.ok){ alert(tvT('Namba ya simu si sahihi.','Invalid phone number.')); return; }
+  if(userChanged || phoneChanged){
+    try{
+      const dup = await mgCheckUnique(username, pf, auth.currentUser.uid, userChanged, phoneChanged && pf.ok);
+      if(dup.userTaken){ alert(tvT('Jina hili la mtumiaji tayari limetumika.','This username is already taken.')); return; }
+      if(dup.phoneTaken){ alert(tvT('Namba hii ya simu tayari imesajiliwa.','This phone number is already registered.')); return; }
+    }catch(e){ console.error(e); alert(tvT('Imeshindwa kuthibitisha. Jaribu tena.','Could not verify. Try again.')); return; }
+  }
+  const phoneSave = (phoneChanged && pf.ok) ? pf.full : phone;
   try{
-    await db.collection('users').doc(auth.currentUser.uid).set({username, nationality, phone}, {merge:true});
+    await db.collection('users').doc(auth.currentUser.uid).set({username, usernameLower: username.toLowerCase(), nationality, phone: phoneSave, phoneKey: pf.ok ? pf.key : ''}, {merge:true});
+    window.__acctOrig = {username, phone: phoneSave};
     document.getElementById('profileUsername').textContent = username;
-    document.getElementById('profileMeta').textContent = [nationality, phone].filter(Boolean).join(' • ');
+    document.getElementById('profileMeta').textContent = [nationality, phoneSave].filter(Boolean).join(' • ');
     document.getElementById('acctCountryView').textContent = nationality || '—';
     toggleAccountEdit();
     alert('Taarifa zimehifadhiwa ✓');
@@ -6487,7 +6508,7 @@ function renderMessages(msgs){
     const initial = (m.name||'?').trim().charAt(0).toUpperCase() || '?';
     const avatar = m.photoURL
       ? `<div class="msg-avatar" data-avatar-full="${escapeHtml(m.photoURL)}" style="background-image:url('${escapeHtml(m.photoURL)}')"></div>`
-      : `<div class="msg-avatar">${escapeHtml(initial)}</div>`;
+      : `<div class="msg-avatar" style="background-image:url('${DEFAULT_AVATAR}')"></div>`;
     return `<div class="msg-row ${mine?'me':''}">
       ${avatar}
       <div class="msg ${mine?'me':''}" data-msg-idx="${idx}" data-msg-id="${escapeHtml(m._id||'')}">
@@ -7249,11 +7270,18 @@ async function submitAuth(){
       errEl.textContent = tvT('Jaza jina la mtumiaji, chagua taifa na uandike namba ya simu.','Fill in username, choose your country and enter your phone number.');
       return;
     }
+    const pf = mgPhoneParse(nationality, phone);
+    if(!pf.ok){ errEl.textContent = tvT('Namba ya simu si sahihi. Maliza namba yako baada ya msimbo wa nchi.','Invalid phone number. Finish your number after the country code.'); return; }
+    try{
+      const dup = await mgCheckUnique(username, pf, null, true, true);
+      if(dup.userTaken){ errEl.textContent = tvT('Jina hili la mtumiaji tayari limetumika. Chagua jingine.','This username is already taken. Choose another.'); return; }
+      if(dup.phoneTaken){ errEl.textContent = tvT('Namba hii ya simu tayari imesajiliwa.','This phone number is already registered.'); return; }
+    }catch(e){ console.error(e); errEl.textContent = tvT('Imeshindwa kuthibitisha taarifa. Angalia mtandao kisha jaribu tena.','Could not verify your details. Check your connection and try again.'); return; }
     try{
       const cred = await auth.createUserWithEmailAndPassword(email, pass);
       const myRefCode = await generateUniqueRefCode();
       await db.collection('users').doc(cred.user.uid).set({
-        username, nationality, phone, email, createdAt: Date.now(),
+        username, usernameLower: username.toLowerCase(), nationality, phone: pf.full, phoneKey: pf.key, email, createdAt: Date.now(),
         points: 100, referrals: 0, refCode: myRefCode, signupBonus: true
       });
       await db.collection('referralCodes').doc(myRefCode).set({uid: cred.user.uid});
@@ -7498,15 +7526,31 @@ try{
     if(user){
       document.getElementById('profileLoggedOut').style.display = 'none';
       document.getElementById('profileLoggedIn').style.display = 'block';
-      document.getElementById('avatarInitial').textContent = (user.email||'U').charAt(0).toUpperCase();
+      setAvatarDefault();
       db.collection('users').doc(user.uid).get().then(async doc=>{
         let data = doc.exists ? doc.data() : {};
+        window.__acctOrig = {username: data.username||'', phone: data.phone||''};
+        if(doc.exists && !data.signupBonus){ // wanachama wa zamani: zawadi ya token 100, mara moja tu
+          try{
+            const uref = db.collection('users').doc(user.uid); let granted = false;
+            await db.runTransaction(async tx=>{
+              const rr = await tx.get(uref); const dd = rr.data() || {};
+              if(dd.signupBonus) return;
+              const np = Math.min(TOKEN_CAP, (dd.points||0) + 100);
+              tx.update(uref, {points: np, signupBonus: true});
+              data.points = np; granted = true;
+            });
+            if(granted){ try{ showAppNotification(tvT('🎁 Zawadi kwa wanachama wa zamani','🎁 Gift for our early members'), tvT('Umepata token 100 bure!','You got 100 free tokens!'), '🪙'); }catch(e){} }
+          }catch(e){ console.error('bonus failed', e); }
+        }
+        if(doc.exists && data.username && !data.usernameLower){ // kwa ajili ya ukaguzi wa majina yanayofanana
+          try{ const pp = mgPhoneParse(data.nationality, data.phone); db.collection('users').doc(user.uid).set({usernameLower: String(data.username).toLowerCase(), phoneKey: pp.key||''}, {merge:true}); }catch(e){}
+        }
         document.getElementById('profileUsername').textContent = data.username || 'Mtumiaji';
         document.getElementById('profileEmail').textContent = user.email;
         document.getElementById('profileMeta').textContent = [data.nationality, data.phone].filter(Boolean).join(' • ');
-        if(data.username) document.getElementById('avatarInitial').textContent = data.username.charAt(0).toUpperCase();
         if(data.photoURL){ setAvatarPhoto(data.photoURL); myChatPhotoURL = data.photoURL; }
-        else { myChatPhotoURL = ''; }
+        else { myChatPhotoURL = ''; setAvatarDefault(); }
         // Account tab (Overview) view + edit fields
         document.getElementById('acctCountryView').textContent = data.nationality || '—';
         document.getElementById('acctEmailView').textContent = user.email || '—';
@@ -7724,14 +7768,72 @@ var MG_COUNTRIES = [["AF", "Afghanistan"], ["AL", "Albania"], ["DZ", "Algeria"],
 function mgFlag(cc){ return cc.length===2 ? String.fromCodePoint.apply(null, cc.toUpperCase().split('').map(function(c){ return 127397+c.charCodeAt(0); })) : '🏳️'; }
 function mgEsc(v){ return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
 function mgEn(){ try{ return currentLang === 'en'; }catch(e){ return false; } }
+var MG_DIAL = {"AF": 93, "AL": 355, "DZ": 213, "AD": 376, "AO": 244, "AG": 1268, "AR": 54, "AM": 374, "AU": 61, "AT": 43, "AZ": 994, "BS": 1242, "BH": 973, "BD": 880, "BB": 1246, "BY": 375, "BE": 32, "BZ": 501, "BJ": 229, "BT": 975, "BO": 591, "BA": 387, "BW": 267, "BR": 55, "BN": 673, "BG": 359, "BF": 226, "BI": 257, "CV": 238, "KH": 855, "CM": 237, "CA": 1, "CF": 236, "TD": 235, "CL": 56, "CN": 86, "CO": 57, "KM": 269, "CG": 242, "CD": 243, "CR": 506, "CI": 225, "HR": 385, "CU": 53, "CY": 357, "CZ": 420, "DK": 45, "DJ": 253, "DM": 1767, "DO": 1809, "EC": 593, "EG": 20, "SV": 503, "GQ": 240, "ER": 291, "EE": 372, "SZ": 268, "ET": 251, "FJ": 679, "FI": 358, "FR": 33, "GA": 241, "GM": 220, "GE": 995, "DE": 49, "GH": 233, "GR": 30, "GD": 1473, "GT": 502, "GN": 224, "GW": 245, "GY": 592, "HT": 509, "HN": 504, "HU": 36, "IS": 354, "IN": 91, "ID": 62, "IR": 98, "IQ": 964, "IE": 353, "IL": 972, "IT": 39, "JM": 1876, "JP": 81, "JO": 962, "KZ": 7, "KE": 254, "KI": 686, "XK": 383, "KW": 965, "KG": 996, "LA": 856, "LV": 371, "LB": 961, "LS": 266, "LR": 231, "LY": 218, "LI": 423, "LT": 370, "LU": 352, "MG": 261, "MW": 265, "MY": 60, "MV": 960, "ML": 223, "MT": 356, "MH": 692, "MR": 222, "MU": 230, "MX": 52, "FM": 691, "MD": 373, "MC": 377, "MN": 976, "ME": 382, "MA": 212, "MZ": 258, "MM": 95, "NA": 264, "NR": 674, "NP": 977, "NL": 31, "NZ": 64, "NI": 505, "NE": 227, "NG": 234, "KP": 850, "MK": 389, "NO": 47, "OM": 968, "PK": 92, "PW": 680, "PS": 970, "PA": 507, "PG": 675, "PY": 595, "PE": 51, "PH": 63, "PL": 48, "PT": 351, "QA": 974, "RO": 40, "RU": 7, "RW": 250, "KN": 1869, "LC": 1758, "VC": 1784, "WS": 685, "SM": 378, "ST": 239, "SA": 966, "SN": 221, "RS": 381, "SC": 248, "SL": 232, "SG": 65, "SK": 421, "SI": 386, "SB": 677, "SO": 252, "ZA": 27, "KR": 82, "SS": 211, "ES": 34, "LK": 94, "SD": 249, "SR": 597, "SE": 46, "CH": 41, "SY": 963, "TW": 886, "TJ": 992, "TZ": 255, "TH": 66, "TL": 670, "TG": 228, "TO": 676, "TT": 1868, "TN": 216, "TR": 90, "TM": 993, "TV": 688, "UG": 256, "UA": 380, "AE": 971, "GB": 44, "US": 1, "UY": 598, "UZ": 998, "VU": 678, "VA": 39, "VE": 58, "VN": 84, "YE": 967, "ZM": 260, "ZW": 263};
+function mgDialFor(name){
+  for(var i=0;i<MG_COUNTRIES.length;i++){ if(MG_COUNTRIES[i][1]===name) return String(MG_DIAL[MG_COUNTRIES[i][0]]||''); }
+  return '';
+}
+function mgPhoneParse(country, raw){
+  var dial = mgDialFor(country), r = String(raw||'').trim(), d = r.replace(/\D/g,'');
+  if(dial && d.indexOf(dial)===0 && (r.charAt(0)==='+' || d.length > dial.length+6)) d = d.slice(dial.length);
+  d = d.replace(/^0+/,'');
+  return {dial:dial, national:d, ok: d.length>=6 && d.length<=12, full: dial ? ('+'+dial+d) : d, key: (dial||'')+d};
+}
+async function mgCheckUnique(username, pf, excludeUid, checkUser, checkPhone){
+  var col = db.collection('users'), res = {userTaken:false, phoneTaken:false}, jobs = [];
+  var other = function(snap){ return snap.docs.some(function(d){ return d.id !== excludeUid; }); };
+  if(checkUser){
+    var u = String(username||'').trim(), lower = u.toLowerCase(), cap = lower.charAt(0).toUpperCase()+lower.slice(1);
+    var vars = Array.from(new Set([u, lower, cap, u.toUpperCase()]));
+    jobs.push(col.where('usernameLower','==',lower).limit(3).get().then(function(sn){ if(other(sn)) res.userTaken = true; }));
+    jobs.push(col.where('username','in',vars).limit(5).get().then(function(sn){ if(other(sn)) res.userTaken = true; }));
+  }
+  if(checkPhone && pf){
+    var dl = pf.dial, nat = pf.national;
+    var pv = Array.from(new Set(dl ? ['+'+dl+nat, '+'+dl+' '+nat, dl+nat, '0'+nat, nat, '+'+dl+' 0'+nat] : [nat, '0'+nat]));
+    jobs.push(col.where('phone','in',pv).limit(5).get().then(function(sn){ if(other(sn)) res.phoneTaken = true; }));
+    if(pf.key) jobs.push(col.where('phoneKey','==',pf.key).limit(3).get().then(function(sn){ if(other(sn)) res.phoneTaken = true; }));
+  }
+  await Promise.all(jobs);
+  return res;
+}
+function mgPhonePrefix(inputId, countryId){
+  var pi = document.getElementById(inputId), ci = document.getElementById(countryId); if(!pi || !ci) return;
+  function fix(){
+    var d = mgDialFor(ci.value); if(!d) return;
+    var raw = pi.value, digits = raw.replace(/\D/g,'');
+    var prev = pi.getAttribute('data-dial') || '';
+    if(prev && prev !== d && digits.indexOf(prev)===0) digits = digits.slice(prev.length);
+    else if(digits.indexOf(d)===0 && (raw.charAt(0)==='+' || digits.length > d.length+6)) digits = digits.slice(d.length);
+    digits = digits.replace(/^0+/,'');
+    pi.value = '+'+d+(digits?' '+digits:' ');
+    pi.setAttribute('data-dial', d);
+  }
+  ci.addEventListener('change', fix);
+  pi.addEventListener('input', function(){ var d = mgDialFor(ci.value); if(d && pi.value.indexOf('+'+d)!==0) fix(); });
+  pi.addEventListener('focus', function(){ var d = mgDialFor(ci.value); if(d && !pi.value.trim()) fix(); });
+}
+function mgSortProfileTabs(){
+  var box = document.getElementById('profileTabs'); if(!box) return;
+  var lang = mgEn() ? 'en' : 'sw';
+  var tabs = Array.prototype.slice.call(box.querySelectorAll('.ptab'));
+  var key = function(t){ return (t.textContent||'').replace(/[^\p{L}\p{N} ]/gu,'').trim().toLowerCase(); };
+  tabs.sort(function(a,b){ return key(a).localeCompare(key(b), lang); });
+  tabs.forEach(function(t){ box.appendChild(t); });
+}
+function mgCName(iso, en){
+  try{ if(!mgEn() && window.Intl && Intl.DisplayNames){ var n = new Intl.DisplayNames(['sw'], {type:'region'}).of(iso); if(n && n!==iso) return n; } }catch(e){}
+  return en;
+}
 function fillCountrySelect(id, selected){
   var el = document.getElementById(id); if(!el) return;
-  var list = MG_COUNTRIES.slice();
+  var lang = mgEn() ? 'en' : 'sw';
+  var list = MG_COUNTRIES.map(function(x){ return [x[0], x[1], mgCName(x[0], x[1])]; }).sort(function(a,b){ return a[2].localeCompare(b[2], lang); });
   var sel = selected || '';
-  if(sel && !list.some(function(x){ return x[1]===sel; })) list.unshift(['', sel]);
+  if(sel && !list.some(function(x){ return x[1]===sel; })) list.unshift(['', sel, sel]);
   var ph = mgEn() ? '🌍 Choose country' : '🌍 Chagua taifa';
   el.innerHTML = '<option value=""'+(sel?'':' selected')+'>'+ph+'</option>' + list.map(function(x){
-    return '<option value="'+mgEsc(x[1])+'"'+(x[1]===sel?' selected':'')+'>'+(x[0]?mgFlag(x[0])+' ':'')+mgEsc(x[1])+'</option>';
+    return '<option value="'+mgEsc(x[1])+'"'+(x[1]===sel?' selected':'')+'>'+(x[0]?mgFlag(x[0])+' ':'')+mgEsc(x[2])+'</option>';
   }).join('');
   el.value = sel;
 }
@@ -7739,14 +7841,17 @@ function mgRefreshCountryPh(){
   ['authNationality','acctCountryInput'].forEach(function(id){
     var el = document.getElementById(id); if(!el || !el.options.length) return;
     el.options[0].text = mgEn() ? '🌍 Choose country' : '🌍 Chagua taifa';
+    fillCountrySelect(id, el.value);
   });
 }
 fillCountrySelect('authNationality','');
 fillCountrySelect('acctCountryInput','');
 (function(){
   var orig = window.setLang;
-  if(typeof orig === 'function') window.setLang = function(l){ orig(l); try{ mgRefreshCountryPh(); }catch(e){} };
+  if(typeof orig === 'function') window.setLang = function(l){ orig(l); try{ mgRefreshCountryPh(); }catch(e){} setTimeout(function(){ try{ mgSortProfileTabs(); }catch(e){} }, 60); };
   try{ mgRefreshCountryPh(); }catch(e){}
+  try{ mgPhonePrefix('authPhone','authNationality'); mgPhonePrefix('acctPhoneInput','acctCountryInput'); }catch(e){}
+  setTimeout(function(){ try{ mgSortProfileTabs(); }catch(e){} }, 400);
 })();
 </script>
 </body>
