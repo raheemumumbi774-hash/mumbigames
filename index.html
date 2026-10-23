@@ -631,6 +631,8 @@
   .nav-dot{display:none;position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
   .ptab-dot{display:none;position:absolute;top:-4px;right:-4px;width:9px;height:9px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
   .nav-item.active{color:var(--lime);}
+  .nav-av{width:21px;height:21px;border-radius:50%;object-fit:cover;background:#cdd1d6;border:2px solid transparent;box-sizing:border-box;}
+  .nav-item.active .nav-av{border-color:var(--lime);box-shadow:0 0 8px rgba(245,166,35,.55);}
   .nav-center{margin-top:-26px;}
   .nav-center .ic{width:48px;height:48px;border-radius:50%;background:var(--lime);color:#fff;font-size:18px;border:4px solid var(--bg);}
   .nav-center span{color:var(--sub);}
@@ -1590,8 +1592,8 @@
   <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
   <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic" style="position:relative;">💬<span class="nav-badge" id="chatUnreadBadge">0</span></div><span data-i18n="nav_chat">Chat</span></div>
   <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5c0-1.2.4-2.3 1-3.3l.6-1c.2-.3.5-.5.9-.5h10c.4 0 .7.2.9.5l.6 1c.6 1 1 2.1 1 3.3"/><path d="M4.5 9.5c1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0"/><path d="M5.5 9.5V18a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.5"/><path d="M9.5 14c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5"/></svg></div><span data-i18n="nav_duka">Duka</span></div>
-  <div class="nav-item" id="navTV" onclick="showTV()"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5l4 3 4-3"/><rect x="3" y="7" width="18" height="13" rx="4"/></svg><span class="nav-live" id="tvLiveBadge">LIVE</span></div><span data-i18n="nav_tv">TV</span></div>
-  <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic">☺<span class="nav-dot" id="navMeDot"></span></div><span data-i18n="nav_me">Me</span></div>
+  <div class="nav-item" id="navTV" onclick="showTV()"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5l4 3 4-3"/><rect x="3" y="7" width="18" height="13" rx="4"/></svg><span class="nav-live" id="tvLiveBadge">LIVE</span></div><span data-i18n="nav_tv">TV</span></div>
+  <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic"><img id="navMeImg" class="nav-av" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="><span class="nav-dot" id="navMeDot"></span></div><span data-i18n="nav_me">Me</span></div>
 </div>
 
 <script>
@@ -4431,11 +4433,15 @@ const DAILY_THEMES = [
   ['#8e0e00','#f5a623','#fff6c0']
 ];
 var DEFAULT_AVATAR = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#cdd1d6"/><circle cx="50" cy="38" r="17" fill="#f6f4f7"/><path d="M14 100c0-22 16-36 36-36s36 14 36 36z" fill="#f6f4f7"/></svg>');
+function navMeSet(url){ try{ const n = document.getElementById('navMeImg'); if(n){ n.onerror = function(){ n.onerror = null; n.src = DEFAULT_AVATAR; }; n.src = url || DEFAULT_AVATAR; } }catch(e){} }
 function setAvatarDefault(){
+  navMeSet('');
   const el = document.getElementById('avatarInitial'); if(!el) return;
   el.style.backgroundImage = 'url("' + DEFAULT_AVATAR + '")'; el.textContent = '';
 }
+navMeSet('');
 let dailyState = {last:'', streak:0};
+const EARLY_GIFT_BEFORE = Date.parse('2026-10-18T12:00:00Z'); // waliojisajili kabla ya tarehe hii wanapata zawadi ya wanachama wa zamani
 const DAILY_EPOCH = 2; // ukiongeza namba hii, kila mtu anaanza upya
 function dayKey(off){ return new Date(Date.now() + 3*3600000 - (off||0)*86400000).toISOString().slice(0,10); } // siku inabadilika saa 6 usiku (EAT)
 function dailyStateFromUser(d){ dailyState = (d.dailyEpoch === DAILY_EPOCH) ? {last: d.dailyLast||'', streak: d.dailyStreak||0} : {last:'', streak:0}; }
@@ -7530,18 +7536,26 @@ try{
       db.collection('users').doc(user.uid).get().then(async doc=>{
         let data = doc.exists ? doc.data() : {};
         window.__acctOrig = {username: data.username||'', phone: data.phone||''};
-        if(doc.exists && !data.signupBonus){ // wanachama wa zamani: zawadi ya token 100, mara moja tu
+        // wanachama waliojisajili kabla ya ofa ya token 100: zawadi mara moja tu (alama: earlyGift)
+        if(doc.exists && !data.earlyGift && (!data.signupBonus || (data.createdAt && data.createdAt < EARLY_GIFT_BEFORE))){
+          const uref = db.collection('users').doc(user.uid); let granted = false;
+          const give = (dd)=>{ const np = Math.min(TOKEN_CAP, (dd.points||0) + 100); return {np:np}; };
           try{
-            const uref = db.collection('users').doc(user.uid); let granted = false;
             await db.runTransaction(async tx=>{
               const rr = await tx.get(uref); const dd = rr.data() || {};
-              if(dd.signupBonus) return;
-              const np = Math.min(TOKEN_CAP, (dd.points||0) + 100);
-              tx.update(uref, {points: np, signupBonus: true});
-              data.points = np; granted = true;
+              if(dd.earlyGift) return;
+              const g = give(dd);
+              tx.update(uref, {points: g.np, earlyGift: true});
+              data.points = g.np; granted = true;
             });
-            if(granted){ try{ showAppNotification(tvT('🎁 Zawadi kwa wanachama wa zamani','🎁 Gift for our early members'), tvT('Umepata token 100 bure!','You got 100 free tokens!'), '🪙'); }catch(e){} }
-          }catch(e){ console.error('bonus failed', e); }
+          }catch(e){
+            console.error('early gift txn failed, trying plain write', e);
+            try{
+              const rr = await uref.get(); const dd = rr.data() || {};
+              if(!dd.earlyGift){ const g = give(dd); await uref.update({points: g.np, earlyGift: true}); data.points = g.np; granted = true; }
+            }catch(e2){ console.error('early gift failed', e2); }
+          }
+          if(granted){ try{ showAppNotification(tvT('🎁 Zawadi kwa wanachama wa zamani','🎁 Gift for our early members'), tvT('Umepata token 100 bure!','You got 100 free tokens!'), '🪙'); }catch(e){} }
         }
         if(doc.exists && data.username && !data.usernameLower){ // kwa ajili ya ukaguzi wa majina yanayofanana
           try{ const pp = mgPhoneParse(data.nationality, data.phone); db.collection('users').doc(user.uid).set({usernameLower: String(data.username).toLowerCase(), phoneKey: pp.key||''}, {merge:true}); }catch(e){}
@@ -7609,6 +7623,7 @@ function setAvatarPhoto(url){
   if(!el) return;
   el.style.backgroundImage = "url('" + url + "')";
   el.textContent = '';
+  navMeSet(url);
 }
 
 async function uploadProfilePhoto(file){
