@@ -63,8 +63,8 @@
   .gate-card p{color:var(--sub);font-size:13px;margin:6px 0 20px;}
   input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:9px;font-size:15px;font-family:'Baloo 2',sans-serif;}
   input:focus{outline:none;border-color:var(--lime);}
-  .btn{cursor:pointer;border:none;border-radius:9px;padding:12px 16px;font-family:'Baloo 2',sans-serif;font-weight:600;font-size:14px;transition:transform .1s ease, opacity .15s ease;}
-  .btn:active{transform:scale(0.97);}
+  .btn{cursor:pointer;border:none;border-radius:9px;padding:12px 16px;font-family:'Baloo 2',sans-serif;font-weight:600;font-size:14px;transition:opacity .15s ease;}
+  .btn:active{opacity:.85;}
   .btn-primary{background:var(--lime);color:#0a0d0a;width:100%;margin-top:14px;}
   .btn-primary:hover{opacity:.9;}
   .gate-err{color:var(--danger);font-size:12px;margin-top:10px;min-height:14px;}
@@ -200,14 +200,14 @@
   .brand small{color:#a994ff;}
   .tabs{position:sticky;top:61px;z-index:4;gap:7px;padding:10px 14px;background:rgba(8,8,18,.66);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--glass-line);}
   .tab{background:rgba(255,255,255,.045);border:1px solid var(--glass-line);color:#b9bddb;transition:all .18s ease;}
-  .tab:hover{background:rgba(255,255,255,.09);color:#fff;transform:translateY(-1px);}
+  .tab:hover{background:rgba(255,255,255,.09);color:#fff;}
   .tab.active{background:linear-gradient(135deg,#ffc15a,#f5a623 55%,#ff7a45);color:#1c1200;border-color:transparent;box-shadow:0 6px 20px rgba(245,166,35,.38);}
   main{max-width:780px;padding:18px 16px 40px;}
-  .view.active{animation:vIn .35s ease both;}
+  .view.active{animation:none;}
   @keyframes vIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .game-card,.pay-card,.listing-card,.link-card,.stat,.mini-stat,.switch-row{background:var(--glass);border:1px solid var(--glass-line);border-radius:16px;box-shadow:0 8px 26px rgba(0,0,0,.28);}
-  .game-card,.listing-card,.link-card{transition:transform .15s ease,border-color .15s ease;}
-  .game-card:hover,.listing-card:hover{transform:translateY(-2px);border-color:rgba(245,166,35,.35);}
+  .game-card,.listing-card,.link-card{transition:border-color .15s ease;}
+  .game-card:hover,.listing-card:hover{border-color:rgba(245,166,35,.35);}
   .gcard{border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.3);}
   .section-title h2{display:flex;align-items:center;gap:9px;color:#d9dcf5;font-size:13.5px;letter-spacing:.09em;}
   .section-title h2:before{content:"";width:4px;height:16px;border-radius:3px;background:linear-gradient(180deg,#f5a623,#8b5cf6);flex:none;}
@@ -216,7 +216,7 @@
   select option{background:#14152a;}
   .btn{border-radius:12px;}
   .btn-primary{background:linear-gradient(135deg,#ffc15a,#f5a623 55%,#ff7a45);color:#1c1200;font-weight:700;box-shadow:0 8px 22px rgba(245,166,35,.30);}
-  .btn-primary:hover{opacity:1;transform:translateY(-1px);box-shadow:0 12px 28px rgba(245,166,35,.42);}
+  .btn-primary:hover{opacity:1;box-shadow:0 12px 28px rgba(245,166,35,.42);}
   .btn-ghost{background:rgba(255,255,255,.04);border:1px solid var(--glass-line);}
   .icon-btn{background:rgba(255,255,255,.05);border:1px solid var(--glass-line);border-radius:10px;transition:all .15s;}
   .icon-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
@@ -1003,6 +1003,7 @@ function loadBannersAdmin(){
 }
 
 // ---- TV channels (YouTube live) ----
+const __az=(k)=>(x,y)=>String(x[k]||'').localeCompare(String(y[k]||''),'sw',{sensitivity:'base',numeric:true});
 let tvEditId = null, tvListening = false, tvItems = [];
 const TV_INF = 9999999999999;
 function tvLiveValue(v){
@@ -1104,7 +1105,7 @@ function loadTvAdmin(){
   if(tvListening) return;
   tvListening = true;
   db.collection('tvChannels').orderBy('order','asc').onSnapshot(snap=>{
-    tvItems = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    tvItems = snap.docs.map(d=>({id:d.id, ...d.data()})).sort(__az('name'));
     document.getElementById('tvAdminList').innerHTML = tvItems.length ? tvItems.map(c=>`
       <div class="game-card" style="${c.active===false?'opacity:.55;':''}">
         <div class="thumb" style="${c.logo?`background-image:url('${String(c.logo).replace(/'/g,"")}');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#fff;`:''}">${c.logo?'':'📺'}</div>
@@ -1550,7 +1551,7 @@ function loadListings(){
   if(listingsListening) return; // already subscribed
   listingsListening = true;
   db.collection('listings').onSnapshot(snap=>{
-    listings = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    listings = snap.docs.map(d=>({id:d.id, ...d.data()})).sort((x,y)=>String(x.title||x.name||'').localeCompare(String(y.title||y.name||''),'sw',{sensitivity:'base',numeric:true}));
     renderListings();
   }, err=>{
     console.error(err);
@@ -1703,7 +1704,7 @@ function loadTournamentsAdmin(){
   if(tournamentsAdminListening) return;
   tournamentsAdminListening = true;
   db.collection('tournaments').orderBy('createdAt','desc').onSnapshot(snap=>{
-    tournamentsAdmin = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    tournamentsAdmin = snap.docs.map(d=>({id:d.id, ...d.data()})).sort(__az('name'));
     renderTournamentsAdmin();
   }, err=>{
     console.error(err);
@@ -2017,7 +2018,7 @@ function resetAdForm(){
 function loadSponsoredAdsAdmin(){
   resetAdForm();
   db.collection('sponsoredAds').orderBy('createdAt','desc').onSnapshot(snap=>{
-    adsCache = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    adsCache = snap.docs.map(d=>({id:d.id, ...d.data()})).sort(__az('title'));
     document.getElementById('adsList').innerHTML = adsCache.length ? adsCache.map(a=>`
       <div class="game-card">
         <div class="thumb" ${a.image?`style="background-image:url('${a.image.replace(/'/g,"")}')"`:''}>${a.image?'':(a.adType==='video'?'🎬':'🖼️')}</div>
