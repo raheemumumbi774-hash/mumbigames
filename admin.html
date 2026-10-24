@@ -187,6 +187,62 @@
   .btn-approve{background:var(--lime);color:var(--bg);}
   .btn-reject{background:rgba(255,92,92,0.15);color:var(--danger);border:1px solid rgba(255,92,92,0.4);}
   .btn-remove{background:var(--panel-2);color:var(--sub);border:1px solid var(--line);}
+
+  /* ============ STUDIO THEME ============ */
+  :root{--glass:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.025));--glass-line:rgba(255,255,255,.10);--violet:#8b5cf6;--pink:#ff5fa2;}
+  html{scroll-behavior:smooth;}
+  body{background:radial-gradient(900px 480px at 8% -8%,rgba(139,92,246,.22),transparent 60%),radial-gradient(800px 460px at 100% 2%,rgba(245,166,35,.16),transparent 55%),radial-gradient(700px 500px at 50% 110%,rgba(255,95,162,.10),transparent 60%),#07070f;background-attachment:fixed;}
+  ::-webkit-scrollbar{width:8px;height:8px;} ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px;}
+  .cartridge-mark{background:linear-gradient(135deg,#ffc15a,#f5a623 45%,#ff6b6b);box-shadow:0 0 18px rgba(245,166,35,.45);border-radius:10px;}
+  .gate-card{background:var(--glass);border:1px solid var(--glass-line);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(139,92,246,.12);backdrop-filter:blur(14px);}
+  .topbar{background:rgba(9,9,20,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-line);padding:12px 16px;}
+  .brand span{background:linear-gradient(90deg,#fff,#ffd98a);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:.2px;}
+  .brand small{color:#a994ff;}
+  .tabs{position:sticky;top:61px;z-index:4;gap:7px;padding:10px 14px;background:rgba(8,8,18,.66);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--glass-line);}
+  .tab{background:rgba(255,255,255,.045);border:1px solid var(--glass-line);color:#b9bddb;transition:all .18s ease;}
+  .tab:hover{background:rgba(255,255,255,.09);color:#fff;transform:translateY(-1px);}
+  .tab.active{background:linear-gradient(135deg,#ffc15a,#f5a623 55%,#ff7a45);color:#1c1200;border-color:transparent;box-shadow:0 6px 20px rgba(245,166,35,.38);}
+  main{max-width:780px;padding:18px 16px 40px;}
+  .view.active{animation:vIn .35s ease both;}
+  @keyframes vIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .game-card,.pay-card,.listing-card,.link-card,.stat,.mini-stat,.switch-row{background:var(--glass);border:1px solid var(--glass-line);border-radius:16px;box-shadow:0 8px 26px rgba(0,0,0,.28);}
+  .game-card,.listing-card,.link-card{transition:transform .15s ease,border-color .15s ease;}
+  .game-card:hover,.listing-card:hover{transform:translateY(-2px);border-color:rgba(245,166,35,.35);}
+  .gcard{border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.3);}
+  .section-title h2{display:flex;align-items:center;gap:9px;color:#d9dcf5;font-size:13.5px;letter-spacing:.09em;}
+  .section-title h2:before{content:"";width:4px;height:16px;border-radius:3px;background:linear-gradient(180deg,#f5a623,#8b5cf6);flex:none;}
+  input,textarea,select{background:rgba(255,255,255,.04);border:1px solid var(--glass-line);border-radius:12px;transition:border-color .15s,box-shadow .15s,background .15s;}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:#f5a623;box-shadow:0 0 0 3px rgba(245,166,35,.18);background:rgba(255,255,255,.06);}
+  select option{background:#14152a;}
+  .btn{border-radius:12px;}
+  .btn-primary{background:linear-gradient(135deg,#ffc15a,#f5a623 55%,#ff7a45);color:#1c1200;font-weight:700;box-shadow:0 8px 22px rgba(245,166,35,.30);}
+  .btn-primary:hover{opacity:1;transform:translateY(-1px);box-shadow:0 12px 28px rgba(245,166,35,.42);}
+  .btn-ghost{background:rgba(255,255,255,.04);border:1px solid var(--glass-line);}
+  .icon-btn{background:rgba(255,255,255,.05);border:1px solid var(--glass-line);border-radius:10px;transition:all .15s;}
+  .icon-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
+  .btn-sm{border-radius:10px;}
+  .tag{background:rgba(255,255,255,.06);border:1px solid var(--glass-line);}
+  .switch{background:rgba(255,255,255,.06);}
+  .empty{border:1px dashed var(--glass-line);border-radius:14px;margin:6px 0;}
+  .toast{background:linear-gradient(135deg,#ffc15a,#f5a623);box-shadow:0 10px 30px rgba(0,0,0,.4);}
+  /* ---- Maoni: kadi ndogo ---- */
+  .fb-card{background:var(--glass);border:1px solid var(--glass-line);border-radius:18px;padding:12px 12px 10px;margin-bottom:11px;box-shadow:0 8px 26px rgba(0,0,0,.28);}
+  .fb-top{display:flex;gap:11px;align-items:center;}
+  .fb-av{width:44px;height:44px;border-radius:50%;flex:none;background:#cdd1d6 center/cover no-repeat;border:2px solid rgba(255,255,255,.25);}
+  .fb-who{flex:1;min-width:0;}
+  .fb-name{font-weight:800;font-size:14px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .fb-country{font-size:11px;color:var(--sub);margin-top:1px;}
+  .fb-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none;}
+  .fb-date{font-size:10.5px;color:var(--sub);}
+  .fb-done{font-size:10px;font-weight:700;color:#7dffb0;background:rgba(61,220,132,.14);border:1px solid rgba(61,220,132,.4);padding:2px 8px;border-radius:20px;}
+  .fb-new{font-size:10px;font-weight:700;color:#ff8a8a;background:rgba(255,92,92,.13);border:1px solid rgba(255,92,92,.4);padding:2px 8px;border-radius:20px;}
+  .fb-kind{display:inline-block;font-size:10px;font-weight:700;color:#a994ff;margin-top:9px;}
+  .fb-msg{margin-top:5px;background:rgba(0,0,0,.25);border:1px solid var(--glass-line);border-radius:12px;padding:9px 11px;font-size:13px;line-height:1.5;word-break:break-word;}
+  .fb-reply{display:flex;gap:8px;margin-top:9px;align-items:flex-end;}
+  .fb-reply textarea{min-height:42px;font-size:13px;padding:9px 12px;}
+  .fb-reply .btn{padding:10px 14px;width:auto;margin:0;}
+  .fb-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+  .fb-link{font-size:11px;color:var(--sub);cursor:pointer;text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -255,8 +311,7 @@
       </div>
       <div style="display:none;"><span id="statUnique">0</span></div>
       <div class="section-title"><h2>📢 Tangaza machapisho mapya</h2></div>
-      <p style="font-size:12px;color:var(--sub);margin-bottom:10px;">Ukiweka video mpya TikTok au YouTube, bonyeza hapa ili watumiaji waone alama ya "kipya" kwenye website.</p>
-      <div style="display:flex;gap:10px;margin-bottom:20px;">
+            <div style="display:flex;gap:10px;margin-bottom:20px;">
         <button class="btn btn-ghost" style="flex:1" onclick="announceSocial('tiktok')">♪ TikTok Mpya</button>
         <button class="btn btn-ghost" style="flex:1" onclick="announceSocial('youtube')">▶ YouTube Mpya</button>
       </div>
@@ -316,8 +371,7 @@
       <input type="hidden" id="gImage" value="">
 
       <label style="margin-top:20px;display:block;">Link za kudownload</label>
-      <div style="font-size:11.5px;color:var(--sub);margin-bottom:8px;">Ongeza link kwa kila faili linalohitajika (mfano: Game File, Emulator, Data)</div>
-      <div id="downloadRows"></div>
+            <div id="downloadRows"></div>
       <button type="button" class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="addDownloadRow()">+ Ongeza Link Nyingine</button>
 
       <div class="switch-row">
@@ -370,15 +424,9 @@
         <div class="pay-line"><span>Namba ya kimataifa</span><b class="mono">+255 703 504 270</b></div>
         <div class="pay-line"><span>Jina la mpokeaji</span><b>Josh Abdallahman</b></div>
       </div>
-      <p style="color:var(--sub);font-size:12px;margin-top:12px;line-height:1.6;">
-        Haya maelekezo ndiyo yanayoonekana kwa mtumiaji anapojaribu ku-download game ya kulipia. Mtumiaji hawezi kudownload mpaka UWE UMETHIBITISHA ombi lake hapa chini — linganisha namba na kiasi alichojaza na ujumbe wa Tigo Pesa uliopokea kabla ya "Thibitisha".
-      </p>
-
+      
       <div class="section-title"><h2>🤖 AI ya Msaada (unapokosa muda wa kuangalia)</h2></div>
-      <p style="color:var(--sub);font-size:12px;line-height:1.6;">
-        Ukiwasha hii, na ombi la malipo likikaa "pending" zaidi ya muda uliyoweka bila wewe kulithibitisha, AI itaangalia zile picha mbili za muamala na, ikiwa na uhakika wa kutosha tu, itathibitisha yenyewe. Vinginevyo itabaki ikisubiri wewe. Kadi itaonyesha wazi "Imethibitishwa na AI" ili ujue — na unaweza kubatilisha uamuzi wake wakati wowote. <b>Kumbuka:</b> AI haiwezi kuthibitisha pesa zimefika benki kwako halisi — inaangalia tu kama picha zinaonekana za kweli, hivyo si njia isiyokosea 100%.
-      </p>
-      <div class="switch-row">
+            <div class="switch-row">
         <span>Washa AI ya msaada</span>
         <div class="switch" id="aiEnabledSwitch" onclick="toggleAiEnabled()"><div class="knob"></div></div>
       </div>
@@ -426,8 +474,7 @@
     <!-- TV CHANNELS -->
     <div class="view" id="view-tv">
       <div class="section-title"><h2 id="tvFormTitle">Ongeza Channel ya TV</h2></div>
-      <p style="color:var(--sub);font-size:12px;margin-bottom:12px;">Kwa sasa TV inakubali <b>link za YouTube live rasmi tu</b> (video ya live, au ID ya channel inayoanza na <b>UC</b>). Channel itaonekana kwenye ukurasa wa TV wa app.</p>
-      <label>Jina la channel</label>
+            <label>Jina la channel</label>
       <input type="text" id="tvName" placeholder="mfano: Mumbi Gaming Live">
       <label>Maelezo mafupi (si lazima)</label>
       <input type="text" id="tvDesc" placeholder="mfano: Live za games kila Ijumaa">
@@ -446,8 +493,7 @@
       </select>
       <label>Link ya YouTube live</label>
       <input type="text" id="tvYt" placeholder="https://www.youtube.com/watch?v=...  au  UCxxxxxxxxxxxxxxxxxxxxxx">
-      <div style="font-size:11px;color:var(--sub);margin:-6px 0 10px;">Inakubali: youtube.com/watch?v=… · youtu.be/… · youtube.com/live/… · youtube.com/channel/UC… · au ID ya channel (UC…) kwa live inayoendelea kila wakati.</div>
-      <label>Alama ya LIVE (inaonekana kwa watumiaji kwa muda huo)</label>
+            <label>Alama ya LIVE (inaonekana kwa watumiaji kwa muda huo)</label>
       <select id="tvLive">
         <option value="keep">Live otomatiki (channel ikiwepo)</option>
         <option value="1">🔴 Live — saa 1</option>
@@ -468,8 +514,7 @@
       <input type="hidden" id="tvLogo" value="">
       <div style="margin:14px 0 4px;padding:12px;border:1px dashed var(--line);border-radius:12px;">
         <label style="margin-top:0;">🎬🎵 Orodha ya movie au nyimbo ndani ya channel hii (si lazima)</label>
-        <div style="font-size:11.5px;color:var(--sub);margin-bottom:6px;">Kwa channel ya <b>Movie</b> au <b>Muziki</b>: andika kimoja kila mstari, <b>Jina | link ya YouTube</b>. Zinacheza moja baada ya nyingine ndani ya channel hii hii (nyimbo zikiisha, inayofuata inaanza yenyewe). Ukijaza hapa, sehemu ya "YouTube link" juu si lazima.</div>
-        <textarea id="tvPl" rows="6" placeholder="Movie ya kwanza | https://www.youtube.com/watch?v=...&#10;Movie ya pili | https://youtu.be/..." style="width:100%;"></textarea>
+                <textarea id="tvPl" rows="6" placeholder="Movie ya kwanza | https://www.youtube.com/watch?v=...&#10;Movie ya pili | https://youtu.be/..." style="width:100%;"></textarea>
       </div>
       <div class="form-actions">
         <button class="btn btn-primary" style="flex:1" onclick="saveTvChannel()" id="tvSaveBtn">Hifadhi Channel</button>
@@ -545,8 +590,7 @@
     <!-- SOCIAL -->
     <div class="view" id="view-notices">
       <div class="section-title"><h2>🔔 Andika Taarifa Mpya</h2></div>
-      <p style="color:var(--sub);font-size:12px;margin-bottom:12px;">Taarifa unayoandika hapa inaonekana kwenye <b>kengele 🔔</b> ya app kwa watumiaji wote: picha pembeni, kichwa juu, maelezo chini yake. Watumiaji wanapata namba nyekundu kuwajulisha kuna taarifa mpya.</p>
-      <label>Kichwa cha habari</label>
+            <label>Kichwa cha habari</label>
       <input type="text" id="nTitle" placeholder="mfano: Games Mpya Zimeongezwa 🎮" maxlength="90">
       <label>Maelezo</label>
       <textarea id="nBody" rows="5" placeholder="Andika maelezo hapa..." maxlength="1200"></textarea>
@@ -563,13 +607,11 @@
 
     <div class="view" id="view-ads">
       <div class="section-title"><h2>📢 Weka Tangazo Jipya (Sponsored)</h2></div>
-      <p style="color:var(--sub);font-size:12px;margin-bottom:14px;">Weka matangazo mengi hapa — mfumo utachagua LIMOJA KWA BAHATI NASIBU kila mtu akifungua game, hivyo watu wataona matangazo tofauti-tofauti kila wakiingia/kufungua tena. Mteja akikubali kulipia nafasi hii, jaza taarifa zake hapa chini kisha bonyeza "Ongeza Tangazo".</p>
-
+      
       <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
         <div>
           <div style="font-weight:700;font-size:14px;">Onyesha Tangazo Hili?</div>
-          <div style="font-size:11.5px;color:var(--sub);margin-top:2px;">Ukizima, hili tangazo mahususi halitaonekana kwa watumiaji (lakini mengine yataendelea kuonekana).</div>
-        </div>
+                  </div>
         <div class="switch" id="adEnabledSwitch" onclick="toggleAdEnabled()"><div class="knob"></div></div>
       </div>
 
@@ -607,20 +649,14 @@
           <video id="adVideoPreview" src="" controls playsinline style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#000;"></video>
         </div>
 
-        <label style="font-size:12px;color:var(--sub);margin-bottom:4px;">Njia ya 1 (ya uhakika): bandika link ya video</label>
+        <label style="font-size:12px;color:var(--sub);margin-bottom:4px;">Link ya video (.mp4)</label>
         <input type="text" id="adVideoUrlInput" placeholder="https://github.com/.../releases/download/.../ad.mp4" onchange="useAdVideoUrl()">
-        <div style="font-size:11px;color:var(--sub);margin:6px 0 14px;line-height:1.5;">
-          Pakia video lako (.mp4) kwenye <b>GitHub Releases</b> — njia ile ile uliyotumia kupakia APK yako — kisha bandika hapa link ya moja kwa moja utakayoipata. Hii ndiyo njia ya uhakika zaidi kwa sasa.
-        </div>
-
-        <label style="font-size:12px;color:var(--sub);margin-bottom:4px;">Njia ya 2 (bado haifanyi kazi): pakia moja kwa moja</label>
-        <input type="file" id="adVideoFile" accept="video/mp4,video/*" onchange="handleAdVideoSelect()">
-        <div id="adVideoUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
+        
+        <label style="display:none;"></label>
+        <input type="file" id="adVideoFile" accept="video/mp4,video/*" onchange="handleAdVideoSelect()" style="display:none;">
+        <div id="adVideoUploadStatus" style="display:none;"></div>
         <input type="hidden" id="adVideoUrl" value="">
-        <div style="font-size:11px;color:#ff9e6b;margin-top:6px;line-height:1.5;">
-          ⚠️ Njia hii bado haijawezeshwa (inahitaji Firebase Storage billing). Tumia Njia ya 1 kwa sasa.
-        </div>
-      </div>
+              </div>
 
       <input type="hidden" id="adEditId" value="">
       <button class="btn btn-primary" style="width:100%;margin-top:16px;" id="adSaveBtn" onclick="saveSponsoredAd()">Ongeza Tangazo</button>
@@ -1273,31 +1309,54 @@ function loadFeedbackAdmin(){
     renderFeedbackAdmin();
   }, err=>console.error(err));
 }
+var FB_DEFAULT_AV = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#cdd1d6"/><circle cx="50" cy="38" r="17" fill="#f6f4f7"/><path d="M14 100c0-22 16-36 36-36s36 14 36 36z" fill="#f6f4f7"/></svg>');
+var fbUserCache = {}, fbUserLoading = false, fbEditing = {};
+function fbLoadUsers(list){
+  if(fbUserLoading) return;
+  const need = []; list.forEach(f=>{ if(f.uid && !(f.uid in fbUserCache) && need.indexOf(f.uid)<0) need.push(f.uid); });
+  if(!need.length) return;
+  fbUserLoading = true;
+  Promise.all(need.slice(0,40).map(u=>db.collection('users').doc(u).get().then(d=>{ fbUserCache[u] = d.exists ? d.data() : {}; }).catch(()=>{ fbUserCache[u] = {}; })))
+    .then(()=>{ fbUserLoading = false; renderFeedbackAdmin(); });
+}
+function fbEditReply(id){ fbEditing[id] = true; renderFeedbackAdmin(); }
 function renderFeedbackAdmin(){
   let list = feedbackCache;
   if(fbAdminFilter === 'feedback') list = list.filter(f=>f.type==='feedback');
   if(fbAdminFilter === 'request') list = list.filter(f=>f.type==='request');
   if(fbAdminFilter === 'open') list = list.filter(f=>!f.adminReply);
+  fbLoadUsers(list);
   document.getElementById('feedbackList').innerHTML = list.length ? list.map(f=>{
     const d = new Date(f.createdAt);
     const dd = String(d.getDate()).padStart(2,'0'), mo = String(d.getMonth()+1).padStart(2,'0');
     const isReq = f.type === 'request';
+    const u = (f.uid && fbUserCache[f.uid]) || {};
+    const name = u.username || f.userName || 'Mtumiaji';
+    const photo = u.photoURL ? escapeHtmlAdmin(u.photoURL) : FB_DEFAULT_AV;
+    const country = u.nationality ? '🌍 ' + escapeHtmlAdmin(u.nationality) : '🌍 —';
+    const replied = !!f.adminReply;
+    const showBox = !replied || fbEditing[f.id];
     return `
-    <div class="game-card" style="flex-direction:column;align-items:stretch;gap:8px;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-        <div>
-          <span class="tag ${isReq?'paid':'free'}">${isReq ? '🎮 Ombi la Game' : '📝 Maoni'}</span>
-          <span class="tag">${dd}/${mo}</span>
-          ${!f.adminReply ? '<span class="tag" style="color:#ff6b6b;">🔴 Bado</span>' : '<span class="tag" style="color:var(--lime);">✅ Imejibiwa</span>'}
+    <div class="fb-card">
+      <div class="fb-top">
+        <div class="fb-av" style="background-image:url('${photo}')"></div>
+        <div class="fb-who">
+          <div class="fb-name">${escapeHtmlAdmin(name)}</div>
+          <div class="fb-country">${country}</div>
+        </div>
+        <div class="fb-meta">
+          <span class="fb-date">${dd}/${mo}</span>
+          ${replied ? '<span class="fb-done">✓ Imejibiwa</span>' : '<span class="fb-new">● Mpya</span>'}
         </div>
       </div>
-      <div style="font-size:12.5px;font-weight:700;">${escapeHtmlAdmin(f.userName||'Mtumiaji')} <span style="font-weight:400;color:var(--sub);font-size:10.5px;">(${escapeHtmlAdmin(f.userEmail||'')})</span></div>
-      ${isReq && f.gameTitle ? `<div style="font-size:12px;color:var(--lime);font-weight:700;">🎮 ${escapeHtmlAdmin(f.gameTitle)}</div>` : ''}
-      <div style="font-size:12px;color:var(--text);line-height:1.5;">${escapeHtmlAdmin(f.text)}</div>
-      ${f.adminReply ? `<div style="background:rgba(0,0,0,0.2);border-left:2px solid var(--lime);border-radius:8px;padding:8px 10px;font-size:11.5px;color:var(--sub);"><b style="color:var(--lime);">Jibu lako:</b> ${escapeHtmlAdmin(f.adminReply)}</div>` : ''}
-      <textarea id="fbReplyInput-${f.id}" rows="2" placeholder="Andika jibu lako hapa..." style="margin-top:4px;">${f.adminReply ? escapeHtmlAdmin(f.adminReply) : ''}</textarea>
-      <div class="form-actions">
-        <button class="btn btn-primary" style="flex:1" onclick="replyToFeedback('${f.id}')">${f.adminReply ? 'Sasisha Jibu' : 'Tuma Jibu'}</button>
+      <div class="fb-kind">${isReq ? '🎮 Ombi la Game' + (f.gameTitle ? ' · ' + escapeHtmlAdmin(f.gameTitle) : '') : '📝 Maoni'}</div>
+      <div class="fb-msg">${escapeHtmlAdmin(f.text)}</div>
+      ${showBox ? `<div class="fb-reply">
+        <textarea id="fbReplyInput-${f.id}" rows="1" placeholder="Jibu...">${replied ? escapeHtmlAdmin(f.adminReply) : ''}</textarea>
+        <button class="btn btn-primary" onclick="replyToFeedback('${f.id}')">${replied ? 'Sasisha' : 'Tuma'}</button>
+      </div>` : ''}
+      <div class="fb-foot">
+        ${replied && !showBox ? `<span class="fb-link" onclick="fbEditReply('${f.id}')">✏ Hariri jibu</span>` : '<span></span>'}
         <button class="icon-btn del" onclick="deleteFeedback('${f.id}')">🗑</button>
       </div>
     </div>`;
@@ -1311,6 +1370,7 @@ async function replyToFeedback(id){
     // apate arifa mpya ndani ya app yake — hata kama alishaona jibu la
     // zamani huko nyuma.
     await db.collection('feedback').doc(id).update({adminReply: val, adminReplyAt: Date.now(), status: 'replied', replySeen: false});
+    delete fbEditing[id];
     showToast('Jibu limetumwa ✓');
   }catch(e){
     console.error(e);

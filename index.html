@@ -631,6 +631,17 @@
   .nav-dot{display:none;position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
   .ptab-dot{display:none;position:absolute;top:-4px;right:-4px;width:9px;height:9px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
   .nav-item.active{color:var(--lime);}
+  .pf-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:14px;}
+  .pf-cover{position:relative;height:120px;background:linear-gradient(135deg,#2b1a52 0%,#7a4a14 55%,#14152a 100%);background-size:cover;background-position:center;}
+  .pf-cover:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(10,10,22,.6));pointer-events:none;}
+  .pf-cam{position:absolute;right:10px;top:10px;z-index:2;width:30px;height:30px;border-radius:50%;background:rgba(10,10,22,.65);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;}
+  .pf-body{display:flex;align-items:flex-end;gap:12px;padding:0 14px 14px;margin-top:-36px;position:relative;z-index:3;}
+  .pf-av{position:relative;width:78px;height:78px;flex:none;}
+  .pf-avatar{width:78px;height:78px;border-radius:50%;background-color:#cdd1d6;background-size:cover;background-position:center;border:3px solid var(--panel);box-sizing:border-box;}
+  .pf-avcam{position:absolute;right:-2px;bottom:-2px;width:25px;height:25px;border-radius:50%;background:var(--panel-2);border:2px solid var(--panel);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;}
+  .pf-info{flex:1;min-width:0;padding-bottom:2px;}
+  .pf-name{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:18px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .pf-sub{font-size:11px;color:var(--sub);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .nav-av{width:21px;height:21px;border-radius:50%;object-fit:cover;background:#cdd1d6;border:2px solid transparent;box-sizing:border-box;}
   .nav-item.active .nav-av{border-color:var(--lime);box-shadow:0 0 8px rgba(245,166,35,.55);}
   .nav-center{margin-top:-26px;}
@@ -1332,16 +1343,24 @@
     </div>
 
     <div id="profileLoggedIn" style="display:none;">
-      <div class="settings-section" style="text-align:center;">
-        <div style="position:relative;width:56px;height:56px;margin:0 auto 10px;">
-          <div style="width:56px;height:56px;border-radius:50%;background:var(--lime);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;background-size:cover;background-position:center;overflow:hidden;" id="avatarInitial">U</div>
-          <div onclick="document.getElementById('avatarFileInput').click()" style="position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--panel-2);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;">📷</div>
-          <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="uploadProfilePhoto(this.files[0])">
+      <div class="pf-card">
+        <div class="pf-cover" id="pfCover">
+          <div class="pf-cam" onclick="document.getElementById('coverFileInput').click()" title="Background">📷</div>
+          <input type="file" id="coverFileInput" accept="image/*" style="display:none;" onchange="uploadCoverPhoto(this.files[0])">
         </div>
-        <div id="avatarUploadStatus" style="font-size:9.5px;color:var(--sub);margin-bottom:6px;"></div>
-        <div style="font-weight:700;font-size:13.5px;" id="profileUsername">—</div>
-        <div style="font-size:10.5px;color:var(--sub);margin-top:4px;" id="profileEmail">—</div>
-        <div style="font-size:10px;color:var(--sub);margin-top:2px;" id="profileMeta">—</div>
+        <div class="pf-body">
+          <div class="pf-av">
+            <div class="pf-avatar" id="avatarInitial"></div>
+            <div class="pf-avcam" onclick="document.getElementById('avatarFileInput').click()">📷</div>
+            <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="uploadProfilePhoto(this.files[0])">
+          </div>
+          <div class="pf-info">
+            <div class="pf-name" id="profileUsername">—</div>
+            <div class="pf-sub" id="profileEmail">—</div>
+            <div class="pf-sub" id="profileMeta">—</div>
+            <div id="avatarUploadStatus" style="font-size:9.5px;color:var(--lime);min-height:11px;"></div>
+          </div>
+        </div>
       </div>
 
       <div class="ptabs" id="profileTabs">
@@ -4813,8 +4832,10 @@ async function saveAccountEdit(){
   const phoneSave = (phoneChanged && pf.ok) ? pf.full : phone;
   try{
     await db.collection('users').doc(auth.currentUser.uid).set({username, usernameLower: username.toLowerCase(), nationality, phone: phoneSave, phoneKey: pf.ok ? pf.key : ''}, {merge:true});
+    if(chatName && chatName === (orig.username||'')){ chatName = username; try{ localStorage.setItem('mg-chat-name', username); }catch(e){} }
     window.__acctOrig = {username, phone: phoneSave};
     document.getElementById('profileUsername').textContent = username;
+    try{ lbSyncProfile(); }catch(e){}
     document.getElementById('profileMeta').textContent = [nationality, phoneSave].filter(Boolean).join(' • ');
     document.getElementById('acctCountryView').textContent = nationality || '—';
     toggleAccountEdit();
@@ -6491,6 +6512,7 @@ function subscribeMessages(){
 }
 
 function renderMessages(msgs){
+  chatLastMsgs = msgs; try{ mgProfNeed(msgs); }catch(e){}
   const box = document.getElementById('chatMessages');
   if(msgs.length===0){
     box.innerHTML = '<div class="chat-empty">Bado hakuna ujumbe. Kuwa wa kwanza kuandika! 👋</div>';
@@ -6498,7 +6520,10 @@ function renderMessages(msgs){
   }
   const wasAtBottom = (box.scrollHeight - box.scrollTop - box.clientHeight) < 60;
   box.innerHTML = msgs.map((m,idx)=>{
-    const mine = m.name === chatName;
+    const mine = mgIsMine(m);
+    const pr = (m.uid && mgProf[m.uid]) || null;
+    const dName = (pr && pr.username) || m.name;
+    const dPhoto = (pr && pr.photoURL) || m.photoURL;
     const t = new Date(m.time);
     const hh = String(t.getHours()).padStart(2,'0');
     const mm = String(t.getMinutes()).padStart(2,'0');
@@ -6512,13 +6537,13 @@ function renderMessages(msgs){
       ? `<img class="chat-img" src="${escapeHtml(m.imageUrl)}" alt="picha" loading="lazy" data-full="${escapeHtml(m.imageUrl)}">` + (m.text ? `<div class="txt">${linkifyChat(escapeHtml(m.text))}${editedTag}</div>` : '')
       : `<div class="txt">${linkifyChat(escapeHtml(m.text))}${editedTag}</div>`;
     const initial = (m.name||'?').trim().charAt(0).toUpperCase() || '?';
-    const avatar = m.photoURL
-      ? `<div class="msg-avatar" data-avatar-full="${escapeHtml(m.photoURL)}" style="background-image:url('${escapeHtml(m.photoURL)}')"></div>`
+    const avatar = dPhoto
+      ? `<div class="msg-avatar" data-avatar-full="${escapeHtml(dPhoto)}" style="background-image:url('${escapeHtml(dPhoto)}')"></div>`
       : `<div class="msg-avatar" style="background-image:url('${DEFAULT_AVATAR}')"></div>`;
     return `<div class="msg-row ${mine?'me':''}">
       ${avatar}
       <div class="msg ${mine?'me':''}" data-msg-idx="${idx}" data-msg-id="${escapeHtml(m._id||'')}">
-        <div class="who">${escapeHtml(m.name)}</div>
+        <div class="who">${escapeHtml(dName)}</div>
         ${quote}
         ${body}
         <div class="time">${hh}:${mm}</div>
@@ -6573,7 +6598,7 @@ function openChatMsgMenu(idx){
   const m = currentChatMsgs[idx];
   if(!m || m.deleted) return;
   window._chatMenuTs = Date.now();
-  const mine = m.name === chatName;
+  const mine = mgIsMine(m);
   const isTextEditable = mine && (!m.type || m.type === 'text');
   const bubble = document.querySelector('#chatMessages .msg[data-msg-idx="'+idx+'"]');
   const view = document.getElementById('chatView');
@@ -6702,6 +6727,7 @@ async function sendVoiceMessage(blob){
     const audioUrl = await ref.getDownloadURL();
     const msg = {name: chatName, type: 'voice', audioUrl, time: Date.now()};
     if(myChatPhotoURL) msg.photoURL = myChatPhotoURL;
+    if(auth.currentUser) msg.uid = auth.currentUser.uid;
     if(chatReplyTo){ msg.replyToName = chatReplyTo.name; msg.replyToText = chatReplyTo.text; cancelChatReply(); }
     await db.collection('chat_messages').add(msg);
   }catch(e){
@@ -6779,6 +6805,7 @@ async function confirmSendChatImage(){
     const msg = {name: chatName, type: 'image', imageUrl, time: Date.now()};
     if(caption) msg.text = caption;
     if(myChatPhotoURL) msg.photoURL = myChatPhotoURL;
+    if(auth.currentUser) msg.uid = auth.currentUser.uid;
     if(chatReplyTo){ msg.replyToName = chatReplyTo.name; msg.replyToText = chatReplyTo.text; cancelChatReply(); }
     await db.collection('chat_messages').add(msg);
     cancelChatImagePreview();
@@ -6842,6 +6869,7 @@ async function sendMsg(){
   try{
     const msg = {name: chatName, text, time: Date.now()};
     if(myChatPhotoURL) msg.photoURL = myChatPhotoURL;
+    if(auth.currentUser) msg.uid = auth.currentUser.uid;
     if(chatReplyTo){ msg.replyToName = chatReplyTo.name; msg.replyToText = chatReplyTo.text; cancelChatReply(); }
     await db.collection('chat_messages').add(msg);
   }catch(e){
@@ -7563,6 +7591,7 @@ try{
         document.getElementById('profileUsername').textContent = data.username || 'Mtumiaji';
         document.getElementById('profileEmail').textContent = user.email;
         document.getElementById('profileMeta').textContent = [data.nationality, data.phone].filter(Boolean).join(' • ');
+        setCoverPhoto(data.coverURL || '');
         if(data.photoURL){ setAvatarPhoto(data.photoURL); myChatPhotoURL = data.photoURL; }
         else { myChatPhotoURL = ''; setAvatarDefault(); }
         // Account tab (Overview) view + edit fields
@@ -7626,6 +7655,43 @@ function setAvatarPhoto(url){
   navMeSet(url);
 }
 
+function setCoverPhoto(url){
+  const el = document.getElementById('pfCover'); if(!el) return;
+  el.style.backgroundImage = url ? "url('" + url + "')" : '';
+}
+async function uploadCoverPhoto(file){
+  if(!file || !auth.currentUser) return;
+  if(!file.type.startsWith('image/')){ alert(tvT('Chagua picha halali (jpg/png).','Choose a valid image (jpg/png).')); return; }
+  if(file.size > 8*1024*1024){ alert(tvT('Picha ni kubwa mno (chini ya 8MB).','Image is too large (under 8MB).')); return; }
+  const st = document.getElementById('avatarUploadStatus'); if(st) st.textContent = tvT('Inapakia background...','Uploading background...');
+  try{
+    const url = await uploadToImgbb(file);
+    await db.collection('users').doc(auth.currentUser.uid).set({coverURL: url}, {merge:true});
+    setCoverPhoto(url);
+    if(st){ st.textContent = tvT('Background imewekwa ✓','Background set ✓'); setTimeout(()=>{ st.textContent=''; }, 2500); }
+  }catch(e){
+    console.error(e); if(st) st.textContent = '';
+    alert(tvT('Imeshindwa kupakia. Jaribu tena.','Upload failed. Try again.'));
+  }
+}
+var mgProf = {}, mgProfPending = false, chatLastMsgs = [];
+function mgIsMine(m){ if(m.uid && auth.currentUser) return m.uid === auth.currentUser.uid; return m.name === chatName; }
+function mgProfNeed(msgs){
+  const need = []; msgs.forEach(m=>{ if(m.uid && !(m.uid in mgProf) && need.indexOf(m.uid)<0) need.push(m.uid); });
+  if(!need.length || mgProfPending) return;
+  mgProfPending = true;
+  Promise.all(need.slice(0,40).map(u=>db.collection('leaderboard').doc(u).get().then(d=>{ mgProf[u] = d.exists ? d.data() : {}; }).catch(()=>{ mgProf[u] = {}; })))
+    .then(()=>{ mgProfPending = false; try{ renderMessages(chatLastMsgs); }catch(e){} });
+}
+function lbSyncProfile(){ // jina/picha likibadilika, lisasishwe kila mahali (chat, vinara, Me)
+  try{
+    const pts = parseInt((document.getElementById('pointsCount')||{}).textContent,10) || 0;
+    const name = (document.getElementById('profileUsername')||{}).textContent || '';
+    lbLastSent = ''; lbSync(pts, true, name, myChatPhotoURL || '');
+    if(auth.currentUser) mgProf[auth.currentUser.uid] = {username: name, photoURL: myChatPhotoURL || ''};
+    try{ renderMessages(chatLastMsgs); }catch(e){}
+  }catch(e){}
+}
 async function uploadProfilePhoto(file){
   if(!file || !auth.currentUser) return;
   if(!file.type.startsWith('image/')){ alert('Chagua picha halali (jpg/png).'); return; }
@@ -7637,6 +7703,7 @@ async function uploadProfilePhoto(file){
     await db.collection('users').doc(auth.currentUser.uid).set({photoURL: url}, {merge:true});
     setAvatarPhoto(url);
     myChatPhotoURL = url;
+    try{ lbSyncProfile(); }catch(e){}
     if(statusEl) statusEl.textContent = 'Picha imewekwa ✓';
     setTimeout(()=>{ if(statusEl) statusEl.textContent = ''; }, 2500);
   }catch(e){
