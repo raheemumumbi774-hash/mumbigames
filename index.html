@@ -774,6 +774,42 @@
   .g-footer .g-action.dl{cursor:default;color:#7fe3ff;}
   .g-footer .g-action.maoni{background:linear-gradient(135deg,rgba(168,85,247,.35),rgba(245,166,35,.28));border-color:rgba(255,255,255,.18);font-size:12px;padding:6px 12px;}
   .g-footer .g-action.share{color:#1a1200;background:linear-gradient(135deg,#ffcc66,#f5a623);border:0;font-size:12px;font-weight:800;padding:7px 13px;box-shadow:0 3px 10px rgba(245,166,35,.3);}
+  /* ===== compact v3 ===== */
+  .pf-cover{height:96px;background-position:center var(--cy,18%);touch-action:pan-x;cursor:grab;}
+  .pf-hint{position:absolute;left:8px;bottom:6px;z-index:2;font-size:9px;color:#fff;background:rgba(0,0,0,.45);padding:2px 7px;border-radius:10px;pointer-events:none;}
+  .pf-body{flex-direction:row;align-items:flex-start;gap:10px;margin-top:-30px;padding:0 4px 2px;}
+  .pf-av,.pf-avatar{width:64px;height:64px;}
+  .pf-avatar{border-width:3px;}
+  .pf-avcam{width:22px;height:22px;font-size:10px;}
+  .pf-info{padding-top:32px;flex:1;min-width:0;}
+  .pf-name{font-size:16px;}
+  .pf-sub{font-size:10.5px;margin-top:1px;}
+  .g-thumb{height:180px;}
+  .g-name{font-size:13px;}
+  .g-date{font-size:10px;margin-top:2px;}
+  .g-desc{font-size:10.5px;margin-top:4px;}
+  .tag{font-size:8.5px;padding:2px 7px;}
+  .g-footer{margin-top:9px;padding-top:9px;}
+  .g-footer .g-action{font-size:11px;padding:5px 10px;gap:5px;}
+  .g-footer .g-action svg{width:13px;height:13px;}
+  .g-footer .g-action.maoni{font-size:11px;padding:5px 10px;}
+  .g-footer .g-action.share{font-size:11px;padding:6px 11px;}
+  #overlay{align-items:flex-start;}
+  #overlay .modal{margin-top:5vh;border-radius:20px;border:1px solid var(--line);max-height:90vh;padding:14px;}
+  .modal-thumb{height:120px;margin-bottom:9px;}
+  .modal h3{font-size:13px;}
+  .modal-desc{font-size:10.5px;}
+  .perf-box{padding:8px 11px;font-size:10px;margin-bottom:8px;}
+  .dl-btn{font-size:11.5px;padding:10px;margin-bottom:8px;border-radius:10px;}
+  .req-card{margin-top:14px;margin-bottom:6px;border-radius:16px;}
+  .req-in{padding:11px 11px 10px;border-radius:14px;}
+  .req-top{gap:9px;}
+  .req-pad{width:32px;height:32px;border-radius:10px;font-size:16px;}
+  .req-ti{font-size:12.5px;}
+  .req-su{font-size:10px;}
+  .req-in input,.req-in textarea{margin-top:7px;padding:8px 10px;font-size:12px;border-radius:10px;}
+  .req-btn{margin-top:7px;padding:9px;font-size:12px;border-radius:10px;}
+  .req-hint{font-size:9.5px;margin-top:6px;}
   .sv-box{display:none;margin-top:16px;border-radius:18px;padding:2px;background:linear-gradient(135deg,#a855f7,#f5a623,#ff4d6d);}
   .sv-in{border-radius:16px;background:#14142b;padding:12px;}
   .sv-lab{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:1px;color:#ffcc66;margin-bottom:9px;}
@@ -1400,6 +1436,7 @@
       <div class="pf-card">
         <div class="pf-cover" id="pfCover">
           <div class="pf-cam" onclick="document.getElementById('coverFileInput').click()" title="Background">📷</div>
+          <div class="pf-hint" id="pfHint" style="display:none;">↕ Buruta kupanga</div>
           <input type="file" id="coverFileInput" accept="image/*" style="display:none;" onchange="uploadCoverPhoto(this.files[0])">
         </div>
         <div class="pf-body">
@@ -1428,16 +1465,6 @@
 
       <!-- ---- MUHTASARI (Overview) ---- -->
       <div class="ptab-panel active" id="ptabOverview">
-        <div class="req-card" id="reqCard"><div class="req-in">
-          <div class="req-top">
-            <div class="req-pad">🎮</div>
-            <div><div class="req-ti" data-i18n="req_title">Omba Game Unayoitaka</div><div class="req-su" data-i18n="req_sub">Tuambie game gani uone ikiwekwa hapa</div></div>
-          </div>
-          <input type="text" id="reqGameTitle" data-i18n-placeholder="req_name_ph" placeholder="Jina la game, mfano: GTA V" maxlength="80">
-          <textarea id="reqGameNote" rows="2" data-i18n-placeholder="req_note_ph" placeholder="Maelezo ya ziada (hiari)" maxlength="300"></textarea>
-          <button class="req-btn" id="reqSendBtn" onclick="submitGameRequest()" data-i18n="req_btn">🚀 Tuma Ombi</button>
-          <div class="req-hint" data-i18n="req_hint">Admin akijibu, utaliona jibu kwenye tab ya Maoni 🔴</div>
-        </div></div>
         <div class="settings-section">
           <div class="settings-label" data-i18n="profile_stats_title">📊 Takwimu Zangu</div>
           <div style="display:flex;gap:10px;margin-top:10px;">
@@ -1474,6 +1501,16 @@
             <button class="post-btn" onclick="saveAccountEdit()" data-i18n="account_save_btn">Hifadhi</button>
           </div>
         </div>
+        <div class="req-card" id="reqCard"><div class="req-in">
+          <div class="req-top">
+            <div class="req-pad">🎮</div>
+            <div><div class="req-ti" data-i18n="req_title">Omba Game Unayoitaka</div><div class="req-su" data-i18n="req_sub">Tuambie game gani uone ikiwekwa hapa</div></div>
+          </div>
+          <input type="text" id="reqGameTitle" data-i18n-placeholder="req_name_ph" placeholder="Jina la game, mfano: GTA V" maxlength="80">
+          <textarea id="reqGameNote" rows="1" data-i18n-placeholder="req_note_ph" placeholder="Maelezo ya ziada (hiari)" maxlength="300"></textarea>
+          <button class="req-btn" id="reqSendBtn" onclick="submitGameRequest()" data-i18n="req_btn">🚀 Tuma Ombi</button>
+          <div class="req-hint" data-i18n="req_hint">Admin akijibu, utaliona jibu kwenye tab ya Maoni 🔴</div>
+        </div></div>
       </div>
 
       <!-- ---- SERA (Policy) ---- -->
@@ -2028,6 +2065,7 @@ function openGameModal(g, restoreState){
     showModalDownloads(g, restoreState);
   }
   document.getElementById('overlay').classList.add('show');
+  try{ const ov=document.getElementById('overlay'); ov.scrollTop=0; const md=ov.querySelector('.modal'); if(md) md.scrollTop=0; }catch(e){}
 }
 
 // ---- Paid-game download gating: user cannot see download links until
@@ -7722,7 +7760,7 @@ try{
         document.getElementById('profileUsername').textContent = data.username || 'Mtumiaji';
         document.getElementById('profileEmail').textContent = user.email;
         document.getElementById('profileMeta').textContent = [data.nationality, data.phone].filter(Boolean).join(' • ');
-        setCoverPhoto(data.coverURL || '');
+        setCoverPhoto(data.coverURL || '', typeof data.coverY === 'number' ? data.coverY : 18);
         if(data.photoURL){ setAvatarPhoto(data.photoURL); myChatPhotoURL = data.photoURL; }
         else { myChatPhotoURL = ''; setAvatarDefault(); }
         // Account tab (Overview) view + edit fields
@@ -7786,10 +7824,27 @@ function setAvatarPhoto(url){
   navMeSet(url);
 }
 
-function setCoverPhoto(url){
+function setCoverPhoto(url, y){
   const el = document.getElementById('pfCover'); if(!el) return;
   el.style.backgroundImage = url ? "url('" + url + "')" : '';
+  if(typeof y === 'number') el.style.setProperty('--cy', y + '%');
+  const h = document.getElementById('pfHint'); if(h) h.style.display = url ? 'block' : 'none';
 }
+(function(){
+  let drag = null;
+  function pt(e){ return (e.touches && e.touches[0]) ? e.touches[0] : e; }
+  function cur(el){ const v = parseFloat(getComputedStyle(el).getPropertyValue('--cy')); return isNaN(v) ? 18 : v; }
+  document.addEventListener('DOMContentLoaded', function(){
+    const el = document.getElementById('pfCover'); if(!el) return;
+    function start(e){ if(e.target.closest('.pf-cam')) return; if(!el.style.backgroundImage) return; drag = {y: pt(e).clientY, v: cur(el)}; }
+    function move(e){ if(!drag) return; const dy = pt(e).clientY - drag.y; const v = Math.max(0, Math.min(100, drag.v - dy*0.6)); el.style.setProperty('--cy', v + '%'); if(e.cancelable) e.preventDefault(); }
+    function end(){ if(!drag) return; drag = null; const v = Math.round(cur(el));
+      try{ localStorage.setItem('mgCoverY', String(v)); }catch(e){}
+      if(auth.currentUser) db.collection('users').doc(auth.currentUser.uid).set({coverY: v}, {merge:true}).catch(function(){}); }
+    el.addEventListener('touchstart', start, {passive:true}); el.addEventListener('touchmove', move, {passive:false}); el.addEventListener('touchend', end);
+    el.addEventListener('mousedown', start); window.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+  });
+})();
 async function uploadCoverPhoto(file){
   if(!file || !auth.currentUser) return;
   if(!file.type.startsWith('image/')){ alert(tvT('Chagua picha halali (jpg/png).','Choose a valid image (jpg/png).')); return; }
@@ -7798,7 +7853,8 @@ async function uploadCoverPhoto(file){
   try{
     const url = await uploadToImgbb(file);
     await db.collection('users').doc(auth.currentUser.uid).set({coverURL: url}, {merge:true});
-    setCoverPhoto(url);
+    setCoverPhoto(url, 18);
+    db.collection('users').doc(auth.currentUser.uid).set({coverY: 18}, {merge:true}).catch(function(){});
     if(st){ st.textContent = tvT('Background imewekwa ✓','Background set ✓'); setTimeout(()=>{ st.textContent=''; }, 2500); }
   }catch(e){
     console.error(e); if(st) st.textContent = '';
