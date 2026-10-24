@@ -282,6 +282,7 @@
     <div class="tab" data-view="banners">Banner</div>
     <div class="tab" data-view="bettips">🎫 Bet Tips</div>
     <div class="tab" data-view="feedback">💬 Maoni</div>
+    <div class="tab" data-view="requests">🎮 Request</div>
     <div class="tab" data-view="ads">Tangazo</div>
   </div>
 
@@ -407,6 +408,8 @@
       <div class="price-box" id="setupBox">
         <label>Maelekezo ya kuseti (hatua kwa hatua)</label>
         <textarea id="gSetupSteps" placeholder="1. Pakua emulator&#10;2. Fungua faili la game&#10;3. ..." style="min-height:100px;"></textarea>
+        <label style="margin-top:12px;display:block;">🎓 Link ya YouTube ya video ya kuseti</label>
+        <input type="text" id="gSetupVideo" placeholder="https://youtu.be/... au https://www.youtube.com/watch?v=...">
       </div>
 
       <div class="form-actions">
@@ -577,14 +580,21 @@
 
     <!-- FEEDBACK -->
     <div class="view" id="view-feedback">
-      <div class="section-title"><h2>💬 Maoni na Maombi ya Games</h2></div>
-      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-        <div class="tab active" style="flex:1 1 auto;min-width:0;text-align:center;white-space:normal;" data-fbfilter="all" onclick="setFbAdminFilter('all')">Yote</div>
-        <div class="tab" style="flex:1 1 auto;min-width:0;text-align:center;white-space:normal;" data-fbfilter="feedback" onclick="setFbAdminFilter('feedback')">📝 Maoni</div>
-        <div class="tab" style="flex:1 1 auto;min-width:0;text-align:center;white-space:normal;" data-fbfilter="request" onclick="setFbAdminFilter('request')">🎮 Maombi ya Game</div>
-        <div class="tab" style="flex:1 1 auto;min-width:0;text-align:center;white-space:normal;" data-fbfilter="open" onclick="setFbAdminFilter('open')">🔴 Bado Hazijajibiwa</div>
+      <div class="section-title"><h2>💬 Maoni ya Games</h2></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <div class="tab active" style="flex:1;text-align:center;" data-fbf="fb" data-fbv="all" onclick="setFbAdminFilter('fb','all')">Yote</div>
+        <div class="tab" style="flex:1;text-align:center;" data-fbf="fb" data-fbv="open" onclick="setFbAdminFilter('fb','open')">🔴 Hazijajibiwa</div>
       </div>
       <div id="feedbackList"></div>
+    </div>
+
+    <div class="view" id="view-requests">
+      <div class="section-title"><h2>🎮 Maombi ya Games</h2></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <div class="tab active" style="flex:1;text-align:center;" data-fbf="rq" data-fbv="all" onclick="setFbAdminFilter('rq','all')">Yote</div>
+        <div class="tab" style="flex:1;text-align:center;" data-fbf="rq" data-fbv="open" onclick="setFbAdminFilter('rq','open')">🔴 Hazijajibiwa</div>
+      </div>
+      <div id="requestList"></div>
     </div>
 
     <!-- SOCIAL -->
@@ -804,7 +814,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
     if(tab.dataset.view==='tv') loadTvAdmin();
     if(tab.dataset.view==='notices') loadNoticesAdmin();
     if(tab.dataset.view==='bettips') loadBetTipsAdmin();
-    if(tab.dataset.view==='feedback') loadFeedbackAdmin();
+    if(tab.dataset.view==='feedback' || tab.dataset.view==='requests') loadFeedbackAdmin();
     if(tab.dataset.view==='payment') loadPaymentRequests();
     if(tab.dataset.view==='ads') loadSponsoredAdsAdmin();
   });
@@ -855,6 +865,7 @@ function resetForm(){
   document.getElementById('gPrice').value='';
   document.getElementById('gPerformance').value='';
   document.getElementById('gSetupSteps').value='';
+  document.getElementById('gSetupVideo').value='';
   document.getElementById('downloadRows').innerHTML='';
   addDownloadRow();
   paidOn=false; trendOn=false; setupOn=false; tokenLockedOn=false;
@@ -1297,11 +1308,11 @@ async function deleteBetTip(id){
 }
 
 // ---- Feedback & Game Requests ----
-let fbAdminFilter = 'all';
+let fbAdminFilter = {fb:'all', rq:'all'};
 let feedbackCache = [];
-function setFbAdminFilter(f){
-  fbAdminFilter = f;
-  document.querySelectorAll('[data-fbfilter]').forEach(t=>t.classList.toggle('active', t.dataset.fbfilter===f));
+function setFbAdminFilter(k,f){
+  fbAdminFilter[k] = f;
+  document.querySelectorAll('[data-fbf="'+k+'"]').forEach(t=>t.classList.toggle('active', t.dataset.fbv===f));
   renderFeedbackAdmin();
 }
 function loadFeedbackAdmin(){
@@ -1322,12 +1333,18 @@ function fbLoadUsers(list){
 }
 function fbEditReply(id){ fbEditing[id] = true; renderFeedbackAdmin(); }
 function renderFeedbackAdmin(){
-  let list = feedbackCache;
-  if(fbAdminFilter === 'feedback') list = list.filter(f=>f.type==='feedback');
-  if(fbAdminFilter === 'request') list = list.filter(f=>f.type==='request');
-  if(fbAdminFilter === 'open') list = list.filter(f=>!f.adminReply);
-  fbLoadUsers(list);
-  document.getElementById('feedbackList').innerHTML = list.length ? list.map(f=>{
+  fbLoadUsers(feedbackCache);
+  const mk = (key, items)=>{ const l = fbAdminFilter[key]==='open' ? items.filter(f=>!f.adminReply) : items; return l.length ? l.map(fbCardHtml).join('') : '<div class="empty">Hakuna ujumbe hapa.</div>'; };
+  const fbItems = feedbackCache.filter(f=>f.type!=='request'), rqItems = feedbackCache.filter(f=>f.type==='request');
+  document.getElementById('feedbackList').innerHTML = mk('fb', fbItems);
+  document.getElementById('requestList').innerHTML = mk('rq', rqItems);
+  const cnt = (items)=>items.filter(f=>!f.adminReply).length;
+  const t1=document.querySelector('.tab[data-view="feedback"]'), t2=document.querySelector('.tab[data-view="requests"]');
+  if(t1) t1.textContent = '💬 Maoni' + (cnt(fbItems)? ' ('+cnt(fbItems)+')':'');
+  if(t2) t2.textContent = '🎮 Request' + (cnt(rqItems)? ' ('+cnt(rqItems)+')':'');
+}
+function fbCardHtml(f){
+  return (function(){
     const d = new Date(f.createdAt);
     const dd = String(d.getDate()).padStart(2,'0'), mo = String(d.getMonth()+1).padStart(2,'0');
     const isReq = f.type === 'request';
@@ -1350,7 +1367,7 @@ function renderFeedbackAdmin(){
           ${replied ? '<span class="fb-done">✓ Imejibiwa</span>' : '<span class="fb-new">● Mpya</span>'}
         </div>
       </div>
-      <div class="fb-kind">${isReq ? '🎮 Ombi la Game' + (f.gameTitle ? ' · ' + escapeHtmlAdmin(f.gameTitle) : '') : '📝 Maoni'}</div>
+      <div class="fb-kind">${isReq ? '🎮 Ombi la Game' + (f.gameTitle ? ' · ' + escapeHtmlAdmin(f.gameTitle) : '') : '💬 Maoni' + (f.gameTitle ? ' · 🎮 ' + escapeHtmlAdmin(f.gameTitle) : '')}</div>
       <div class="fb-msg">${escapeHtmlAdmin(f.text)}</div>
       ${showBox ? `<div class="fb-reply">
         <textarea id="fbReplyInput-${f.id}" rows="1" placeholder="Jibu...">${replied ? escapeHtmlAdmin(f.adminReply) : ''}</textarea>
@@ -1361,7 +1378,7 @@ function renderFeedbackAdmin(){
         <button class="icon-btn del" onclick="deleteFeedback('${f.id}')">🗑</button>
       </div>
     </div>`;
-  }).join('') : '<div class="empty">Hakuna ujumbe hapa.</div>';
+  })();
 }
 async function replyToFeedback(id){
   const val = document.getElementById('fbReplyInput-' + id).value.trim();
@@ -1424,6 +1441,7 @@ async function saveGame(){
     performance: document.getElementById('gPerformance').value,
     needsSetup: setupOn,
     setupSteps: setupOn ? document.getElementById('gSetupSteps').value.trim() : '',
+    setupVideo: setupOn ? document.getElementById('gSetupVideo').value.trim() : '',
     createdAt: editingId ? (existing.createdAt || Date.now()) : Date.now(),
     hidden: editingId ? !!existing.hidden : false
   };
@@ -1469,6 +1487,7 @@ function editGame(id){
   document.getElementById('gPerformance').value=g.performance||'';
   setupOn = !!g.needsSetup;
   document.getElementById('gSetupSteps').value=g.setupSteps||'';
+  document.getElementById('gSetupVideo').value=g.setupVideo||'';
   document.getElementById('setupSwitch').classList.toggle('on', setupOn);
   document.getElementById('setupBox').classList.toggle('show', setupOn);
   paidOn = !!g.paid;

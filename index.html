@@ -121,6 +121,7 @@
   header{position:sticky;top:0;z-index:10;background:rgba(10,13,10,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;gap:10px;}
   .token-pill{display:flex;align-items:center;gap:5px;background:rgba(255,211,71,0.12);border:1px solid rgba(255,211,71,0.4);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:800;color:#ffd347;font-family:'Baloo 2',sans-serif;margin-left:auto;cursor:pointer;white-space:nowrap;}
   .token-pill .coin{font-size:13px;}
+  .brand-logo{width:38px;height:38px;flex:none;filter:drop-shadow(0 0 8px rgba(245,166,35,.5));}
   .mark{width:30px;height:30px;background:var(--lime);border-radius:8px;position:relative;flex:none;}
   .mark::after{content:'';position:absolute;top:5px;left:5px;right:5px;bottom:11px;background:var(--bg);border-radius:4px;}
   header span{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15.5px;}
@@ -632,15 +633,15 @@
   .ptab-dot{display:none;position:absolute;top:-4px;right:-4px;width:9px;height:9px;border-radius:50%;background:#ff3b30;border:2px solid var(--bg);}
   .nav-item.active{color:var(--lime);}
   .pf-card{background:none;border:0;border-radius:0;overflow:visible;margin-bottom:14px;}
-  .pf-cover{position:relative;height:150px;border-radius:0;background:linear-gradient(135deg,#2b1a52 0%,#7a4a14 55%,#14152a 100%);background-size:cover;background-position:center;}
+  .pf-cover{position:relative;height:104px;border-radius:0;background:linear-gradient(135deg,#2b1a52 0%,#7a4a14 55%,#14152a 100%);background-size:cover;background-position:center;}
   .pf-cover:after{display:none;}
   .pf-cam{position:absolute;right:10px;top:10px;z-index:2;width:30px;height:30px;border-radius:50%;background:rgba(10,10,22,.65);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;}
-  .pf-body{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0 4px 6px;margin-top:-48px;position:relative;z-index:3;}
-  .pf-av{position:relative;width:96px;height:96px;flex:none;}
-  .pf-avatar{width:96px;height:96px;border-radius:50%;background-color:#cdd1d6;background-size:cover;background-position:center;border:4px solid var(--bg);box-sizing:border-box;}
+  .pf-body{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:0 4px 2px;margin-top:-34px;position:relative;z-index:3;}
+  .pf-av{position:relative;width:70px;height:70px;flex:none;}
+  .pf-avatar{width:70px;height:70px;border-radius:50%;background-color:#cdd1d6;background-size:cover;background-position:center;border:4px solid var(--bg);box-sizing:border-box;}
   .pf-avcam{position:absolute;right:-2px;bottom:-2px;width:25px;height:25px;border-radius:50%;background:var(--panel-2);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;}
   .pf-info{width:100%;min-width:0;padding-bottom:2px;}
-  .pf-name{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:22px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .pf-name{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:19px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .pf-sub{font-size:11px;color:var(--sub);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .nav-av{width:21px;height:21px;border-radius:50%;object-fit:cover;background:#cdd1d6;border:2px solid transparent;box-sizing:border-box;}
   .nav-item.active .nav-av{border-color:var(--lime);box-shadow:0 0 8px rgba(245,166,35,.55);}
@@ -754,13 +755,66 @@
   #aiView .ai-msg a.ai-act{text-decoration:none;color:#ffd27a;}
   #aiView .ai-msg a.ai-act.wa{border-color:rgba(37,211,102,.7);background:rgba(37,211,102,.16);color:#7dffb0;}
   .ai-msg .ai-act.wa{border-color:rgba(37,211,102,.7);background:rgba(37,211,102,.16);color:#7dffb0;}
+
+  /* ===== Maoni per game, like, request card ===== */
+  .g-footer{gap:6px;}
+  .g-action.like{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .g-action.like.on{color:#ff4d6d;}
+  .g-action.like.pop .hrt{animation:mgPop .35s ease;}
+  @keyframes mgPop{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
+  .g-action.maoni{cursor:pointer;color:#fff;font-weight:700;padding:5px 10px;border-radius:20px;background:linear-gradient(135deg,rgba(168,85,247,.45),rgba(245,166,35,.4));border:1px solid rgba(255,255,255,.18);-webkit-tap-highlight-color:transparent;}
+  .g-footer{gap:8px;}
+  .g-footer .g-action{font-size:14px;font-weight:700;color:#fff;padding:8px 13px;border-radius:24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);}
+  .g-footer .g-action.like.on{color:#ff4d6d;background:rgba(255,77,109,.14);border-color:rgba(255,77,109,.4);}
+  .g-footer .g-action.maoni{font-size:13.5px;padding:8px 14px;}
+  .g-footer .g-action.share{font-size:14px;font-weight:800;color:#1a1200;background:linear-gradient(135deg,#ffcc66,#f5a623);border:0;padding:9px 16px;box-shadow:0 4px 14px rgba(245,166,35,.35);cursor:pointer;}
+  /* footer ndogo */
+  .g-footer{gap:8px;}
+  .g-footer .g-action{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#e9ecff;padding:6px 12px;border-radius:20px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);box-shadow:none;cursor:pointer;line-height:1;}
+  .g-footer .g-action.dl{cursor:default;color:#7fe3ff;}
+  .g-footer .g-action.maoni{background:linear-gradient(135deg,rgba(168,85,247,.35),rgba(245,166,35,.28));border-color:rgba(255,255,255,.18);font-size:12px;padding:6px 12px;}
+  .g-footer .g-action.share{color:#1a1200;background:linear-gradient(135deg,#ffcc66,#f5a623);border:0;font-size:12px;font-weight:800;padding:7px 13px;box-shadow:0 3px 10px rgba(245,166,35,.3);}
+  .sv-box{display:none;margin-top:16px;border-radius:18px;padding:2px;background:linear-gradient(135deg,#a855f7,#f5a623,#ff4d6d);}
+  .sv-in{border-radius:16px;background:#14142b;padding:12px;}
+  .sv-lab{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:1px;color:#ffcc66;margin-bottom:9px;}
+  .sv-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000 center/cover no-repeat;cursor:pointer;}
+  .sv-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.55));}
+  .sv-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:3;}
+  .sv-play{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;z-index:2;background:linear-gradient(135deg,#f5a623,#ff4d6d);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 0 rgba(245,166,35,.6);animation:svPulse 1.8s infinite;}
+  .sv-play:before{content:"";border-left:20px solid #fff;border-top:12px solid transparent;border-bottom:12px solid transparent;margin-left:5px;}
+  @keyframes svPulse{70%{box-shadow:0 0 0 16px rgba(245,166,35,0)}100%{box-shadow:0 0 0 0 rgba(245,166,35,0)}}
+  .sv-t{font-weight:800;font-size:14px;margin-top:10px;}
+  .sv-s{font-size:11.5px;color:var(--sub);margin-top:2px;line-height:1.4;}
+  .gm-ov{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:flex-end;z-index:70;}
+  .gm-ov.show{display:flex;}
+  .gm-sheet{width:100%;max-width:520px;margin:0 auto;background:var(--panel);border-radius:22px 22px 0 0;padding:18px 16px 22px;border-top:1px solid var(--line);}
+  .gm-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .gm-ico{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#a855f7,#f5a623);display:flex;align-items:center;justify-content:center;font-size:19px;flex:none;}
+  .gm-t{font-weight:800;font-size:14px;line-height:1.2;}
+  .gm-s{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70vw;}
+  .gm-x{margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--panel-2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--sub);}
+  .gm-sheet textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:12px 13px;border-radius:12px;font-size:13px;font-family:'Baloo 2',sans-serif;resize:none;}
+  .gm-send{margin-top:10px;width:100%;border:0;border-radius:12px;padding:13px;font-weight:800;font-size:13.5px;font-family:'Baloo 2',sans-serif;color:#1a1204;background:linear-gradient(135deg,#ffcf6b,#f5a623 55%,#ff8a3d);cursor:pointer;}
+  .req-card{position:relative;border-radius:20px;padding:2px;overflow:hidden;margin-bottom:14px;}
+  .req-card:before{content:"";position:absolute;left:50%;top:50%;width:260%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,#f5a623,#a855f7,#22d3ee,#f5a623);animation:reqSpin 5s linear infinite;}
+  @keyframes reqSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  .req-in{position:relative;border-radius:18px;padding:16px 14px 14px;background:linear-gradient(160deg,#241b45 0%,#15152b 60%,#2a1a12 100%);}
+  .req-top{display:flex;align-items:center;gap:12px;}
+  .req-pad{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#a855f7,#f5a623);display:flex;align-items:center;justify-content:center;font-size:23px;flex:none;box-shadow:0 6px 18px rgba(168,85,247,.45);animation:reqFloat 2.6s ease-in-out infinite;}
+  @keyframes reqFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .req-ti{font-weight:800;font-size:15px;line-height:1.15;}
+  .req-su{font-size:11px;color:var(--sub);margin-top:2px;}
+  .req-in input,.req-in textarea{width:100%;margin-top:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--text);padding:12px 13px;border-radius:12px;font-size:13px;font-family:'Baloo 2',sans-serif;}
+  .req-in textarea{resize:none;}
+  .req-btn{margin-top:10px;width:100%;border:0;border-radius:12px;padding:13px;font-weight:800;font-size:13.5px;font-family:'Baloo 2',sans-serif;color:#1a1204;background:linear-gradient(135deg,#ffcf6b,#f5a623 55%,#ff8a3d);cursor:pointer;box-shadow:0 8px 22px rgba(245,166,35,.35);}
+  .req-hint{font-size:10.5px;color:var(--sub);text-align:center;margin-top:9px;}
 </style>
 </head>
 <body>
 
 <div id="homeView">
 <header>
-  <div class="mark"></div>
+  <svg class="brand-logo" viewBox="0 0 40 40" width="38" height="38" aria-label="mumbigames"><defs><linearGradient id="blg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd27a"/><stop offset=".55" stop-color="#f5a623"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient><linearGradient id="blp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a1b52"/><stop offset="1" stop-color="#0b0b1a"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="url(#blg)"/><path d="M11 14.5h18a5 5 0 0 1 4.9 4l1.3 6.4a3.4 3.4 0 0 1-5.9 2.8l-2.4-2.9H13.1l-2.4 2.9a3.4 3.4 0 0 1-5.9-2.8l1.3-6.4a5 5 0 0 1 4.9-4z" fill="url(#blp)"/><path d="M12.5 18v5M10 20.5h5" stroke="#ffd27a" stroke-width="1.8" stroke-linecap="round"/><circle cx="26" cy="19.4" r="1.5" fill="#ffd27a"/><circle cx="29.2" cy="22.2" r="1.5" fill="#ff8a5c"/></svg>
   <span>mumbigames</span>
   <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
     <div class="gift" id="giftBtn" onclick="showEarnTokens()" aria-label="Ads"><span class="gift-txt" data-i18n="gift_txt">Tangazo</span><svg class="gift-box" viewBox="0 0 32 32" width="22" height="22"><defs><linearGradient id="gW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc83d"/><stop offset="1" stop-color="#f59a1b"/></linearGradient></defs><rect class="g-in" x="6" y="14" width="20" height="4" rx="1.5" fill="#262b3d"/><rect x="5" y="15" width="22" height="14" rx="3" fill="url(#gW)"/><rect x="14.5" y="15" width="3" height="14" fill="#7c5cff"/><g class="g-lid"><rect x="3" y="10" width="26" height="6.5" rx="2.5" fill="#ffd25e"/><rect x="14.5" y="10" width="3" height="6.5" fill="#7c5cff"/><path d="M16 10C13 4.5 8.5 6.5 11 9.5C12 10.5 14.5 10.3 16 10Z" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round"/><path d="M16 10C19 4.5 23.5 6.5 21 9.5C20 10.5 17.5 10.3 16 10Z" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round"/></g></svg></div>
@@ -1374,6 +1428,16 @@
 
       <!-- ---- MUHTASARI (Overview) ---- -->
       <div class="ptab-panel active" id="ptabOverview">
+        <div class="req-card" id="reqCard"><div class="req-in">
+          <div class="req-top">
+            <div class="req-pad">🎮</div>
+            <div><div class="req-ti" data-i18n="req_title">Omba Game Unayoitaka</div><div class="req-su" data-i18n="req_sub">Tuambie game gani uone ikiwekwa hapa</div></div>
+          </div>
+          <input type="text" id="reqGameTitle" data-i18n-placeholder="req_name_ph" placeholder="Jina la game, mfano: GTA V" maxlength="80">
+          <textarea id="reqGameNote" rows="2" data-i18n-placeholder="req_note_ph" placeholder="Maelezo ya ziada (hiari)" maxlength="300"></textarea>
+          <button class="req-btn" id="reqSendBtn" onclick="submitGameRequest()" data-i18n="req_btn">🚀 Tuma Ombi</button>
+          <div class="req-hint" data-i18n="req_hint">Admin akijibu, utaliona jibu kwenye tab ya Maoni 🔴</div>
+        </div></div>
         <div class="settings-section">
           <div class="settings-label" data-i18n="profile_stats_title">📊 Takwimu Zangu</div>
           <div style="display:flex;gap:10px;margin-top:10px;">
@@ -1503,21 +1567,9 @@
       <!-- ---- MAONI & MAOMBI (Feedback & Game Requests) ---- -->
       <div class="ptab-panel" id="ptabFeedback">
         <div class="settings-section">
-          <div class="settings-label" data-i18n="fb_title">💬 Toa Maoni au Omba Game</div>
-          <div class="settings-sub" data-i18n="fb_sub">Una changamoto, malalamiko, wazo, au unataka game fulani iongezwe? Tuandikie hapa — admin atakujibu papo hapa.</div>
-          <div class="fb-type-row" style="display:flex;gap:8px;margin-top:12px;">
-            <div class="fb-type-btn active" data-fbtype="feedback" onclick="setFbType('feedback')" data-i18n="fb_type_feedback">📝 Maoni/Malalamiko</div>
-            <div class="fb-type-btn" data-fbtype="request" onclick="setFbType('request')" data-i18n="fb_type_request">🎮 Omba Game</div>
-          </div>
-          <div id="fbGameTitleWrap" style="display:none;">
-            <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;" data-i18n="fb_game_title_lbl">Jina la game unayotaka</label>
-            <input type="text" id="fbGameTitle" data-i18n-placeholder="fb_game_title_placeholder" placeholder="mfano: FIFA 26" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;">
-          </div>
-          <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;" data-i18n="fb_msg_lbl">Ujumbe wako</label>
-          <textarea id="fbMessage" rows="3" data-i18n-placeholder="fb_msg_placeholder" placeholder="Andika hapa..." style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:12.5px;font-family:'Baloo 2',sans-serif;resize:vertical;"></textarea>
-          <button class="post-btn" style="margin-top:10px;" onclick="submitFeedback()" data-i18n="fb_submit_btn">Tuma</button>
+          <div class="settings-label" data-i18n="fb_title">💬 Maoni Yangu</div>
+          <div class="settings-sub" data-i18n="fb_sub">Maoni uliyotuma kwenye games yanaonekana hapa. Admin akikujibu, jibu lake litaonekana hapa.</div>
         </div>
-        <div style="font-size:12px;font-weight:800;color:var(--text);margin:18px 4px 8px;" data-i18n="fb_history_title">Historia yako</div>
         <div id="fbHistoryList" style="font-size:11px;color:var(--sub);">—</div>
       </div>
 
@@ -1548,6 +1600,12 @@
       <div id="modalDownloadsList"></div>
       <div style="font-size:10px;color:var(--sub);text-align:center;margin:4px 0 2px;line-height:1.5;">ℹ️ Ukiona "Could not preview the file" kwenye Chrome baada ya download, si tatizo — faili limeshahifadhiwa salama kwenye Downloads za simu yako. Bonyeza back kurudi mumbigames.</div>
       <div id="modalThanks" style="display:none;font-size:11px;color:var(--lime);font-weight:600;text-align:center;margin:6px 0 4px;">Asante kwa kuchagua mumbigames🥰</div>
+      <div class="sv-box" id="setupVideoBox"><div class="sv-in">
+        <div class="sv-lab">🎓 <span id="svLab"></span></div>
+        <div class="sv-frame" id="svFrame" onclick="svPlay()"><div class="sv-play"></div></div>
+        <div class="sv-t" id="svTitle"></div>
+        <div class="sv-s" id="svSub"></div>
+      </div></div>
       <div id="sponsoredAdBox" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
         <div style="font-size:9.5px;letter-spacing:1px;color:var(--sub);font-weight:700;margin-bottom:8px;">SPONSORED</div>
         <img id="adBoxImage" src="" style="width:100%;border-radius:12px;margin-bottom:10px;display:block;">
@@ -1689,6 +1747,10 @@ function tryOpenDeepLinkGame(){
   }
 }
 
+function mgImg(u,w){
+  try{ u=String(u||''); if(!/^https?:\/\//i.test(u) || u.indexOf('wsrv.nl')>-1 || /\.gif(\?|$)/i.test(u)) return u;
+    return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&q=72&output=webp'; }catch(e){ return u; }
+}
 function loadGames(){
   const listEl = document.getElementById('gameList');
   // Fast path: paint instantly from the last known list on disk (e.g. right
@@ -1827,10 +1889,10 @@ function render(){
   const q = (document.getElementById('gameSearchInput')?.value || '').trim().toLowerCase();
   if(q) list = list.filter(g=>(g.name||'').toLowerCase().includes(q));
 
-  document.getElementById('gameList').innerHTML = list.length ? list.map(g=>`
+  document.getElementById('gameList').innerHTML = list.length ? list.map((g,gi)=>`
     <div class="g-card" onclick='handleDownload(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
       <div class="g-thumb">
-        ${g.image ? `<img src="${g.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(g.name)}" loading="eager" fetchpriority="high" decoding="async">` : ''}
+        ${g.image ? `<img src="${escapeHtml(mgImg(g.image,640))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="${gi<2?'eager':'lazy'}" ${gi<2?'fetchpriority="high" ':''}decoding="async">` : ''}
         <span class="g-badge ${g.paid?'paid':''}">${g.paid?'🔒 Kulipia':'Bure'}</span>
       </div>
       <div class="g-body">
@@ -1845,10 +1907,9 @@ function render(){
           </div>
         </div>
         <div class="g-footer">
-          <div class="g-action">⬇️ ${g.downloadCount||0}</div>
-          <div class="g-action" onclick='event.stopPropagation();openComments(${JSON.stringify(g).replace(/'/g,"&#39;")})'>💬 ${g.commentCount||0}</div>
-          ${g.image ? `<div class="g-action" title="Pakua picha ya kushea" onclick='event.stopPropagation();downloadGameImage(${JSON.stringify(g.image).replace(/'/g,"&#39;")}, ${JSON.stringify(g.name).replace(/'/g,"&#39;")})'>📥</div>` : ''}
-          <button class="g-action share" onclick='event.stopPropagation();shareGame(${JSON.stringify(g.name).replace(/'/g,"&#39;")}, ${JSON.stringify(g.id).replace(/'/g,"&#39;")}, ${JSON.stringify(g.image||'').replace(/'/g,"&#39;")})'>🔗 Share</button>
+          <div class="g-action dl"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg><span>${g.downloadCount||0}</span></div>
+          <div class="g-action maoni" onclick='event.stopPropagation();openGameMaoni(${JSON.stringify(g.id).replace(/'/g,"&#39;")}, ${JSON.stringify(g.name).replace(/'/g,"&#39;")})'><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.5-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11.5h7M8.5 14.5h4"/></svg><span>${tvT('Maoni','Feedback')}</span></div>
+          <button class="g-action share" onclick='event.stopPropagation();shareGame(${JSON.stringify(g.name).replace(/'/g,"&#39;")}, ${JSON.stringify(g.id).replace(/'/g,"&#39;")}, ${JSON.stringify(g.image||'').replace(/'/g,"&#39;")})'><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4"/></svg><span>Share</span></button>
         </div>
       </div>
     </div>`).join('') : '<div class="empty">Hakuna games kwenye kundi hili bado</div>';
@@ -2694,7 +2755,45 @@ function showModalDownloads(g, restoreState){
     document.getElementById('modalThanks').style.display = 'block';
   }
 
-  renderSponsoredAd();
+  const svId = g.needsSetup ? mgYtId(g.setupVideo) : '';
+  if(svId){
+    const sb = document.getElementById('setupVideoBox');
+    sb.style.display = 'block'; sb.dataset.id = svId;
+    document.getElementById('svLab').textContent = tvT('JIFUNZE KUSETI','LEARN TO SET UP');
+    document.getElementById('svTitle').textContent = tvT('Tazama jinsi ya kuseti ','Watch how to set up ') + g.name;
+    document.getElementById('svSub').textContent = tvT('Fuata hatua kwenye video hii ndipo game ifanye kazi vizuri.','Follow the steps in this video so the game runs well.');
+    const fr = document.getElementById('svFrame');
+    fr.innerHTML = '<div class="sv-play"></div>';
+    fr.style.backgroundImage = "url('https://img.youtube.com/vi/" + svId + "/hqdefault.jpg')";
+    document.getElementById('sponsoredAdBox').style.display = 'none';
+    const af = document.getElementById('adBoxVideoFrame'); if(af) af.removeAttribute('src');
+  } else {
+    svReset();
+    renderSponsoredAd();
+  }
+}
+function mgYtId(url){
+  try{
+    if(!url) return '';
+    const u = new URL(String(url).trim());
+    let id = '';
+    if(u.hostname.includes('youtu.be')) id = u.pathname.slice(1);
+    else if(u.hostname.includes('youtube.com')){
+      id = u.searchParams.get('v') || '';
+      if(!id){ const m = u.pathname.match(/\/(embed|shorts|live)\/([\w-]{6,})/); if(m) id = m[2]; }
+    }
+    return /^[\w-]{6,}$/.test(id) ? id : '';
+  }catch(e){ return ''; }
+}
+function svPlay(){
+  const sb = document.getElementById('setupVideoBox'); const id = sb && sb.dataset.id; if(!id) return;
+  const fr = document.getElementById('svFrame');
+  fr.innerHTML = '<iframe src="https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+}
+function svReset(){
+  const sb = document.getElementById('setupVideoBox'); if(!sb) return;
+  sb.style.display = 'none'; sb.dataset.id = '';
+  const fr = document.getElementById('svFrame'); if(fr) fr.innerHTML = '<div class="sv-play"></div>';
 }
 
 let sponsoredAdsCache = null;
@@ -3029,6 +3128,7 @@ function handleDownload(g){
 }
 function closeModal(){
   document.getElementById('overlay').classList.remove('show');
+  try{ svReset(); }catch(e){}
   currentModalGame = null;
   if(currentPayUnsub){ currentPayUnsub(); currentPayUnsub = null; }
   clearDeepLinkUrlParams();
@@ -3156,7 +3256,7 @@ function renderBanner(){
   if(!track) return;
   track.innerHTML = banners.map(b=>`
     <div class="b-slide"${b.gameRef?` onclick='handleDownload(${JSON.stringify(b.gameRef).replace(/'/g,"&#39;")})'`:''}>
-      ${b.image ? `<img src="${b.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(b.title||'')}" loading="eager" fetchpriority="high" decoding="async">` : ''}
+      ${b.image ? `<img src="${escapeHtml(mgImg(b.image,800))}" data-o="${escapeHtml(b.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(b.title||'')}" loading="eager" fetchpriority="high" decoding="async">` : ''}
       ${b.badge?`<span class="b-badge">${escapeHtml(b.badge)}</span>`:''}
       <div class="b-title">${escapeHtml(b.title||'')}</div>
       ${b.subtitle?`<div class="b-sub">${escapeHtml(b.subtitle)}</div>`:''}
@@ -3756,7 +3856,7 @@ function aiNav(k){
       case 'home': showHome(); break;
       case 'profile': showProfile(); break;
       case 'token': showHome(); showEarnTokens(); break;
-      case 'feedback': showProfile(); setTimeout(()=>{ try{ switchProfileTab('feedback'); }catch(e){} }, 50); break;
+      case 'feedback': showProfile(); setTimeout(()=>{ try{ switchProfileTab('overview'); var rc=document.getElementById('reqCard'); if(rc) rc.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} }, 50); break;
       case 'bettips': showProfile(); setTimeout(()=>{ try{ switchProfileTab('bettips'); }catch(e){} }, 50); break;
       case 'downloads': showMyDownloads(); break;
       case 'tournament': showTournaments(); break;
@@ -4620,8 +4720,8 @@ function lbSync(points, force, uname, photo){
 }
 function lbAvatar(x, size){
   const base = 'width:'+size+'px;height:'+size+'px;border-radius:50%;flex:0 0 auto;object-fit:cover;background:#cdd1d6;border:2px solid rgba(255,255,255,.3);';
-  const src = x.photoURL ? escapeHtml(x.photoURL) : DEFAULT_AVATAR;
-  return '<img src="'+src+'" alt="" style="'+base+'" onerror="this.onerror=null;this.src=DEFAULT_AVATAR">';
+  const src = x.photoURL ? escapeHtml(mgImg(x.photoURL,size*2)) : DEFAULT_AVATAR;
+  return '<img src="'+src+'" loading="lazy" decoding="async" alt="" style="'+base+'" onerror="this.onerror=null;this.src=DEFAULT_AVATAR">';
 }
 function lbRow(rank, x, mine, kind){
   const medals = ['🥇','🥈','🥉'];
@@ -4693,44 +4793,73 @@ function switchProfileTab(name){
 // Stored in Firestore `feedback`, one doc per submission. Admin replies
 // from admin.html; the reply shows back here once posted.
 // ============================================================
-let fbType = 'feedback';
-function setFbType(type){
-  fbType = type;
-  document.querySelectorAll('.fb-type-btn').forEach(b=>b.classList.toggle('active', b.dataset.fbtype===type));
-  document.getElementById('fbGameTitleWrap').style.display = type === 'request' ? 'block' : 'none';
-}
-async function submitFeedback(){
-  if(!auth.currentUser){ alert('Ingia kwenye akaunti yako kwanza.'); return; }
-  const message = document.getElementById('fbMessage').value.trim();
-  const gameTitle = document.getElementById('fbGameTitle').value.trim();
-  if(fbType === 'request' && !gameTitle){
-    alert('Weka jina la game unayotaka.');
-    return;
-  }
-  if(!message){
-    alert('Andika ujumbe wako kwanza.');
-    return;
-  }
+async function mgSendFeedbackDoc(data){
+  if(!auth.currentUser){ alert(tvT('Ingia kwenye akaunti yako kwanza.','Please log in first.')); return false; }
+  const uname = ((document.getElementById('profileUsername')||{}).textContent||'').trim();
   try{
-    await db.collection('feedback').add({
+    await db.collection('feedback').add(Object.assign({
       uid: auth.currentUser.uid,
-      userName: (document.getElementById('profileUsername')||{}).textContent || 'Mtumiaji',
+      userName: (uname && uname!=='—') ? uname : 'Mtumiaji',
       userEmail: auth.currentUser.email || '',
-      type: fbType,
-      gameTitle: fbType === 'request' ? gameTitle : '',
-      text: message,
-      status: 'open',
-      adminReply: '',
-      replySeen: true,
-      createdAt: Date.now()
-    });
-    document.getElementById('fbMessage').value = '';
-    document.getElementById('fbGameTitle').value = '';
-    alert('Umetuma! Admin atakujibu hapa hapa.');
+      status: 'open', adminReply: '', replySeen: true, createdAt: Date.now()
+    }, data));
+    return true;
   }catch(e){
     console.error(e);
-    alert('Imeshindwa kutuma. Angalia mtandao wako na ujaribu tena.');
+    alert(tvT('Imeshindwa kutuma. Angalia mtandao wako na ujaribu tena.','Failed to send. Check your connection and try again.'));
+    return false;
   }
+}
+async function submitGameRequest(){
+  const t = document.getElementById('reqGameTitle'), n = document.getElementById('reqGameNote');
+  const title = t.value.trim(), note = n.value.trim();
+  if(!title){ alert(tvT('Weka jina la game unayotaka.','Enter the name of the game you want.')); return; }
+  const btn = document.getElementById('reqSendBtn'); btn.disabled = true;
+  const ok = await mgSendFeedbackDoc({type:'request', gameTitle:title, text: note || title});
+  btn.disabled = false;
+  if(ok){ t.value=''; n.value=''; showAppNotification(tvT('Ombi limetumwa ✅','Request sent ✅'), tvT('Admin atakujibu kwenye tab ya Maoni.','Admin will reply in the Feedback tab.'), '🎮'); }
+}
+let gmCur = null;
+function openGameMaoni(id, name){
+  if(!auth.currentUser){ alert(tvT('Ingia kwenye akaunti yako kwanza.','Please log in first.')); return; }
+  gmCur = {id:id, name:name};
+  let ov = document.getElementById('gmOverlay');
+  if(!ov){
+    ov = document.createElement('div'); ov.id='gmOverlay'; ov.className='gm-ov';
+    ov.innerHTML = '<div class="gm-sheet"><div class="gm-head"><div class="gm-ico">💬</div><div style="min-width:0"><div class="gm-t" id="gmTitle"></div><div class="gm-s" id="gmGame"></div></div><div class="gm-x" onclick="closeGameMaoni()">✕</div></div><textarea id="gmText" rows="4" maxlength="500"></textarea><button class="gm-send" id="gmSend" onclick="submitGameMaoni()"></button></div>';
+    ov.addEventListener('click', function(e){ if(e.target===ov) closeGameMaoni(); });
+    document.body.appendChild(ov);
+  }
+  document.getElementById('gmTitle').textContent = tvT('Toa Maoni yako','Give your feedback');
+  document.getElementById('gmGame').textContent = '🎮 ' + name;
+  document.getElementById('gmText').placeholder = tvT('Andika maoni yako kuhusu game hii...','Write your feedback about this game...');
+  document.getElementById('gmSend').textContent = tvT('Tuma Maoni','Send Feedback');
+  document.getElementById('gmText').value = '';
+  ov.classList.add('show');
+  setTimeout(function(){ try{ document.getElementById('gmText').focus(); }catch(e){} }, 120);
+}
+function closeGameMaoni(){ var ov=document.getElementById('gmOverlay'); if(ov) ov.classList.remove('show'); }
+async function submitGameMaoni(){
+  const txt = document.getElementById('gmText').value.trim();
+  if(!txt || !gmCur){ alert(tvT('Andika maoni yako kwanza.','Write your feedback first.')); return; }
+  const btn = document.getElementById('gmSend'); btn.disabled = true;
+  const ok = await mgSendFeedbackDoc({type:'feedback', gameId:gmCur.id, gameTitle:gmCur.name, text:txt});
+  btn.disabled = false;
+  if(ok){ closeGameMaoni(); showAppNotification(tvT('Maoni yametumwa ✅','Feedback sent ✅'), tvT('Admin akijibu utaliona kwenye Me → Maoni.','Admin replies will show in Me → Feedback.'), '💬'); }
+}
+function mgLikedSet(){ try{ return JSON.parse(localStorage.getItem('mgLikes')||'{}'); }catch(e){ return {}; } }
+function mgLiked(id){ return !!mgLikedSet()[id]; }
+function mgToggleLike(id, el){
+  const s = mgLikedSet(); const on = !s[id];
+  if(on) s[id]=1; else delete s[id];
+  try{ localStorage.setItem('mgLikes', JSON.stringify(s)); }catch(e){}
+  if(el){
+    el.classList.toggle('on', on);
+    el.querySelector('.hrt').textContent = on ? '❤️' : '🤍';
+    const c = el.querySelector('.lc'); c.textContent = Math.max(0,(parseInt(c.textContent)||0) + (on?1:-1));
+    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+  }
+  db.collection('games').doc(id).set({likeCount: firebase.firestore.FieldValue.increment(on?1:-1)},{merge:true}).catch(function(e){ console.error(e); });
 }
 function loadFeedbackHistory(){
   if(!auth.currentUser) return;
@@ -4742,7 +4871,7 @@ function loadFeedbackHistory(){
     .onSnapshot(snap=>{
       const list = document.getElementById('fbHistoryList');
       if(!list) return;
-      if(snap.empty){ list.textContent = 'Bado hujatuma chochote.'; return; }
+      if(snap.empty){ list.textContent = tvT('Bado hujatuma maoni. Bonyeza 💬 Maoni kwenye game yoyote.','No feedback yet. Tap 💬 Feedback on any game.'); return; }
       const docs = snap.docs.slice().sort((a,b)=>(b.data().createdAt||0)-(a.data().createdAt||0));
       list.innerHTML = docs.map(d=>{
         const f = d.data();
@@ -4750,8 +4879,8 @@ function loadFeedbackHistory(){
         const dd = String(t.getDate()).padStart(2,'0'), mo = String(t.getMonth()+1).padStart(2,'0');
         const isReq = f.type === 'request';
         return `<div class="fb-card">
-          <span class="fb-badge ${isReq?'request':''}">${isReq ? '🎮 Ombi la Game' : '📝 Maoni'}</span>
-          ${isReq && f.gameTitle ? `<div class="fb-text"><b>${escapeHtml(f.gameTitle)}</b></div>` : ''}
+          <span class="fb-badge ${isReq?'request':''}">${isReq ? '🎮 '+tvT('Ombi la Game','Game Request') : '💬 '+tvT('Maoni','Feedback')}</span>
+          ${f.gameTitle ? `<div class="fb-text"><b>${escapeHtml(f.gameTitle)}</b></div>` : ''}
           <div class="fb-text">${escapeHtml(f.text)}</div>
           <div class="fb-time">${dd}/${mo}</div>
           ${f.adminReply ? `<div class="fb-reply"><b>Admin:</b> ${escapeHtml(f.adminReply)}</div>` : ''}
@@ -6968,8 +7097,9 @@ const TRANSLATIONS = {
     promo_how_4:'Ukifikisha token 500, chagua game LOLOTE la kulipia BURE kabisa — mara moja tu kwa kila akaunti.',
     promo_how_5:'Msimbo unatumika wakati wa kujisajili tu, na ni hiari.',
     ptab_feedback:'💬 Maoni', ptab_top:'🏆 Vinara',
-    fb_title:'💬 Toa Maoni au Omba Game',
-    fb_sub:'Una changamoto, malalamiko, wazo, au unataka game fulani iongezwe? Tuandikie hapa — admin atakujibu papo hapa.',
+    fb_title:'💬 Maoni Yangu',
+    fb_sub:'Maoni uliyotuma kwenye games yanaonekana hapa. Admin akikujibu, jibu lake litaonekana hapa.',
+    req_title:'Omba Game Unayoitaka', req_sub:'Tuambie game gani uone ikiwekwa hapa', req_name_ph:'Jina la game, mfano: GTA V', req_note_ph:'Maelezo ya ziada (hiari)', req_btn:'🚀 Tuma Ombi', req_hint:'Admin akijibu, utaliona jibu kwenye tab ya Maoni 🔴',
     fb_type_feedback:'📝 Maoni/Malalamiko', fb_type_request:'🎮 Omba Game',
     fb_game_title_lbl:'Jina la game unayotaka', fb_msg_lbl:'Ujumbe wako',
     fb_submit_btn:'Tuma', fb_history_title:'Historia yako',
@@ -7065,8 +7195,9 @@ const TRANSLATIONS = {
     promo_how_4:'Reach 500 tokens and pick ANY paid game completely FREE — once per account only.',
     promo_how_5:'A code can only be entered during sign-up, and it is optional.',
     ptab_feedback:'💬 Feedback', ptab_top:'🏆 Top',
-    fb_title:'💬 Give Feedback or Request a Game',
-    fb_sub:'Have a challenge, a complaint, an idea, or want a specific game added? Write to us here — admin will reply right here.',
+    fb_title:'💬 My Feedback',
+    fb_sub:'Feedback you sent on games shows up here. When admin replies, the answer appears here.',
+    req_title:'Request a Game', req_sub:'Tell us which game you want to see added', req_name_ph:'Game name, e.g. GTA V', req_note_ph:'Extra details (optional)', req_btn:'🚀 Send Request', req_hint:'When admin replies, you will see it in the Feedback tab 🔴',
     fb_type_feedback:'📝 Feedback/Complaint', fb_type_request:'🎮 Request a Game',
     fb_game_title_lbl:'Name of the game you want', fb_msg_lbl:'Your message',
     fb_submit_btn:'Send', fb_history_title:'Your history',
