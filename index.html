@@ -866,13 +866,44 @@
   .sv-play{width:68px;height:48px;margin:-24px 0 0 -34px;border-radius:0;background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 68 48%22%3E%3Cpath d=%22M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z%22 fill=%22%23f00%22/%3E%3Cpath d=%22M45 24 27 14v20%22 fill=%22%23fff%22/%3E%3C/svg%3E") center/contain no-repeat;box-shadow:none;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));animation:none;}
   .sv-play:before{display:none;}
   .sv-frame:hover .sv-play{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) brightness(1.1);}
+  /* ===== v4: maamuzi ya mwisho ===== */
+  .brand-logo{width:30px;height:30px;flex:none;filter:drop-shadow(0 0 6px rgba(245,166,35,.4));}
+  /* dirisha la game: kama zamani */
+  #overlay .modal{padding:20px;}
+  .modal-thumb{height:auto;aspect-ratio:16/9;margin-bottom:12px;}
+  .modal h3{font-size:14.5px;}
+  .modal-desc{font-size:11px;}
+  .perf-box{padding:12px 14px;font-size:11px;margin-bottom:10px;}
+  .dl-btn{font-size:12.5px;padding:14px;margin-bottom:10px;border-radius:12px;}
+  /* video: kama TV */
+  .sv-in{padding:12px 12px 16px;}
+  .sv-frame{width:100%;box-sizing:border-box;border:7px solid #0c0c14;border-radius:16px;box-shadow:0 0 0 2px #2c2c40,0 12px 28px rgba(0,0,0,.6),inset 0 0 0 1px #3a3a52;background-color:#000;}
+  .sv-stand{width:86px;height:9px;margin:0 auto;background:linear-gradient(#262638,#12121c);clip-path:polygon(18% 0,82% 0,100% 100%,0 100%);}
+  .sv-stand:after{content:"";display:block;}
+  .sv-t{margin-top:12px;}
+  /* request: tulivu, bila mwanga unaozunguka */
+  .req-card{padding:0;border:1px solid rgba(255,255,255,.14);border-radius:16px;}
+  .req-card:before{display:none;}
+  .req-pad{animation:none;}
+  .req-in{border-radius:15px;}
+  /* kadi za game: ukubwa wa kati */
+  .g-thumb{height:205px;}
+  .g-name{font-size:14.5px;}
+  .g-date{font-size:10.5px;}
+  .g-desc{font-size:11px;}
+  .tag{font-size:9px;padding:3px 8px;}
+  .g-footer{margin-top:11px;padding-top:11px;}
+  .g-footer .g-action{font-size:12px;padding:6px 12px;}
+  .g-footer .g-action svg{width:14px;height:14px;}
+  .g-footer .g-action.maoni{font-size:12px;padding:6px 12px;}
+  .g-footer .g-action.share{font-size:12px;padding:7px 14px;}
 </style>
 </head>
 <body>
 
 <div id="homeView">
 <header>
-  <svg class="brand-logo" viewBox="0 0 40 40" width="38" height="38" aria-label="mumbigames"><defs><linearGradient id="blg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd27a"/><stop offset=".55" stop-color="#f5a623"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient><linearGradient id="blp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a1b52"/><stop offset="1" stop-color="#0b0b1a"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="url(#blg)"/><path d="M11 14.5h18a5 5 0 0 1 4.9 4l1.3 6.4a3.4 3.4 0 0 1-5.9 2.8l-2.4-2.9H13.1l-2.4 2.9a3.4 3.4 0 0 1-5.9-2.8l1.3-6.4a5 5 0 0 1 4.9-4z" fill="url(#blp)"/><path d="M12.5 18v5M10 20.5h5" stroke="#ffd27a" stroke-width="1.8" stroke-linecap="round"/><circle cx="26" cy="19.4" r="1.5" fill="#ffd27a"/><circle cx="29.2" cy="22.2" r="1.5" fill="#ff8a5c"/></svg>
+  <svg class="brand-logo" viewBox="0 0 40 40" width="30" height="30" aria-label="mumbigames"><defs><linearGradient id="blg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe29a"/><stop offset=".5" stop-color="#f5a623"/><stop offset="1" stop-color="#ff7a45"/></linearGradient><linearGradient id="blp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2d1d5c"/><stop offset="1" stop-color="#0c0c1c"/></linearGradient></defs><rect x="1.5" y="1.5" width="37" height="37" rx="11" fill="url(#blp)" stroke="url(#blg)" stroke-width="2"/><path d="M11 28V13l9 9 9-9v15" fill="none" stroke="url(#blg)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="31.5" cy="8.5" r="2.2" fill="#ffe29a"/></svg>
   <span>mumbigames</span>
   <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
     <div class="gift" id="giftBtn" onclick="showEarnTokens()" aria-label="Ads"><span class="gift-txt" data-i18n="gift_txt">Tangazo</span><svg class="gift-box" viewBox="0 0 32 32" width="22" height="22"><defs><linearGradient id="gW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc83d"/><stop offset="1" stop-color="#f59a1b"/></linearGradient></defs><rect class="g-in" x="6" y="14" width="20" height="4" rx="1.5" fill="#262b3d"/><rect x="5" y="15" width="22" height="14" rx="3" fill="url(#gW)"/><rect x="14.5" y="15" width="3" height="14" fill="#7c5cff"/><g class="g-lid"><rect x="3" y="10" width="26" height="6.5" rx="2.5" fill="#ffd25e"/><rect x="14.5" y="10" width="3" height="6.5" fill="#7c5cff"/><path d="M16 10C13 4.5 8.5 6.5 11 9.5C12 10.5 14.5 10.3 16 10Z" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round"/><path d="M16 10C19 4.5 23.5 6.5 21 9.5C20 10.5 17.5 10.3 16 10Z" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round"/></g></svg></div>
@@ -1661,7 +1692,7 @@
       <div id="modalThanks" style="display:none;font-size:11px;color:var(--lime);font-weight:600;text-align:center;margin:6px 0 4px;">Asante kwa kuchagua mumbigames🥰</div>
       <div class="sv-box" id="setupVideoBox"><div class="sv-in">
         <div class="sv-lab">🎓 <span id="svLab"></span></div>
-        <div class="sv-frame" id="svFrame" onclick="svPlay()"><div class="sv-play"></div></div>
+        <div class="sv-frame" id="svFrame" onclick="svPlay()"><div class="sv-play"></div></div><div class="sv-stand"></div>
         <div class="sv-t" id="svTitle"></div>
         <div class="sv-s" id="svSub"></div>
       </div></div>
