@@ -1650,7 +1650,7 @@
           </div>
           <label style="display:block;font-size:11px;color:var(--sub);margin:12px 0 6px;font-weight:600;" data-i18n="invite_code_lbl">Msimbo wako wa Mwaliko</label>
           <input type="text" id="referralLinkInput" readonly style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:9px;font-size:14.5px;font-weight:700;letter-spacing:2px;text-align:center;font-family:'JetBrains Mono',monospace;">
-          <button class="post-btn" style="margin-top:10px;" onclick="shareReferralLink()" data-i18n="invite_share_btn">Shea APK + Msimbo Wangu</button>
+          <button class="post-btn" style="margin-top:10px;" onclick="shareReferralLink()" data-i18n="invite_share_btn">Shea Link + Msimbo Wangu</button>
           <div id="enterCodeSection" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);">
             <label style="display:block;font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:600;" data-i18n="invite_enter_code_lbl">Una msimbo wa rafiki? Weka hapa upate token kwake</label>
             <div style="display:flex;gap:8px;">
@@ -2745,32 +2745,40 @@ async function claimAdTokens(){
   const userRef = db.collection('users').doc(uid);
   const today = earnTodayKey();
   let result = null;
+  const compute = function(data){
+    const usedToday = (data.adEarnDate === today) ? (data.adEarnRoundsToday || 0) : 0;
+    if(usedToday >= AD_EARN_DAILY_CAP) throw new Error('daily-cap');
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    let streak = data.adEarnStreak || 0;
+    if(data.adEarnLastDay === today){ /* siku hiyo hiyo */ }
+    else if(data.adEarnLastDay === yesterday){ streak += 1; }
+    else { streak = 1; }
+    const lucky = Math.random() < AD_EARN_LUCKY_CHANCE;
+    let reward = AD_EARN_PER_ROUND + (lucky ? AD_EARN_LUCKY_BONUS : 0);
+    const streakBonus = (streak > 0 && streak % 3 === 0 && data.adEarnLastDay !== today) ? AD_EARN_STREAK_BONUS : 0;
+    reward += streakBonus;
+    const newPoints = Math.min(TOKEN_CAP, (data.points || 0) + reward);
+    return {
+      upd: {points: newPoints, adEarnDate: today, adEarnRoundsToday: usedToday + 1, adEarnLastDay: today, adEarnStreak: streak},
+      res: {reward, lucky, streak, streakBonus, newPoints}
+    };
+  };
   try{
-    await db.runTransaction(async (tx)=>{
-      const doc = await tx.get(userRef);
-      const data = doc.exists ? doc.data() : {};
-      const usedToday = (data.adEarnDate === today) ? (data.adEarnRoundsToday || 0) : 0;
-      if(usedToday >= AD_EARN_DAILY_CAP) throw new Error('daily-cap');
-
-      const yesterday = new Date(Date.now() - 86400000).toDateString();
-      let streak = data.adEarnStreak || 0;
-      if(data.adEarnLastDay === today){ /* streak haibadiliki, siku hiyo hiyo */ }
-      else if(data.adEarnLastDay === yesterday){ streak += 1; }
-      else { streak = 1; }
-
-      const lucky = Math.random() < AD_EARN_LUCKY_CHANCE;
-      let reward = AD_EARN_PER_ROUND + (lucky ? AD_EARN_LUCKY_BONUS : 0);
-      const streakBonus = (streak > 0 && streak % 3 === 0 && data.adEarnLastDay !== today) ? AD_EARN_STREAK_BONUS : 0;
-      reward += streakBonus;
-
-      const newPoints = (data.points || 0) + reward;
-      tx.set(userRef, {
-        points: newPoints,
-        adEarnDate: today, adEarnRoundsToday: usedToday + 1,
-        adEarnLastDay: today, adEarnStreak: streak
-      }, {merge:true});
-      result = {reward, lucky, streak, streakBonus, newPoints};
-    });
+    try{
+      await db.runTransaction(async (tx)=>{
+        const doc = await tx.get(userRef);
+        const c = compute(doc.exists ? doc.data() : {});
+        tx.set(userRef, c.upd, {merge:true});
+        result = c.res;
+      });
+    }catch(e1){
+      if(e1 && e1.message === 'daily-cap') throw e1;
+      console.error('earn tx failed, using plain write', e1);
+      const snap = await userRef.get();
+      const c = compute(snap.exists ? snap.data() : {});
+      await userRef.set(c.upd, {merge:true});
+      result = c.res;
+    }
   }catch(e){
     if(e.message === 'daily-cap'){
       document.getElementById('earnRewardBox').style.display = 'block';
@@ -2778,7 +2786,8 @@ async function claimAdTokens(){
       return;
     }
     console.error(e);
-    alert('Imeshindwa. Jaribu tena.');
+    alert(tvT('Imeshindwa kuweka token. ','Could not add tokens. ') + '(' + (e && (e.code || e.message) || 'error') + ') ' + tvT('Jaribu tena.','Try again.'));
+    try{ earnRoundCount = 0; const b=document.getElementById('earnWatchBtn'); if(b){ b.disabled=false; b.innerHTML='▶️ <span>'+(currentLang==='en'?'Watch Ad':'Tazama Tangazo')+'</span> (0/3)'; } for(let k=0;k<3;k++){ const d=document.getElementById('earnDot'+k); if(d){ d.className='earn-dot'; d.textContent=String(k+1); } } }catch(_e){}
     return;
   }
 
@@ -3581,8 +3590,8 @@ E(['pata token','tazama tangazo pata token','earn token','jinsi ya kupata token'
  ['🎁 **Kupata token kwa tangazo:**\n1. Kwenye Home juu, gusa **boksi dogo la zawadi** (linatingisika na kufunguka kuonyesha "Tangazo") — au niambie nikufungulie\n2. Ingia akaunti kama haujaingia\n3. Tazama **matangazo 3** (mzunguko mmoja) — kila hatua ya duara inawaka ukimaliza tangazo\n4. Unapata **token 15** kwa mzunguko; mara nyingine **bonasi ya bahati +15**\n5. Unaweza kufanya hadi **mizunguko 5 kwa siku**\n6. Ukicheza **siku 3 mfululizo** unapata **bonasi ya streak +20**\n\nTokens zinaonekana kwenye balance juu ya Home. Zikifika 500 unaweza kuchukua game ya kulipia bure.\n\n[[nav:token|🎁 Fungua Pata Token]]'],
  ['🎁 **Earning tokens with ads:**\n1. On Home at the top, tap the **small gift box** (it shakes and opens to show "Ads") — or ask me to open it\n2. Log in if you haven\'t\n3. Watch **3 ads** (one round) — each dot lights up as you finish an ad\n4. You get **15 tokens** per round; sometimes a **lucky bonus +15**\n5. Up to **5 rounds per day**\n6. Play **3 days in a row** for a **streak bonus +20**\n\nTokens show in the balance at the top of Home. At 500 you can claim a paid game for free.\n\n[[nav:token|🎁 Open Earn Tokens]]']);
 E(['alika','referral','mwaliko','msimbo','alika marafiki','invite','invite friends','msimbo wa mwaliko','code ya mwaliko','invite code','nimealika','rafiki amejisajili','shea app','shea apk','share app','napataje msimbo','msimbo wangu'],
- ['👥 **Kualika marafiki na kupata token:**\n1. Nenda **Profile (☺ Me)** → sehemu ya **"Alika Marafiki"** — utaona **msimbo wako wa kipekee**\n2. Gusa **"Shea APK + Msimbo Wangu"** kumtumia rafiki (WhatsApp n.k.)\n3. Rafiki anapakua app, anajisajili, kisha anaweka **msimbo wako** kwenye Profile yake\n4. Wewe unapata **token 50** kwa kila rafiki (rafiki yako naye hupata zawadi)\n5. Ukifika **token 500** → Profile → **"Chagua Game la Kupata Bure"** kuchukua game lolote la kulipia\n\nKila mtu anaweza kutumia msimbo wa mwaliko **mara moja tu**, na huwezi kutumia msimbo wako mwenyewe.\n\n[[nav:profile|☺ Fungua Profile]]'],
- ['👥 **Inviting friends and earning tokens:**\n1. Go to **Profile (☺ Me)** → the **"Invite Friends"** section — you\'ll see your **unique code**\n2. Tap **"Share APK + My Code"** to send it to a friend (WhatsApp etc.)\n3. The friend downloads the app, signs up, then enters **your code** in their Profile\n4. You get **50 tokens** per friend (your friend gets a reward too)\n5. At **500 tokens** → Profile → **"Choose a Game to Get Free"** to claim any paid game\n\nEveryone can use an invite code **only once**, and you can\'t use your own code.\n\n[[nav:profile|☺ Open Profile]]']);
+ ['👥 **Kualika marafiki na kupata token:**\n1. Nenda **Profile (☺ Me)** → sehemu ya **"Alika Marafiki"** — utaona **msimbo wako wa kipekee**\n2. Gusa **"Shea Link + Msimbo Wangu"** kumtumia rafiki (WhatsApp n.k.)\n3. Rafiki anapakua app, anajisajili, kisha anaweka **msimbo wako** kwenye Profile yake\n4. Wewe unapata **token 50** kwa kila rafiki (rafiki yako naye hupata zawadi)\n5. Ukifika **token 500** → Profile → **"Chagua Game la Kupata Bure"** kuchukua game lolote la kulipia\n\nKila mtu anaweza kutumia msimbo wa mwaliko **mara moja tu**, na huwezi kutumia msimbo wako mwenyewe.\n\n[[nav:profile|☺ Fungua Profile]]'],
+ ['👥 **Inviting friends and earning tokens:**\n1. Go to **Profile (☺ Me)** → the **"Invite Friends"** section — you\'ll see your **unique code**\n2. Tap **"Share Link + My Code"** to send it to a friend (WhatsApp etc.)\n3. The friend downloads the app, signs up, then enters **your code** in their Profile\n4. You get **50 tokens** per friend (your friend gets a reward too)\n5. At **500 tokens** → Profile → **"Choose a Game to Get Free"** to claim any paid game\n\nEveryone can use an invite code **only once**, and you can\'t use your own code.\n\n[[nav:profile|☺ Open Profile]]']);
 
 // ---------------- 6. Maoni, Request, Tournament, Duka, Chat ----------------
 E(['maoni','malalamiko','changamoto','feedback','complaint','request game','omba game','ombi la game','suggest','pendekezo','nina maoni','nataka kuomba game','ongeza game','naomba game iwekwe','game haipo naomba','request a game','maombi','nataka game iongezwe','tuma maoni','tuma ombi'],
@@ -3644,8 +3653,8 @@ E(['ai','akili bandia','chatbot','bot','robot ndogo','robot inayoelea','mumbibot
  ['🤖 **Mimi (Mumbigames AI / mumbiBot):** niko kwenye **robot ndogo inayoelea** kwenye Home (inaonekana kwenye Home tu). Gusa nifungue; **iburute** kuisogeza popote; ikikaa sekunde 5 bila kuguswa inafifia, ukiigusa inaamka. Naweza kujibu kwa **Kiswahili au Kiingereza** (kulingana na unavyoandika), kukutafutia game na kukufungulia, kukuelekeza kuseti games, kushauri simu, na kuelezea kila sehemu ya app.'],
  ['🤖 **Me (Mumbigames AI / mumbiBot):** I live in the **small floating robot** on Home (shown on Home only). Tap to open me; **drag** it anywhere; if left 5 seconds untouched it dims, tap to wake it. I reply in **Swahili or English** (matching how you write), find games and open them for you, guide you through game setups, advise on phones, and explain every part of the app.']);
 E(['sasisha app','update app','toleo jipya','new version','apk ya app','pakua app','download app','install app','app haifunguki','app inagoma','app imekwama','app inakwama','clear cache','logo mpya','app ina hitilafu','app haifanyi kazi','app inafunga','nimeinstall app','sasisho','app slow','app ni nzito'],
- ['📲 **Kuhusu app yenyewe:**\n• **Kusasisha:** mabadiliko mengi ya app (tab, TV, AI, duka…) yanakuja **yenyewe** ukiwa na mtandao — fungua app upya. Mabadiliko ya **logo/jina** pekee yanahitaji **APK mpya**: admin atakujulisha kwenye 🔔 kengele au channel ya WhatsApp, kisha unapakua na kuinstall juu ya ya zamani (usifute ya zamani)\n• **App inakwama/inafunga:** hakikisha mtandao, funga app na uifungue upya, futa cache (Settings ya simu → Apps → mumbigames → Storage → Clear cache), na hakikisha una nafasi ya kutosha\n• **Kualika rafiki:** Profile → "Shea APK + Msimbo Wangu"\nBado shida? WhatsApp 0611153086.'],
- ['📲 **About the app itself:**\n• **Updating:** most app changes (tabs, TV, AI, shop…) arrive **by themselves** when you have internet — just reopen the app. Only **logo/name** changes need a **new APK**: admin will tell you on the 🔔 bell or the WhatsApp channel, then you download and install over the old one (don\'t uninstall)\n• **App freezes/closes:** check your connection, close and reopen the app, clear the cache (phone Settings → Apps → mumbigames → Storage → Clear cache), and make sure you have enough space\n• **Inviting a friend:** Profile → "Share APK + My Code"\nStill stuck? WhatsApp 0611153086.']);
+ ['📲 **Kuhusu app yenyewe:**\n• **Kusasisha:** mabadiliko mengi ya app (tab, TV, AI, duka…) yanakuja **yenyewe** ukiwa na mtandao — fungua app upya. Mabadiliko ya **logo/jina** pekee yanahitaji **APK mpya**: admin atakujulisha kwenye 🔔 kengele au channel ya WhatsApp, kisha unapakua na kuinstall juu ya ya zamani (usifute ya zamani)\n• **App inakwama/inafunga:** hakikisha mtandao, funga app na uifungue upya, futa cache (Settings ya simu → Apps → mumbigames → Storage → Clear cache), na hakikisha una nafasi ya kutosha\n• **Kualika rafiki:** Profile → "Shea Link + Msimbo Wangu"\nBado shida? WhatsApp 0611153086.'],
+ ['📲 **About the app itself:**\n• **Updating:** most app changes (tabs, TV, AI, shop…) arrive **by themselves** when you have internet — just reopen the app. Only **logo/name** changes need a **new APK**: admin will tell you on the 🔔 bell or the WhatsApp channel, then you download and install over the old one (don\'t uninstall)\n• **App freezes/closes:** check your connection, close and reopen the app, clear the cache (phone Settings → Apps → mumbigames → Storage → Clear cache), and make sure you have enough space\n• **Inviting a friend:** Profile → "Share Link + My Code"\nStill stuck? WhatsApp 0611153086.']);
 E(['offline','bila mtandao','hakuna mtandao','data bundle','bando','no internet','inatumika offline','nimeishiwa bando','mtandao mdogo','game offline','game ya offline'],
  ['📶 **Mtandao:** app inahitaji intaneti kupakia orodha ya games, TV, chat na AI (orodha ya games na channel huhifadhiwa kidogo kwa matumizi ya haraka). **Kupunguza matumizi ya bando:** download kwa WiFi, usitazame TV/movie kwa data ya simu. Kuhusu games: zenye alama **"Inatumika Offline"** zinachezwa **bila mtandao** baada ya kuziinstall — chuja kwa kichupo **Offline** kwenye Home.'],
  ['📶 **Internet:** the app needs internet to load the games list, TV, chat and AI (the games and channel lists are cached a little for speed). **To save data:** download on WiFi, don\'t watch TV/movies on mobile data. About games: those tagged **"Works Offline"** play **without internet** after installing — filter with the **Offline** tab on Home.']);
@@ -5116,11 +5125,18 @@ document.getElementById('profileTabs').addEventListener('click', (e)=>{
 const TOKEN_CAP = 5000;
 async function creditPointsCapped(uid, amount){
   const ref = db.collection('users').doc(uid);
-  await db.runTransaction(async (tx)=>{
-    const doc = await tx.get(ref);
-    const current = (doc.exists && doc.data().points) || 0;
-    tx.update(ref, {points: Math.min(TOKEN_CAP, current + amount)});
-  });
+  try{
+    await db.runTransaction(async (tx)=>{
+      const doc = await tx.get(ref);
+      const current = (doc.exists && doc.data().points) || 0;
+      tx.set(ref, {points: Math.min(TOKEN_CAP, current + amount)}, {merge:true});
+    });
+  }catch(e){
+    console.error('credit tx failed, using plain write', e);
+    const snap = await ref.get();
+    const current = (snap.exists && snap.data().points) || 0;
+    await ref.set({points: Math.min(TOKEN_CAP, current + amount)}, {merge:true});
+  }
 }
 
 // ============================================================
@@ -7197,7 +7213,7 @@ const TRANSLATIONS = {
     invite_title:'🎁 Alika Marafiki, Pata Game Bure',
     invite_sub:'Mtumie rafiki yako APK ya mumbigames pamoja na msimbo wako wa mwaliko. Akijisajili na kuweka msimbo huo, unapata token 50. Ukifikisha token 500, unaweza kupata game moja la kulipia BURE (mara moja tu kwa akaunti yako).',
     invite_tokens_lbl:'🪙 Token zako', invite_friends_lbl:'Marafiki walioalikwa',
-    invite_code_lbl:'Msimbo wako wa Mwaliko', invite_share_btn:'Shea APK + Msimbo Wangu',
+    invite_code_lbl:'Msimbo wako wa Mwaliko', invite_share_btn:'Shea Link + Msimbo Wangu',
     invite_enter_code_lbl:'Una msimbo wa rafiki? Weka hapa upate token kwake', invite_use_code_btn:'Tumia',
     redeem_title:'🏆 Chagua Game la Kupata Bure',
     ptab_overview:'Muhtasari', ptab_policy:'Sera', ptab_bettips:'🎫 Bet Tips', ptab_promo:'🎁 Promo',
@@ -7295,7 +7311,7 @@ const TRANSLATIONS = {
     invite_title:'🎁 Invite Friends, Get a Free Game',
     invite_sub:'Send your friend the mumbigames APK along with your invite code. When they sign up and enter that code, you get 50 tokens. Reach 500 tokens and you can get one paid game FREE (once per account only).',
     invite_tokens_lbl:'🪙 Your tokens', invite_friends_lbl:'Friends invited',
-    invite_code_lbl:'Your Invite Code', invite_share_btn:'Share APK + My Code',
+    invite_code_lbl:'Your Invite Code', invite_share_btn:'Share Link + My Code',
     invite_enter_code_lbl:'Have a friend\'s code? Enter it here to get them tokens', invite_use_code_btn:'Apply',
     redeem_title:'🏆 Pick a Free Game',
     ptab_overview:'Overview', ptab_policy:'Policy', ptab_bettips:'🎫 Bet Tips', ptab_promo:'🎁 Promo',
@@ -7320,7 +7336,7 @@ const TRANSLATIONS = {
     policy_contact_1:'Questions, complaints, or takedown requests? Message us in the Chat tab, or on WhatsApp:',
     promo_how_title:'ℹ️ How Promo Codes Work',
     promo_how_1:'Your invite code is already shown above — just share it with your friend.',
-    promo_how_2:'Everyone who signs up with your code earns you 50 tokens.',
+    promo_how_2:'Everyone who signs up with your link/code earns you 50 tokens, and they get 25.',
     promo_how_3:'5 friends = 250 tokens, 10 friends = 500 tokens, and so on.',
     promo_how_4:'Reach 500 tokens and pick ANY paid game completely FREE — once per account only.',
     promo_how_5:'A code can only be entered during sign-up, and it is optional.',
@@ -7535,6 +7551,10 @@ try{
   if(savedRef) document.getElementById('authRefCode').value = savedRef;
 }catch(e){ console.error(e); }
 
+window.addEventListener('load', function(){ setTimeout(function(){ try{
+  if(new URLSearchParams(location.search).get('ref') && localStorage.getItem('mg_ref') && !auth.currentUser){ showProfile(); }
+}catch(e){} }, 1800); });
+
 // ---- Short unique referral codes (6 chars, eFootball-style, never repeats) ----
 async function generateUniqueRefCode(){
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no O/0/I/1 to avoid confusion
@@ -7601,9 +7621,9 @@ async function submitAuth(){
             if(refUid && refUid !== cred.user.uid){
               await db.collection('users').doc(cred.user.uid).set({referredBy: refUid}, {merge:true});
               await creditPointsCapped(refUid, 50);
-              await creditPointsCapped(cred.user.uid, 50); // rafiki aliyealikwa pia anapata 50
+              await creditPointsCapped(cred.user.uid, 25); // aliyealikwa anapata 25, aliyemwalika 50
               refBonus = true;
-              try{ document.getElementById('pointsCount').textContent=150; document.getElementById('headerTokenCount').textContent=150; }catch(e){}
+              try{ document.getElementById('pointsCount').textContent=125; document.getElementById('headerTokenCount').textContent=125; }catch(e){}
               await db.collection('users').doc(refUid).set({
                 referrals: firebase.firestore.FieldValue.increment(1)
               }, {merge:true});
@@ -7612,7 +7632,7 @@ async function submitAuth(){
         }catch(e){ console.error('referral lookup failed', e); }
       }
       localStorage.removeItem('mg_ref');
-      try{ showAppNotification(tvT('🎁 Karibu mumbigames!','🎁 Welcome to mumbigames!'), (refBonus ? tvT('Umepata token 150: 100 za kujisajili + 50 za mwaliko wa rafiki.','You got 150 tokens: 100 sign-up + 50 friend invite bonus.') : tvT('Umepata token 100 za zawadi ya kujisajili.','You got 100 tokens as a sign-up gift.')), '🪙'); }catch(e){}
+      try{ showAppNotification(tvT('🎁 Karibu mumbigames!','🎁 Welcome to mumbigames!'), (refBonus ? tvT('Umepata token 125: 100 za kujisajili + 25 za mwaliko wa rafiki.','You got 125 tokens: 100 sign-up + 25 friend invite bonus.') : tvT('Umepata token 100 za zawadi ya kujisajili.','You got 100 tokens as a sign-up gift.')), '🪙'); }catch(e){}
     }catch(e){
       errEl.textContent = authErrorMessage(e);
     }
@@ -7994,7 +8014,9 @@ async function uploadProfilePhoto(file){
 
 function shareReferralLink(){
   const code = document.getElementById('referralLinkInput').value;
-  const text = 'Pakua app ya mumbigames hapa: ' + APK_DOWNLOAD_LINK + '\n\nUkishafungua akaunti, weka msimbo wangu wa mwaliko: ' + code + ' ili tupate token zote wawili!';
+  if(!code || code==='—'){ alert(tvT('Msimbo wako bado unapakia. Jaribu tena baada ya sekunde chache.','Your code is still loading. Try again in a few seconds.')); return; }
+  const link = 'https://raheemumumbi774-hash.github.io/mumbigames/?ref=' + encodeURIComponent(code);
+  const text = tvT('Fungua mumbigames, pakua games bure! Jisajili kupitia link hii nawe upate token: ','Open mumbigames and download games for free! Sign up through this link and get tokens: ') + link + '\n\n' + tvT('Msimbo wangu wa mwaliko: ','My invite code: ') + code;
   if(navigator.share){
     navigator.share({title:'mumbigames', text}).catch(()=>{});
   } else if(navigator.clipboard){
@@ -8059,15 +8081,17 @@ async function redeemReferralCode(){
     }
     await db.collection('users').doc(uid).set({referredBy: refUid}, {merge:true});
     await creditPointsCapped(refUid, 50);
-    await db.collection('users').doc(refUid).set({
+    await creditPointsCapped(uid, 25);
+    try{ await db.collection('users').doc(refUid).set({
       referrals: firebase.firestore.FieldValue.increment(1)
-    }, {merge:true});
-    alert('Umefanikiwa! Rafiki yako amepata token 50.');
+    }, {merge:true}); }catch(e2){ console.error(e2); }
+    try{ const pc=document.getElementById('pointsCount'); const n=(parseInt(pc.textContent,10)||0)+25; pc.textContent=n; const hc=document.getElementById('headerTokenCount'); if(hc) hc.textContent=n; }catch(e3){}
+    alert(tvT('Umefanikiwa! Umepata token 25 na rafiki yako amepata token 50.','Done! You got 25 tokens and your friend got 50.'));
     document.getElementById('enterCodeSection').style.display = 'none';
     input.value = '';
   }catch(e){
     console.error(e);
-    alert('Imeshindwa. Jaribu tena.');
+    alert(tvT('Imeshindwa. ','Failed. ') + '(' + (e && (e.code || e.message) || 'error') + ')');
   }
 }
 
