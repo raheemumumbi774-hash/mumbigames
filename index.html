@@ -897,13 +897,43 @@
   .g-footer .g-action svg{width:14px;height:14px;}
   .g-footer .g-action.maoni{font-size:12px;padding:6px 12px;}
   .g-footer .g-action.share{font-size:12px;padding:7px 14px;}
+  /* ===== v5 ===== */
+  #overlay .modal{padding:0 18px 18px;}
+  .modal-thumb{margin:0 -18px;width:calc(100% + 36px);border-radius:20px 20px 0 0;aspect-ratio:1.8/1;position:relative;}
+  .modal-thumb:after{content:"";position:absolute;left:0;right:0;bottom:0;height:55%;background:linear-gradient(180deg,rgba(0,0,0,0),var(--panel));}
+  #overlay .modal h3{margin:-30px 0 8px;position:relative;z-index:2;font-size:17px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.6);}
+  #overlay .modal-desc{font-size:11.5px;line-height:1.55;margin:0 0 12px;}
+  #modalDetails{margin-bottom:12px;}
+  #modalDetails .pay-card{margin:0 !important;display:flex;gap:8px;background:none;border:0;padding:0;}
+  #modalDetails .pay-line{flex:1;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:9px 6px;text-align:center;min-width:0;}
+  #modalDetails .pay-line span{font-size:9.5px;color:var(--sub);}
+  #modalDetails .pay-line b{font-size:12px;color:var(--lime);word-break:break-word;}
+  .dl-btn{box-shadow:0 5px 14px rgba(0,0,0,.28);}
+  .sv-box{margin-top:14px;}
+  .sv-in{background:none;box-shadow:none;padding:0;text-align:left;}
+  .sv-lab{background:none;padding:0;font-size:12.5px;letter-spacing:.2px;color:#ffcc66;margin-bottom:8px;font-weight:800;}
+  .sv-frame{border:3px solid #0c0c14;border-radius:12px;box-shadow:0 0 0 1px #34344a,0 8px 20px rgba(0,0,0,.5);}
+  .sv-stand,.sv-t,.sv-s{display:none;}
+  #sponsoredAdBox{margin-top:14px !important;padding:10px !important;background:rgba(255,255,255,.04);border:1px solid var(--line) !important;border-radius:16px;}
+  #sponsoredAdBox #adBoxImage{border-radius:12px;}
+  /* ===== v6 ===== */
+  #modalDetails{margin-bottom:0;}
+  #modalDetails .pay-card{display:block;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:2px 14px;margin:0 0 12px !important;}
+  #modalDetails .pay-line{flex-direction:row;justify-content:space-between;align-items:center;gap:10px;background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:10px 0;text-align:left;}
+  #modalDetails .pay-line:last-child{border-bottom:0;}
+  #modalDetails .pay-line span{font-size:11.5px;color:var(--sub);}
+  #modalDetails .pay-line b{font-size:12px;color:#ffbf47;text-align:right;}
+  .sv-frame{border:0;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.4);}
+  .g-footer .g-action.share{background:rgba(255,255,255,.07);color:#ffd27a;border:1px solid rgba(255,255,255,.12);box-shadow:none;font-weight:700;}
+  .g-footer .g-action.maoni{background:rgba(255,255,255,.05);color:#aeb3d6;border:1px solid rgba(255,255,255,.09);font-weight:600;}
+  .g-footer .g-action.dl{background:rgba(255,255,255,.06);color:#9fcfe6;border:1px solid rgba(255,255,255,.1);}
 </style>
 </head>
 <body>
 
 <div id="homeView">
 <header>
-  <svg class="brand-logo" viewBox="0 0 40 40" width="30" height="30" aria-label="mumbigames"><defs><linearGradient id="blg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe29a"/><stop offset=".5" stop-color="#f5a623"/><stop offset="1" stop-color="#ff7a45"/></linearGradient><linearGradient id="blp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2d1d5c"/><stop offset="1" stop-color="#0c0c1c"/></linearGradient></defs><rect x="1.5" y="1.5" width="37" height="37" rx="11" fill="url(#blp)" stroke="url(#blg)" stroke-width="2"/><path d="M11 28V13l9 9 9-9v15" fill="none" stroke="url(#blg)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="31.5" cy="8.5" r="2.2" fill="#ffe29a"/></svg>
+  <svg class="brand-logo" viewBox="0 0 40 40" width="30" height="30" aria-label="mumbigames"><defs><linearGradient id="blg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc83d"/><stop offset=".6" stop-color="#ff9a1f"/><stop offset="1" stop-color="#ff5e62"/></linearGradient><linearGradient id="bls" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1b3a"/><stop offset="1" stop-color="#07070f"/></linearGradient><linearGradient id="blt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b8"/><stop offset="1" stop-color="#ffb52e"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="url(#blg)"/><rect x="6.5" y="8" width="27" height="20" rx="5.5" fill="url(#bls)"/><path d="M17 13.2v9.6l8.2-4.8z" fill="url(#blt)"/><rect x="12" y="31" width="16" height="3" rx="1.5" fill="#1b1b3a" opacity=".55"/><path d="M8 11.5c4-3 10-3.2 16-2.4" stroke="#fff" stroke-opacity=".35" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
   <span>mumbigames</span>
   <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
     <div class="gift" id="giftBtn" onclick="showEarnTokens()" aria-label="Ads"><span class="gift-txt" data-i18n="gift_txt">Tangazo</span><svg class="gift-box" viewBox="0 0 32 32" width="22" height="22"><defs><linearGradient id="gW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc83d"/><stop offset="1" stop-color="#f59a1b"/></linearGradient></defs><rect class="g-in" x="6" y="14" width="20" height="4" rx="1.5" fill="#262b3d"/><rect x="5" y="15" width="22" height="14" rx="3" fill="url(#gW)"/><rect x="14.5" y="15" width="3" height="14" fill="#7c5cff"/><g class="g-lid"><rect x="3" y="10" width="26" height="6.5" rx="2.5" fill="#ffd25e"/><rect x="14.5" y="10" width="3" height="6.5" fill="#7c5cff"/><path d="M16 10C13 4.5 8.5 6.5 11 9.5C12 10.5 14.5 10.3 16 10Z" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round"/><path d="M16 10C19 4.5 23.5 6.5 21 9.5C20 10.5 17.5 10.3 16 10Z" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round"/></g></svg></div>
@@ -1691,7 +1721,7 @@
       <div style="font-size:10px;color:var(--sub);text-align:center;margin:4px 0 2px;line-height:1.5;">ℹ️ Ukiona "Could not preview the file" kwenye Chrome baada ya download, si tatizo — faili limeshahifadhiwa salama kwenye Downloads za simu yako. Bonyeza back kurudi mumbigames.</div>
       <div id="modalThanks" style="display:none;font-size:11px;color:var(--lime);font-weight:600;text-align:center;margin:6px 0 4px;">Asante kwa kuchagua mumbigames🥰</div>
       <div class="sv-box" id="setupVideoBox"><div class="sv-in">
-        <div class="sv-lab">🎓 <span id="svLab"></span></div>
+        <div class="sv-lab"><span id="svLab"></span></div>
         <div class="sv-frame" id="svFrame" onclick="svPlay()"><div class="sv-play"></div></div><div class="sv-stand"></div>
         <div class="sv-t" id="svTitle"></div>
         <div class="sv-s" id="svSub"></div>
@@ -2854,7 +2884,7 @@ function showModalDownloads(g, restoreState){
   if(svId){
     const sb = document.getElementById('setupVideoBox');
     sb.style.display = 'block'; sb.dataset.id = svId;
-    document.getElementById('svLab').textContent = tvT('JIFUNZE KUSETI','LEARN TO SET UP');
+    document.getElementById('svLab').textContent = tvT('Namna ya kuseti game','How to set up the game');
     document.getElementById('svTitle').textContent = tvT('Tazama jinsi ya kuseti ','Watch how to set up ') + g.name;
     document.getElementById('svSub').textContent = tvT('Fuata hatua kwenye video hii ndipo game ifanye kazi vizuri.','Follow the steps in this video so the game runs well.');
     const fr = document.getElementById('svFrame');
