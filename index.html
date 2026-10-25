@@ -1012,6 +1012,40 @@
   .nav-item.active:not(.nav-center) span:not(.nav-badge):not(.nav-live):not(.nav-dot){font-weight:700;}
   .nav-item.active .nav-av{box-shadow:none;}
   .nav-center .ic{width:48px;height:48px;border-radius:50%;}
+
+  /* ===== Duka: wallpaper hai (aurora + nyota zinazoelea) ===== */
+  #dukaView{position:relative;isolation:isolate;}
+  #dukaView > *:not(.duka-bg){position:relative;z-index:1;}
+  .duka-bg{position:fixed !important;inset:0;z-index:0 !important;overflow:hidden;pointer-events:none;background:radial-gradient(120% 80% at 50% 0%,#1b1146 0%,#0b0b1f 55%,#05060e 100%);}
+  .duka-bg i{position:absolute;display:block;border-radius:50%;filter:blur(60px);will-change:transform;}
+  .duka-bg .b1{width:70vmax;height:70vmax;left:-25vmax;top:-20vmax;background:radial-gradient(circle,rgba(124,77,255,.55),rgba(124,77,255,0) 65%);animation:dkA 16s ease-in-out infinite alternate;}
+  .duka-bg .b2{width:60vmax;height:60vmax;right:-22vmax;top:25%;background:radial-gradient(circle,rgba(255,138,61,.38),rgba(255,138,61,0) 65%);animation:dkB 19s ease-in-out infinite alternate;}
+  .duka-bg .b3{width:55vmax;height:55vmax;left:-10vmax;bottom:-22vmax;background:radial-gradient(circle,rgba(32,196,255,.32),rgba(32,196,255,0) 65%);animation:dkC 22s ease-in-out infinite alternate;}
+  .duka-bg .st{width:2px;height:2px;border-radius:50%;filter:none;background:transparent;left:0;top:0;opacity:.85;
+    box-shadow:8vw 12vh #fff,22vw 31vh #cfd8ff,35vw 8vh #fff,47vw 44vh #ffe2c2,61vw 18vh #fff,74vw 36vh #cfd8ff,88vw 9vh #fff,93vw 52vh #fff,12vw 63vh #ffe2c2,28vw 77vh #fff,44vw 88vh #cfd8ff,58vw 69vh #fff,71vw 82vh #ffe2c2,86vw 71vh #fff,5vw 91vh #cfd8ff,52vw 26vh #fff,17vw 47vh #fff,80vw 24vh #cfd8ff;animation:dkTw 4.5s ease-in-out infinite alternate;}
+  .duka-bg .s2{width:3px;height:3px;opacity:.6;box-shadow:14vw 20vh #fff,31vw 55vh #ffd9a8,52vw 14vh #fff,67vw 61vh #cfd8ff,82vw 41vh #fff,96vw 78vh #ffd9a8,9vw 38vh #fff,40vw 72vh #fff,63vw 94vh #cfd8ff,76vw 6vh #fff;animation:dkTw 6.5s ease-in-out -2s infinite alternate;}
+  .duka-bg .grid{inset:auto 0 0 0;width:auto;height:38%;border-radius:0;filter:none;background:linear-gradient(rgba(124,77,255,.0),rgba(124,77,255,.10)),repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px,transparent 1px 44px),repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 44px);-webkit-mask-image:linear-gradient(to top,#000,transparent);mask-image:linear-gradient(to top,#000,transparent);animation:dkGrid 6s linear infinite;}
+  @keyframes dkA{to{transform:translate(18vmax,14vmax) scale(1.15);}}
+  @keyframes dkB{to{transform:translate(-20vmax,-12vmax) scale(1.2);}}
+  @keyframes dkC{to{transform:translate(16vmax,-14vmax) scale(1.1);}}
+  @keyframes dkTw{from{opacity:.25;}to{opacity:.95;}}
+  @keyframes dkGrid{from{background-position:0 0,0 0,0 0;}to{background-position:0 0,44px 0,0 44px;}}
+  #dukaView .chat-header{background:rgba(10,10,28,.35);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);}
+  #dukaView .duka-tabs{border-bottom:1px solid rgba(255,255,255,.08);}
+  #dukaView .duka-warning{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+  #dukaView .d-gcard{background:rgba(18,18,44,.62);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+  #dukaView .d-card{background:rgba(18,18,44,.62);border:1px solid rgba(255,255,255,.1);}
+  @media (prefers-reduced-motion:reduce){.duka-bg i{animation:none !important;}}
+
+  #chatOnlineLabel{cursor:pointer;color:#ffb14a;font-weight:600;}
+  .mgm-ov{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center;}
+  .mgm-box{width:100%;max-width:480px;max-height:75vh;display:flex;flex-direction:column;background:#14152b;border-radius:20px 20px 0 0;border:1px solid rgba(255,255,255,.1);border-bottom:0;}
+  .mgm-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .mgm-x{color:var(--sub);font-size:15px;padding:2px 6px;cursor:pointer;}
+  .mgm-list{overflow-y:auto;padding:6px 12px 22px;}
+  .mgm-row{display:flex;align-items:center;gap:11px;padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.05);}
+  .mgm-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#7c4dff,#ff8a3d);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex:none;}
+  .mgm-nm{font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -1149,9 +1183,8 @@
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
       <div class="title" data-i18n="chat_title">Jumuiya ya mumbigames</div>
-      <div class="sub" id="chatOnlineLabel" data-i18n="chat_sub">Chati ya wachezaji wote</div>
+      <div class="sub" id="chatOnlineLabel" onclick="mgMemOpen()">Chati ya wachezaji wote</div>
     </div>
-    <button type="button" class="chat-theme-btn" onclick="nextChatTheme()" title="Wallpaper">🎨</button>
     <a class="wa-btn" href="https://whatsapp.com/channel/0029VbDjDDrCnA7s1aPmcR3b" target="_blank">WhatsApp</a>
   </div>
 
@@ -1198,6 +1231,7 @@
 </div>
 
 <div id="dukaView">
+  <div class="duka-bg" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="st s1"></i><i class="st s2"></i><i class="grid"></i></div>
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
@@ -4236,8 +4270,9 @@ function showHome(){
 
 // ===== Chat live wallpaper (Bahari / Radi / Aurora) =====
 let chatTheme = 0, chatBgRunning = false, chatBgT = 0, chatBgObjs = null, chatFlash = 0, chatBolt = null;
-const CHAT_THEME_COUNT = 5;
+const CHAT_THEME_COUNT = 6;
 function pickRandomChatTheme(){
+  chatTheme = 5; chatBgObjs = null; chatBolt = null; return;
   let n; do{ n = Math.floor(Math.random()*CHAT_THEME_COUNT); }while(n === chatTheme && CHAT_THEME_COUNT > 1);
   chatTheme = n; chatBgObjs = null; chatBolt = null;
 }
@@ -4308,6 +4343,8 @@ function chatBgFrame(){
     o.meteors.forEach(m=>{ m.x+=m.vx; m.y+=m.vy; m.life--; const gr=ctx.createLinearGradient(m.x,m.y,m.x-m.vx*8,m.y-m.vy*8); gr.addColorStop(0,'rgba(255,255,255,0.95)'); gr.addColorStop(1,'rgba(255,255,255,0)');
       ctx.strokeStyle=gr; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x-m.vx*8,m.y-m.vy*8); ctx.stroke(); });
     ctx.font='34px serif'; ctx.textBaseline='middle'; ctx.fillText('🌙',w-60,70+Math.sin(chatBgT*0.01)*6);
+  } else if(chatTheme === 5){
+    mgFilmFrame(ctx,w,h,o);
   } else {
     ctx.fillStyle='#070a14'; ctx.fillRect(0,0,w,h);
     ctx.globalCompositeOperation='lighter';
@@ -4318,6 +4355,107 @@ function chatBgFrame(){
   }
   requestAnimationFrame(chatBgFrame);
 }
+
+// ===== Wallpaper ya "filamu": historia ya mumbigames tangu mwanzo hadi leo =====
+const MG_FILM = [
+  {e:'🎮', a:['SURA YA 1','CHAPTER 1'], t:['MWANZO','THE BEGINNING'], s:['Tovuti ndogo ya kupakua games','A small site to download games']},
+  {e:'💬', a:['SURA YA 2','CHAPTER 2'], t:['JUMUIYA','COMMUNITY'], s:['Wachezaji wakakutana kwenye chat moja','Players met in one chat']},
+  {e:'🎁', a:['SURA YA 3','CHAPTER 3'], t:['TOKENI & ZAWADI','TOKENS & REWARDS'], s:['Tokeni, zawadi na marafiki','Tokens, gifts and friends']},
+  {e:'🛒', a:['SURA YA 4','CHAPTER 4'], t:['DUKA, TV & MUZIKI','SHOP, TV & MUSIC'], s:['Kila kitu cha mchezaji mahali pamoja','Everything a gamer needs, in one place']},
+  {e:'🤖', a:['SURA YA 5','CHAPTER 5'], t:['mumbiBot','mumbiBot'], s:['Msaidizi mwerevu wa mumbigames','The smart helper of mumbigames']},
+  {e:'📱', a:['SURA YA 6','CHAPTER 6'], t:['APP YETU','OUR APP'], s:['Sasa mumbigames iko mfukoni mwako','Now mumbigames is in your pocket']},
+  {e:'🎬', a:['SURA YA 7','CHAPTER 7'], t:['TUNAENDELEA...','TO BE CONTINUED...'], s:['Hadithi bado inaandikwa pamoja nawe','The story is still being written with you']}
+];
+function mgFilmFrame(ctx,w,h,o){
+  const T = chatBgT, L = (typeof currentLang !== 'undefined' && currentLang === 'en') ? 1 : 0;
+  const g = ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,'#05060f'); g.addColorStop(0.55,'#0d0a24'); g.addColorStop(1,'#1a0e08');
+  ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+  // mwanga wa sinema unaotembea polepole
+  ctx.globalCompositeOperation = 'lighter';
+  const bx = w*(0.5+0.32*Math.sin(T*0.004)), by = h*(0.3+0.1*Math.cos(T*0.003));
+  const r1 = ctx.createRadialGradient(bx,by,0,bx,by,h*0.55); r1.addColorStop(0,'rgba(124,77,255,0.22)'); r1.addColorStop(1,'rgba(124,77,255,0)');
+  ctx.fillStyle = r1; ctx.fillRect(0,0,w,h);
+  const cx2 = w*(0.5-0.3*Math.sin(T*0.0035+1)), cy2 = h*(0.75+0.08*Math.sin(T*0.0045));
+  const r2 = ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,h*0.5); r2.addColorStop(0,'rgba(255,138,61,0.16)'); r2.addColorStop(1,'rgba(255,138,61,0)');
+  ctx.fillStyle = r2; ctx.fillRect(0,0,w,h);
+  // mstari mwembamba wa mwanga (anamorphic)
+  const sy = h*0.34 + Math.sin(T*0.006)*h*0.02;
+  const sg = ctx.createLinearGradient(0,0,w,0); sg.addColorStop(0,'rgba(120,160,255,0)'); sg.addColorStop(0.5,'rgba(170,200,255,0.18)'); sg.addColorStop(1,'rgba(120,160,255,0)');
+  ctx.fillStyle = sg; ctx.fillRect(0,sy,w,1.5);
+  ctx.globalCompositeOperation = 'source-over';
+  // vumbi/nyota zinazoelea
+  o.stars.forEach(st=>{ st.y -= 0.12+st.r*0.1; st.x += Math.sin(T*0.01+st.ph)*0.15; if(st.y < -4){ st.y = h+4; st.x = Math.random()*w; }
+    ctx.fillStyle = 'rgba(255,235,205,'+(0.15+0.3*Math.abs(Math.sin(T*st.sp+st.ph)))+')'; ctx.beginPath(); ctx.arc(st.x,st.y,st.r*0.9,0,7); ctx.fill(); });
+  // sura (chapter) — kila sekunde 8
+  const D = 480, idx = Math.floor(T/D) % MG_FILM.length, k = T % D, c = MG_FILM[idx];
+  let al = k < 70 ? k/70 : (k > D-70 ? (D-k)/70 : 1); al = Math.max(0,Math.min(1,al));
+  const zoom = 1 + (k/D)*0.06;
+  ctx.save(); ctx.translate(w/2, h*0.3); ctx.scale(zoom,zoom); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.globalAlpha = al*0.5; ctx.font = '46px serif'; ctx.fillText(c.e, 0, -52);
+  ctx.globalAlpha = al*0.55; ctx.fillStyle = '#ffb14a'; ctx.font = '700 11px sans-serif'; ctx.fillText(c.a[L].split('').join(' '), 0, -8);
+  ctx.globalAlpha = al*0.7; ctx.fillStyle = '#ffffff'; ctx.font = '800 25px "Baloo 2",sans-serif'; ctx.fillText(c.t[L], 0, 20);
+  ctx.globalAlpha = al*0.5; ctx.fillStyle = '#cfd6ff'; ctx.font = '12.5px sans-serif'; ctx.fillText(c.s[L], 0, 48);
+  ctx.restore();
+  // mistari ya sinema (juu na chini) + giza kando
+  const bar = Math.max(10, h*0.03);
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(0,0,w,bar); ctx.fillRect(0,h-bar,w,bar);
+  const vg = ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*0.35,w/2,h/2,Math.max(w,h)*0.75); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.55)');
+  ctx.fillStyle = vg; ctx.fillRect(0,0,w,h);
+  // chembe ndogo za filamu
+  if(T % 3 === 0){ ctx.fillStyle = 'rgba(255,255,255,0.05)'; for(let i=0;i<6;i++) ctx.fillRect(Math.random()*w, Math.random()*h, 1, 1+Math.random()*2); }
+}
+
+// ===== Wanachama wa Chat (jina + idadi inayoongezeka) =====
+let mgMembers = {}, mgMemUnsub = null, mgMemSheetOpen = false;
+function mgMemKey(n){ return String(n||'').trim().toLowerCase().replace(/\s+/g,' '); }
+function mgMemList(){
+  const map = {};
+  Object.keys(mgMembers).forEach(k=>{ map[k] = mgMembers[k]; });
+  try{ (chatLastMsgs||[]).forEach(m=>{ const k = mgMemKey(m.name); if(k && !map[k]) map[k] = {name:m.name}; }); }catch(e){}
+  if(chatName){ const k = mgMemKey(chatName); if(k && !map[k]) map[k] = {name:chatName}; }
+  return Object.keys(map).map(k=>map[k]).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+}
+function mgMemRender(){
+  const list = mgMemList(), n = list.length;
+  const el = document.getElementById('chatOnlineLabel');
+  if(el) el.textContent = n ? ('👥 ' + n + ' ' + tvT('wanachama • bonyeza kuona majina','members • tap to see names')) : tvT('Chati ya wachezaji wote','Chat with all players');
+  if(mgMemSheetOpen) mgMemFill(list);
+}
+function mgMemSub(){
+  if(mgMemUnsub) return;
+  try{
+    mgMemUnsub = db.collection('chat_members').limit(2000).onSnapshot(snap=>{
+      const m = {}; snap.forEach(d=>{ const v = d.data() || {}; const k = mgMemKey(v.name); if(k) m[k] = {name:v.name, joinedAt:v.joinedAt||0}; });
+      mgMembers = m; mgMemRender();
+    }, err=>{ console.error(err); mgMemUnsub = null; });
+  }catch(e){}
+}
+async function mgMemRegister(){
+  try{
+    if(!chatName) return;
+    const k = mgMemKey(chatName); if(!k) return;
+    const id = k.replace(/[^a-z0-9]+/g,'_').slice(0,60) || ('u' + Date.now());
+    const ref = db.collection('chat_members').doc(id);
+    const d = await ref.get();
+    if(!d.exists){ const o = {name: chatName, joinedAt: Date.now()}; if(auth.currentUser) o.uid = auth.currentUser.uid; await ref.set(o); }
+  }catch(e){ console.error(e); }
+}
+function mgMemFill(list){
+  const box = document.getElementById('mgMemList'); if(!box) return;
+  const t = document.getElementById('mgMemTitle'); if(t) t.textContent = tvT('Wanachama wa Chat','Chat Members') + ' (' + list.length + ')';
+  box.innerHTML = list.map(m=>{ const nm = String(m.name||'?'); return '<div class="mgm-row"><span class="mgm-av">' + escapeHtml(nm.charAt(0).toUpperCase()) + '</span><span class="mgm-nm">' + escapeHtml(nm) + '</span></div>'; }).join('');
+}
+function mgMemOpen(){
+  let ov = document.getElementById('mgMemOv');
+  if(!ov){
+    ov = document.createElement('div'); ov.id = 'mgMemOv'; ov.className = 'mgm-ov';
+    ov.innerHTML = '<div class="mgm-box"><div class="mgm-hd"><div id="mgMemTitle"></div><span class="mgm-x" onclick="mgMemClose()">✕</span></div><div id="mgMemList" class="mgm-list"></div></div>';
+    ov.addEventListener('click', function(e){ if(e.target === ov) mgMemClose(); });
+    document.body.appendChild(ov);
+  }
+  mgMemSheetOpen = true; mgMemFill(mgMemList()); ov.style.display = 'flex';
+}
+function mgMemClose(){ mgMemSheetOpen = false; const ov = document.getElementById('mgMemOv'); if(ov) ov.style.display = 'none'; }
 function openAbout(){ document.getElementById('aboutOverlay').classList.add('show'); }
 function closeAbout(){ document.getElementById('aboutOverlay').classList.remove('show'); }
 
@@ -4328,7 +4466,9 @@ function showChat(){
   markChatSeen();
   pickRandomChatTheme();
   startChatBg();
+  mgMemSub(); mgMemRender();
   if(chatName){
+    mgMemRegister();
     document.getElementById('nameGate').style.display = 'none';
     document.getElementById('chatBody').style.display = 'flex';
     subscribeMessages();
@@ -6863,6 +7003,7 @@ function joinChat(){
   if(!val){ return; }
   chatName = val;
   localStorage.setItem('mg-chat-name', val);
+  try{ mgMemRegister(); }catch(e){}
   document.getElementById('nameGate').style.display = 'none';
   document.getElementById('chatBody').style.display = 'flex';
   subscribeMessages();
@@ -6880,7 +7021,7 @@ function subscribeMessages(){
 }
 
 function renderMessages(msgs){
-  chatLastMsgs = msgs; try{ mgProfNeed(msgs); }catch(e){}
+  chatLastMsgs = msgs; try{ mgProfNeed(msgs); }catch(e){} try{ mgMemRender(); }catch(e){}
   const box = document.getElementById('chatMessages');
   if(msgs.length===0){
     box.innerHTML = '<div class="chat-empty">Bado hakuna ujumbe. Kuwa wa kwanza kuandika! 👋</div>';
@@ -7590,6 +7731,7 @@ function setLang(lang){
   if(typeof render === 'function' && games && games.length) render();
   i18nApply(lang);
   try{ mgSettingsLang(); }catch(e){}
+  try{ mgMemRender(); }catch(e){}
 }
 function mgSettingsLang(){
   var en = currentLang === 'en';
