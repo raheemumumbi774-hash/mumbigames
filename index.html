@@ -978,6 +978,40 @@
   .mg-apkbar .ab-t{font-size:12px;}
   .mg-apkbar .ab-go{padding:6px 13px;font-size:11.5px;border-radius:16px;}
   .mg-apkbar .ab-x{font-size:12px;width:20px;height:20px;}
+
+  /* ===== Muonekano mpya: Toka / Futa Akaunti + bango la app (tulivu) ===== */
+  .mg-logout,.del-acct{background:var(--panel);border-radius:16px;padding:12px 14px;gap:12px;}
+  .mg-logout{border:1px solid rgba(255,92,92,.55) !important;}
+  .del-acct{border:1px solid rgba(255,255,255,.08) !important;}
+  .mg-logout .si-icon,.del-acct .si-icon{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;background:rgba(255,92,92,.14);flex:none;}
+  .mg-logout .si-title,.del-acct .si-title{color:#ff6b6b;font-weight:700;font-size:13px;}
+  .mg-logout .si-arrow,.del-acct .si-arrow{color:#ff6b6b;opacity:.7;}
+  .mg-apkbar{left:12px;right:12px;max-width:360px;margin:0 auto;padding:10px 12px 12px;border-radius:18px;gap:11px;background:#1d1f27;border:1px solid rgba(255,255,255,.09);box-shadow:0 10px 26px rgba(0,0,0,.4);overflow:hidden;}
+  .mg-apkbar .ab-ic{width:44px;height:44px;border-radius:12px;overflow:hidden;background:#000015;flex:none;}
+  .mg-apkbar .ab-ic img{width:44px;height:44px;border-radius:12px;box-shadow:none;border:0;outline:0;display:block;}
+  .mg-apkbar .ab-t{font-size:13px;font-weight:800;color:#fff;line-height:1.2;}
+  .mg-apkbar .ab-s{font-size:10.5px;color:#9a9fb6;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mg-apkbar .ab-go{background:#f5a623;color:#1a1200;border-radius:18px;padding:8px 16px;font-size:12.5px;font-weight:800;box-shadow:none;}
+  .mg-apkbar .ab-x{color:#8a8ea6;font-size:12px;width:22px;height:22px;}
+  .mg-apkbar .ab-bar{height:2px;background:rgba(245,166,35,.6);}
+
+  /* ===== Bango kama la Chrome (install app) ===== */
+  .mg-apkbar{left:0;right:0;top:0;max-width:none;margin:0;border-radius:0 0 4px 4px;padding:12px 14px calc(12px) 14px;gap:14px;background:#2f3033;border:0;box-shadow:0 4px 14px rgba(0,0,0,.45);}
+  .mg-apkbar .ab-ic{width:46px;height:46px;border-radius:12px;background:none;}
+  .mg-apkbar .ab-ic img{width:46px;height:46px;border-radius:12px;}
+  .mg-apkbar .ab-t{font-size:15px;font-weight:500;color:#e8eaed;letter-spacing:.1px;}
+  .mg-apkbar .ab-s{font-size:12.5px;color:#9aa0a6;margin-top:3px;}
+  .mg-apkbar .ab-go{background:none;color:#8ab4f8;border-radius:0;padding:8px 6px;font-size:15px;font-weight:500;font-family:inherit;}
+  .mg-apkbar .ab-x,.mg-apkbar .ab-bar{display:none;}
+
+  /* ===== Nav: kidude cha active kama pill (muundo wa Master Pes), ukubwa sawa ===== */
+  .nav-item{gap:3px;font-size:10px;}
+  .nav-item:not(.nav-center) .ic{width:46px;height:26px;border-radius:14px;font-size:15px;transition:background .15s;}
+  .nav-item:not(.nav-center) .ic svg{width:20px;height:20px;}
+  .nav-item.active:not(.nav-center) .ic{background:rgba(245,166,35,.18);}
+  .nav-item.active:not(.nav-center) span:not(.nav-badge):not(.nav-live):not(.nav-dot){font-weight:700;}
+  .nav-item.active .nav-av{box-shadow:none;}
+  .nav-center .ic{width:48px;height:48px;border-radius:50%;}
 </style>
 </head>
 <body>
@@ -1744,11 +1778,11 @@
         <div id="fbHistoryList" style="font-size:11px;color:var(--sub);">—</div>
       </div>
 
-      <div class="settings-item" onclick="logoutUser()">
+      <div class="settings-item mg-logout" onclick="logoutUser()">
         <div class="si-icon">🚪</div>
         <div class="si-text">
-          <div class="si-title">Toka (Logout)</div>
-          <div class="si-sub">Utahitaji kuingia tena kwa email/password</div>
+          <div class="si-title" id="logoutTitle">Toka (Logout)</div>
+          <div class="si-sub" id="logoutSub">Utahitaji kuingia tena kwa email/password</div>
         </div>
         <div class="si-arrow">›</div>
       </div>
@@ -1845,8 +1879,8 @@
 <div id="aiFab" onclick="" aria-label="AI"><div class="aif-in">🤖</div></div>
 
 <div class="bottomnav">
-  <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic">⌂</div><span data-i18n="nav_home">Home</span></div>
-  <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic" style="position:relative;">💬<span class="nav-badge" id="chatUnreadBadge">0</span></div><span data-i18n="nav_chat">Chat</span></div>
+  <div class="nav-item active" id="navHome" onclick="showHome()"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7.5L21 11"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></div><span data-i18n="nav_home">Home</span></div>
+  <div class="nav-item" id="navChat" onclick="showChat()"><div class="ic" style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.7 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/></svg><span class="nav-badge" id="chatUnreadBadge">0</span></div><span data-i18n="nav_chat">Chat</span></div>
   <div class="nav-item nav-center" id="navGames" onclick="showDuka()"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5c0-1.2.4-2.3 1-3.3l.6-1c.2-.3.5-.5.9-.5h10c.4 0 .7.2.9.5l.6 1c.6 1 1 2.1 1 3.3"/><path d="M4.5 9.5c1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0 1.1 1 2.9 1 4 0"/><path d="M5.5 9.5V18a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.5"/><path d="M9.5 14c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5"/></svg></div><span data-i18n="nav_duka">Duka</span></div>
   <div class="nav-item" id="navTV" onclick="showTV()"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5l4 3 4-3"/><rect x="3" y="7" width="18" height="13" rx="4"/></svg><span class="nav-live" id="tvLiveBadge">LIVE</span></div><span data-i18n="nav_tv">TV</span></div>
   <div class="nav-item" id="navMe" onclick="showProfile()"><div class="ic"><img id="navMeImg" class="nav-av" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="><span class="nav-dot" id="navMeDot"></span></div><span data-i18n="nav_me">Me</span></div>
@@ -7555,7 +7589,17 @@ function setLang(lang){
   applyLang(lang);
   if(typeof render === 'function' && games && games.length) render();
   i18nApply(lang);
+  try{ mgSettingsLang(); }catch(e){}
 }
+function mgSettingsLang(){
+  var en = currentLang === 'en';
+  var set = function(id,sw,e){ var el = document.getElementById(id); if(el) el.textContent = en ? e : sw; };
+  set('logoutTitle','Toka (Logout)','Log out');
+  set('logoutSub','Utahitaji kuingia tena kwa email/password','You will need to sign in again with email/password');
+  set('delAcctTitle','Futa Akaunti','Delete Account');
+  set('delAcctSub','Futa akaunti na taarifa zako zote kabisa','Permanently delete your account and all your data');
+}
+document.addEventListener('DOMContentLoaded', function(){ try{ mgSettingsLang(); }catch(e){} setTimeout(function(){ try{ mgSettingsLang(); }catch(e){} }, 800); });
 
 function setTheme(theme){
   localStorage.setItem('mg-theme', theme);
@@ -8322,13 +8366,14 @@ var MG_LOGO_URI = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAACQCAYAAAD
     }catch(e){}
     return false;
   }
-  if(inApp()) return;
+  window.__mgInApp = inApp();
+  if(window.__mgInApp) return;
   if(!/Android/i.test(navigator.userAgent || '')) return; /* APK ni ya Android tu */
   var bar = null, stopped = false;
   function build(){
     bar = document.createElement('div'); bar.className = 'mg-apkbar';
     bar.innerHTML = '<div class="ab-ic"><img alt="mumbigames" src="' + MG_LOGO_URI + '"></div>'
-      + '<div class="ab-tx"><div class="ab-t"></div></div>'
+      + '<div class="ab-tx"><div class="ab-t"></div><div class="ab-s"></div></div>'
       + '<button class="ab-go" type="button"></button><div class="ab-x" aria-label="close">✕</div><div class="ab-bar"></div>';
     document.body.appendChild(bar);
     bar.querySelector('.ab-go').addEventListener('click', function(){
@@ -8337,7 +8382,7 @@ var MG_LOGO_URI = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAACQCAYAAAD
         var a = document.createElement('a');
         a.href = (typeof APK_DOWNLOAD_LINK !== 'undefined' ? APK_DOWNLOAD_LINK : 'https://apk.e-droid.net/apk/app4163882-ejdbc0.apk?v=1');
         a.setAttribute('download', 'mumbigames.apk');
-        a.rel = 'noopener'; a.style.display = 'none';
+        a.rel = 'noopener noreferrer'; a.referrerPolicy = 'no-referrer'; a.target = '_self'; a.style.display = 'none';
         document.body.appendChild(a); a.click();
         setTimeout(function(){ try{ document.body.removeChild(a); }catch(e){} }, 1500);
       }catch(e){ location.href = 'https://apk.e-droid.net/apk/app4163882-ejdbc0.apk?v=1'; }
@@ -8348,7 +8393,8 @@ var MG_LOGO_URI = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAACQCAYAAAD
   function show(){
     if(stopped) return;
     if(!bar) build();
-    bar.querySelector('.ab-t').textContent = en() ? 'Get our app' : 'Pakua App yetu';
+    bar.querySelector('.ab-t').textContent = 'Install Mumbigames App';
+    bar.querySelector('.ab-s').textContent = location.hostname || 'mumbigames';
     bar.querySelector('.ab-go').textContent = 'Install';
     var pb = bar.querySelector('.ab-bar'); pb.style.animation = 'none'; void pb.offsetWidth; pb.style.animation = 'mgBarRun ' + (STAY_MS/1000) + 's linear forwards';
     requestAnimationFrame(function(){ bar.classList.add('show'); });
@@ -8436,7 +8482,9 @@ async function mgDeleteAccountDo(){
     var cv = cx.measureText('MMMMMMMMMM').width;
     var r = (cv > 0) ? dom / cv : 1;
     window.__mgTextScale = r;
-    if(r > 1.08 && r < 1.8){ document.documentElement.style.zoom = (1 / r).toFixed(3); }
+    var z = (r > 1.08 && r < 1.8) ? (1 / r) : 1;
+    if(!window.__mgInApp && window.innerWidth < 700) z = z * 0.9;
+    if(z !== 1) document.documentElement.style.zoom = z.toFixed(3);
   }catch(e){}
 })();
 </script>
