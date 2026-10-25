@@ -1713,6 +1713,23 @@
           <button class="req-btn" id="reqSendBtn" onclick="submitGameRequest()" data-i18n="req_btn">🚀 Tuma Ombi</button>
           <div class="req-hint" data-i18n="req_hint">Admin akijibu, utaliona jibu kwenye tab ya Maoni 🔴</div>
         </div></div>
+
+      <div class="settings-item mg-logout" onclick="logoutUser()">
+        <div class="si-icon">🚪</div>
+        <div class="si-text">
+          <div class="si-title" id="logoutTitle">Toka (Logout)</div>
+          <div class="si-sub" id="logoutSub">Utahitaji kuingia tena kwa email/password</div>
+        </div>
+        <div class="si-arrow">›</div>
+      </div>
+      <div class="settings-item del-acct" onclick="mgDeleteAccountOpen()">
+        <div class="si-icon">🗑️</div>
+        <div class="si-text">
+          <div class="si-title" id="delAcctTitle">Futa Akaunti</div>
+          <div class="si-sub" id="delAcctSub">Futa akaunti na taarifa zako zote kabisa</div>
+        </div>
+        <div class="si-arrow">›</div>
+      </div>
       </div>
 
       <!-- ---- SERA (Policy) ---- -->
@@ -1812,22 +1829,6 @@
         <div id="fbHistoryList" style="font-size:11px;color:var(--sub);">—</div>
       </div>
 
-      <div class="settings-item mg-logout" onclick="logoutUser()">
-        <div class="si-icon">🚪</div>
-        <div class="si-text">
-          <div class="si-title" id="logoutTitle">Toka (Logout)</div>
-          <div class="si-sub" id="logoutSub">Utahitaji kuingia tena kwa email/password</div>
-        </div>
-        <div class="si-arrow">›</div>
-      </div>
-      <div class="settings-item del-acct" onclick="mgDeleteAccountOpen()">
-        <div class="si-icon">🗑️</div>
-        <div class="si-text">
-          <div class="si-title" id="delAcctTitle">Futa Akaunti</div>
-          <div class="si-sub" id="delAcctSub">Futa akaunti na taarifa zako zote kabisa</div>
-        </div>
-        <div class="si-arrow">›</div>
-      </div>
     </div>
   </div>
 </div>
@@ -4272,7 +4273,7 @@ function showHome(){
 let chatTheme = 0, chatBgRunning = false, chatBgT = 0, chatBgObjs = null, chatFlash = 0, chatBolt = null;
 const CHAT_THEME_COUNT = 6;
 function pickRandomChatTheme(){
-  chatTheme = 5; chatBgObjs = null; chatBolt = null; return;
+  chatTheme = 5; chatBgObjs = null; chatBolt = null; mgFilmStart = 0; return;
   let n; do{ n = Math.floor(Math.random()*CHAT_THEME_COUNT); }while(n === chatTheme && CHAT_THEME_COUNT > 1);
   chatTheme = n; chatBgObjs = null; chatBolt = null;
 }
@@ -4356,53 +4357,138 @@ function chatBgFrame(){
   requestAnimationFrame(chatBgFrame);
 }
 
-// ===== Wallpaper ya "filamu": historia ya mumbigames tangu mwanzo hadi leo =====
-const MG_FILM = [
-  {e:'🎮', a:['SURA YA 1','CHAPTER 1'], t:['MWANZO','THE BEGINNING'], s:['Tovuti ndogo ya kupakua games','A small site to download games']},
-  {e:'💬', a:['SURA YA 2','CHAPTER 2'], t:['JUMUIYA','COMMUNITY'], s:['Wachezaji wakakutana kwenye chat moja','Players met in one chat']},
-  {e:'🎁', a:['SURA YA 3','CHAPTER 3'], t:['TOKENI & ZAWADI','TOKENS & REWARDS'], s:['Tokeni, zawadi na marafiki','Tokens, gifts and friends']},
-  {e:'🛒', a:['SURA YA 4','CHAPTER 4'], t:['DUKA, TV & MUZIKI','SHOP, TV & MUSIC'], s:['Kila kitu cha mchezaji mahali pamoja','Everything a gamer needs, in one place']},
-  {e:'🤖', a:['SURA YA 5','CHAPTER 5'], t:['mumbiBot','mumbiBot'], s:['Msaidizi mwerevu wa mumbigames','The smart helper of mumbigames']},
-  {e:'📱', a:['SURA YA 6','CHAPTER 6'], t:['APP YETU','OUR APP'], s:['Sasa mumbigames iko mfukoni mwako','Now mumbigames is in your pocket']},
-  {e:'🎬', a:['SURA YA 7','CHAPTER 7'], t:['TUNAENDELEA...','TO BE CONTINUED...'], s:['Hadithi bado inaandikwa pamoja nawe','The story is still being written with you']}
-];
+// ===== Wallpaper ya "filamu": kimdoli kinaokota vitu vya app, kinatengeneza kilima, app inaibuka, inakula logo, logo inajipanga, kisha shukrani =====
+var mgFilmImg = null, mgFilmStart = 0;
+function mgFilmLogo(){ if(!mgFilmImg){ mgFilmImg = new Image(); try{ mgFilmImg.src = MG_LOGO_URI; }catch(e){} } return (mgFilmImg.complete && mgFilmImg.naturalWidth) ? mgFilmImg : null; }
+const MG_FILM_LEN = 2200;
+function mgEase(x){ x = Math.max(0,Math.min(1,x)); return x<0.5 ? 2*x*x : 1-Math.pow(-2*x+2,2)/2; }
+function mgRR(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function mgDrawItem(ctx,k,x,y,sz){
+  const img = mgFilmLogo();
+  ctx.save(); ctx.textAlign='center'; ctx.textBaseline='middle';
+  if(k === 'logo'){ if(img){ mgRR(ctx,x-sz/2,y-sz/2,sz,sz,sz*0.22); ctx.clip(); ctx.drawImage(img,x-sz/2,y-sz/2,sz,sz); } else { ctx.fillStyle='#f5a623'; mgRR(ctx,x-sz/2,y-sz/2,sz,sz,sz*0.22); ctx.fill(); } }
+  else if(k === 'ai'){ ctx.fillStyle='#d97757'; ctx.beginPath(); ctx.arc(x,y,sz/2,0,7); ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=Math.max(1.2,sz*0.08); ctx.lineCap='round';
+    for(let i=0;i<4;i++){ const an = i*Math.PI/4; ctx.beginPath(); ctx.moveTo(x-Math.cos(an)*sz*0.28,y-Math.sin(an)*sz*0.28); ctx.lineTo(x+Math.cos(an)*sz*0.28,y+Math.sin(an)*sz*0.28); ctx.stroke(); } }
+  else { ctx.font = Math.round(sz*0.95)+'px serif'; ctx.fillText(k,x,y); }
+  ctx.restore();
+}
+function mgDrawKid(ctx,x,gy,t,walking,armsUp){
+  const ph = t*0.22, sw = walking ? Math.sin(ph) : 0, bob = walking ? Math.abs(Math.cos(ph))*2.2 : Math.sin(t*0.05)*0.8;
+  ctx.save(); ctx.translate(x, gy - bob); ctx.lineCap='round';
+  ctx.strokeStyle='#2a2f55'; ctx.lineWidth=5; // miguu
+  ctx.beginPath(); ctx.moveTo(-3,-16); ctx.lineTo(-3+sw*7,0); ctx.moveTo(3,-16); ctx.lineTo(3-sw*7,0); ctx.stroke();
+  ctx.fillStyle='#ff8a3d'; mgRR(ctx,-8,-34,16,20,6); ctx.fill(); // mwili
+  ctx.strokeStyle='#f2c9a0'; ctx.lineWidth=4; // mikono
+  ctx.beginPath(); if(armsUp){ ctx.moveTo(-8,-30); ctx.lineTo(-12,-44); ctx.moveTo(8,-30); ctx.lineTo(12,-44); } else { ctx.moveTo(-8,-30); ctx.lineTo(-10-sw*3,-19); ctx.moveTo(8,-30); ctx.lineTo(10+sw*3,-19); } ctx.stroke();
+  ctx.fillStyle='#f2c9a0'; ctx.beginPath(); ctx.arc(0,-43,9,0,7); ctx.fill(); // kichwa
+  ctx.fillStyle='#14152b'; ctx.beginPath(); ctx.arc(0,-46,9.2,Math.PI,0); ctx.fill();
+  ctx.fillStyle='#14152b'; ctx.beginPath(); ctx.arc(3.2,-43,1.3,0,7); ctx.fill();
+  ctx.restore();
+}
 function mgFilmFrame(ctx,w,h,o){
   const T = chatBgT, L = (typeof currentLang !== 'undefined' && currentLang === 'en') ? 1 : 0;
+  if(!mgFilmStart) mgFilmStart = performance.now();
+  const t = ((performance.now()-mgFilmStart)/1000*60) % MG_FILM_LEN;
   const g = ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,'#05060f'); g.addColorStop(0.55,'#0d0a24'); g.addColorStop(1,'#1a0e08');
   ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
-  // mwanga wa sinema unaotembea polepole
   ctx.globalCompositeOperation = 'lighter';
   const bx = w*(0.5+0.32*Math.sin(T*0.004)), by = h*(0.3+0.1*Math.cos(T*0.003));
-  const r1 = ctx.createRadialGradient(bx,by,0,bx,by,h*0.55); r1.addColorStop(0,'rgba(124,77,255,0.22)'); r1.addColorStop(1,'rgba(124,77,255,0)');
+  const r1 = ctx.createRadialGradient(bx,by,0,bx,by,h*0.55); r1.addColorStop(0,'rgba(124,77,255,0.2)'); r1.addColorStop(1,'rgba(124,77,255,0)');
   ctx.fillStyle = r1; ctx.fillRect(0,0,w,h);
-  const cx2 = w*(0.5-0.3*Math.sin(T*0.0035+1)), cy2 = h*(0.75+0.08*Math.sin(T*0.0045));
-  const r2 = ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,h*0.5); r2.addColorStop(0,'rgba(255,138,61,0.16)'); r2.addColorStop(1,'rgba(255,138,61,0)');
+  const r2 = ctx.createRadialGradient(w*0.8,h*0.62,0,w*0.8,h*0.62,h*0.4); r2.addColorStop(0,'rgba(255,138,61,0.14)'); r2.addColorStop(1,'rgba(255,138,61,0)');
   ctx.fillStyle = r2; ctx.fillRect(0,0,w,h);
-  // mstari mwembamba wa mwanga (anamorphic)
-  const sy = h*0.34 + Math.sin(T*0.006)*h*0.02;
-  const sg = ctx.createLinearGradient(0,0,w,0); sg.addColorStop(0,'rgba(120,160,255,0)'); sg.addColorStop(0.5,'rgba(170,200,255,0.18)'); sg.addColorStop(1,'rgba(120,160,255,0)');
-  ctx.fillStyle = sg; ctx.fillRect(0,sy,w,1.5);
   ctx.globalCompositeOperation = 'source-over';
-  // vumbi/nyota zinazoelea
   o.stars.forEach(st=>{ st.y -= 0.12+st.r*0.1; st.x += Math.sin(T*0.01+st.ph)*0.15; if(st.y < -4){ st.y = h+4; st.x = Math.random()*w; }
     ctx.fillStyle = 'rgba(255,235,205,'+(0.15+0.3*Math.abs(Math.sin(T*st.sp+st.ph)))+')'; ctx.beginPath(); ctx.arc(st.x,st.y,st.r*0.9,0,7); ctx.fill(); });
-  // sura (chapter) — kila sekunde 8
-  const D = 480, idx = Math.floor(T/D) % MG_FILM.length, k = T % D, c = MG_FILM[idx];
-  let al = k < 70 ? k/70 : (k > D-70 ? (D-k)/70 : 1); al = Math.max(0,Math.min(1,al));
-  const zoom = 1 + (k/D)*0.06;
-  ctx.save(); ctx.translate(w/2, h*0.3); ctx.scale(zoom,zoom); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.globalAlpha = al*0.5; ctx.font = '46px serif'; ctx.fillText(c.e, 0, -52);
-  ctx.globalAlpha = al*0.55; ctx.fillStyle = '#ffb14a'; ctx.font = '700 11px sans-serif'; ctx.fillText(c.a[L].split('').join(' '), 0, -8);
-  ctx.globalAlpha = al*0.7; ctx.fillStyle = '#ffffff'; ctx.font = '800 25px "Baloo 2",sans-serif'; ctx.fillText(c.t[L], 0, 20);
-  ctx.globalAlpha = al*0.5; ctx.fillStyle = '#cfd6ff'; ctx.font = '12.5px sans-serif'; ctx.fillText(c.s[L], 0, 48);
+
+  // ---- hadithi ----
+  const dim = mgEase((t-1380)/130) * (1 - mgEase((t-2080)/100));
+  const sceneA = Math.min(1, t/60) * (1 - dim*0.72) * (t > 2120 ? Math.max(0,(MG_FILM_LEN-t)/80) : 1);
+  const gy = h*0.6, heapX = w*0.8, charEnd = heapX-42, wlkT = 700;
+  ctx.save(); ctx.globalAlpha = sceneA;
+  // ardhi
+  const gg = ctx.createLinearGradient(0,gy,w,gy); gg.addColorStop(0,'rgba(255,255,255,0)'); gg.addColorStop(0.5,'rgba(255,255,255,0.22)'); gg.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle = gg; ctx.fillRect(0,gy,w,1.5);
+  // vitu
+  const items = ['logo','ai','🎮','🎁','📺','🛒','💬','🪙'];
+  const ix = i => w*0.1 + i*(w*0.54/7);
+  const kidX = t < wlkT ? -24 + (t/wlkT)*(charEnd+24) : charEnd;
+  const pickT = i => ((ix(i)+6+24)/(charEnd+24))*wlkT;
+  const heapPos = i => ({x: heapX + (i-3.5)*6.5, y: gy - 7 - (3.6-Math.abs(i-3.5))*4.4});
+  // kilima
+  const mh = mgEase((t-720)/160);
+  if(mh > 0){ ctx.fillStyle = '#3b2a22'; ctx.beginPath(); ctx.ellipse(heapX, gy+1, 34*mh+2, 14*mh, 0, Math.PI, 0); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.beginPath(); ctx.ellipse(heapX-6, gy-3, 18*mh, 6*mh, 0, Math.PI, 0); ctx.fill(); }
+  items.forEach((k,i)=>{
+    const sz = k === 'logo' ? 28 : 22, pt = pickT(i), drop = 740 + i*14;
+    const hp = heapPos(i);
+    let x, y, s = sz;
+    if(t < pt){ x = ix(i); y = gy - 12 + Math.sin(T*0.05+i)*1.5; }
+    else if(t < pt+26){ const p = mgEase((t-pt)/26); x = ix(i)+(kidX-ix(i))*p; y = (gy-12)+((gy-84)-(gy-12))*p; }
+    else if(t < drop){ const n = i, off = (i-3.5)*14; x = kidX + off*0.8; y = gy - 86 + Math.sin(T*0.07+i)*2.5; if(t > wlkT) { x = charEnd + (i-3.5)*8; } }
+    else if(t < drop+60){ const p = mgEase((t-drop)/60), sx = charEnd + (i-3.5)*8, sy = gy-86; x = sx+(hp.x-sx)*p; y = sy+(hp.y-sy)*p - Math.sin(p*Math.PI)*36; s = sz*(1-0.35*p); }
+    else { x = hp.x; y = hp.y; s = sz*0.65; }
+    // baada ya app kuibuka vitu vinazama kwenye kilima
+    const sink = mgEase((t-900)/70); if(sink > 0){ s *= (1-sink); }
+    if(s > 0.5) mgDrawItem(ctx,k,x,y,s);
+  });
+  // kimdoli
+  const walking = t < wlkT && t > 0;
+  mgDrawKid(ctx, kidX, gy, T, walking, t > 760 && t < 900);
+  // app (simu) inaibuka
+  const ap = mgEase((t-900)/90), apOut = 1 - mgEase((t-1380)/60);
+  if(ap > 0 && apOut > 0){
+    const chomp = (t>1085 && t<1135) ? Math.sin((t-1085)/50*Math.PI) : 0;
+    ctx.save(); ctx.globalAlpha = sceneA*apOut; ctx.translate(heapX, gy+2 - ap*58); ctx.scale(ap*(1+chomp*0.12), ap*(1-chomp*0.18));
+    ctx.fillStyle = '#12142a'; mgRR(ctx,-22,-40,44,78,10); ctx.fill(); ctx.strokeStyle = '#ffb14a'; ctx.lineWidth = 2; ctx.stroke();
+    const sg = ctx.createLinearGradient(0,-36,0,34); sg.addColorStop(0,'#2b2060'); sg.addColorStop(1,'#4a2a18'); ctx.fillStyle = sg; mgRR(ctx,-18,-35,36,68,6); ctx.fill();
+    ctx.fillStyle = '#fff'; const bl = (Math.floor(T/90)%6===0) ? 0.5 : 3; ctx.beginPath(); ctx.ellipse(-7,-14,2.6,bl,0,0,7); ctx.ellipse(7,-14,2.6,bl,0,0,7); ctx.fill();
+    const mo = (t>1010 && t<1140) ? (t<1100 ? 6+Math.sin(T*0.2)*1.5 : 2) : 1.2;
+    ctx.fillStyle = '#10050a'; ctx.beginPath(); ctx.ellipse(0,6,10,mo,0,0,7); ctx.fill();
+    ctx.restore();
+  }
+  // logo kubwa inaliwa na app
+  if(t > 1000 && t < 1110){
+    const p = mgEase((t-1030)/70), pop = mgEase((t-1000)/30), sx = w*0.5, sy = h*0.34, tx = heapX, ty = gy - 52 + 4;
+    mgDrawItem(ctx,'logo', sx+(tx-sx)*p, sy+(ty-sy)*p, 70*pop*(1-0.85*p));
+  }
+  // vipande vya logo vinatoka na kujipanga
+  const img = mgFilmLogo();
+  if(t >= 1130 && t < 1400 && img){
+    const N = 4, tile = 34, cx = w*0.5, cy = h*0.36, tsz = img.naturalWidth/N;
+    for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+      const id = r*N+c, rnd1 = Math.sin(id*12.9898)*43758.5453, rx = rnd1-Math.floor(rnd1), rnd2 = Math.sin(id*78.233)*12345.678, ry = rnd2-Math.floor(rnd2);
+      const sx0 = heapX, sy0 = gy-52, scx = w*(0.12+rx*0.76), scy = h*(0.2+ry*0.38);
+      const tx = cx + (c-(N-1)/2)*tile, ty = cy + (r-(N-1)/2)*tile;
+      const out = mgEase((t-1130-id*2)/50), asm = mgEase((t-1215-id*7)/70);
+      let x = sx0+(scx-sx0)*out, y = sy0+(scy-sy0)*out;
+      x = x+(tx-x)*asm; y = y+(ty-y)*asm;
+      const rot = (1-asm)*(rx-0.5)*3, sc = 0.3+0.7*out;
+      ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.scale(sc,sc); ctx.globalAlpha = sceneA*Math.min(1,out*2);
+      ctx.drawImage(img, c*tsz, r*tsz, tsz, tsz, -tile/2, -tile/2, tile+0.6, tile+0.6); ctx.restore();
+    }
+  }
+  if(t >= 1400 && t < 2120){ const sz = tile4(); mgDrawItem(ctx,'logo', w*0.5, h*0.36, sz); }
   ctx.restore();
-  // mistari ya sinema (juu na chini) + giza kando
+  function tile4(){ return 34*4*(1 + 0.02*Math.sin(T*0.04)); }
+
+  // ---- maneno ya shukrani (video inafifia ili yaonekane) ----
+  if(t > 1480 && t < 2150){
+    const k = t-1480, al = Math.min(1,k/70) * (t > 2080 ? Math.max(0,(2150-t)/70) : 1);
+    ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.globalAlpha = al; ctx.fillStyle = '#ffffff'; ctx.shadowColor = 'rgba(0,0,0,.7)'; ctx.shadowBlur = 8;
+    ctx.font = '800 24px "Baloo 2",sans-serif'; ctx.fillText(L ? 'Thank you for your support!' : 'Asante kwa sapoti yako!', w/2, h*0.58);
+    ctx.globalAlpha = al*0.9; ctx.fillStyle = '#ffd9a8'; ctx.font = '600 13px "Baloo 2",sans-serif';
+    ctx.fillText(L ? 'You are the reason mumbigames keeps growing' : 'Wewe ndiye sababu mumbigames inaendelea kukua', w/2, h*0.58+30);
+    ctx.globalAlpha = al*0.75; ctx.fillStyle = '#cfd6ff'; ctx.font = '12px "Baloo 2",sans-serif';
+    ctx.fillText(L ? 'Thank you to everyone who uses mumbigames ❤' : 'Tunawashukuru wote wanaotumia mumbigames ❤', w/2, h*0.58+54);
+    ctx.fillStyle = '#ffb14a'; ctx.font = '700 11px "Baloo 2",sans-serif'; ctx.fillText(L ? '— The mumbigames Team' : '— Timu ya mumbigames', w/2, h*0.58+80);
+    ctx.restore();
+  }
+  // mistari ya sinema + giza kando
   const bar = Math.max(10, h*0.03);
   ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(0,0,w,bar); ctx.fillRect(0,h-bar,w,bar);
-  const vg = ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*0.35,w/2,h/2,Math.max(w,h)*0.75); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.55)');
+  const vg = ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*0.35,w/2,h/2,Math.max(w,h)*0.75); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.5)');
   ctx.fillStyle = vg; ctx.fillRect(0,0,w,h);
-  // chembe ndogo za filamu
-  if(T % 3 === 0){ ctx.fillStyle = 'rgba(255,255,255,0.05)'; for(let i=0;i<6;i++) ctx.fillRect(Math.random()*w, Math.random()*h, 1, 1+Math.random()*2); }
 }
 
 // ===== Wanachama wa Chat (jina + idadi inayoongezeka) =====
