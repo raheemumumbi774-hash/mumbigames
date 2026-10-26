@@ -1056,6 +1056,30 @@
   .del-acct .si-title{color:#e07070;}
   .del-acct .si-icon{background:rgba(214,84,84,.12);}
   .del-acct .si-arrow{color:#e07070;}
+
+  /* ===== Darasa la Mumbi ===== */
+  .acad-ic{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ff8a3d,#7c4dff);flex:none;}
+  .acad-soon{font-size:9px;font-weight:700;color:#ffb14a;background:rgba(245,166,35,.14);border:1px solid rgba(245,166,35,.35);padding:3px 8px;border-radius:20px;white-space:nowrap;}
+  #academyView{display:none;flex-direction:column;height:calc(100vh - 78px);position:relative;overflow:hidden;background:#0a1b3d;}
+  #acadBg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+  #academyView>*:not(#acadBg){position:relative;z-index:1;}
+  #academyView .chat-header{background:rgba(10,27,61,.55);border-bottom:1px solid rgba(120,200,255,.2);}
+  .acad-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 26px 60px;gap:10px;}
+  .acad-logo{width:96px;height:96px;border-radius:28px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ff8a3d,#7c4dff);box-shadow:0 12px 30px rgba(0,0,0,.4);margin-bottom:6px;animation:acadFloat 4s ease-in-out infinite;}
+  @keyframes acadFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+  .acad-soon-big{font-size:11px;font-weight:800;letter-spacing:3px;color:#ffb14a;}
+  .acad-h{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:21px;color:#fff;line-height:1.2;}
+  .acad-p{font-size:12px;color:#b9c6ea;line-height:1.55;max-width:300px;}
+  .acad-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:6px;}
+  .acad-chips span{font-size:10.5px;font-weight:600;color:#dbe6ff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:5px 11px;border-radius:20px;}
+  .acad-note{font-size:10.5px;color:#9fb0d8;margin-top:8px;}
+
+  /* ===== Settings: icons za kweli (SVG) ===== */
+  .si-tile{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;color:#fff;font-size:0;}
+  .si-tile.acad-ic{background:linear-gradient(135deg,#ff8a3d,#7c4dff);box-shadow:0 4px 12px rgba(124,77,255,.3);}
+  .si-tile.t-clear{background:linear-gradient(135deg,#20c4ff,#3b6bff);}
+  .si-tile.t-share{background:linear-gradient(135deg,#2fd27f,#12a064);}
+  .acad-item{background:linear-gradient(135deg,rgba(124,77,255,.16),rgba(255,138,61,.10)),var(--panel);border-color:rgba(160,130,255,.35);}
 </style>
 </head>
 <body>
@@ -1565,6 +1589,25 @@
   <div class="md-grid" id="mdGrid"></div>
 </div>
 
+<div id="academyView">
+  <canvas id="acadBg"></canvas>
+  <div class="chat-header">
+    <div class="back" onclick="showSettings()">←</div>
+    <div style="flex:1;">
+      <div class="title" id="acadHdTitle">Darasa la Mumbi</div>
+      <div class="sub" id="acadHdSub">Jifunze na ukue</div>
+    </div>
+  </div>
+  <div class="acad-body">
+    <div class="acad-logo"><svg viewBox="0 0 48 48" width="54" height="54" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18L24 8l20 10-20 10L4 18z"/><path d="M12 23v9c0 3 5.4 6 12 6s12-3 12-6v-9"/><path d="M44 18v12"/></svg></div>
+    <div class="acad-soon-big" id="acadSoonBig">HIVI KARIBUNI</div>
+    <div class="acad-h" id="acadH">Darasa la Mumbi linakuja</div>
+    <div class="acad-p" id="acadP">Tunakuandalia masomo ya kupost TikTok ili upate likes, views na followers.</div>
+    <div class="acad-chips"><span>🎵 TikTok</span><span>❤ Likes</span><span>👁 Views</span><span>👥 Followers</span></div>
+    <div class="acad-note" id="acadNote">🔒 Masomo yatafunguliwa kwa tokeni</div>
+  </div>
+</div>
+
 <div id="settingsView">
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
@@ -1592,8 +1635,17 @@
       </div>
     </div>
 
+    <div class="settings-item acad-item" onclick="showAcademy()">
+      <div class="si-icon si-tile acad-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5L2 9z"/><path d="M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5"/><path d="M22 9v6"/></svg></div>
+      <div class="si-text">
+        <div class="si-title" id="acadItemTitle">Darasa la Mumbi</div>
+        <div class="si-sub" id="acadItemSub">Hivi karibuni — jifunze TikTok na zaidi</div>
+      </div>
+      <div class="si-arrow">›</div>
+    </div>
+
     <div class="settings-item" onclick="clearCache()">
-      <div class="si-icon">🧹</div>
+      <div class="si-icon si-tile t-clear"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.4 4.6l-6.2 6.2"/><path d="M14 10.6l-1.4-1.4c-.8-.8-2-.8-2.8 0L6.5 12.5c-.8.8-.8 2 0 2.8L9 17.8"/><path d="M9 17.8L4 20l1.5-5.2"/><path d="M9.2 17.6l3-3.3M6.6 14.9l3-3.3"/></svg></div>
       <div class="si-text">
         <div class="si-title" data-i18n="settings_clear">Futa Cache ya App</div>
         <div class="si-sub" data-i18n="settings_clear_sub">Rudisha mipangilio kwenye hali ya awali</div>
@@ -1602,7 +1654,7 @@
     </div>
 
     <div class="settings-item" onclick="shareGame('mumbigames')">
-      <div class="si-icon">📤</div>
+      <div class="si-icon si-tile t-share"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.7l7.4-4.3M8.3 13.3l7.4 4.3"/></svg></div>
       <div class="si-text">
         <div class="si-title" data-i18n="settings_share">Shea na Marafiki</div>
         <div class="si-sub" data-i18n="settings_share_sub">Waambie wenzako kuhusu mumbigames</div>
@@ -4259,7 +4311,7 @@ let chatName = localStorage.getItem('mg-chat-name') || '';
 let myChatPhotoURL = ''; // picha ya profile ya mtumiaji aliyeingia, inatumwa na kila ujumbe wake
 let chatUnsub = null;
 
-const ALL_VIEWS = ['homeView','chatView','dukaView','settingsView','profileView','myDownloadsView','aiView','tvView','tournamentView','tournDetailView'];
+const ALL_VIEWS = ['academyView','homeView','chatView','dukaView','settingsView','profileView','myDownloadsView','aiView','tvView','tournamentView','tournDetailView'];
 const ALL_NAVS = ['navHome','navChat','navGames','navTV','navMe'];
 function hideAllViews(){
   if(tournDetailUnsub){ tournDetailUnsub(); tournDetailUnsub = null; }
@@ -4803,6 +4855,60 @@ function closeChangelog(){
   document.getElementById('changelogOverlay').classList.remove('show');
 }
 
+
+// ===== Darasa la Mumbi (muundo wa nje tu — "Hivi karibuni") =====
+function academyLang(){
+  const set = (id,sw,en)=>{ const el = document.getElementById(id); if(el) el.textContent = tvT(sw,en); };
+  set('acadItemTitle','Darasa la Mumbi','Mumbi Academy');
+  set('acadItemSub','Hivi karibuni — jifunze TikTok na zaidi','Coming soon — learn TikTok and more');
+  set('acadHdTitle','Darasa la Mumbi','Mumbi Academy');
+  set('acadHdSub','Jifunze na ukue','Learn and grow');
+  set('acadSoonBig','HIVI KARIBUNI','COMING SOON');
+  set('acadH','Darasa la Mumbi linakuja','Mumbi Academy is coming');
+  set('acadP','Tunakuandalia masomo ya kupost TikTok ili upate likes, views na followers.','We are preparing lessons on posting to TikTok so you can get likes, views and followers.');
+  set('acadNote','🔒 Masomo yatafunguliwa kwa tokeni','🔒 Lessons will be unlocked with tokens');
+}
+let acadRun = false, acadT = 0, acadObj = null;
+function showAcademy(){
+  hideAllViews();
+  document.getElementById('academyView').style.display = 'flex';
+  academyLang();
+  try{ document.getElementById('academyView').scrollTop = 0; }catch(e){}
+  if(!acadRun){ acadRun = true; requestAnimationFrame(acadFrame); }
+}
+function acadFrame(){
+  const view = document.getElementById('academyView');
+  if(!view || view.style.display !== 'flex'){ acadRun = false; return; }
+  const cv = document.getElementById('acadBg'), w = cv.clientWidth, h = cv.clientHeight;
+  if(!w || !h){ requestAnimationFrame(acadFrame); return; }
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  if(cv.width !== Math.round(w*dpr) || cv.height !== Math.round(h*dpr)){ cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr); acadObj = null; }
+  const c = cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  if(!acadObj){
+    const em = ['❤','👁','👥','🔥','⭐','🎵','💬','📈'];
+    acadObj = {fl:[], st:[]};
+    for(let i=0;i<16;i++) acadObj.fl.push({x:Math.random()*w,y:Math.random()*h,e:em[i%em.length],s:14+Math.random()*14,v:.25+Math.random()*.45,ph:Math.random()*6.28});
+    for(let i=0;i<70;i++) acadObj.st.push({x:Math.random()*w,y:Math.random()*h,r:.4+Math.random()*1.3,ph:Math.random()*6.28,sp:.8+Math.random()*2});
+  }
+  acadT += 0.016;
+  const g = c.createLinearGradient(0,0,0,h); g.addColorStop(0,'#0a1b3d'); g.addColorStop(.5,'#102a5c'); g.addColorStop(1,'#1d0f3d');
+  c.fillStyle = g; c.fillRect(0,0,w,h);
+  c.globalCompositeOperation = 'lighter';
+  [[.2,.25,'40,200,255',.30,.2],[.85,.5,'255,120,60',.20,.16],[.35,.9,'160,100,255',.26,.18]].forEach((q,i)=>{
+    const x = w*q[0]+Math.sin(acadT*q[4]+i*2)*w*.14, y = h*q[1]+Math.cos(acadT*q[4]*1.2+i)*h*.08, r = Math.max(w,h)*.45;
+    const rg = c.createRadialGradient(x,y,0,x,y,r); rg.addColorStop(0,'rgba('+q[2]+','+q[3]+')'); rg.addColorStop(1,'rgba('+q[2]+',0)'); c.fillStyle = rg; c.fillRect(0,0,w,h); });
+  // miale inayozunguka kutoka katikati
+  const cx = w/2, cy = h*.38; c.save(); c.translate(cx,cy); c.rotate(acadT*.08);
+  for(let i=0;i<10;i++){ c.rotate(Math.PI/5); const rg = c.createLinearGradient(0,0,0,-Math.max(w,h)); rg.addColorStop(0,'rgba(120,200,255,.10)'); rg.addColorStop(1,'rgba(120,200,255,0)'); c.fillStyle = rg; c.beginPath(); c.moveTo(-10,0); c.lineTo(10,0); c.lineTo(40,-Math.max(w,h)); c.lineTo(-40,-Math.max(w,h)); c.fill(); }
+  c.restore();
+  c.globalCompositeOperation = 'source-over';
+  acadObj.st.forEach(st=>{ c.fillStyle = 'rgba(225,235,255,'+(0.2+0.6*Math.abs(Math.sin(acadT*st.sp+st.ph)))+')'; c.beginPath(); c.arc(st.x,st.y,st.r,0,7); c.fill(); });
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  acadObj.fl.forEach(f=>{ f.y -= f.v; if(f.y < -30){ f.y = h+30; f.x = Math.random()*w; } const x = f.x + Math.sin(acadT*.7+f.ph)*12;
+    c.globalAlpha = .22 + .12*Math.sin(acadT+f.ph); c.font = f.s+'px serif'; c.fillText(f.e,x,f.y); });
+  c.globalAlpha = 1;
+  requestAnimationFrame(acadFrame);
+}
 function showSettings(){
   hideAllViews();
   document.getElementById('settingsView').style.display = 'flex';
@@ -7731,6 +7837,7 @@ function setLang(lang){
   i18nApply(lang);
   try{ mgSettingsLang(); }catch(e){}
   try{ mgMemRender(); }catch(e){}
+  try{ academyLang(); }catch(e){}
 }
 function mgSettingsLang(){
   var en = currentLang === 'en';
@@ -7740,7 +7847,7 @@ function mgSettingsLang(){
   set('delAcctTitle','Futa Akaunti','Delete Account');
   set('delAcctSub','Futa akaunti na taarifa zako zote kabisa','Permanently delete your account and all your data');
 }
-document.addEventListener('DOMContentLoaded', function(){ try{ mgSettingsLang(); }catch(e){} setTimeout(function(){ try{ mgSettingsLang(); }catch(e){} }, 800); });
+document.addEventListener('DOMContentLoaded', function(){ try{ mgSettingsLang(); academyLang(); }catch(e){} setTimeout(function(){ try{ mgSettingsLang(); }catch(e){} }, 800); });
 
 function setTheme(theme){
   localStorage.setItem('mg-theme', theme);
