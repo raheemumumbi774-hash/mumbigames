@@ -1122,6 +1122,34 @@
   .mgm-av{background-color:#cdd1d6;background-size:cover;background-position:center;}
 
   .acad-flow{justify-content:flex-start;padding-top:34px;}
+
+  /* ===== Darasa: somo moja, avatars, profile ===== */
+  .ac-card .ac-av{display:block;width:84px;height:84px;margin:0 auto 10px;}
+  .ac-card .ac-av svg{display:block;border-radius:50%;}
+  .ac-rd{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.3);flex:none;position:relative;}
+  .ac-topic.sel .ac-rd{border-color:#ffb14a;}
+  .ac-topic.sel .ac-rd:after{content:'';position:absolute;inset:3px;border-radius:50%;background:#ffb14a;}
+  .ac-lbl{font-size:11px;color:#b9c6ea;font-weight:600;margin:4px 0 -4px 4px;}
+  .acad-pfbtn{flex:none;width:34px;height:34px;border-radius:50%;background-size:cover;background-position:center;background-color:#cdd1d6;border:2px solid rgba(255,255,255,.7);cursor:pointer;}
+  .acad-prof{flex:1;flex-direction:column;overflow-y:auto;padding:16px 16px 80px;gap:12px;}
+  .ap-top{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 4px;}
+  .ap-av{width:92px;height:92px;border-radius:50%;background-size:cover;background-position:center;background-color:#cdd1d6;border:3px solid rgba(255,255,255,.85);box-shadow:0 8px 20px rgba(0,0,0,.35);}
+  .ap-nm{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:19px;color:#fff;margin-top:6px;}
+  .ap-ph{font-size:12px;color:#b9c6ea;}
+  .ap-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+  .ap-lbl{font-size:10.5px;font-weight:800;letter-spacing:1.5px;color:#ffb14a;text-transform:uppercase;margin-bottom:10px;}
+  .ap-lesson{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .ap-btn{width:100%;height:42px;border:0;border-radius:21px;background:linear-gradient(135deg,#ffb14a,#ff8a3d);color:#1a1200;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit;}
+  .ap-hint{font-size:10.5px;color:#9fb0d8;text-align:center;margin-top:8px;}
+  .ap-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px;color:#b9c6ea;}
+  .ap-row:last-child{border-bottom:0;}
+  .ap-row b{color:#fff;font-weight:600;text-align:right;overflow:hidden;text-overflow:ellipsis;}
+  .ap-mem{display:flex;gap:11px;align-items:flex-start;padding:7px 0;}
+  .ap-mem i{width:9px;height:9px;border-radius:50%;background:#ffb14a;margin-top:5px;flex:none;}
+  .ap-mem b{display:block;font-size:12px;color:#fff;font-weight:600;line-height:1.35;}
+  .ap-mem small{font-size:10px;color:#9fb0d8;}
+  #acChgOv .ac-topic{background:rgba(255,255,255,.06);margin-bottom:10px;}
+  #acChgOv .ac-err{margin-top:8px;}
 </style>
 </head>
 <body>
@@ -1634,13 +1662,15 @@
 <div id="academyView">
   <canvas id="acadBg"></canvas>
   <div class="chat-header">
-    <div class="back" onclick="showSettings()">←</div>
+    <div class="back" onclick="acNav()">←</div>
     <div style="flex:1;">
       <div class="title" id="acadHdTitle">Darasa la Mumbi</div>
       <div class="sub" id="acadHdSub">Jifunze na ukue</div>
     </div>
+    <div class="acad-pfbtn" id="acadPfBtn" onclick="acProfile()" style="display:none;"></div>
   </div>
   <div class="acad-flow" id="acadFlow" style="display:none;"></div>
+  <div class="acad-prof" id="acadProf" style="display:none;"></div>
   <div class="acad-body" id="acadSoon" style="display:none;">
     <div class="acad-logo"><svg viewBox="0 0 48 48" width="54" height="54" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18L24 8l20 10-20 10L4 18z"/><path d="M12 23v9c0 3 5.4 6 12 6s12-3 12-6v-9"/><path d="M44 18v12"/></svg></div>
     <div class="acad-soon-big" id="acadSoonBig">HIVI KARIBUNI</div>
@@ -4917,49 +4947,78 @@ function academyLang(){
   set('acadNote','🔒 Masomo yatafunguliwa kwa tokeni','🔒 Lessons will be unlocked with tokens');
 }
 
-// ===== Darasa: usajili wa mara ya kwanza (jinsia → kuzaliwa → nenosiri → masomo) =====
+// ===== Darasa: usajili wa mara ya kwanza (jinsia → kuzaliwa → taarifa → nenosiri → somo MOJA) + profile =====
+const AC_IC_MAN = '<svg viewBox="0 0 100 100" width="84" height="84"><defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3aa0ff"/><stop offset="1" stop-color="#4a5bff"/></linearGradient><clipPath id="cm"><circle cx="50" cy="50" r="50"/></clipPath></defs><circle cx="50" cy="50" r="50" fill="url(#gm)"/><g clip-path="url(#cm)"><path d="M12 100c2-22 18-30 38-30s36 8 38 30z" fill="#1d2a52"/><rect x="43" y="56" width="14" height="16" rx="5" fill="#e3b189"/><circle cx="50" cy="42" r="17" fill="#f1c7a1"/><path d="M33 40c0-13 8-20 18-20 11 0 17 8 16 20-3-6-8-9-17-9s-14 3-17 9z" fill="#241a14"/><circle cx="44" cy="43" r="1.7" fill="#2b2118"/><circle cx="56" cy="43" r="1.7" fill="#2b2118"/><path d="M45 51c3 2.6 7 2.6 10 0" stroke="#b9714f" stroke-width="2" fill="none" stroke-linecap="round"/></g></svg>', AC_IC_WOMAN = '<svg viewBox="0 0 100 100" width="84" height="84"><defs><linearGradient id="gf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6fb0"/><stop offset="1" stop-color="#c04bff"/></linearGradient><clipPath id="cf"><circle cx="50" cy="50" r="50"/></clipPath></defs><circle cx="50" cy="50" r="50" fill="url(#gf)"/><g clip-path="url(#cf)"><path d="M28 36c-2-18 12-24 22-24s24 6 22 24c-1 14 4 26 8 38H20c4-12 9-24 8-38z" fill="#2a1a22"/><path d="M12 100c2-22 18-30 38-30s36 8 38 30z" fill="#f4eaff"/><rect x="43" y="56" width="14" height="16" rx="5" fill="#e3b189"/><circle cx="50" cy="42" r="16" fill="#f1c7a1"/><path d="M34 40c1-12 8-17 16-17s15 5 16 17c-5-5-9-8-16-8s-11 3-16 8z" fill="#2a1a22"/><circle cx="44" cy="43" r="1.7" fill="#2b2118"/><circle cx="56" cy="43" r="1.7" fill="#2b2118"/><path d="M45 51c3 2.6 7 2.6 10 0" stroke="#c4586f" stroke-width="2" fill="none" stroke-linecap="round"/></g></svg>';
 const ACAD_TOPICS = [
-  {id:'edit',  e:'✂️', g:'linear-gradient(135deg,#ff5fa2,#7c4dff)', t:['Kuedit Video','Video Editing'],  d:['Jifunze kuedit video kwa InShot','Learn to edit videos with InShot']},
-  {id:'sport', e:'⚽', g:'linear-gradient(135deg,#1fc98a,#1a7fd6)', t:['Michezo / Mpira','Sport / Football'], d:['Matukio ya mpira na kutengeneza short clips','Football moments and making short clips']},
-  {id:'gaming',e:'🎮', g:'linear-gradient(135deg,#ff9a3d,#e0463d)', t:['Gaming','Gaming'], d:['eFootball na michezo mingine','eFootball and other games']}
+  {id:'edit',  ic:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/></svg>',  g:'linear-gradient(135deg,#ff5fa2,#7c4dff)', t:['Kuedit Video','Video Editing'],  d:['Jifunze kuedit video kwa InShot','Learn to edit videos with InShot']},
+  {id:'sport', ic:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/><path d="M12 7V2M16 10l5-1.5M14.5 14.5L17 19M9.5 14.5L7 19M8 10L3 8.5"/></svg>', g:'linear-gradient(135deg,#1fc98a,#1a7fd6)', t:['Michezo / Mpira','Sport / Football'], d:['Matukio ya mpira na kutengeneza short clips','Football moments and making short clips']},
+  {id:'gaming',ic:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h4M8 10v4"/><circle cx="15" cy="11" r=".9"/><circle cx="17.5" cy="13" r=".9"/><path d="M17.3 5H6.7a4 4 0 0 0-3.9 3.2l-1.5 7A3 3 0 0 0 6.2 18.4L8 16h8l1.8 2.4a3 3 0 0 0 4.9-3.2l-1.5-7A4 4 0 0 0 17.3 5z"/></svg>',  g:'linear-gradient(135deg,#ff9a3d,#e0463d)', t:['Gaming','Gaming'], d:['eFootball na michezo mingine','eFootball and other games']}
 ];
-let acadS = null;
+const ACAD_CHANGE_COST = 20;
+/* HALI YA MAJARIBIO: true = taarifa za Darasa HAZIHIFADHIWI (si Firebase wala simu). Kila app ikifunguliwa upya mtu anasajili upya. Tukimaliza kila kitu, weka false ili kuhifadhi kabisa. */
+const ACAD_TEST_MODE = true;
+let acadMem = null;
+let acadS = null, acadData = null, acadPage = 'flow';
 function acL(){ return currentLang === 'en' ? 1 : 0; }
-function acDone(uid){ try{ return localStorage.getItem('mg_acad_'+uid) === '1'; }catch(e){ return false; } }
-function acTopicsLocal(uid){ try{ return JSON.parse(localStorage.getItem('mg_acad_t_'+uid) || '[]'); }catch(e){ return []; } }
+function acT(sw,en){ return acL() ? en : sw; }
+function acTopic1(id){ return ACAD_TOPICS.find(x=>x.id===id) || null; }
+function acDone(uid){ if(ACAD_TEST_MODE) return false; try{ return localStorage.getItem('mg_acad_'+uid) === '1'; }catch(e){ return false; } }
+function acCache(uid,d){ if(ACAD_TEST_MODE){ acadMem = d || null; return; } try{ if(d){ localStorage.setItem('mg_acad_'+uid,'1'); localStorage.setItem('mg_acad_d_'+uid, JSON.stringify({topic:d.topic,gender:d.gender,username:d.username,phone:d.phone,birthDay:d.birthDay,birthMonth:d.birthMonth,birthYear:d.birthYear,changes:d.changes||0,doneAt:d.doneAt,history:d.history||[]})); } }catch(e){} }
+function acCached(uid){ if(ACAD_TEST_MODE) return acadMem; try{ return JSON.parse(localStorage.getItem('mg_acad_d_'+uid) || 'null'); }catch(e){ return null; } }
 function acShow(which){
+  acadPage = which;
   document.getElementById('acadFlow').style.display = which === 'flow' ? 'flex' : 'none';
   document.getElementById('acadSoon').style.display = which === 'soon' ? 'flex' : 'none';
+  document.getElementById('acadProf').style.display = which === 'prof' ? 'flex' : 'none';
+  acPfBtn();
 }
-function acSoonChips(topics){
-  const box = document.getElementById('acadChips'); if(!box) return;
-  const L = acL();
-  const list = (topics && topics.length ? topics : ACAD_TOPICS.map(x=>x.id)).map(id=>ACAD_TOPICS.find(x=>x.id===id)).filter(Boolean);
-  box.innerHTML = list.map(x=>'<span>'+x.e+' '+escapeHtml(x.t[L])+'</span>').join('');
+function acPhoto(){ const p = (typeof myChatPhotoURL === 'string' && /^https?:/.test(myChatPhotoURL)) ? myChatPhotoURL : ''; return p || DEFAULT_AVATAR; }
+function acPfBtn(){
+  const b = document.getElementById('acadPfBtn'); if(!b) return;
+  const show = acadData && acadData.doneAt && acadPage !== 'flow';
+  b.style.display = show ? 'block' : 'none';
+  b.style.backgroundImage = 'url("' + acPhoto() + '")';
+}
+function acAvSync(){ try{ acPfBtn(); const pa = document.querySelector('#acadProf .ap-av'); if(pa) pa.style.backgroundImage = 'url("' + acPhoto() + '")'; }catch(e){} }
+function acNav(){ if(acadPage === 'prof'){ acSoonFill(); acShow('soon'); } else if(acadPage === 'flow' && acadS && acadS.step > 0){ acBack(); } else showSettings(); }
+function acSoonFill(){
+  const L = acL(), box = document.getElementById('acadChips'); if(!box) return;
+  const tp = acadData && acTopic1(acadData.topic);
+  box.innerHTML = tp ? '<span>'+escapeHtml(acT('Somo lako: ','Your lesson: '))+escapeHtml(tp.t[L])+'</span>' : '';
 }
 async function acadStart(){
   const u = auth.currentUser; if(!u) return;
-  acadS = {step:0, gender:'', d:'', m:'', y:'', pw:'', pw2:'', topics:[], busy:false, err:''};
-  if(acDone(u.uid)){ acSoonChips(acTopicsLocal(u.uid)); acShow('soon'); return; }
-  acShow('flow'); document.getElementById('acadFlow').innerHTML = '<div class="ac-load">…</div>';
+  acadS = {step:0, gender:'', d:'', m:'', y:'', username:'', phone:'', pw:'', pw2:'', topic:'', busy:false, err:''};
+  const cached = ACAD_TEST_MODE ? acadMem : (acDone(u.uid) ? acCached(u.uid) : null);
+  if(cached){ acadData = cached; acSoonFill(); acShow('soon'); }
+  else { acadData = null; acShow('flow'); document.getElementById('acadFlow').innerHTML = '<div class="ac-load">…</div>'; }
   try{
     const d = await db.collection('users').doc(u.uid).get();
-    const a = d.exists ? (d.data().academy || null) : null;
-    if(a && a.doneAt){ try{ localStorage.setItem('mg_acad_'+u.uid,'1'); localStorage.setItem('mg_acad_t_'+u.uid, JSON.stringify(a.topics||[])); }catch(e){} acSoonChips(a.topics||[]); acShow('soon'); return; }
+    const ud = d.exists ? d.data() : {};
+    const a = ACAD_TEST_MODE ? null : (ud.academy || null);
+    if(a && a.doneAt && a.topic){ acadData = a; acCache(u.uid, a); if(acadPage !== 'prof'){ acSoonFill(); acShow('soon'); } else acProfRender(); return; }
+    acadS.username = ud.username || (document.getElementById('profileUsername')||{}).textContent || '';
+    acadS.phone = ud.phone || '';
+    if(a && a.gender){ /* data ya zamani isiyo na somo: anza upya */ }
   }catch(e){}
-  acRender();
+  if(!cached){ acShow('flow'); acRender(); }
 }
 const AC_MONTHS = [['Januari','January'],['Februari','February'],['Machi','March'],['Aprili','April'],['Mei','May'],['Juni','June'],['Julai','July'],['Agosti','August'],['Septemba','September'],['Oktoba','October'],['Novemba','November'],['Desemba','December']];
-function acBars(){ let h = '<div class="ac-bars">'; for(let i=0;i<4;i++) h += '<i class="'+(i<=acadS.step?'on':'')+'"></i>'; return h + '</div>'; }
+const AC_STEPS = 5;
+function acBars(){ let h = '<div class="ac-bars">'; for(let i=0;i<AC_STEPS;i++) h += '<i class="'+(i<=acadS.step?'on':'')+'"></i>'; return h + '</div>'; }
+function acTopicCards(sel, fn){
+  const L = acL();
+  return '<div class="ac-topics">' + ACAD_TOPICS.map(x=>'<div class="ac-topic '+(sel===x.id?'sel':'')+'" onclick="'+fn+'(\''+x.id+'\')"><span class="ac-ti" style="background:'+x.g+'">'+x.ic+'</span><span class="ac-tx"><b>'+escapeHtml(x.t[L])+'</b><small>'+escapeHtml(x.d[L])+'</small></span><span class="ac-rd"></span></div>').join('') + '</div>';
+}
 function acRender(){
   const S = acadS, L = acL(), box = document.getElementById('acadFlow'); if(!box) return;
-  const T = (sw,en)=> L ? en : sw;
+  const T = acT;
   let h = acBars();
   if(S.step === 0){
     h += '<div class="ac-h">'+T('Tuambie kukuhusu','Tell us about yourself')+'</div><div class="ac-p">'+T('Wewe ni nani? Taarifa hii ni ya siri na inatusaidia kukuandalia masomo.','Who are you? This stays private and helps us prepare lessons for you.')+'</div>'
       + '<div class="ac-opts">'
-      + '<div class="ac-card g-m '+(S.gender==='male'?'sel':'')+'" onclick="acPick(\'gender\',\'male\')"><span class="ac-ic">♂</span><b>'+T('Kiume','Male')+'</b></div>'
-      + '<div class="ac-card g-f '+(S.gender==='female'?'sel':'')+'" onclick="acPick(\'gender\',\'female\')"><span class="ac-ic">♀</span><b>'+T('Kike','Female')+'</b></div></div>';
+      + '<div class="ac-card '+(S.gender==='male'?'sel':'')+'" onclick="acPick(\'gender\',\'male\')"><span class="ac-av">'+AC_IC_MAN+'</span><b>'+T('Mwanaume','Man')+'</b></div>'
+      + '<div class="ac-card '+(S.gender==='female'?'sel':'')+'" onclick="acPick(\'gender\',\'female\')"><span class="ac-av">'+AC_IC_WOMAN+'</span><b>'+T('Mwanamke','Woman')+'</b></div></div>';
   } else if(S.step === 1){
     const yNow = new Date().getFullYear(); let dOpt = '<option value="">'+T('Siku','Day')+'</option>', mOpt = '<option value="">'+T('Mwezi','Month')+'</option>', yOpt = '<option value="">'+T('Mwaka','Year')+'</option>';
     for(let i=1;i<=31;i++) dOpt += '<option value="'+i+'"'+(String(S.d)===String(i)?' selected':'')+'>'+i+'</option>';
@@ -4968,20 +5027,24 @@ function acRender(){
     h += '<div class="ac-h">'+T('Ulizaliwa lini?','When were you born?')+'</div><div class="ac-p">'+T('Chagua tarehe, mwezi na mwaka wako wa kuzaliwa.','Choose your birth day, month and year.')+'</div>'
       + '<div class="ac-sel"><select onchange="acadS.d=this.value">'+dOpt+'</select><select onchange="acadS.m=this.value">'+mOpt+'</select><select onchange="acadS.y=this.value">'+yOpt+'</select></div>';
   } else if(S.step === 2){
+    h += '<div class="ac-h">'+T('Taarifa zako','Your details')+'</div><div class="ac-p">'+T('Tumezichukua kutoka kwenye akaunti yako ya mumbigames. Hakikisha ni sahihi.','We took these from your mumbigames account. Please make sure they are correct.')+'</div>'
+      + '<div class="ac-lbl">'+T('Jina la mtumiaji','Username')+'</div><div class="ac-in"><input id="acUn" type="text" maxlength="30" placeholder="'+T('Jina la mtumiaji','Username')+'" value="'+escapeHtml(S.username)+'" oninput="acadS.username=this.value"></div>'
+      + '<div class="ac-lbl">'+T('Namba ya simu','Phone number')+'</div><div class="ac-in"><input id="acPh" type="tel" maxlength="16" placeholder="07XXXXXXXX" value="'+escapeHtml(S.phone)+'" oninput="acadS.phone=this.value"></div>';
+  } else if(S.step === 3){
     h += '<div class="ac-h">'+T('Weka nenosiri la Darasa','Set your Academy password')+'</div><div class="ac-p">'+T('Linalinda taarifa zako za Darasa. Tumia angalau herufi 6.','It protects your Academy details. Use at least 6 characters.')+'</div>'
       + '<div class="ac-in"><input id="acPw" type="password" placeholder="'+T('Nenosiri','Password')+'" value="'+escapeHtml(S.pw)+'" oninput="acadS.pw=this.value"><span class="ac-eye" onclick="acEye()">👁</span></div>'
       + '<div class="ac-in"><input id="acPw2" type="password" placeholder="'+T('Rudia nenosiri','Repeat password')+'" value="'+escapeHtml(S.pw2)+'" oninput="acadS.pw2=this.value"></div>';
   } else {
-    h += '<div class="ac-h">'+T('Chagua unachopenda','Choose what you like')+'</div><div class="ac-p">'+T('Chagua masomo unayotaka kujifunza (unaweza kuchagua zaidi ya moja).','Pick the lessons you want to learn (you can choose more than one).')+'</div><div class="ac-topics">'
-      + ACAD_TOPICS.map(x=>'<div class="ac-topic '+(S.topics.indexOf(x.id)>=0?'sel':'')+'" onclick="acTopic(\''+x.id+'\')"><span class="ac-ti" style="background:'+x.g+'">'+x.e+'</span><span class="ac-tx"><b>'+escapeHtml(x.t[L])+'</b><small>'+escapeHtml(x.d[L])+'</small></span><span class="ac-ck">'+(S.topics.indexOf(x.id)>=0?'✓':'+')+'</span></div>').join('') + '</div>';
+    h += '<div class="ac-h">'+T('Chagua somo lako','Choose your lesson')+'</div><div class="ac-p">'+T('Chagua somo MOJA utakalolisoma. Unaweza kulibadilisha baadaye (mara ya kwanza bure, baada ya hapo tokeni '+ACAD_CHANGE_COST+').','Choose ONE lesson to study. You can change it later (first time free, after that '+ACAD_CHANGE_COST+' tokens).')+'</div>'
+      + acTopicCards(S.topic,'acTopic');
   }
   if(S.err) h += '<div class="ac-err">'+escapeHtml(S.err)+'</div>';
-  const last = S.step === 3, nextLbl = last ? (T('Maliza','Finish') + (S.topics.length ? ' ('+S.topics.length+')' : '')) : T('Endelea','Continue');
+  const last = S.step === AC_STEPS-1, nextLbl = last ? T('Maliza','Finish') : T('Endelea','Continue');
   h += '<div class="ac-btns">'+(S.step>0 ? '<button class="ac-back" onclick="acBack()">'+T('Rudi','Back')+'</button>' : '<span></span>')+'<button class="ac-next" '+(S.busy?'disabled':'')+' onclick="acNext()">'+(S.busy?'…':nextLbl)+'</button></div>';
   box.innerHTML = h;
 }
 function acPick(k,v){ acadS[k] = v; acadS.err = ''; acRender(); }
-function acTopic(id){ const i = acadS.topics.indexOf(id); if(i>=0) acadS.topics.splice(i,1); else acadS.topics.push(id); acadS.err = ''; acRender(); }
+function acTopic(id){ acadS.topic = id; acadS.err = ''; acRender(); }
 function acEye(){ ['acPw','acPw2'].forEach(id=>{ const el = document.getElementById(id); if(el) el.type = el.type === 'password' ? 'text' : 'password'; }); }
 function acBack(){ if(acadS.step>0){ acadS.step--; acadS.err=''; acRender(); } }
 async function acHash(uid,pw){
@@ -4989,7 +5052,7 @@ async function acHash(uid,pw){
   catch(e){ let h = 5381; const t = 'mgacad:'+uid+':'+pw; for(let i=0;i<t.length;i++) h = ((h<<5)+h+t.charCodeAt(i))|0; return 'f'+h; }
 }
 async function acNext(){
-  const S = acadS, L = acL(), T = (sw,en)=> L ? en : sw;
+  const S = acadS, T = acT;
   S.err = '';
   if(S.step === 0 && !S.gender) S.err = T('Chagua jinsia yako.','Please choose your gender.');
   else if(S.step === 1){
@@ -4998,21 +5061,100 @@ async function acNext(){
     else { const dt = new Date(y, m-1, d); if(dt.getMonth() !== m-1) S.err = T('Tarehe hii si sahihi.','This date is not valid.'); }
   }
   else if(S.step === 2){
+    if(!(S.username||'').trim()) S.err = T('Weka jina la mtumiaji.','Enter your username.');
+    else if(String(S.phone||'').replace(/\D/g,'').length < 9) S.err = T('Weka namba sahihi ya simu.','Enter a valid phone number.');
+  }
+  else if(S.step === 3){
     if((S.pw||'').length < 6) S.err = T('Nenosiri liwe na angalau herufi 6.','Password must be at least 6 characters.');
     else if(S.pw !== S.pw2) S.err = T('Manenosiri hayafanani.','Passwords do not match.');
   }
-  else if(S.step === 3 && !S.topics.length) S.err = T('Chagua angalau somo moja.','Choose at least one lesson.');
+  else if(S.step === 4 && !S.topic) S.err = T('Chagua somo moja.','Choose one lesson.');
   if(S.err){ acRender(); return; }
-  if(S.step < 3){ S.step++; acRender(); return; }
-  // maliza: hifadhi
+  if(S.step < AC_STEPS-1){ S.step++; acRender(); return; }
   S.busy = true; acRender();
   const u = auth.currentUser;
   try{
     const pwHash = await acHash(u.uid, S.pw);
-    await db.collection('users').doc(u.uid).set({academy:{gender:S.gender, birthDay:+S.d, birthMonth:+S.m, birthYear:+S.y, topics:S.topics, pwHash, doneAt:Date.now()}}, {merge:true});
-    try{ localStorage.setItem('mg_acad_'+u.uid,'1'); localStorage.setItem('mg_acad_t_'+u.uid, JSON.stringify(S.topics)); }catch(e){}
-    acSoonChips(S.topics); acShow('soon');
+    const now = Date.now();
+    const a = {gender:S.gender, birthDay:+S.d, birthMonth:+S.m, birthYear:+S.y, username:S.username.trim(), phone:String(S.phone).trim(), topic:S.topic, pwHash, changes:0, doneAt:now, history:[{t:now,type:'join',topic:S.topic}]};
+    if(!ACAD_TEST_MODE) await db.collection('users').doc(u.uid).set({academy:a}, {merge:true});
+    acadData = a; acCache(u.uid, a); acSoonFill(); acShow('soon');
   }catch(e){ console.error(e); S.busy = false; S.err = T('Imeshindwa kuhifadhi. Jaribu tena.','Could not save. Please try again.'); acRender(); }
+}
+// ---- profile ya Darasa ----
+function acFmtDate(ts){ const d = new Date(ts), L = acL(); return d.getDate()+' '+AC_MONTHS[d.getMonth()][L]+' '+d.getFullYear(); }
+function acProfile(){ if(!acadData) return; acShow('prof'); acProfRender(); }
+function acProfRender(){
+  const box = document.getElementById('acadProf'); if(!box || !acadData) return;
+  const a = acadData, L = acL(), T = acT, tp = acTopic1(a.topic);
+  const free = !(a.changes > 0);
+  const hist = (a.history||[]).slice().sort((x,y)=>y.t-x.t).slice(0,30);
+  const histH = hist.map(h=>{ const t2 = acTopic1(h.topic); const nm = t2 ? t2.t[L] : '';
+    let txt = h.type === 'join' ? T('Ulijiunga na Darasa — somo: ','You joined the Academy — lesson: ')+nm : T('Ulibadili somo kuwa: ','You changed lesson to: ')+nm+(h.cost ? ' (−'+h.cost+' '+T('tokeni','tokens')+')' : ' ('+T('bure','free')+')');
+    return '<div class="ap-mem"><i></i><div><b>'+escapeHtml(txt)+'</b><small>'+escapeHtml(acFmtDate(h.t))+'</small></div></div>'; }).join('');
+  const gTxt = a.gender === 'female' ? T('Mwanamke','Woman') : T('Mwanaume','Man');
+  const bTxt = a.birthDay ? (a.birthDay+' '+AC_MONTHS[(a.birthMonth||1)-1][L]+' '+a.birthYear) : '—';
+  box.innerHTML =
+    '<div class="ap-top"><div class="ap-av" style="background-image:url(\''+acPhoto()+'\')"></div><div class="ap-nm">'+escapeHtml(a.username||'')+'</div><div class="ap-ph">'+escapeHtml(a.phone||'')+'</div></div>'
+    + '<div class="ap-card"><div class="ap-lbl">'+T('Somo lako','Your lesson')+'</div><div class="ap-lesson"><span class="ac-ti" style="background:'+(tp?tp.g:'#444')+'">'+(tp?tp.ic:'')+'</span><span class="ac-tx"><b>'+escapeHtml(tp?tp.t[L]:'—')+'</b><small>'+escapeHtml(tp?tp.d[L]:'')+'</small></span></div>'
+    + '<button class="ap-btn" onclick="acChangeOpen()">'+T('Badili somo','Change lesson')+'</button><div class="ap-hint">'+(free ? T('Mara ya kwanza ni bure.','The first change is free.') : T('Kubadili kunagharimu tokeni '+ACAD_CHANGE_COST+'.','Changing costs '+ACAD_CHANGE_COST+' tokens.'))+'</div></div>'
+    + '<div class="ap-card"><div class="ap-lbl">'+T('Taarifa zako','Your details')+'</div>'
+    + '<div class="ap-row"><span>'+T('Jina','Username')+'</span><b>'+escapeHtml(a.username||'—')+'</b></div>'
+    + '<div class="ap-row"><span>'+T('Simu','Phone')+'</span><b>'+escapeHtml(a.phone||'—')+'</b></div>'
+    + '<div class="ap-row"><span>'+T('Jinsia','Gender')+'</span><b>'+gTxt+'</b></div>'
+    + '<div class="ap-row"><span>'+T('Kuzaliwa','Born')+'</span><b>'+escapeHtml(bTxt)+'</b></div></div>'
+    + '<div class="ap-card"><div class="ap-lbl">'+T('Kumbukumbu zako','Your memories')+'</div>'+(histH||'<div class="ap-hint">—</div>')+'</div>';
+}
+let acChgSel = '';
+function acChangeOpen(){
+  const a = acadData; if(!a) return;
+  acChgSel = ''; let ov = document.getElementById('acChgOv');
+  if(!ov){ ov = document.createElement('div'); ov.id = 'acChgOv'; ov.className = 'mgm-ov'; ov.addEventListener('click', function(e){ if(e.target === ov) ov.style.display = 'none'; }); document.body.appendChild(ov); }
+  acChangeRender(); ov.style.display = 'flex';
+}
+function acChangeRender(){
+  const ov = document.getElementById('acChgOv'), a = acadData, T = acT; if(!ov || !a) return;
+  const free = !(a.changes > 0), cur = a.topic;
+  const tops = ACAD_TOPICS.filter(x=>x.id !== cur);
+  ov.innerHTML = '<div class="mgm-box" style="max-height:85vh;"><div class="mgm-hd"><div>'+T('Badili somo','Change lesson')+'</div><span class="mgm-x" onclick="document.getElementById(\'acChgOv\').style.display=\'none\'">✕</span></div><div class="mgm-list" style="padding:12px 14px 22px;">'
+    + '<div class="ac-p" style="margin-bottom:10px;">'+(free ? T('Mara ya kwanza kubadili ni bure.','Your first change is free.') : T('Kubadili kunagharimu tokeni '+ACAD_CHANGE_COST+'.','Changing costs '+ACAD_CHANGE_COST+' tokens.'))+'</div>'
+    + acTopicCards(acChgSel,'acChgPick').split('<div class="ac-topic').filter(function(p,i){ return i===0 || true; }).join('<div class="ac-topic')
+    + '<button class="ac-next" id="acChgBtn" style="width:100%;max-width:none;margin-top:14px;" onclick="acChangeDo()">'+(free ? T('Badili (bure)','Change (free)') : T('Badili (tokeni '+ACAD_CHANGE_COST+')','Change ('+ACAD_CHANGE_COST+' tokens)'))+'</button><div class="ac-err" id="acChgErr"></div></div></div>';
+  // ficha somo la sasa
+  ov.querySelectorAll('.ac-topic').forEach(function(el){ if(el.getAttribute('onclick').indexOf("'"+cur+"'") >= 0) el.style.display = 'none'; });
+}
+function acChgPick(id){ acChgSel = id; acChangeRender(); }
+async function acChangeDo(){
+  const a = acadData, u = auth.currentUser, T = acT, err = document.getElementById('acChgErr'), btn = document.getElementById('acChgBtn');
+  if(!a || !u) return;
+  if(!acChgSel){ if(err) err.textContent = T('Chagua somo jipya.','Choose a new lesson.'); return; }
+  if(btn){ btn.disabled = true; btn.textContent = '…'; }
+  const cost = (a.changes > 0) ? ACAD_CHANGE_COST : 0, ref = db.collection('users').doc(u.uid);
+  try{
+    let newPts = null, newA = null;
+    if(ACAD_TEST_MODE){
+      const chg0 = (a.changes > 0) ? ACAD_CHANGE_COST : 0;
+      newA = Object.assign({}, a, {topic:acChgSel, changes:(a.changes||0)+1, history:(a.history||[]).concat([{t:Date.now(), type:'topic', topic:acChgSel, cost:chg0}])});
+    } else
+    await db.runTransaction(async (tx)=>{
+      const d = await tx.get(ref); const ud = d.exists ? d.data() : {}, cur = ud.academy || a;
+      const pts = ud.points || 0, chg = (cur.changes > 0) ? ACAD_CHANGE_COST : 0;
+      if(chg && pts < chg) throw new Error('not-enough-tokens');
+      const hist = (cur.history||[]).concat([{t:Date.now(), type:'topic', topic:acChgSel, cost:chg}]).slice(-40);
+      newA = Object.assign({}, cur, {topic:acChgSel, changes:(cur.changes||0)+1, history:hist});
+      const upd = {'academy.topic':acChgSel, 'academy.changes':newA.changes, 'academy.history':hist};
+      if(chg){ upd.points = pts - chg; newPts = pts - chg; }
+      tx.update(ref, upd);
+    });
+    acadData = newA; acCache(u.uid, newA);
+    if(newPts !== null){ try{ document.getElementById('pointsCount').textContent = newPts; const hc = document.getElementById('headerTokenCount'); if(hc) hc.textContent = newPts; lbSync(newPts, true); }catch(e){} }
+    document.getElementById('acChgOv').style.display = 'none';
+    acProfRender();
+  }catch(e){
+    console.error(e);
+    if(err) err.textContent = (e && e.message === 'not-enough-tokens') ? T('Huna tokeni za kutosha ('+ACAD_CHANGE_COST+' zinahitajika).','You do not have enough tokens ('+ACAD_CHANGE_COST+' needed).') : T('Imeshindwa. Jaribu tena.','Failed. Please try again.');
+    if(btn){ btn.disabled = false; btn.textContent = T('Jaribu tena','Try again'); }
+  }
 }
 let acadRun = false, acadT = 0, acadObj = null;
 function showAcademy(){
@@ -5179,6 +5321,7 @@ const DAILY_THEMES = [
 var DEFAULT_AVATAR = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#cdd1d6"/><circle cx="50" cy="38" r="17" fill="#f6f4f7"/><path d="M14 100c0-22 16-36 36-36s36 14 36 36z" fill="#f6f4f7"/></svg>');
 function navMeSet(url){ try{ const n = document.getElementById('navMeImg'); if(n){ n.onerror = function(){ n.onerror = null; n.src = DEFAULT_AVATAR; }; n.src = url || DEFAULT_AVATAR; } }catch(e){} }
 function setAvatarDefault(){
+  try{ setTimeout(acAvSync,0); }catch(e){}
   navMeSet('');
   const el = document.getElementById('avatarInitial'); if(!el) return;
   el.style.backgroundImage = 'url("' + DEFAULT_AVATAR + '")'; el.textContent = '';
@@ -7986,7 +8129,7 @@ function setLang(lang){
   try{ mgSettingsLang(); }catch(e){}
   try{ mgMemRender(); }catch(e){}
   try{ academyLang(); }catch(e){}
-  try{ if(acadS && document.getElementById('acadFlow').style.display === 'flex') acRender(); const uu = auth.currentUser; if(uu && document.getElementById('acadSoon').style.display === 'flex') acSoonChips(acTopicsLocal(uu.uid)); }catch(e){}
+  try{ if(acadS && document.getElementById('acadFlow').style.display === 'flex') acRender(); if(acadPage === 'soon') acSoonFill(); if(acadPage === 'prof') acProfRender(); }catch(e){}
 }
 function mgSettingsLang(){
   var en = currentLang === 'en';
@@ -8434,6 +8577,7 @@ function setAvatarPhoto(url){
   el.style.backgroundImage = "url('" + url + "')";
   el.textContent = '';
   navMeSet(url);
+  try{ setTimeout(acAvSync,0); }catch(e){}
 }
 
 function setCoverPhoto(url, y){
