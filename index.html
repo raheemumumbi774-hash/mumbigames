@@ -1080,6 +1080,48 @@
   .si-tile.t-clear{background:linear-gradient(135deg,#20c4ff,#3b6bff);}
   .si-tile.t-share{background:linear-gradient(135deg,#2fd27f,#12a064);}
   .acad-item{background:linear-gradient(135deg,rgba(124,77,255,.16),rgba(255,138,61,.10)),var(--panel);border-color:rgba(160,130,255,.35);}
+
+  /* ===== Darasa: hatua za usajili ===== */
+  .acad-flow{flex:1;flex-direction:column;justify-content:center;padding:18px 22px 70px;overflow-y:auto;gap:12px;}
+  .ac-load{text-align:center;color:#b9c6ea;font-size:20px;}
+  .ac-bars{display:flex;gap:6px;margin-bottom:10px;}
+  .ac-bars i{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.14);}
+  .ac-bars i.on{background:linear-gradient(90deg,#ff8a3d,#ffb14a);}
+  .ac-h{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:23px;color:#fff;line-height:1.2;text-align:center;}
+  .ac-p{font-size:12px;color:#b9c6ea;line-height:1.55;text-align:center;margin-bottom:6px;}
+  .ac-opts{display:flex;gap:12px;}
+  .ac-card{flex:1;border-radius:20px;padding:22px 10px;text-align:center;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.13);cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:transform .15s;}
+  .ac-card:active{transform:scale(.97);}
+  .ac-card .ac-ic{display:flex;width:56px;height:56px;margin:0 auto 10px;border-radius:50%;align-items:center;justify-content:center;font-size:30px;color:#fff;font-weight:700;}
+  .ac-card.g-m .ac-ic{background:linear-gradient(135deg,#3aa0ff,#4a5bff);}
+  .ac-card.g-f .ac-ic{background:linear-gradient(135deg,#ff6fb0,#c04bff);}
+  .ac-card b{font-size:14px;color:#fff;}
+  .ac-card.sel{border-color:#ffb14a;background:rgba(255,177,74,.14);}
+  .ac-sel{display:flex;gap:8px;}
+  .ac-sel select{flex:1;min-width:0;height:46px;border-radius:14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:#fff;font-size:13px;padding:0 8px;font-family:inherit;}
+  .ac-sel select option{color:#111;}
+  .ac-in{position:relative;}
+  .ac-in input{width:100%;height:48px;border-radius:14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:#fff;font-size:14px;padding:0 44px 0 14px;font-family:inherit;box-sizing:border-box;}
+  .ac-in input:focus{outline:0;border-color:#ffb14a;}
+  .ac-eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;opacity:.7;cursor:pointer;}
+  .ac-topics{display:flex;flex-direction:column;gap:10px;}
+  .ac-topic{display:flex;align-items:center;gap:12px;padding:12px;border-radius:18px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+  .ac-topic.sel{border-color:#ffb14a;background:rgba(255,177,74,.13);}
+  .ac-ti{width:48px;height:48px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:24px;flex:none;}
+  .ac-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .ac-tx b{font-size:13.5px;color:#fff;}
+  .ac-tx small{font-size:10.5px;color:#b9c6ea;line-height:1.35;}
+  .ac-ck{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;background:rgba(255,255,255,.12);flex:none;}
+  .ac-topic.sel .ac-ck{background:#ffb14a;color:#1a1200;}
+  .ac-err{color:#ff8a8a;font-size:11.5px;text-align:center;}
+  .ac-btns{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:8px;}
+  .ac-back{background:none;border:0;color:#b9c6ea;font-size:13px;font-weight:600;padding:12px 14px;cursor:pointer;font-family:inherit;}
+  .ac-next{flex:1;max-width:240px;margin-left:auto;height:48px;border:0;border-radius:24px;background:linear-gradient(135deg,#ffb14a,#ff8a3d);color:#1a1200;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;}
+  .ac-next:disabled{opacity:.6;}
+  /* chat: wanachama wana picha */
+  .mgm-av{background-color:#cdd1d6;background-size:cover;background-position:center;}
+
+  .acad-flow{justify-content:flex-start;padding-top:34px;}
 </style>
 </head>
 <body>
@@ -1598,12 +1640,13 @@
       <div class="sub" id="acadHdSub">Jifunze na ukue</div>
     </div>
   </div>
-  <div class="acad-body">
+  <div class="acad-flow" id="acadFlow" style="display:none;"></div>
+  <div class="acad-body" id="acadSoon" style="display:none;">
     <div class="acad-logo"><svg viewBox="0 0 48 48" width="54" height="54" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18L24 8l20 10-20 10L4 18z"/><path d="M12 23v9c0 3 5.4 6 12 6s12-3 12-6v-9"/><path d="M44 18v12"/></svg></div>
     <div class="acad-soon-big" id="acadSoonBig">HIVI KARIBUNI</div>
     <div class="acad-h" id="acadH">Darasa la Mumbi linakuja</div>
     <div class="acad-p" id="acadP">Tunakuandalia masomo ya kupost TikTok ili upate likes, views na followers.</div>
-    <div class="acad-chips"><span>🎵 TikTok</span><span>❤ Likes</span><span>👁 Views</span><span>👥 Followers</span></div>
+    <div class="acad-chips" id="acadChips"></div>
     <div class="acad-note" id="acadNote">🔒 Masomo yatafunguliwa kwa tokeni</div>
   </div>
 </div>
@@ -4476,7 +4519,7 @@ function mgMemSub(){
   if(mgMemUnsub) return;
   try{
     mgMemUnsub = db.collection('chat_members').limit(2000).onSnapshot(snap=>{
-      const m = {}; snap.forEach(d=>{ const v = d.data() || {}; const k = mgMemKey(v.name); if(k) m[k] = {name:v.name, joinedAt:v.joinedAt||0}; });
+      const m = {}; snap.forEach(d=>{ const v = d.data() || {}; const k = mgMemKey(v.name); if(k) m[k] = {name:v.name, joinedAt:v.joinedAt||0, photoURL:v.photoURL||''}; });
       mgMembers = m; mgMemRender();
     }, err=>{ console.error(err); mgMemUnsub = null; });
   }catch(e){}
@@ -4488,13 +4531,18 @@ async function mgMemRegister(){
     const id = k.replace(/[^a-z0-9]+/g,'_').slice(0,60) || ('u' + Date.now());
     const ref = db.collection('chat_members').doc(id);
     const d = await ref.get();
-    if(!d.exists){ const o = {name: chatName, joinedAt: Date.now()}; if(auth.currentUser) o.uid = auth.currentUser.uid; await ref.set(o); }
+    const pu = (typeof myChatPhotoURL === 'string' && /^https?:/.test(myChatPhotoURL)) ? myChatPhotoURL : '';
+    if(!d.exists){ const o = {name: chatName, joinedAt: Date.now()}; if(auth.currentUser) o.uid = auth.currentUser.uid; if(pu) o.photoURL = pu; await ref.set(o); }
+    else if(pu && (d.data()||{}).photoURL !== pu){ await ref.set({photoURL: pu}, {merge:true}); }
   }catch(e){ console.error(e); }
 }
 function mgMemFill(list){
   const box = document.getElementById('mgMemList'); if(!box) return;
   const t = document.getElementById('mgMemTitle'); if(t) t.textContent = tvT('Wanachama wa Chat','Chat Members') + ' (' + list.length + ')';
-  box.innerHTML = list.map(m=>{ const nm = String(m.name||'?'); return '<div class="mgm-row"><span class="mgm-av">' + escapeHtml(nm.charAt(0).toUpperCase()) + '</span><span class="mgm-nm">' + escapeHtml(nm) + '</span></div>'; }).join('');
+  const ph = {};
+  try{ (chatLastMsgs||[]).forEach(m=>{ const k = mgMemKey(m.name); const u = (m.uid && mgProf[m.uid] && mgProf[m.uid].photoURL) || m.photoURL || ''; if(k && u && /^https?:/.test(u)) ph[k] = u; }); }catch(e){}
+  box.innerHTML = list.map(m=>{ const nm = String(m.name||'?'), u = (m.photoURL && /^https?:/.test(m.photoURL)) ? m.photoURL : (ph[mgMemKey(nm)] || '');
+    return '<div class="mgm-row"><span class="mgm-av" style="background-image:url(\'' + escapeHtml(u || DEFAULT_AVATAR) + '\')"></span><span class="mgm-nm">' + escapeHtml(nm) + '</span></div>'; }).join('');
 }
 function mgMemOpen(){
   let ov = document.getElementById('mgMemOv');
@@ -4868,11 +4916,111 @@ function academyLang(){
   set('acadP','Tunakuandalia masomo ya kupost TikTok ili upate likes, views na followers.','We are preparing lessons on posting to TikTok so you can get likes, views and followers.');
   set('acadNote','🔒 Masomo yatafunguliwa kwa tokeni','🔒 Lessons will be unlocked with tokens');
 }
+
+// ===== Darasa: usajili wa mara ya kwanza (jinsia → kuzaliwa → nenosiri → masomo) =====
+const ACAD_TOPICS = [
+  {id:'edit',  e:'✂️', g:'linear-gradient(135deg,#ff5fa2,#7c4dff)', t:['Kuedit Video','Video Editing'],  d:['Jifunze kuedit video kwa InShot','Learn to edit videos with InShot']},
+  {id:'sport', e:'⚽', g:'linear-gradient(135deg,#1fc98a,#1a7fd6)', t:['Michezo / Mpira','Sport / Football'], d:['Matukio ya mpira na kutengeneza short clips','Football moments and making short clips']},
+  {id:'gaming',e:'🎮', g:'linear-gradient(135deg,#ff9a3d,#e0463d)', t:['Gaming','Gaming'], d:['eFootball na michezo mingine','eFootball and other games']}
+];
+let acadS = null;
+function acL(){ return currentLang === 'en' ? 1 : 0; }
+function acDone(uid){ try{ return localStorage.getItem('mg_acad_'+uid) === '1'; }catch(e){ return false; } }
+function acTopicsLocal(uid){ try{ return JSON.parse(localStorage.getItem('mg_acad_t_'+uid) || '[]'); }catch(e){ return []; } }
+function acShow(which){
+  document.getElementById('acadFlow').style.display = which === 'flow' ? 'flex' : 'none';
+  document.getElementById('acadSoon').style.display = which === 'soon' ? 'flex' : 'none';
+}
+function acSoonChips(topics){
+  const box = document.getElementById('acadChips'); if(!box) return;
+  const L = acL();
+  const list = (topics && topics.length ? topics : ACAD_TOPICS.map(x=>x.id)).map(id=>ACAD_TOPICS.find(x=>x.id===id)).filter(Boolean);
+  box.innerHTML = list.map(x=>'<span>'+x.e+' '+escapeHtml(x.t[L])+'</span>').join('');
+}
+async function acadStart(){
+  const u = auth.currentUser; if(!u) return;
+  acadS = {step:0, gender:'', d:'', m:'', y:'', pw:'', pw2:'', topics:[], busy:false, err:''};
+  if(acDone(u.uid)){ acSoonChips(acTopicsLocal(u.uid)); acShow('soon'); return; }
+  acShow('flow'); document.getElementById('acadFlow').innerHTML = '<div class="ac-load">…</div>';
+  try{
+    const d = await db.collection('users').doc(u.uid).get();
+    const a = d.exists ? (d.data().academy || null) : null;
+    if(a && a.doneAt){ try{ localStorage.setItem('mg_acad_'+u.uid,'1'); localStorage.setItem('mg_acad_t_'+u.uid, JSON.stringify(a.topics||[])); }catch(e){} acSoonChips(a.topics||[]); acShow('soon'); return; }
+  }catch(e){}
+  acRender();
+}
+const AC_MONTHS = [['Januari','January'],['Februari','February'],['Machi','March'],['Aprili','April'],['Mei','May'],['Juni','June'],['Julai','July'],['Agosti','August'],['Septemba','September'],['Oktoba','October'],['Novemba','November'],['Desemba','December']];
+function acBars(){ let h = '<div class="ac-bars">'; for(let i=0;i<4;i++) h += '<i class="'+(i<=acadS.step?'on':'')+'"></i>'; return h + '</div>'; }
+function acRender(){
+  const S = acadS, L = acL(), box = document.getElementById('acadFlow'); if(!box) return;
+  const T = (sw,en)=> L ? en : sw;
+  let h = acBars();
+  if(S.step === 0){
+    h += '<div class="ac-h">'+T('Tuambie kukuhusu','Tell us about yourself')+'</div><div class="ac-p">'+T('Wewe ni nani? Taarifa hii ni ya siri na inatusaidia kukuandalia masomo.','Who are you? This stays private and helps us prepare lessons for you.')+'</div>'
+      + '<div class="ac-opts">'
+      + '<div class="ac-card g-m '+(S.gender==='male'?'sel':'')+'" onclick="acPick(\'gender\',\'male\')"><span class="ac-ic">♂</span><b>'+T('Kiume','Male')+'</b></div>'
+      + '<div class="ac-card g-f '+(S.gender==='female'?'sel':'')+'" onclick="acPick(\'gender\',\'female\')"><span class="ac-ic">♀</span><b>'+T('Kike','Female')+'</b></div></div>';
+  } else if(S.step === 1){
+    const yNow = new Date().getFullYear(); let dOpt = '<option value="">'+T('Siku','Day')+'</option>', mOpt = '<option value="">'+T('Mwezi','Month')+'</option>', yOpt = '<option value="">'+T('Mwaka','Year')+'</option>';
+    for(let i=1;i<=31;i++) dOpt += '<option value="'+i+'"'+(String(S.d)===String(i)?' selected':'')+'>'+i+'</option>';
+    AC_MONTHS.forEach((m,i)=>{ mOpt += '<option value="'+(i+1)+'"'+(String(S.m)===String(i+1)?' selected':'')+'>'+m[L]+'</option>'; });
+    for(let y=yNow-6;y>=1950;y--) yOpt += '<option value="'+y+'"'+(String(S.y)===String(y)?' selected':'')+'>'+y+'</option>';
+    h += '<div class="ac-h">'+T('Ulizaliwa lini?','When were you born?')+'</div><div class="ac-p">'+T('Chagua tarehe, mwezi na mwaka wako wa kuzaliwa.','Choose your birth day, month and year.')+'</div>'
+      + '<div class="ac-sel"><select onchange="acadS.d=this.value">'+dOpt+'</select><select onchange="acadS.m=this.value">'+mOpt+'</select><select onchange="acadS.y=this.value">'+yOpt+'</select></div>';
+  } else if(S.step === 2){
+    h += '<div class="ac-h">'+T('Weka nenosiri la Darasa','Set your Academy password')+'</div><div class="ac-p">'+T('Linalinda taarifa zako za Darasa. Tumia angalau herufi 6.','It protects your Academy details. Use at least 6 characters.')+'</div>'
+      + '<div class="ac-in"><input id="acPw" type="password" placeholder="'+T('Nenosiri','Password')+'" value="'+escapeHtml(S.pw)+'" oninput="acadS.pw=this.value"><span class="ac-eye" onclick="acEye()">👁</span></div>'
+      + '<div class="ac-in"><input id="acPw2" type="password" placeholder="'+T('Rudia nenosiri','Repeat password')+'" value="'+escapeHtml(S.pw2)+'" oninput="acadS.pw2=this.value"></div>';
+  } else {
+    h += '<div class="ac-h">'+T('Chagua unachopenda','Choose what you like')+'</div><div class="ac-p">'+T('Chagua masomo unayotaka kujifunza (unaweza kuchagua zaidi ya moja).','Pick the lessons you want to learn (you can choose more than one).')+'</div><div class="ac-topics">'
+      + ACAD_TOPICS.map(x=>'<div class="ac-topic '+(S.topics.indexOf(x.id)>=0?'sel':'')+'" onclick="acTopic(\''+x.id+'\')"><span class="ac-ti" style="background:'+x.g+'">'+x.e+'</span><span class="ac-tx"><b>'+escapeHtml(x.t[L])+'</b><small>'+escapeHtml(x.d[L])+'</small></span><span class="ac-ck">'+(S.topics.indexOf(x.id)>=0?'✓':'+')+'</span></div>').join('') + '</div>';
+  }
+  if(S.err) h += '<div class="ac-err">'+escapeHtml(S.err)+'</div>';
+  const last = S.step === 3, nextLbl = last ? (T('Maliza','Finish') + (S.topics.length ? ' ('+S.topics.length+')' : '')) : T('Endelea','Continue');
+  h += '<div class="ac-btns">'+(S.step>0 ? '<button class="ac-back" onclick="acBack()">'+T('Rudi','Back')+'</button>' : '<span></span>')+'<button class="ac-next" '+(S.busy?'disabled':'')+' onclick="acNext()">'+(S.busy?'…':nextLbl)+'</button></div>';
+  box.innerHTML = h;
+}
+function acPick(k,v){ acadS[k] = v; acadS.err = ''; acRender(); }
+function acTopic(id){ const i = acadS.topics.indexOf(id); if(i>=0) acadS.topics.splice(i,1); else acadS.topics.push(id); acadS.err = ''; acRender(); }
+function acEye(){ ['acPw','acPw2'].forEach(id=>{ const el = document.getElementById(id); if(el) el.type = el.type === 'password' ? 'text' : 'password'; }); }
+function acBack(){ if(acadS.step>0){ acadS.step--; acadS.err=''; acRender(); } }
+async function acHash(uid,pw){
+  try{ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('mgacad:'+uid+':'+pw)); return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''); }
+  catch(e){ let h = 5381; const t = 'mgacad:'+uid+':'+pw; for(let i=0;i<t.length;i++) h = ((h<<5)+h+t.charCodeAt(i))|0; return 'f'+h; }
+}
+async function acNext(){
+  const S = acadS, L = acL(), T = (sw,en)=> L ? en : sw;
+  S.err = '';
+  if(S.step === 0 && !S.gender) S.err = T('Chagua jinsia yako.','Please choose your gender.');
+  else if(S.step === 1){
+    const d = +S.d, m = +S.m, y = +S.y;
+    if(!d || !m || !y) S.err = T('Chagua siku, mwezi na mwaka.','Choose day, month and year.');
+    else { const dt = new Date(y, m-1, d); if(dt.getMonth() !== m-1) S.err = T('Tarehe hii si sahihi.','This date is not valid.'); }
+  }
+  else if(S.step === 2){
+    if((S.pw||'').length < 6) S.err = T('Nenosiri liwe na angalau herufi 6.','Password must be at least 6 characters.');
+    else if(S.pw !== S.pw2) S.err = T('Manenosiri hayafanani.','Passwords do not match.');
+  }
+  else if(S.step === 3 && !S.topics.length) S.err = T('Chagua angalau somo moja.','Choose at least one lesson.');
+  if(S.err){ acRender(); return; }
+  if(S.step < 3){ S.step++; acRender(); return; }
+  // maliza: hifadhi
+  S.busy = true; acRender();
+  const u = auth.currentUser;
+  try{
+    const pwHash = await acHash(u.uid, S.pw);
+    await db.collection('users').doc(u.uid).set({academy:{gender:S.gender, birthDay:+S.d, birthMonth:+S.m, birthYear:+S.y, topics:S.topics, pwHash, doneAt:Date.now()}}, {merge:true});
+    try{ localStorage.setItem('mg_acad_'+u.uid,'1'); localStorage.setItem('mg_acad_t_'+u.uid, JSON.stringify(S.topics)); }catch(e){}
+    acSoonChips(S.topics); acShow('soon');
+  }catch(e){ console.error(e); S.busy = false; S.err = T('Imeshindwa kuhifadhi. Jaribu tena.','Could not save. Please try again.'); acRender(); }
+}
 let acadRun = false, acadT = 0, acadObj = null;
 function showAcademy(){
+  if(!auth.currentUser){ alert(currentLang==='en' ? 'Please log in first.' : 'Ingia kwenye akaunti yako kwanza.'); return; }
   hideAllViews();
   document.getElementById('academyView').style.display = 'flex';
   academyLang();
+  acadStart();
   try{ document.getElementById('academyView').scrollTop = 0; }catch(e){}
   if(!acadRun){ acadRun = true; requestAnimationFrame(acadFrame); }
 }
@@ -7838,6 +7986,7 @@ function setLang(lang){
   try{ mgSettingsLang(); }catch(e){}
   try{ mgMemRender(); }catch(e){}
   try{ academyLang(); }catch(e){}
+  try{ if(acadS && document.getElementById('acadFlow').style.display === 'flex') acRender(); const uu = auth.currentUser; if(uu && document.getElementById('acadSoon').style.display === 'flex') acSoonChips(acTopicsLocal(uu.uid)); }catch(e){}
 }
 function mgSettingsLang(){
   var en = currentLang === 'en';
