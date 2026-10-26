@@ -1150,6 +1150,63 @@
   .ap-mem small{font-size:10px;color:#9fb0d8;}
   #acChgOv .ac-topic{background:rgba(255,255,255,.06);margin-bottom:10px;}
   #acChgOv .ac-err{margin-top:8px;}
+
+  /* ===== Darasa: kozi, topics, ukurasa wa topic ===== */
+  .acad-main,.acad-topic{flex:1;flex-direction:column;overflow-y:auto;padding:14px 16px 90px;gap:10px;}
+  .am-hero{display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+  .am-ic{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex:none;}
+  .am-ic svg{width:28px;height:28px;}
+  .am-nm{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:18px;color:#fff;line-height:1.15;}
+  .am-ds{font-size:11px;color:#c3cdee;margin-top:2px;}
+  .am-pill{align-self:flex-start;font-size:11.5px;color:#e8eeff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);padding:6px 12px;border-radius:20px;}
+  .am-pill b{color:#ffd27a;}
+  .am-lb{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#ffb14a;text-transform:uppercase;margin:6px 2px 0;}
+  .am-empty{text-align:center;padding:30px 16px;border-radius:20px;background:rgba(255,255,255,.07);border:1px dashed rgba(255,255,255,.2);display:flex;flex-direction:column;gap:4px;color:#fff;}
+  .am-empty .am-em{font-size:34px;}
+  .am-empty small{font-size:11.5px;color:#b9c6ea;}
+  .at-card{display:flex;align-items:center;gap:11px;padding:9px;border-radius:16px;background:rgba(10,14,30,.55);border:1px solid rgba(255,255,255,.13);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer;position:relative;overflow:hidden;}
+  .at-card:before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--g);}
+  .at-card:active{transform:scale(.985);}
+  .at-th{width:62px;height:62px;border-radius:12px;background-size:cover;background-position:center;flex:none;display:flex;align-items:center;justify-content:center;position:relative;}
+  .at-play{width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;padding-left:2px;}
+  .at-ico svg{width:24px;height:24px;}
+  .at-in{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .at-in b{font-size:12.5px;color:#fff;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .at-in small{font-size:10.5px;color:#b9c6ea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .at-meta{display:flex;gap:10px;font-size:10px;color:#9fb0d8;margin-top:2px;}
+  .atd-hero{border-radius:20px;padding:16px;color:#fff;display:flex;flex-direction:column;gap:8px;box-shadow:0 10px 26px rgba(0,0,0,.35);}
+  .atd-tag{align-self:flex-start;font-size:10.5px;font-weight:700;background:rgba(0,0,0,.28);padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:6px;}
+  .atd-tag svg{width:14px;height:14px;}
+  .atd-t{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:20px;line-height:1.2;}
+  .atd-views{font-size:11px;opacity:.9;}
+  .atd-card{padding:14px;border-radius:18px;background:rgba(10,14,30,.6);border:1px solid rgba(255,255,255,.12);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;flex-direction:column;gap:10px;}
+  .at-p{display:flex;gap:9px;font-size:13px;line-height:1.6;color:#eef2ff;}
+  .at-p i{font-style:normal;color:#ffb14a;flex:none;margin-top:1px;}
+  .atd-video{border-radius:18px;aspect-ratio:16/9;background-size:cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#fff;cursor:pointer;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.14);}
+  .atd-video:before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.28);}
+  .atd-play{position:relative;width:56px;height:56px;border-radius:50%;background:rgba(255,0,0,.88);display:flex;align-items:center;justify-content:center;font-size:22px;padding-left:3px;}
+  .atd-video small{position:relative;font-size:11px;text-shadow:0 1px 4px rgba(0,0,0,.6);}
+  .atd-video.playing{aspect-ratio:16/9;cursor:default;}
+  .atd-video.playing:before{display:none;}
+  .atd-video.playing.tt{aspect-ratio:9/14;max-height:70vh;}
+  .atd-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .atd-card textarea{width:100%;box-sizing:border-box;border-radius:12px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:#fff;font-size:13px;padding:10px 12px;font-family:inherit;resize:none;}
+  .atd-card textarea:focus{outline:0;border-color:#ffb14a;}
+  .atd-fb{display:flex;flex-direction:column;gap:8px;}
+  .atd-q{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:6px;}
+  .atd-qt{font-size:12.5px;color:#fff;}
+  .atd-qr{font-size:12px;color:#ffd9a8;background:rgba(255,177,74,.12);border-left:3px solid #ffb14a;padding:7px 9px;border-radius:8px;}
+  .atd-qw{font-size:10.5px;color:#9fb0d8;}
+  /* jinsia: emoji kubwa zilizopambwa */
+  .ac-em{position:relative;display:flex;width:92px;height:92px;margin:0 auto 10px;border-radius:50%;align-items:center;justify-content:center;animation:acEm 3.6s ease-in-out infinite;}
+  .ac-em>span{font-size:54px;line-height:1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));}
+  .ac-em.m{background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.5),rgba(58,160,255,.55) 45%,rgba(74,91,255,.7));box-shadow:0 8px 22px rgba(58,120,255,.4),inset 0 0 0 2px rgba(255,255,255,.35);}
+  .ac-em.f{background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.5),rgba(255,111,176,.55) 45%,rgba(192,75,255,.7));box-shadow:0 8px 22px rgba(220,80,200,.4),inset 0 0 0 2px rgba(255,255,255,.35);animation-delay:-1.8s;}
+  .ac-em:before,.ac-em:after{content:'✦';position:absolute;color:#fff;opacity:.85;font-size:13px;}
+  .ac-em:before{top:2px;right:6px;}
+  .ac-em:after{bottom:6px;left:2px;font-size:10px;}
+  @keyframes acEm{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+  .ac-card.sel .ac-em{transform:scale(1.06);}
 </style>
 </head>
 <body>
@@ -1671,14 +1728,8 @@
   </div>
   <div class="acad-flow" id="acadFlow" style="display:none;"></div>
   <div class="acad-prof" id="acadProf" style="display:none;"></div>
-  <div class="acad-body" id="acadSoon" style="display:none;">
-    <div class="acad-logo"><svg viewBox="0 0 48 48" width="54" height="54" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18L24 8l20 10-20 10L4 18z"/><path d="M12 23v9c0 3 5.4 6 12 6s12-3 12-6v-9"/><path d="M44 18v12"/></svg></div>
-    <div class="acad-soon-big" id="acadSoonBig">HIVI KARIBUNI</div>
-    <div class="acad-h" id="acadH">Darasa la Mumbi linakuja</div>
-    <div class="acad-p" id="acadP">Tunakuandalia masomo ya kupost TikTok ili upate likes, views na followers.</div>
-    <div class="acad-chips" id="acadChips"></div>
-    <div class="acad-note" id="acadNote">🔒 Masomo yatafunguliwa kwa tokeni</div>
-  </div>
+  <div class="acad-main" id="acadSoon" style="display:none;"></div>
+  <div class="acad-topic" id="acadTopic" style="display:none;"></div>
 </div>
 
 <div id="settingsView">
@@ -4970,6 +5021,8 @@ function acShow(which){
   document.getElementById('acadFlow').style.display = which === 'flow' ? 'flex' : 'none';
   document.getElementById('acadSoon').style.display = which === 'soon' ? 'flex' : 'none';
   document.getElementById('acadProf').style.display = which === 'prof' ? 'flex' : 'none';
+  document.getElementById('acadTopic').style.display = which === 'topic' ? 'flex' : 'none';
+  if(which !== 'topic' && acFbUnsub){ try{ acFbUnsub(); }catch(e){} acFbUnsub = null; }
   acPfBtn();
 }
 function acPhoto(){ const p = (typeof myChatPhotoURL === 'string' && /^https?:/.test(myChatPhotoURL)) ? myChatPhotoURL : ''; return p || DEFAULT_AVATAR; }
@@ -4980,12 +5033,8 @@ function acPfBtn(){
   b.style.backgroundImage = 'url("' + acPhoto() + '")';
 }
 function acAvSync(){ try{ acPfBtn(); const pa = document.querySelector('#acadProf .ap-av'); if(pa) pa.style.backgroundImage = 'url("' + acPhoto() + '")'; }catch(e){} }
-function acNav(){ if(acadPage === 'prof'){ acSoonFill(); acShow('soon'); } else if(acadPage === 'flow' && acadS && acadS.step > 0){ acBack(); } else showSettings(); }
-function acSoonFill(){
-  const L = acL(), box = document.getElementById('acadChips'); if(!box) return;
-  const tp = acadData && acTopic1(acadData.topic);
-  box.innerHTML = tp ? '<span>'+escapeHtml(acT('Somo lako: ','Your lesson: '))+escapeHtml(tp.t[L])+'</span>' : '';
-}
+function acNav(){ if(acadPage === 'prof' || acadPage === 'topic'){ acSoonFill(); acShow('soon'); } else if(acadPage === 'flow' && acadS && acadS.step > 0){ acBack(); } else showSettings(); }
+function acSoonFill(){ acMain(); }
 async function acadStart(){
   const u = auth.currentUser; if(!u) return;
   acadS = {step:0, gender:'', d:'', m:'', y:'', username:'', phone:'', pw:'', pw2:'', topic:'', busy:false, err:''};
@@ -5017,8 +5066,8 @@ function acRender(){
   if(S.step === 0){
     h += '<div class="ac-h">'+T('Tuambie kukuhusu','Tell us about yourself')+'</div><div class="ac-p">'+T('Wewe ni nani? Taarifa hii ni ya siri na inatusaidia kukuandalia masomo.','Who are you? This stays private and helps us prepare lessons for you.')+'</div>'
       + '<div class="ac-opts">'
-      + '<div class="ac-card '+(S.gender==='male'?'sel':'')+'" onclick="acPick(\'gender\',\'male\')"><span class="ac-av">'+AC_IC_MAN+'</span><b>'+T('Mwanaume','Man')+'</b></div>'
-      + '<div class="ac-card '+(S.gender==='female'?'sel':'')+'" onclick="acPick(\'gender\',\'female\')"><span class="ac-av">'+AC_IC_WOMAN+'</span><b>'+T('Mwanamke','Woman')+'</b></div></div>';
+      + '<div class="ac-card '+(S.gender==='male'?'sel':'')+'" onclick="acPick(\'gender\',\'male\')"><span class="ac-em m"><span>👱</span></span><b>'+T('Mwanaume','Man')+'</b></div>'
+      + '<div class="ac-card '+(S.gender==='female'?'sel':'')+'" onclick="acPick(\'gender\',\'female\')"><span class="ac-em f"><span>👱‍♀️</span></span><b>'+T('Mwanamke','Woman')+'</b></div></div>';
   } else if(S.step === 1){
     const yNow = new Date().getFullYear(); let dOpt = '<option value="">'+T('Siku','Day')+'</option>', mOpt = '<option value="">'+T('Mwezi','Month')+'</option>', yOpt = '<option value="">'+T('Mwaka','Year')+'</option>';
     for(let i=1;i<=31;i++) dOpt += '<option value="'+i+'"'+(String(S.d)===String(i)?' selected':'')+'>'+i+'</option>';
@@ -5078,7 +5127,7 @@ async function acNext(){
     const now = Date.now();
     const a = {gender:S.gender, birthDay:+S.d, birthMonth:+S.m, birthYear:+S.y, username:S.username.trim(), phone:String(S.phone).trim(), topic:S.topic, pwHash, changes:0, doneAt:now, history:[{t:now,type:'join',topic:S.topic}]};
     if(!ACAD_TEST_MODE) await db.collection('users').doc(u.uid).set({academy:a}, {merge:true});
-    acadData = a; acCache(u.uid, a); acSoonFill(); acShow('soon');
+    acadData = a; acCache(u.uid, a); acLearnerMove('', S.topic); acSoonFill(); acShow('soon');
   }catch(e){ console.error(e); S.busy = false; S.err = T('Imeshindwa kuhifadhi. Jaribu tena.','Could not save. Please try again.'); acRender(); }
 }
 // ---- profile ya Darasa ----
@@ -5104,6 +5153,122 @@ function acProfRender(){
     + '<div class="ap-row"><span>'+T('Jinsia','Gender')+'</span><b>'+gTxt+'</b></div>'
     + '<div class="ap-row"><span>'+T('Kuzaliwa','Born')+'</span><b>'+escapeHtml(bTxt)+'</b></div></div>'
     + '<div class="ap-card"><div class="ap-lbl">'+T('Kumbukumbu zako','Your memories')+'</div>'+(histH||'<div class="ap-hint">—</div>')+'</div>';
+}
+
+// ===== Darasa: kozi, topics, video, views, wanafunzi, maoni =====
+let acTopics = [], acTopicsUnsub = null, acCourseUnsub = null, acSubId = '', acCourseCnt = 0, acDelta = {}, acSeen = {}, acViewDelta = {}, acCurTopic = null, acFbUnsub = null;
+function acFmt(n){ n = Math.max(0, parseInt(n,10) || 0); if(n >= 1000000) return (Math.floor(n/100000)/10).toString().replace(/\.0$/,'') + 'M'; if(n >= 1000) return (Math.floor(n/100)/10).toString().replace(/\.0$/,'') + 'k'; return String(n); }
+function acVid(t){ if(!t) return null; if(t.videoType === 'yt' && t.videoId) return {type:'yt', id:t.videoId}; if(t.videoType === 'tt') return {type:'tt', id:t.videoId||''}; return null; }
+function acThumb(t){ const v = acVid(t); return (v && v.type === 'yt') ? 'https://img.youtube.com/vi/'+v.id+'/mqdefault.jpg' : ''; }
+function acLearners(cid){ return Math.max(0, acCourseCnt + (acDelta[cid]||0)); }
+function acSubCourse(cid){
+  if(acSubId === cid) return; acSubId = cid; acTopics = []; acCourseCnt = 0;
+  try{ if(acTopicsUnsub) acTopicsUnsub(); if(acCourseUnsub) acCourseUnsub(); }catch(e){}
+  try{
+    acTopicsUnsub = db.collection('academyTopics').where('course','==',cid).onSnapshot(snap=>{
+      acTopics = snap.docs.map(d=>Object.assign({id:d.id}, d.data())).filter(t=>t.active !== false).sort((x,y)=>(y.createdAt||0)-(x.createdAt||0));
+      if(acadPage === 'soon') acMainRender();
+    }, err=>console.error(err));
+    acCourseUnsub = db.collection('academyCourses').doc(cid).onSnapshot(d=>{ acCourseCnt = d.exists ? (d.data().learners||0) : 0; if(acadPage === 'soon') acMainRender(); }, err=>console.error(err));
+  }catch(e){ console.error(e); }
+}
+function acMain(){
+  if(!acadData) return; const c = acTopic1(acadData.topic); if(!c) return;
+  acSubCourse(c.id); acMainRender();
+}
+function acMainRender(){
+  const box = document.getElementById('acadSoon'); if(!box || !acadData) return;
+  const c = acTopic1(acadData.topic); if(!c) return; const L = acL(), T = acT;
+  let h = '<div class="am-hero" style="--g:'+c.g+'"><span class="ac-ti am-ic" style="background:'+c.g+'">'+c.ic+'</span><div class="am-tx"><div class="am-nm">'+escapeHtml(c.t[L])+'</div><div class="am-ds">'+escapeHtml(c.d[L])+'</div></div></div>'
+    + '<div class="am-pill">👥 <b>'+acFmt(acLearners(c.id))+'</b> '+T('wanafunzi wa somo hili','students in this lesson')+'</div>'
+    + '<div class="am-lb">'+T('Topics','Topics')+'</div>';
+  if(!acTopics.length){
+    h += '<div class="am-empty"><div class="am-em">🚧</div><b>'+T('Hivi karibuni','Coming soon')+'</b><small>'+T('Topics za somo hili zinaandaliwa. Rudi hivi karibuni!','Topics for this lesson are being prepared. Come back soon!')+'</small></div>';
+  } else {
+    h += acTopics.map(t=>{
+      const th = acThumb(t), v = acVid(t), vc = (t.views||0) + (acViewDelta[t.id]||0);
+      return '<div class="at-card" onclick="acOpenTopic(\''+t.id+'\')" style="--g:'+c.g+'"><div class="at-th" style="'+(th?'background-image:url('+th+');':'background:'+c.g+';')+'">'+(v ? '<span class="at-play">▶</span>' : '<span class="at-ico">'+c.ic+'</span>')+'</div>'
+        + '<div class="at-in"><b>'+escapeHtml(t.title||'')+'</b><small>'+escapeHtml(t.short||'')+'</small><div class="at-meta"><span>👁 '+acFmt(vc)+'</span>'+(v ? '<span>'+(v.type==='yt'?'▶ YouTube':'♪ TikTok')+'</span>' : '')+'</div></div><span class="ac-go">›</span></div>';
+    }).join('');
+  }
+  box.innerHTML = h;
+}
+function acParas(body){
+  return String(body||'').split(/\n+/).flatMap(l=>l.split(/\.(?=\s|$)/)).map(x=>x.trim()).filter(Boolean);
+}
+function acOpenTopic(id){
+  const t = acTopics.find(x=>x.id===id); if(!t) return;
+  acCurTopic = t; acShow('topic'); acTopicRender(); acCountView(t);
+  try{ document.getElementById('acadTopic').scrollTop = 0; }catch(e){}
+  acSubFb(t.id);
+}
+function acTopicRender(){
+  const t = acCurTopic, box = document.getElementById('acadTopic'); if(!t || !box || !acadData) return;
+  const c = acTopic1(acadData.topic) || ACAD_TOPICS[0], T = acT, L = acL(), v = acVid(t), vc = (t.views||0) + (acViewDelta[t.id]||0);
+  const paras = acParas(t.body).map(p=>'<div class="at-p"><i>▪</i><span>'+escapeHtml(p)+(/[.!?…]$/.test(p)?'':'.')+'</span></div>').join('');
+  let vid = '';
+  if(v){
+    const th = acThumb(t);
+    vid = '<div class="atd-video" id="atVideo" onclick="acPlayVideo()" style="'+(th?'background-image:url('+th+');':'background:'+c.g+';')+'"><span class="atd-play">'+(v.type==='yt'?'▶':'♪')+'</span><small>'+T('Bonyeza kutazama video','Tap to watch the video')+'</small></div>';
+  }
+  box.innerHTML = '<div class="atd-hero" style="background:'+c.g+'"><span class="atd-tag">'+c.ic+' '+escapeHtml(c.t[L])+'</span><div class="atd-t">'+escapeHtml(t.title||'')+'</div><div class="atd-views">👁 '+acFmt(vc)+' '+T('wameangalia','views')+'</div></div>'
+    + '<div class="atd-card">'+paras+'</div>' + vid
+    + '<div class="atd-card"><div class="am-lb" style="margin:0 0 8px;">💬 '+T('Hujaelewa? Uliza hapa','Did not understand? Ask here')+'</div>'
+    + '<textarea id="atAsk" rows="2" placeholder="'+T('Andika swali au maoni yako...','Write your question or comment...')+'"></textarea><button class="ac-next" style="max-width:none;width:100%;margin-top:8px;height:42px;" id="atAskBtn" onclick="acAsk()">'+T('Tuma','Send')+'</button>'
+    + '<div id="atFbList" class="atd-fb"></div></div>';
+}
+function acPlayVideo(){
+  const t = acCurTopic, v = acVid(t), box = document.getElementById('atVideo'); if(!v || !box) return;
+  if(v.type === 'yt'){
+    box.className = 'atd-video playing'; box.style.cssText = ''; box.onclick = null;
+    box.innerHTML = '<iframe src="https://www.youtube.com/embed/'+v.id+'?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen frameborder="0"></iframe>';
+  } else if(v.id){
+    box.className = 'atd-video playing tt'; box.style.cssText = ''; box.onclick = null;
+    box.innerHTML = '<iframe src="https://www.tiktok.com/embed/v2/'+v.id+'" allow="autoplay; encrypted-media; fullscreen" allowfullscreen frameborder="0"></iframe>';
+  } else {
+    window.open(t.videoUrl, '_blank');
+  }
+}
+async function acCountView(t){
+  if(acSeen[t.id]) return; acSeen[t.id] = true;
+  acViewDelta[t.id] = (acViewDelta[t.id]||0) + 1;
+  try{ acTopicRender(); }catch(e){}
+  if(ACAD_TEST_MODE) return; // majaribio: hesabu ya muda tu, haiandikwi Firebase
+  const u = auth.currentUser; if(!u) return;
+  const tr = db.collection('academyTopics').doc(t.id), vr = tr.collection('viewers').doc(u.uid);
+  try{
+    await db.runTransaction(async (tx)=>{
+      const d = await tx.get(vr); if(d.exists){ acViewDelta[t.id] = Math.max(0,(acViewDelta[t.id]||1) - 1); return; }
+      tx.set(vr, {at:Date.now()}); tx.update(tr, {views: firebase.firestore.FieldValue.increment(1)});
+    });
+  }catch(e){ console.error(e); }
+}
+async function acAsk(){
+  const el = document.getElementById('atAsk'), btn = document.getElementById('atAskBtn'), t = acCurTopic; if(!el || !t) return;
+  const txt = el.value.trim(); if(!txt){ alert(acT('Andika swali lako kwanza.','Write your question first.')); return; }
+  btn.disabled = true;
+  const ok = await mgSendFeedbackDoc({type:'academy', gameId:t.id, gameTitle:t.title||'', text:txt});
+  btn.disabled = false;
+  if(ok){ el.value = ''; showAppNotification(acT('Swali limetumwa ✅','Question sent ✅'), acT('Admin akijibu, utaliona hapa na kwenye Me → Maoni.','When admin replies you will see it here and in Me → Feedback.'), '🎓'); }
+}
+function acSubFb(topicId){
+  if(acFbUnsub){ try{ acFbUnsub(); }catch(e){} acFbUnsub = null; }
+  const u = auth.currentUser; if(!u) return;
+  try{
+    acFbUnsub = db.collection('feedback').where('uid','==',u.uid).limit(60).onSnapshot(snap=>{
+      const box = document.getElementById('atFbList'); if(!box) return;
+      const items = snap.docs.map(d=>d.data()).filter(f=>f.type === 'academy' && f.gameId === topicId).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      box.innerHTML = items.map(f=>'<div class="atd-q"><div class="atd-qt">'+escapeHtml(f.text||'')+'</div>'+(f.adminReply ? '<div class="atd-qr"><b>Admin:</b> '+escapeHtml(f.adminReply)+'</div>' : '<div class="atd-qw">'+acT('Inasubiri jibu…','Waiting for a reply…')+'</div>')+'</div>').join('');
+    }, err=>console.error(err));
+  }catch(e){ console.error(e); }
+}
+function acLearnerMove(from, to){
+  if(ACAD_TEST_MODE){ if(from) acDelta[from] = (acDelta[from]||0) - 1; if(to) acDelta[to] = (acDelta[to]||0) + 1; return; }
+  try{
+    const inc = firebase.firestore.FieldValue.increment;
+    if(from) db.collection('academyCourses').doc(from).set({learners: inc(-1)}, {merge:true});
+    if(to) db.collection('academyCourses').doc(to).set({learners: inc(1)}, {merge:true});
+  }catch(e){ console.error(e); }
 }
 let acChgSel = '';
 function acChangeOpen(){
@@ -5146,7 +5311,7 @@ async function acChangeDo(){
       if(chg){ upd.points = pts - chg; newPts = pts - chg; }
       tx.update(ref, upd);
     });
-    acadData = newA; acCache(u.uid, newA);
+    const oldTopic = acadData && acadData.topic; acadData = newA; acCache(u.uid, newA); acLearnerMove(oldTopic, newA.topic); acSubId = '';
     if(newPts !== null){ try{ document.getElementById('pointsCount').textContent = newPts; const hc = document.getElementById('headerTokenCount'); if(hc) hc.textContent = newPts; lbSync(newPts, true); }catch(e){} }
     document.getElementById('acChgOv').style.display = 'none';
     acProfRender();
@@ -5156,7 +5321,68 @@ async function acChangeDo(){
     if(btn){ btn.disabled = false; btn.textContent = T('Jaribu tena','Try again'); }
   }
 }
-let acadRun = false, acadT = 0, acadObj = null;
+
+const AC_THEMES = {
+  edit:function(c,w,h,t,o){
+    const g = c.createLinearGradient(0,0,0,h); g.addColorStop(0,'#1b0a3f'); g.addColorStop(.6,'#3a0f55'); g.addColorStop(1,'#12071f'); c.fillStyle = g; c.fillRect(0,0,w,h);
+    c.globalCompositeOperation = 'lighter';
+    [[.3,.2,'255,80,170',.30],[.8,.55,'120,90,255',.28]].forEach((q,i)=>{ const x = w*q[0]+Math.sin(t*.3+i*2)*w*.1, y = h*q[1]+Math.cos(t*.25+i)*h*.06, r = Math.max(w,h)*.5; const rg = c.createRadialGradient(x,y,0,x,y,r); rg.addColorStop(0,'rgba('+q[2]+','+q[3]+')'); rg.addColorStop(1,'rgba('+q[2]+',0)'); c.fillStyle = rg; c.fillRect(0,0,w,h); });
+    c.globalCompositeOperation = 'source-over';
+    // filamu pande mbili
+    [[w*.035,1],[w*.965-26,-1]].forEach(s=>{ const x = s[0]; c.fillStyle = 'rgba(255,255,255,.06)'; c.fillRect(x,0,26,h);
+      for(let y=-40+((t*28*s[1])%40+40)%40; y<h; y+=40){ c.fillStyle = 'rgba(255,255,255,.16)'; c.fillRect(x+3,y,6,10); c.fillRect(x+17,y,6,10); c.fillStyle = 'rgba(255,120,200,.10)'; c.fillRect(x+4,y+14,18,20); } });
+    // timeline chini
+    const ty = h*.86; c.fillStyle = 'rgba(255,255,255,.05)'; c.fillRect(0,ty-6,w,64);
+    const cols = ['rgba(255,95,162,.55)','rgba(124,77,255,.55)','rgba(32,196,255,.5)'];
+    for(let r=0;r<3;r++){ let x = (r*37)%60; let i = 0; while(x < w){ const cw = 40 + ((i*53+r*29)%70); c.fillStyle = cols[(i+r)%3]; c.beginPath(); c.roundRect ? c.roundRect(x,ty+r*18,cw-4,13,4) : c.rect(x,ty+r*18,cw-4,13); c.fill(); x += cw; i++; } }
+    const px = ((t*38)%(w+40))-20; c.strokeStyle = '#fff'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(px,ty-14); c.lineTo(px,ty+58); c.stroke(); c.fillStyle = '#fff'; c.beginPath(); c.moveTo(px-6,ty-16); c.lineTo(px+6,ty-16); c.lineTo(px,ty-6); c.fill();
+    o.sp.forEach(p=>{ p.y -= p.v; if(p.y < -6){ p.y = h+6; p.x = Math.random()*w; } c.fillStyle = 'rgba(255,200,230,'+(0.15+0.35*Math.abs(Math.sin(t*2+p.ph)))+')'; c.fillRect(p.x,p.y,p.r,p.r); });
+  },
+  sport:function(c,w,h,t,o){
+    const g = c.createLinearGradient(0,0,0,h); g.addColorStop(0,'#03150c'); g.addColorStop(.55,'#0a3a1c'); g.addColorStop(1,'#0e5a2a'); c.fillStyle = g; c.fillRect(0,0,w,h);
+    // mistari ya uwanja
+    c.strokeStyle = 'rgba(255,255,255,.16)'; c.lineWidth = 2;
+    c.beginPath(); c.ellipse(w/2,h*.78,w*.34,h*.07,0,0,7); c.stroke();
+    c.beginPath(); c.moveTo(0,h*.78); c.lineTo(w,h*.78); c.stroke();
+    c.strokeRect(w*.18,h*.62,w*.64,h*.12);
+    for(let i=0;i<8;i++){ c.fillStyle = i%2 ? 'rgba(255,255,255,.025)' : 'rgba(0,0,0,.05)'; c.fillRect(0,h*.55+i*(h*.45/8),w,h*.45/8); }
+    // miale ya taa
+    c.globalCompositeOperation = 'lighter';
+    [[.08,1],[.92,-1]].forEach((s,i)=>{ const x = w*s[0], a = Math.sin(t*.5+i*2)*.12; c.save(); c.translate(x,-10); c.rotate(s[1]*(.55)+a); const rg = c.createLinearGradient(0,0,0,h*1.1); rg.addColorStop(0,'rgba(255,255,220,.32)'); rg.addColorStop(1,'rgba(255,255,220,0)'); c.fillStyle = rg; c.beginPath(); c.moveTo(-6,0); c.lineTo(6,0); c.lineTo(80,h*1.1); c.lineTo(-80,h*1.1); c.fill(); c.restore(); });
+    c.globalCompositeOperation = 'source-over';
+    // mipira inayoruka
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    o.bl.forEach(b=>{ b.y -= b.v; b.x += Math.sin(t*.8+b.ph)*.6; if(b.y < -30){ b.y = h+30; b.x = Math.random()*w; } c.save(); c.translate(b.x,b.y); c.rotate(t*b.rt); c.globalAlpha = .28; c.font = b.s+'px serif'; c.fillText('⚽',0,0); c.restore(); });
+    o.sp.forEach(p=>{ p.y -= p.v*.5; if(p.y < -6){ p.y = h+6; p.x = Math.random()*w; } c.fillStyle = (p.ph>3?'rgba(255,230,90,':'rgba(120,255,170,')+(0.2+0.3*Math.abs(Math.sin(t*2+p.ph)))+')'; c.fillRect(p.x,p.y,p.r,p.r); });
+  },
+  gaming:function(c,w,h,t,o){
+    const g = c.createLinearGradient(0,0,0,h); g.addColorStop(0,'#05050f'); g.addColorStop(.6,'#150a2c'); g.addColorStop(1,'#2a0d18'); c.fillStyle = g; c.fillRect(0,0,w,h);
+    c.globalCompositeOperation = 'lighter';
+    const rg = c.createRadialGradient(w/2,h*.4,0,w/2,h*.4,Math.max(w,h)*.55); rg.addColorStop(0,'rgba(255,110,40,.20)'); rg.addColorStop(1,'rgba(255,110,40,0)'); c.fillStyle = rg; c.fillRect(0,0,w,h);
+    c.globalCompositeOperation = 'source-over';
+    // gridi ya kuteremka
+    c.strokeStyle = 'rgba(255,120,60,.18)'; c.lineWidth = 1;
+    for(let i=0;i<12;i++){ const p = (i+(t*.6)%1)/12, y = h*.62 + (h*.38)*p*p; c.beginPath(); c.moveTo(0,y); c.lineTo(w,y); c.stroke(); }
+    for(let i=-8;i<=8;i++){ c.beginPath(); c.moveTo(w/2+i*w*.01,h*.62); c.lineTo(w/2+i*w*.14,h); c.stroke(); }
+    // alama za kidhibiti
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    const sy = [['△','#3ee6a0'],['○','#ff5a5a'],['✕','#5aa0ff'],['□','#ff7ad0']];
+    o.sy.forEach(b=>{ b.y -= b.v; if(b.y < -30){ b.y = h+30; b.x = Math.random()*w; } const k = sy[b.k]; c.save(); c.translate(b.x + Math.sin(t*.7+b.ph)*10, b.y); c.rotate(Math.sin(t*.5+b.ph)*.6); c.globalAlpha = .3; c.fillStyle = k[1]; c.font = '700 '+b.s+'px sans-serif'; c.fillText(k[0],0,0); c.restore(); });
+    // HUD pembeni
+    c.strokeStyle = 'rgba(255,140,60,'+(0.35+0.15*Math.sin(t*2))+')'; c.lineWidth = 2; const m = 12, L2 = 22;
+    [[m,m,1,1],[w-m,m,-1,1],[m,h-m,1,-1],[w-m,h-m,-1,-1]].forEach(q=>{ c.beginPath(); c.moveTo(q[0],q[1]+q[3]*L2); c.lineTo(q[0],q[1]); c.lineTo(q[0]+q[2]*L2,q[1]); c.stroke(); });
+    // scanlines
+    c.fillStyle = 'rgba(0,0,0,.12)'; for(let y=0;y<h;y+=4) c.fillRect(0,y,w,1);
+  }
+};
+function acThemeObj(w,h){
+  const o = {sp:[], bl:[], sy:[]};
+  for(let i=0;i<40;i++) o.sp.push({x:Math.random()*w,y:Math.random()*h,r:1+Math.random()*2.4,v:.2+Math.random()*.6,ph:Math.random()*6.28});
+  for(let i=0;i<9;i++) o.bl.push({x:Math.random()*w,y:Math.random()*h,s:20+Math.random()*22,v:.25+Math.random()*.4,ph:Math.random()*6.28,rt:(Math.random()-.5)*.8});
+  for(let i=0;i<16;i++) o.sy.push({x:Math.random()*w,y:Math.random()*h,s:20+Math.random()*22,v:.25+Math.random()*.5,ph:Math.random()*6.28,k:i%4});
+  return o;
+}
+let acadRun = false, acadT = 0, acadObj = null, acadTO = null;
 function showAcademy(){
   if(!auth.currentUser){ alert(currentLang==='en' ? 'Please log in first.' : 'Ingia kwenye akaunti yako kwanza.'); return; }
   hideAllViews();
@@ -5172,8 +5398,10 @@ function acadFrame(){
   const cv = document.getElementById('acadBg'), w = cv.clientWidth, h = cv.clientHeight;
   if(!w || !h){ requestAnimationFrame(acadFrame); return; }
   const dpr = Math.min(window.devicePixelRatio||1, 2);
-  if(cv.width !== Math.round(w*dpr) || cv.height !== Math.round(h*dpr)){ cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr); acadObj = null; }
+  if(cv.width !== Math.round(w*dpr) || cv.height !== Math.round(h*dpr)){ cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr); acadObj = null; acadTO = null; }
   const c = cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  const thm = (acadData && acadPage !== 'flow' && AC_THEMES[acadData.topic]) ? acadData.topic : '';
+  if(thm){ if(!acadTO){ acadTO = acThemeObj(w,h); } acadT += 0.016; AC_THEMES[thm](c,w,h,acadT,acadTO); requestAnimationFrame(acadFrame); return; }
   if(!acadObj){
     const em = ['❤','👁','👥','🔥','⭐','🎵','💬','📈'];
     acadObj = {fl:[], st:[]};
@@ -5647,7 +5875,7 @@ function loadFeedbackHistory(){
         const dd = String(t.getDate()).padStart(2,'0'), mo = String(t.getMonth()+1).padStart(2,'0');
         const isReq = f.type === 'request';
         return `<div class="fb-card">
-          <span class="fb-badge ${isReq?'request':''}">${isReq ? '🎮 '+tvT('Ombi la Game','Game Request') : '💬 '+tvT('Maoni','Feedback')}</span>
+          <span class="fb-badge ${isReq?'request':''}">${isReq ? '🎮 '+tvT('Ombi la Game','Game Request') : (f.type==='academy' ? '🎓 '+tvT('Darasa','Academy') : '💬 '+tvT('Maoni','Feedback'))}</span>
           ${f.gameTitle ? `<div class="fb-text"><b>${escapeHtml(f.gameTitle)}</b></div>` : ''}
           <div class="fb-text">${escapeHtml(f.text)}</div>
           <div class="fb-time">${dd}/${mo}</div>

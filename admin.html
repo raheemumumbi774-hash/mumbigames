@@ -281,6 +281,7 @@
     <div class="tab" data-view="notices">🔔 Taarifa</div>
     <div class="tab" data-view="banners">Banner</div>
     <div class="tab" data-view="bettips">🎫 Bet Tips</div>
+    <div class="tab" data-view="academy">🎓 Darasa</div>
     <div class="tab" data-view="feedback">💬 Maoni</div>
     <div class="tab" data-view="requests">🎮 Request</div>
     <div class="tab" data-view="ads">Tangazo</div>
@@ -578,6 +579,35 @@
       <div id="betTipsList"></div>
     </div>
 
+    <!-- DARASA -->
+    <div class="view" id="view-academy">
+      <div class="section-title"><h2>🎓 Darasa la Mumbi</h2></div>
+      <div id="acStats" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;"></div>
+      <div class="section-title"><h2 id="acFormTitle">Ongeza Topic</h2></div>
+      <label>Somo</label>
+      <select id="acCourse">
+        <option value="edit">✂️ Kuedit Video (InShot)</option>
+        <option value="sport">⚽ Michezo / Mpira</option>
+        <option value="gaming">🎮 Gaming (eFootball)</option>
+      </select>
+      <label>Kichwa cha habari</label>
+      <input type="text" id="acTitle" placeholder="mfano: Jinsi ya kukata video kwenye InShot" maxlength="90">
+      <label>Maelezo mafupi (yanaonekana kwenye kadi)</label>
+      <input type="text" id="acShort" placeholder="mfano: Hatua 5 rahisi za kuanza" maxlength="120">
+      <label>Maelezo kamili — kila ukiweka nukta (.) aya mpya inaanza na ▪</label>
+      <textarea id="acBody" rows="7" placeholder="Hatua ya kwanza ni kufungua InShot. Kisha bonyeza Video. Chagua video yako."></textarea>
+      <label>Link ya video (YouTube au TikTok)</label>
+      <input type="text" id="acVideo" placeholder="https://www.youtube.com/watch?v=...  au  https://www.tiktok.com/@jina/video/123...">
+      <div style="display:flex;gap:8px;margin-top:6px;">
+        <button class="btn btn-primary" style="flex:1" id="acSaveBtn" onclick="saveAcademyTopic()">Hifadhi Topic</button>
+        <button class="btn" id="acCancelBtn" style="display:none" onclick="resetAcademyForm()">Ghairi</button>
+      </div>
+      <div class="section-title" style="margin-top:22px;"><h2>Topics zilizopo</h2></div>
+      <div id="acList"></div>
+      <div class="section-title" style="margin-top:22px;"><h2>💬 Maoni / Maswali ya Darasa</h2></div>
+      <div id="academyFbList"></div>
+    </div>
+
     <!-- FEEDBACK -->
     <div class="view" id="view-feedback">
       <div class="section-title"><h2>💬 Maoni ya Games</h2></div>
@@ -814,7 +844,8 @@ document.querySelectorAll('.tab').forEach(tab=>{
     if(tab.dataset.view==='tv') loadTvAdmin();
     if(tab.dataset.view==='notices') loadNoticesAdmin();
     if(tab.dataset.view==='bettips') loadBetTipsAdmin();
-    if(tab.dataset.view==='feedback' || tab.dataset.view==='requests') loadFeedbackAdmin();
+    if(tab.dataset.view==='feedback' || tab.dataset.view==='requests' || tab.dataset.view==='academy') loadFeedbackAdmin();
+    if(tab.dataset.view==='academy') loadAcademyAdmin();
     if(tab.dataset.view==='payment') loadPaymentRequests();
     if(tab.dataset.view==='ads') loadSponsoredAdsAdmin();
   });
@@ -1137,6 +1168,86 @@ function loadTvAdmin(){
   }, err=>{ console.error(err); tvListening = false; showToast('Imeshindwa kupakia channel za TV.'); });
 }
 
+// ---- Darasa la Mumbi ----
+let acEditId = null, acListening = false, acItems = [];
+const AC_COURSE_LBL = {edit:'✂️ Edit', sport:'⚽ Michezo', gaming:'🎮 Gaming'};
+function acParseVideo(u){
+  u = (u||'').trim(); if(!u) return null;
+  let m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([A-Za-z0-9_-]{11})/);
+  if(m) return {type:'yt', id:m[1]};
+  m = u.match(/tiktok\.com\/.*\/video\/(\d{8,25})/);
+  if(m) return {type:'tt', id:m[1]};
+  if(/^https?:\/\/(vm|vt|www)\.tiktok\.com\//.test(u)) return {type:'tt', id:''};
+  return null;
+}
+function resetAcademyForm(){
+  acEditId = null;
+  ['acTitle','acShort','acBody','acVideo'].forEach(id=>{ document.getElementById(id).value = ''; });
+  document.getElementById('acFormTitle').textContent = 'Ongeza Topic';
+  document.getElementById('acSaveBtn').textContent = 'Hifadhi Topic';
+  document.getElementById('acCancelBtn').style.display = 'none';
+}
+async function saveAcademyTopic(){
+  const course = document.getElementById('acCourse').value;
+  const title = document.getElementById('acTitle').value.trim();
+  const short = document.getElementById('acShort').value.trim();
+  const body = document.getElementById('acBody').value.trim();
+  const videoUrl = document.getElementById('acVideo').value.trim();
+  if(!title){ showToast('Andika kichwa cha habari.'); return; }
+  if(!body){ showToast('Andika maelezo kamili.'); return; }
+  let vid = null;
+  if(videoUrl){ vid = acParseVideo(videoUrl); if(!vid){ showToast('Link ya video si sahihi (YouTube au TikTok).'); return; } }
+  const data = {course, title, short, body, videoUrl, videoType: vid ? vid.type : '', videoId: vid ? vid.id : ''};
+  try{
+    if(acEditId){ await db.collection('academyTopics').doc(acEditId).update(data); showToast('Topic imesasishwa ✓'); }
+    else { await db.collection('academyTopics').add({...data, active:true, views:0, createdAt:Date.now()}); showToast('Topic imehifadhiwa ✓'); }
+    resetAcademyForm();
+  }catch(e){ console.error(e); showToast('Imeshindwa kuhifadhi topic.'); }
+}
+function editAcademyTopic(id){
+  const t = acItems.find(x=>x.id===id); if(!t) return;
+  acEditId = id;
+  document.getElementById('acCourse').value = t.course || 'edit';
+  document.getElementById('acTitle').value = t.title || '';
+  document.getElementById('acShort').value = t.short || '';
+  document.getElementById('acBody').value = t.body || '';
+  document.getElementById('acVideo').value = t.videoUrl || '';
+  document.getElementById('acFormTitle').textContent = 'Hariri Topic';
+  document.getElementById('acSaveBtn').textContent = 'Sasisha Topic';
+  document.getElementById('acCancelBtn').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+async function toggleAcademyTopic(id){
+  const t = acItems.find(x=>x.id===id); if(!t) return;
+  try{ await db.collection('academyTopics').doc(id).update({active: t.active === false}); }catch(e){ console.error(e); showToast('Imeshindwa.'); }
+}
+async function deleteAcademyTopic(id){
+  if(!confirm('Futa topic hii?')) return;
+  try{ await db.collection('academyTopics').doc(id).delete(); showToast('Imefutwa.'); if(acEditId===id) resetAcademyForm(); }catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
+}
+function loadAcademyAdmin(){
+  if(acListening) return; acListening = true;
+  db.collection('academyTopics').orderBy('createdAt','desc').onSnapshot(snap=>{
+    acItems = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    document.getElementById('acList').innerHTML = acItems.length ? acItems.map(t=>`
+      <div class="game-card" style="${t.active===false?'opacity:.55;':''}">
+        <div class="g-info">
+          <div class="name">${escapeHtmlAdmin(t.title||'')}</div>
+          <div class="g-tags"><span class="tag">${AC_COURSE_LBL[t.course]||t.course}</span><span class="tag">👁 ${t.views||0}</span>${t.videoType==='yt'?'<span class="tag">▶ YouTube</span>':t.videoType==='tt'?'<span class="tag">♪ TikTok</span>':'<span class="tag">bila video</span>'}</div>
+        </div>
+        <div class="g-actions">
+          <button class="icon-btn" title="${t.active===false?'Onyesha':'Ficha'}" onclick="toggleAcademyTopic('${t.id}')">${t.active===false?'👁️':'🙈'}</button>
+          <button class="icon-btn" title="Hariri" onclick="editAcademyTopic('${t.id}')">✏️</button>
+          <button class="icon-btn del" onclick="deleteAcademyTopic('${t.id}')">🗑</button>
+        </div>
+      </div>`).join('') : '<div class="empty">Hakuna topic bado. Ongeza moja hapo juu.</div>';
+  }, err=>{ console.error(err); acListening = false; showToast('Imeshindwa kupakia topics.'); });
+  db.collection('academyCourses').onSnapshot(snap=>{
+    const m = {}; snap.docs.forEach(d=>{ m[d.id] = d.data().learners || 0; });
+    document.getElementById('acStats').innerHTML = ['edit','sport','gaming'].map(k=>`<div class="tag" style="padding:8px 12px;font-size:12px;">${AC_COURSE_LBL[k]}: 👥 ${Math.max(0,m[k]||0)}</div>`).join('');
+  }, err=>console.error(err));
+}
+
 // ---- Taarifa (kengele ya app) ----
 let noticesListening = false, noticeItems = [];
 async function handleNoticeImg(){
@@ -1335,7 +1446,9 @@ function fbEditReply(id){ fbEditing[id] = true; renderFeedbackAdmin(); }
 function renderFeedbackAdmin(){
   fbLoadUsers(feedbackCache);
   const mk = (key, items)=>{ const l = fbAdminFilter[key]==='open' ? items.filter(f=>!f.adminReply) : items; return l.length ? l.map(fbCardHtml).join('') : '<div class="empty">Hakuna ujumbe hapa.</div>'; };
-  const fbItems = feedbackCache.filter(f=>f.type!=='request'), rqItems = feedbackCache.filter(f=>f.type==='request');
+  const fbItems = feedbackCache.filter(f=>f.type!=='request' && f.type!=='academy'), rqItems = feedbackCache.filter(f=>f.type==='request'), acItems = feedbackCache.filter(f=>f.type==='academy');
+  const acEl = document.getElementById('academyFbList'); if(acEl) acEl.innerHTML = acItems.length ? acItems.map(fbCardHtml).join('') : '<div class="empty">Hakuna maoni ya Darasa bado.</div>';
+  const t3 = document.querySelector('.tab[data-view="academy"]'); if(t3){ const n = acItems.filter(f=>!f.adminReply).length; t3.textContent = '🎓 Darasa' + (n ? ' ('+n+')' : ''); }
   document.getElementById('feedbackList').innerHTML = mk('fb', fbItems);
   document.getElementById('requestList').innerHTML = mk('rq', rqItems);
   const cnt = (items)=>items.filter(f=>!f.adminReply).length;
@@ -1367,7 +1480,7 @@ function fbCardHtml(f){
           ${replied ? '<span class="fb-done">✓ Imejibiwa</span>' : '<span class="fb-new">● Mpya</span>'}
         </div>
       </div>
-      <div class="fb-kind">${isReq ? '🎮 Ombi la Game' + (f.gameTitle ? ' · ' + escapeHtmlAdmin(f.gameTitle) : '') : '💬 Maoni' + (f.gameTitle ? ' · 🎮 ' + escapeHtmlAdmin(f.gameTitle) : '')}</div>
+      <div class="fb-kind">${f.type === 'academy' ? '🎓 Darasa' + (f.gameTitle ? ' · ' + escapeHtmlAdmin(f.gameTitle) : '') : isReq ? '🎮 Ombi la Game' + (f.gameTitle ? ' · ' + escapeHtmlAdmin(f.gameTitle) : '') : '💬 Maoni' + (f.gameTitle ? ' · 🎮 ' + escapeHtmlAdmin(f.gameTitle) : '')}</div>
       <div class="fb-msg">${escapeHtmlAdmin(f.text)}</div>
       ${showBox ? `<div class="fb-reply">
         <textarea id="fbReplyInput-${f.id}" rows="1" placeholder="Jibu...">${replied ? escapeHtmlAdmin(f.adminReply) : ''}</textarea>
