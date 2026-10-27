@@ -243,6 +243,29 @@
   .fb-reply .btn{padding:10px 14px;width:auto;margin:0;}
   .fb-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
   .fb-link{font-size:11px;color:var(--sub);cursor:pointer;text-decoration:underline;}
+
+  .ac-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px;}
+  .ac-stat{border-radius:14px;padding:12px 8px;text-align:center;color:#fff;border:1px solid rgba(255,255,255,.12);}
+  .ac-stat .n{font-size:22px;font-weight:800;line-height:1.1;}
+  .ac-stat .l{font-size:11px;opacity:.9;margin-top:2px;}
+  .ac-form{background:var(--glass);border:1px solid var(--glass-line);border-radius:16px;padding:4px 14px 14px;box-shadow:0 8px 26px rgba(0,0,0,.28);}
+  .ac-form .sec{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--lime);text-transform:uppercase;margin:16px 0 2px;display:flex;align-items:center;gap:8px;}
+  .ac-form .sec:after{content:'';flex:1;height:1px;background:var(--line);}
+  .ac-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .ac-drop{border:1.5px dashed var(--line);border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.02);}
+  .ac-drop .pv{width:96px;aspect-ratio:16/10;border-radius:9px;background:var(--panel-2) center/cover;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;}
+  .ac-drop .bt{flex:1;display:flex;flex-direction:column;gap:6px;}
+  .ac-pick{display:inline-block;text-align:center;padding:8px 10px;border-radius:9px;background:var(--panel-2);border:1px solid var(--line);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;}
+  .ac-pick input{display:none;}
+  .ac-card{display:flex;gap:11px;padding:10px;margin-bottom:10px;background:var(--glass);border:1px solid var(--glass-line);border-radius:16px;box-shadow:0 8px 26px rgba(0,0,0,.28);align-items:stretch;}
+  .ac-card .th{width:92px;flex:none;border-radius:11px;background:var(--panel-2) center/cover;display:flex;align-items:center;justify-content:center;font-size:26px;min-height:74px;}
+  .ac-card .in{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;}
+  .ac-card .ti{font-weight:700;font-size:14px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .ac-card .sh{font-size:11.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ac-card .tg{display:flex;gap:5px;flex-wrap:wrap;}
+  .ac-card .ac{display:flex;gap:6px;margin-top:auto;}
+  .ac-card .ac button{flex:1;border:1px solid var(--line);background:var(--panel-2);color:var(--text);border-radius:8px;padding:6px 0;font-size:13px;cursor:pointer;}
+  .ac-card .ac button.del{color:var(--danger);}
 </style>
 </head>
 <body>
@@ -581,28 +604,41 @@
 
     <!-- DARASA -->
     <div class="view" id="view-academy">
-      <div class="section-title"><h2>🎓 Darasa la Mumbi</h2></div>
-      <div id="acStats" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;"></div>
+      <div class="section-title" style="margin-top:4px;"><h2>🎓 Darasa la Mumbi</h2></div>
+      <div id="acStats" class="ac-stats"></div>
       <div class="section-title"><h2 id="acFormTitle">Ongeza Topic</h2></div>
-      <label>Somo</label>
-      <select id="acCourse">
-        <option value="edit">✂️ Kuedit Video (InShot)</option>
-        <option value="sport">⚽ Michezo / Mpira</option>
-        <option value="gaming">🎮 Gaming (eFootball)</option>
-      </select>
-      <label>Kichwa cha habari</label>
-      <input type="text" id="acTitle" placeholder="mfano: Jinsi ya kukata video kwenye InShot" maxlength="90">
-      <label>Maelezo mafupi (yanaonekana kwenye kadi)</label>
-      <input type="text" id="acShort" placeholder="mfano: Hatua 5 rahisi za kuanza" maxlength="120">
-      <label>Maelezo kamili — kila ukiweka nukta (.) aya mpya inaanza na ▪</label>
-      <textarea id="acBody" rows="7" placeholder="Hatua ya kwanza ni kufungua InShot. Kisha bonyeza Video. Chagua video yako."></textarea>
-      <label>Link ya video (YouTube au TikTok)</label>
-      <input type="text" id="acVideo" placeholder="https://www.youtube.com/watch?v=...  au  https://www.tiktok.com/@jina/video/123...">
-      <div style="display:flex;gap:8px;margin-top:6px;">
-        <button class="btn btn-primary" style="flex:1" id="acSaveBtn" onclick="saveAcademyTopic()">Hifadhi Topic</button>
-        <button class="btn" id="acCancelBtn" style="display:none" onclick="resetAcademyForm()">Ghairi</button>
+      <div class="ac-form">
+        <div class="sec">1 · Somo</div>
+        <select id="acCourse">
+          <option value="edit">✂️ Kuedit Video (InShot)</option>
+          <option value="sport">⚽ Michezo / Mpira</option>
+          <option value="gaming">🎮 Gaming (eFootball)</option>
+        </select>
+        <div class="sec">2 · Habari</div>
+        <label style="margin-top:8px">Kichwa cha habari</label>
+        <input type="text" id="acTitle" placeholder="mfano: Jinsi ya kukata video kwenye InShot" maxlength="90">
+        <label>Maelezo mafupi (yanaonekana kwenye kadi)</label>
+        <input type="text" id="acShort" placeholder="mfano: Hatua 5 rahisi za kuanza" maxlength="120">
+        <label>Maelezo kamili — kila nukta (.) huanzisha aya mpya yenye ▪</label>
+        <textarea id="acBody" rows="7" placeholder="Hatua ya kwanza ni kufungua InShot. Kisha bonyeza Video. Chagua video yako."></textarea>
+        <div class="sec">3 · Picha na video</div>
+        <label style="margin-top:8px">Picha ya kadi (hiari)</label>
+        <div class="ac-drop">
+          <div class="pv" id="acImgPv">🖼️</div>
+          <div class="bt">
+            <label class="ac-pick">📷 Chagua picha<input type="file" id="acImgFile" accept="image/*" onchange="acPickImg(this)"></label>
+            <button class="btn" type="button" id="acImgClr" style="display:none;padding:7px;font-size:12px;" onclick="acClearImg()">Ondoa picha</button>
+          </div>
+        </div>
+        <label>Link ya video (YouTube au TikTok)</label>
+        <input type="text" id="acVideo" placeholder="https://www.youtube.com/watch?v=...  au  https://www.tiktok.com/@jina/video/123...">
+        <input type="hidden" id="acOrient" value="h">
+        <div style="display:flex;gap:8px;margin-top:16px;">
+          <button class="btn btn-primary" style="flex:1" id="acSaveBtn" onclick="saveAcademyTopic()">Hifadhi Topic</button>
+          <button class="btn" id="acCancelBtn" style="display:none" onclick="resetAcademyForm()">Ghairi</button>
+        </div>
       </div>
-      <div class="section-title" style="margin-top:22px;"><h2>Topics zilizopo</h2></div>
+      <div class="section-title"><h2>Topics zilizopo</h2></div>
       <div id="acList"></div>
       <div class="section-title" style="margin-top:22px;"><h2>💬 Maoni / Maswali ya Darasa</h2></div>
       <div id="academyFbList"></div>
@@ -1169,7 +1205,18 @@ function loadTvAdmin(){
 }
 
 // ---- Darasa la Mumbi ----
-let acEditId = null, acListening = false, acItems = [];
+let acEditId = null, acListening = false, acItems = [], acImg = '';
+function acShowImg(){ const pv=document.getElementById('acImgPv'); if(acImg){ pv.style.backgroundImage='url('+acImg+')'; pv.textContent=''; } else { pv.style.backgroundImage=''; pv.textContent='🖼️'; } document.getElementById('acImgClr').style.display = acImg ? 'block' : 'none'; }
+function acClearImg(){ acImg=''; document.getElementById('acImgFile').value=''; acShowImg(); }
+function acPickImg(inp){
+  const f = inp.files && inp.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = ()=>{ const im = new Image(); im.onload = ()=>{
+    const W = 640, sc = Math.min(1, W/im.width), cv = document.createElement('canvas'); cv.width = Math.round(im.width*sc); cv.height = Math.round(im.height*sc);
+    cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height); acImg = cv.toDataURL('image/jpeg',0.75); acShowImg();
+  }; im.onerror = ()=>showToast('Picha haisomeki.'); im.src = rd.result; };
+  rd.readAsDataURL(f);
+}
 const AC_COURSE_LBL = {edit:'✂️ Edit', sport:'⚽ Michezo', gaming:'🎮 Gaming'};
 function acParseVideo(u){
   u = (u||'').trim(); if(!u) return null;
@@ -1183,10 +1230,12 @@ function acParseVideo(u){
 function resetAcademyForm(){
   acEditId = null;
   ['acTitle','acShort','acBody','acVideo'].forEach(id=>{ document.getElementById(id).value = ''; });
+  acClearImg(); document.getElementById('acOrient').value = 'h';
   document.getElementById('acFormTitle').textContent = 'Ongeza Topic';
   document.getElementById('acSaveBtn').textContent = 'Hifadhi Topic';
   document.getElementById('acCancelBtn').style.display = 'none';
 }
+document.addEventListener('input',e=>{ if(e.target&&e.target.id==='acVideo'){ const u=e.target.value; if(/youtube\.com\/shorts\/|tiktok\.com/.test(u)) document.getElementById('acOrient').value='v'; } });
 async function saveAcademyTopic(){
   const course = document.getElementById('acCourse').value;
   const title = document.getElementById('acTitle').value.trim();
@@ -1197,7 +1246,7 @@ async function saveAcademyTopic(){
   if(!body){ showToast('Andika maelezo kamili.'); return; }
   let vid = null;
   if(videoUrl){ vid = acParseVideo(videoUrl); if(!vid){ showToast('Link ya video si sahihi (YouTube au TikTok).'); return; } }
-  const data = {course, title, short, body, videoUrl, videoType: vid ? vid.type : '', videoId: vid ? vid.id : ''};
+  const data = {course, title, short, body, videoUrl, videoType: vid ? vid.type : '', videoId: vid ? vid.id : '', img: acImg, vOrient: document.getElementById('acOrient').value};
   try{
     if(acEditId){ await db.collection('academyTopics').doc(acEditId).update(data); showToast('Topic imesasishwa ✓'); }
     else { await db.collection('academyTopics').add({...data, active:true, views:0, createdAt:Date.now()}); showToast('Topic imehifadhiwa ✓'); }
@@ -1212,6 +1261,7 @@ function editAcademyTopic(id){
   document.getElementById('acShort').value = t.short || '';
   document.getElementById('acBody').value = t.body || '';
   document.getElementById('acVideo').value = t.videoUrl || '';
+  acImg = t.img || ''; acShowImg(); document.getElementById('acOrient').value = t.vOrient || 'h';
   document.getElementById('acFormTitle').textContent = 'Hariri Topic';
   document.getElementById('acSaveBtn').textContent = 'Sasisha Topic';
   document.getElementById('acCancelBtn').style.display = 'block';
@@ -1229,22 +1279,22 @@ function loadAcademyAdmin(){
   if(acListening) return; acListening = true;
   db.collection('academyTopics').orderBy('createdAt','desc').onSnapshot(snap=>{
     acItems = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    const TH = t=> t.img ? 'background-image:url('+t.img+')' : (t.videoType==='yt' ? 'background-image:url(https://img.youtube.com/vi/'+t.videoId+'/mqdefault.jpg)' : '');
     document.getElementById('acList').innerHTML = acItems.length ? acItems.map(t=>`
-      <div class="game-card" style="${t.active===false?'opacity:.55;':''}">
-        <div class="g-info">
-          <div class="name">${escapeHtmlAdmin(t.title||'')}</div>
-          <div class="g-tags"><span class="tag">${AC_COURSE_LBL[t.course]||t.course}</span><span class="tag">👁 ${t.views||0}</span>${t.videoType==='yt'?'<span class="tag">▶ YouTube</span>':t.videoType==='tt'?'<span class="tag">♪ TikTok</span>':'<span class="tag">bila video</span>'}</div>
-        </div>
-        <div class="g-actions">
-          <button class="icon-btn" title="${t.active===false?'Onyesha':'Ficha'}" onclick="toggleAcademyTopic('${t.id}')">${t.active===false?'👁️':'🙈'}</button>
-          <button class="icon-btn" title="Hariri" onclick="editAcademyTopic('${t.id}')">✏️</button>
-          <button class="icon-btn del" onclick="deleteAcademyTopic('${t.id}')">🗑</button>
+      <div class="ac-card" style="${t.active===false?'opacity:.55;':''}">
+        <div class="th" style="${TH(t)}">${TH(t)?'':(AC_COURSE_LBL[t.course]||'🎓').split(' ')[0]}</div>
+        <div class="in">
+          <div class="ti">${escapeHtmlAdmin(t.title||'')}</div>
+          <div class="sh">${escapeHtmlAdmin(t.short||'')}</div>
+          <div class="tg"><span class="tag">${AC_COURSE_LBL[t.course]||t.course}</span><span class="tag">👁 ${t.views||0}</span>${t.videoType==='yt'?'<span class="tag">▶ YouTube</span>':t.videoType==='tt'?'<span class="tag">♪ TikTok</span>':'<span class="tag">bila video</span>'}${t.active===false?'<span class="tag">imefichwa</span>':''}</div>
+          <div class="ac"><button title="${t.active===false?'Onyesha':'Ficha'}" onclick="toggleAcademyTopic('${t.id}')">${t.active===false?'👁️':'🙈'}</button><button title="Hariri" onclick="editAcademyTopic('${t.id}')">✏️</button><button class="del" onclick="deleteAcademyTopic('${t.id}')">🗑</button></div>
         </div>
       </div>`).join('') : '<div class="empty">Hakuna topic bado. Ongeza moja hapo juu.</div>';
   }, err=>{ console.error(err); acListening = false; showToast('Imeshindwa kupakia topics.'); });
   db.collection('academyCourses').onSnapshot(snap=>{
     const m = {}; snap.docs.forEach(d=>{ m[d.id] = d.data().learners || 0; });
-    document.getElementById('acStats').innerHTML = ['edit','sport','gaming'].map(k=>`<div class="tag" style="padding:8px 12px;font-size:12px;">${AC_COURSE_LBL[k]}: 👥 ${Math.max(0,m[k]||0)}</div>`).join('');
+    const GR = {edit:'linear-gradient(135deg,#ff5fa2,#8b5cf6)',sport:'linear-gradient(135deg,#1fb86b,#0b6b7a)',gaming:'linear-gradient(135deg,#ff8a3d,#c2255c)'};
+    document.getElementById('acStats').innerHTML = ['edit','sport','gaming'].map(k=>`<div class="ac-stat" style="background:${GR[k]}"><div class="n">👥 ${Math.max(0,m[k]||0)}</div><div class="l">${AC_COURSE_LBL[k]}</div></div>`).join('');
   }, err=>console.error(err));
 }
 
