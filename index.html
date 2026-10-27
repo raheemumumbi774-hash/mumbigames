@@ -1209,6 +1209,12 @@
   .ac-em:after{bottom:6px;left:2px;font-size:10px;}
   @keyframes acEm{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
   .ac-card.sel .ac-em{transform:scale(1.06);}
+  .atd-play.yt{width:76px;height:54px;border-radius:0;background:none;padding:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
+  .at-play.yt{width:30px;height:21px;border-radius:0;background:none;padding:0;}
+  .atd-send{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:12px;height:54px;border:0;border-radius:16px;background:linear-gradient(135deg,#ffb347,#ff7a3d);color:#1a1000;font-family:inherit;font-size:16px;font-weight:800;letter-spacing:.3px;box-shadow:0 8px 20px rgba(255,122,61,.35);cursor:pointer;}
+  .atd-send:active{transform:scale(.98);}
+  .atd-send:disabled{opacity:.6;}
+  #atAsk{min-height:92px;font-size:14px;}
 </style>
 </head>
 <body>
@@ -5189,7 +5195,7 @@ function acMainRender(){
   } else {
     h += '<div class="at-grid">' + acTopics.map(t=>{
       const th = acThumb(t), v = acVid(t), vc = (t.views||0) + (acViewDelta[t.id]||0);
-      return '<div class="at-card" onclick="acOpenTopic(\''+t.id+'\')"><div class="at-th" style="'+(th?'background-image:url(\''+th.replace(/'/g,'%27')+'\');':'background:'+c.g+';')+'">'+(th?'':'<span class="at-ico">'+c.ic+'</span>')+(v ? '<span class="at-play">'+(v.type==='yt'?'▶':'♪')+'</span>' : '')+'</div>'
+      return '<div class="at-card" onclick="acOpenTopic(\''+t.id+'\')"><div class="at-th" style="'+(th?'background-image:url(\''+th.replace(/'/g,'%27')+'\');':'background:'+c.g+';')+'">'+(th?'':'<span class="at-ico">'+c.ic+'</span>')+(v ? '<span class="at-play'+(v.type==='yt'?' yt':'')+'">'+(v.type==='yt'?'<svg viewBox="0 0 68 48" width="100%" height="100%"><rect width="68" height="48" rx="13" fill="#ff0033"/><path d="M27 14l20 10-20 10z" fill="#fff"/></svg>':'<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>')+'</span>' : '')+'</div>'
         + '<div class="at-in"><b>'+escapeHtml(t.title||'')+'</b><small>'+escapeHtml(t.short||'')+'</small><div class="at-meta"><span>👁 '+acFmt(vc)+'</span></div></div></div>';
     }).join('') + '</div>';
   }
@@ -5211,12 +5217,12 @@ function acTopicRender(){
   let vid = '';
   if(v){
     const th = acThumb(t);
-    vid = '<div class="atd-video'+(t.vOrient==='v'||v.type==='tt'?' vert':'')+'" id="atVideo" onclick="acPlayVideo()" style="'+(th?'background-image:url('+th+');':'background:'+c.g+';')+'"><span class="atd-play">'+(v.type==='yt'?'▶':'♪')+'</span><small>'+T('Bonyeza kutazama video','Tap to watch the video')+'</small></div>';
+    vid = '<div class="atd-video'+(t.vOrient==='v'||v.type==='tt'?' vert':'')+'" id="atVideo" onclick="acPlayVideo()" style="'+(th?'background-image:url('+th+');':'background:'+c.g+';')+'"><span class="atd-play'+(v.type==='yt'?' yt':'')+'">'+(v.type==='yt'?'<svg viewBox="0 0 68 48" width="100%" height="100%"><rect width="68" height="48" rx="13" fill="#ff0033"/><path d="M27 14l20 10-20 10z" fill="#fff"/></svg>':'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>')+'</span><small>'+T('Bonyeza kutazama video','Tap to watch the video')+'</small></div>';
   }
   box.innerHTML = '<div class="atd-hero" style="background:'+c.g+'"><span class="atd-tag">'+c.ic+' '+escapeHtml(c.t[L])+'</span><div class="atd-t">'+escapeHtml(t.title||'')+'</div><div class="atd-views">👁 '+acFmt(vc)+' '+T('wameangalia','views')+'</div></div>'
     + '<div class="atd-card">'+paras+'</div>' + vid
     + '<div class="atd-card"><div class="am-lb" style="margin:0 0 8px;">💬 '+T('Hujaelewa? Uliza hapa','Did not understand? Ask here')+'</div>'
-    + '<textarea id="atAsk" rows="2" placeholder="'+T('Andika swali au maoni yako...','Write your question or comment...')+'"></textarea><button class="ac-next" style="max-width:none;width:100%;margin-top:8px;height:42px;" id="atAskBtn" onclick="acAsk()">'+T('Tuma','Send')+'</button>'
+    + '<textarea id="atAsk" rows="2" placeholder="'+T('Andika swali au maoni yako...','Write your question or comment...')+'"></textarea><button class="atd-send" id="atAskBtn" onclick="acAsk()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg><span>'+T('Tuma','Send')+'</span></button>'
     + '<div id="atFbList" class="atd-fb"></div></div>';
 }
 function acPlayVideo(){

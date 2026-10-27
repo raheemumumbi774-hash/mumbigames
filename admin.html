@@ -266,13 +266,48 @@
   .ac-card .ac{display:flex;gap:6px;margin-top:auto;}
   .ac-card .ac button{flex:1;border:1px solid var(--line);background:var(--panel-2);color:var(--text);border-radius:8px;padding:6px 0;font-size:13px;cursor:pointer;}
   .ac-card .ac button.del{color:var(--danger);}
+
+  /* ---- Admin v2: wallpaper, icons, layout ---- */
+  #admBg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+  #app{position:relative;z-index:1;}
+  .topbar{background:rgba(10,10,22,.72)!important;}
+  .ic{display:inline-flex;align-items:center;justify-content:center;width:1.1em;height:1.1em;vertical-align:-.2em;flex:none;}
+  .ic svg{width:100%;height:100%;display:block;}
+  .tabs{gap:8px;padding:10px 14px;background:rgba(10,10,22,.55);backdrop-filter:blur(8px);position:sticky;top:57px;z-index:4;}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:68px;padding:9px 12px 8px;border-radius:14px;font-size:11px;font-weight:700;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
+  .tab .ic{width:20px;height:20px;}
+  .tab.active{background:linear-gradient(135deg,#ffb347,#ff7a3d);color:#1a1000;border-color:transparent;box-shadow:0 6px 16px rgba(255,122,61,.28);}
+  .tab:not([data-view]){flex-direction:row;justify-content:center;min-width:0;font-size:13px;}
+  .dash-hero{display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:16px;border-radius:20px;background:linear-gradient(135deg,rgba(139,92,246,.28),rgba(255,95,162,.16) 60%,rgba(255,179,71,.14));border:1px solid rgba(255,255,255,.12);}
+  .dash-hero .dh-icon{width:52px;height:52px;border-radius:16px;flex:none;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;}
+  .dash-hero h1{font-size:19px;font-weight:800;color:#fff;}
+  .dash-hero p{font-size:12px;color:#c9cdea;margin:3px 0 0;}
+  .stat-grid2{gap:10px;}
+  .gcard{display:flex;align-items:center;gap:12px;padding:13px 12px;border-radius:16px;}
+  .gcard .gc-icon{margin:0;width:40px;height:40px;font-size:20px;flex:none;}
+  .gcard .gc-num{font-size:22px;}
+  .gcard .gc-lbl{margin-top:2px;}
+  .info-panel{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:4px 14px;}
+  .ip-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px;color:var(--sub);}
+  .ip-row:last-child{border-bottom:0;}
+  .ip-row .ic{color:var(--lime);font-size:17px;}
+  .ip-row>span:not(.ic){flex:1;}
+  .ip-row b{color:var(--text);font-size:15px;}
+  .ann-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .ann-btn{display:flex;align-items:center;justify-content:center;gap:9px;padding:14px 8px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--text);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;}
+  .ann-btn .ic{font-size:20px;}
+  .ann-btn.tt .ic{color:#5eead4;}
+  .icon-btn{display:inline-flex;align-items:center;justify-content:center;}
+  .brand-logo{width:38px;height:38px;flex:none;border-radius:12px;box-shadow:0 4px 14px rgba(255,95,162,.35);}
+  .brand-logo.big{width:64px;height:64px;margin:0 auto 16px;border-radius:18px;}
+  .brand span{font-size:17px;}
 </style>
 </head>
 <body>
 
 <div id="gate">
   <div class="gate-card">
-    <div class="cartridge-mark"></div>
+    <div class="brand-logo big"><svg viewBox="0 0 48 48" width="100%" height="100%"><defs><linearGradient id="bl2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".55" stop-color="#ff5fa2"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#bl2)"/><path d="M15 17h18a6 6 0 0 1 5.8 4.6l1.6 7A4.2 4.2 0 0 1 32.600 33l-1.500-2.200H16.900L15.400 33a4.200 4.200 0 0 1-7.800-4.400l1.600-7A6 6 0 0 1 15 17z" fill="#fff" fill-opacity=".95"/><path d="M16 21.500v5M13.500 24h5" stroke="#8b5cf6" stroke-width="2.200" stroke-linecap="round"/><circle cx="31" cy="22.500" r="1.700" fill="#ff5fa2"/><circle cx="34.500" cy="25.500" r="1.700" fill="#ffb347"/><path d="M36 8l1 2.600 2.600 1-2.600 1-1 2.600-1-2.600-2.600-1 2.600-1z" fill="#fff"/></svg></div>
     <h1>mumbigames admin</h1>
     <p>Weka PIN yako kuingia kwenye dashibodi</p>
     <input type="password" id="pinInput" inputmode="numeric" placeholder="PIN (mfano 1234)" maxlength="12">
@@ -281,10 +316,11 @@
   </div>
 </div>
 
+<canvas id="admBg" aria-hidden="true"></canvas>
 <div id="app">
   <div class="topbar">
     <div class="brand">
-      <div class="cartridge-mark"></div>
+      <div class="brand-logo"><svg viewBox="0 0 48 48" width="100%" height="100%"><defs><linearGradient id="bl1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".55" stop-color="#ff5fa2"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#bl1)"/><path d="M15 17h18a6 6 0 0 1 5.8 4.6l1.6 7A4.2 4.2 0 0 1 32.600 33l-1.500-2.200H16.900L15.400 33a4.200 4.200 0 0 1-7.800-4.400l1.600-7A6 6 0 0 1 15 17z" fill="#fff" fill-opacity=".95"/><path d="M16 21.500v5M13.500 24h5" stroke="#8b5cf6" stroke-width="2.200" stroke-linecap="round"/><circle cx="31" cy="22.500" r="1.700" fill="#ff5fa2"/><circle cx="34.500" cy="25.500" r="1.700" fill="#ffb347"/><path d="M36 8l1 2.600 2.600 1-2.600 1-1 2.600-1-2.600-2.600-1 2.600-1z" fill="#fff"/></svg></div>
       <div>
         <span>mumbigames</span>
         <small>Admin Dashboard</small>
@@ -294,51 +330,42 @@
   </div>
 
   <div class="tabs">
-    <div class="tab active" data-view="overview">Muhtasari</div>
-    <div class="tab" data-view="games">Games</div>
-    <div class="tab" data-view="add">+ Weka Game</div>
-    <div class="tab" data-view="payment">Malipo</div>
-    <div class="tab" data-view="duka">Duka</div>
-    <div class="tab" data-view="tournaments">Tournaments</div>
-    <div class="tab" data-view="tv">📺 TV</div>
-    <div class="tab" data-view="notices">🔔 Taarifa</div>
-    <div class="tab" data-view="banners">Banner</div>
-    <div class="tab" data-view="bettips">🎫 Bet Tips</div>
-    <div class="tab" data-view="academy">🎓 Darasa</div>
-    <div class="tab" data-view="feedback">💬 Maoni</div>
-    <div class="tab" data-view="requests">🎮 Request</div>
-    <div class="tab" data-view="ads">Tangazo</div>
+    <div class="tab active" data-view="overview"><i data-ic="layout"></i><span>Muhtasari</span></div>
+    <div class="tab" data-view="games"><i data-ic="gamepad"></i><span>Games</span></div>
+    <div class="tab" data-view="add"><i data-ic="plus"></i><span>Weka Game</span></div>
+    <div class="tab" data-view="payment"><i data-ic="wallet"></i><span>Malipo</span></div>
+    <div class="tab" data-view="duka"><i data-ic="store"></i><span>Duka</span></div>
+    <div class="tab" data-view="tournaments"><i data-ic="trophy"></i><span>Tournaments</span></div>
+    <div class="tab" data-view="tv"><i data-ic="tv"></i><span>TV</span></div>
+    <div class="tab" data-view="notices"><i data-ic="bell"></i><span>Taarifa</span></div>
+    <div class="tab" data-view="banners"><i data-ic="image"></i><span>Banner</span></div>
+    <div class="tab" data-view="bettips"><i data-ic="ticket"></i><span>Bet Tips</span></div>
+    <div class="tab" data-view="academy"><i data-ic="grad"></i><span>Darasa</span></div>
+    <div class="tab" data-view="feedback"><i data-ic="message"></i><span>Maoni</span></div>
+    <div class="tab" data-view="requests"><i data-ic="inbox"></i><span>Request</span></div>
+    <div class="tab" data-view="ads"><i data-ic="megaphone"></i><span>Tangazo</span></div>
   </div>
 
   <main>
     <!-- OVERVIEW -->
     <div class="view active" id="view-overview">
-      <div class="dash-header">
-        <div class="dh-icon">🛡️</div>
-        <div>
-          <h1>Admin Dashboard</h1>
-          <p>Karibu Admin, dhibiti games na maombi hapa</p>
-        </div>
+      <div class="dash-hero">
+        <div class="dh-icon"><i data-ic="shield"></i></div>
+        <div class="dh-tx"><h1>Admin Dashboard</h1><p>Karibu Admin, dhibiti games na maombi hapa</p></div>
       </div>
       <div class="stat-grid2">
-        <div class="gcard c-blue"><div class="gc-icon">🎮</div><div class="gc-num" id="statTotal">0</div><div class="gc-lbl">Games</div></div>
-        <div class="gcard c-green"><div class="gc-icon">📈</div><div class="gc-num" id="statDownloadsTotal">0</div><div class="gc-lbl">Downloads</div></div>
-        <div class="gcard c-purple"><div class="gc-icon">👑</div><div class="gc-num" id="statPaid">0</div><div class="gc-lbl">Premium Games</div></div>
-        <div class="gcard c-amber"><div class="gc-icon">👥</div><div class="gc-num" id="statRequests">0</div><div class="gc-lbl">Requests</div></div>
-        <div class="gcard c-teal span2"><div class="gc-icon">👤</div><div class="gc-num" id="statAccounts">0</div><div class="gc-lbl">Members</div></div>
+        <div class="gcard c-blue"><div class="gc-icon"><i data-ic="gamepad"></i></div><div class="gc-tx"><div class="gc-num" id="statTotal">0</div><div class="gc-lbl">Games</div></div></div>
+        <div class="gcard c-green"><div class="gc-icon"><i data-ic="trending"></i></div><div class="gc-tx"><div class="gc-num" id="statDownloadsTotal">0</div><div class="gc-lbl">Downloads</div></div></div>
+        <div class="gcard c-purple"><div class="gc-icon"><i data-ic="crown"></i></div><div class="gc-tx"><div class="gc-num" id="statPaid">0</div><div class="gc-lbl">Premium Games</div></div></div>
+        <div class="gcard c-amber"><div class="gc-icon"><i data-ic="inbox"></i></div><div class="gc-tx"><div class="gc-num" id="statRequests">0</div><div class="gc-lbl">Requests</div></div></div>
+        <div class="gcard c-teal span2"><div class="gc-icon"><i data-ic="users"></i></div><div class="gc-tx"><div class="gc-num" id="statAccounts">0</div><div class="gc-lbl">Members</div></div></div>
       </div>
-      <div class="mini-stat-row">
-        <div class="mini-stat"><div class="num" id="statFree">0</div><div class="lbl">Bure</div></div>
-        <div class="mini-stat"><div class="num" id="statDownloadsToday">0</div><div class="lbl">Downloads Leo</div></div>
-        <div class="mini-stat"><div class="num" id="statVisits">0</div><div class="lbl">Watembeleaji</div></div>
-        <div class="mini-stat"><div class="num" id="statAdsToday">0</div><div class="lbl">Matangazo Leo</div></div>
-        <div class="mini-stat"><div class="num" id="statAdsMonth">0</div><div class="lbl">Matangazo (Mwezi Huu)</div></div>
-      </div>
+      <div style="display:none;"><span id="statFree">0</span><span id="statDownloadsToday">0</span><span id="statVisits">0</span><span id="statAdsToday">0</span><span id="statAdsMonth">0</span></div>
       <div style="display:none;"><span id="statUnique">0</span></div>
-      <div class="section-title"><h2>📢 Tangaza machapisho mapya</h2></div>
-            <div style="display:flex;gap:10px;margin-bottom:20px;">
-        <button class="btn btn-ghost" style="flex:1" onclick="announceSocial('tiktok')">♪ TikTok Mpya</button>
-        <button class="btn btn-ghost" style="flex:1" onclick="announceSocial('youtube')">▶ YouTube Mpya</button>
+      <div class="section-title"><h2>Tangaza machapisho mapya</h2></div>
+      <div class="ann-row">
+        <button class="ann-btn tt" onclick="announceSocial('tiktok')"><i data-ic="music"></i><span>TikTok Mpya</span></button>
+        <button class="ann-btn yt" onclick="announceSocial('youtube')"><i data-ic="youtube"></i><span>YouTube Mpya</span></button>
       </div>
     </div>
 
@@ -511,8 +538,8 @@
         <option value="Muziki">Muziki</option>
         <option value="Michezo">Michezo</option>
         <option value="Burudani">Burudani</option>
-        <option value="Movie">🎬 Movie</option>
-        <option value="Highlights">⚽ Highlights za Mipira</option>
+        <option value="Movie">Movie</option>
+        <option value="Highlights">Highlights za Mipira</option>
         <option value="Games">Games</option>
         <option value="Dini">Dini</option>
         <option value="Watoto">Watoto</option>
@@ -523,12 +550,12 @@
             <label>Alama ya LIVE (inaonekana kwa watumiaji kwa muda huo)</label>
       <select id="tvLive">
         <option value="keep">Live otomatiki (channel ikiwepo)</option>
-        <option value="1">🔴 Live — saa 1</option>
-        <option value="3">🔴 Live — saa 3</option>
-        <option value="6">🔴 Live — saa 6</option>
-        <option value="24">🔴 Live — saa 24</option>
-        <option value="inf">🔴 Live daima (masaa 24 kila siku)</option>
-        <option value="0">⚪ Zima alama ya Live</option>
+        <option value="1">Live — saa 1</option>
+        <option value="3">Live — saa 3</option>
+        <option value="6">Live — saa 6</option>
+        <option value="24">Live — saa 24</option>
+        <option value="inf">Live daima (masaa 24 kila siku)</option>
+        <option value="0">Zima alama ya Live</option>
       </select>
       <label>Mpangilio (namba ndogo inatangulia)</label>
       <input type="number" id="tvOrder" placeholder="0" value="0">
@@ -610,9 +637,9 @@
       <div class="ac-form">
         <div class="sec">1 · Somo</div>
         <select id="acCourse">
-          <option value="edit">✂️ Kuedit Video (InShot)</option>
-          <option value="sport">⚽ Michezo / Mpira</option>
-          <option value="gaming">🎮 Gaming (eFootball)</option>
+          <option value="edit">Kuedit Video (InShot)</option>
+          <option value="sport">Michezo / Mpira</option>
+          <option value="gaming">Gaming (eFootball)</option>
         </select>
         <div class="sec">2 · Habari</div>
         <label style="margin-top:8px">Kichwa cha habari</label>
@@ -1192,7 +1219,7 @@ function loadTvAdmin(){
           <div class="g-tags"><span class="tag">${escapeHtmlAdmin(c.cat||'')}</span><span class="tag">order: ${c.order||0}</span>${(c.playlist&&c.playlist.length)?'<span class="tag">🎬 '+c.playlist.length+' movie</span>':''}${c.active===false?'<span class="tag paid">Imefichwa</span>':''}</div>
           <select style="margin-top:6px;padding:6px 8px;font-size:12px;" onchange="setTvLive('${c.id}',this.value);this.value='keep'">
             <option value="keep">${tvLiveLabel(c)} — badilisha…</option>
-            <option value="1">🔴 Live saa 1</option><option value="3">🔴 Live saa 3</option><option value="6">🔴 Live saa 6</option><option value="24">🔴 Live saa 24</option><option value="inf">🔴 Live daima</option><option value="0">⚪ Zima Live</option>
+            <option value="1">Live saa 1</option><option value="3">Live saa 3</option><option value="6">Live saa 6</option><option value="24">Live saa 24</option><option value="inf">Live daima</option><option value="0">Zima Live</option>
           </select>
         </div>
         <div class="g-actions">
@@ -2287,6 +2314,101 @@ async function saveSponsoredAd(){
 
 // initialize form with one empty download row
 addDownloadRow();
+</script>
+
+<script>
+(function(){
+const P = {
+layout:'<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+gamepad:'<path d="M6 12h4M8 10v4"/><circle cx="15" cy="13" r=".7"/><circle cx="18" cy="11" r=".7"/><path d="M17.3 5H6.7a4 4 0 0 0-3.9 3.2L2 15a3 3 0 0 0 5.2 2.2L8 16h8l.8 1.2A3 3 0 0 0 22 15l-.8-6.8A4 4 0 0 0 17.3 5z"/>',
+plus:'<circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/>',
+wallet:'<path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5"/><path d="M16 14h2"/>',
+store:'<path d="M3 9l1.5-5h15L21 9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/>',
+trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
+tv:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M17 2l-5 5-5-5"/>',
+bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>',
+ticket:'<path d="M3 9a2 2 0 0 0 0 6v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-3a2 2 0 0 0 0-6V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1z"/><path d="M13 5v2M13 11v2M13 17v2"/>',
+grad:'<path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2.5 9 2.5 12 0v-5"/><path d="M22 10v6"/>',
+message:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.2a2 2 0 0 0-1.7 1.1z"/>',
+megaphone:'<path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/>',
+trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>',
+eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+eyeoff:'<path d="M3 3l18 18"/><path d="M10.6 6.1A9.7 9.7 0 0 1 12 6c6 0 10 6 10 6a17 17 0 0 1-3 3.6M6.6 7.6A17 17 0 0 0 2 12s4 7 10 7a9.7 9.7 0 0 0 4.2-.9"/>',
+ban:'<circle cx="12" cy="12" r="10"/><path d="M4.9 4.9l14.2 14.2"/>',
+bot:'<rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V5M9 14v1.5M15 14v1.5"/><circle cx="12" cy="4" r="1"/>',
+check:'<path d="M20 6L9 17l-5-5"/>',
+checkc:'<circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/>',
+users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+user:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+flag:'<path d="M4 22V4M4 4h13l-2 4 2 4H4"/>',
+scissors:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/>',
+pencil:'<path d="M17 3l4 4L8 20l-5 1 1-5z"/>',
+globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/>',
+shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>',
+trending:'<path d="M22 7l-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/>',
+crown:'<path d="M2 18l2-11 5 5 3-7 3 7 5-5 2 11z"/><path d="M3 21h18"/>',
+camera:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+x:'<path d="M18 6L6 18M6 6l12 12"/>',
+heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>',
+flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2-.2-4 1-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.5-2.4 1.5-3.5z"/>',
+lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+unlock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>',
+alert:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+ball:'<circle cx="12" cy="12" r="10"/><path d="M12 8l4 3-1.5 5h-5L8 11z"/><path d="M12 2v6M16 11l5.5-1.5M14.5 16l3.5 4.5M9.5 16L6 20.5M8 11L2.5 9.5"/>',
+film:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/>',
+smile:'<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
+download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+dotr:'<circle cx="12" cy="12" r="6" fill="#ff4d4d" stroke="none"/>',
+dotg:'<circle cx="12" cy="12" r="6" fill="#8a90b0" stroke="none"/>',
+youtube:'<rect x="1" y="4.5" width="22" height="15" rx="4.5" fill="#ff0033" stroke="none"/><path d="M10 9l5.5 3-5.5 3z" fill="#fff" stroke="none"/>'
+};
+const MAP = {'🔴':'dotr','⚪':'dotg','🎮':'gamepad','🗑':'trash','🎓':'grad','🎬':'film','🖼':'image','💬':'message','⚽':'ball','👁':'eye','🚫':'ban','🎫':'ticket','🤖':'bot','✓':'check','✅':'checkc','📺':'tv','🔔':'bell','👥':'users','📢':'megaphone','📣':'megaphone','♪':'music','🎵':'music','🚩':'flag','🏆':'trophy','✂':'scissors','🙈':'eyeoff','✏':'pencil','✎':'pencil','🌍':'globe','🛡':'shield','📈':'trending','👑':'crown','👤':'user','📷':'camera','✕':'x','❤':'heart','🔥':'flame','🔓':'unlock','🔒':'lock','⚠':'alert','🚨':'alert','😜':'smile','▶':'youtube','⎋':'logout'};
+window.mgIcon = n => '<span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(P[n]||'')+'</svg></span>';
+const keys = Object.keys(MAP).sort((x,y)=>y.length-x.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+const RE = new RegExp('('+keys.join('|')+')\\uFE0F?','g');
+const SKIP = {SCRIPT:1,STYLE:1,TEXTAREA:1,OPTION:1,TITLE:1,INPUT:1,SELECT:1,NOSCRIPT:1};
+let busy = false, obs = null;
+function fillIc(root){ (root.querySelectorAll ? root.querySelectorAll('i[data-ic]') : []).forEach(el=>{ const n = el.getAttribute('data-ic'); el.removeAttribute('data-ic'); el.outerHTML = mgIcon(n); }); }
+function walk(root){
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode:n=>(n.parentNode && !SKIP[n.parentNode.nodeName] && RE.test(n.nodeValue) && !(RE.lastIndex=0)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT});
+  const list = []; let n; while((n = w.nextNode())) list.push(n);
+  list.forEach(t=>{
+    const html = t.nodeValue.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])).replace(RE,(m,k)=>mgIcon(MAP[k]));
+    const sp = document.createElement('span'); sp.style.display = 'contents'; sp.innerHTML = html; t.parentNode.replaceChild(sp,t);
+  });
+}
+function run(){ if(busy) return; busy = true; try{ fillIc(document.body); walk(document.body); }catch(e){ console.error(e); } busy = false; }
+let q = 0;
+function sched(){ if(q) return; q = requestAnimationFrame(()=>{ q = 0; run(); }); }
+function start(){ run(); obs = new MutationObserver(()=>{ if(!busy) sched(); }); obs.observe(document.body,{childList:true,subtree:true,characterData:true}); }
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+
+// ---- wallpaper ya live (tulivu) ----
+function bg(){
+  const cv = document.getElementById('admBg'); if(!cv) return;
+  const c = cv.getContext('2d'); let w = 0, h = 0, t = 0;
+  const dots = Array.from({length:34},()=>({x:Math.random(),y:Math.random(),r:.6+Math.random()*1.6,v:.02+Math.random()*.05,ph:Math.random()*6.28}));
+  function rs(){ const d = Math.min(devicePixelRatio||1,2); w = cv.clientWidth; h = cv.clientHeight; cv.width = w*d; cv.height = h*d; c.setTransform(d,0,0,d,0,0); }
+  rs(); addEventListener('resize', rs);
+  const blobs = [[.15,.12,'139,92,246',.20,.00],[.9,.45,'255,95,162',.14,2.1],[.3,.95,'56,189,248',.14,4.2]];
+  (function f(){
+    t += .016;
+    if(document.hidden){ requestAnimationFrame(f); return; }
+    const g = c.createLinearGradient(0,0,0,h); g.addColorStop(0,'#0c0b1f'); g.addColorStop(1,'#070712'); c.fillStyle = g; c.fillRect(0,0,w,h);
+    c.globalCompositeOperation = 'lighter';
+    blobs.forEach(b=>{ const x = w*b[0]+Math.sin(t*.14+b[4])*w*.12, y = h*b[1]+Math.cos(t*.11+b[4])*h*.07, r = Math.max(w,h)*.55; const rg = c.createRadialGradient(x,y,0,x,y,r); rg.addColorStop(0,'rgba('+b[2]+','+b[3]+')'); rg.addColorStop(1,'rgba('+b[2]+',0)'); c.fillStyle = rg; c.fillRect(0,0,w,h); });
+    c.globalCompositeOperation = 'source-over';
+    dots.forEach(p=>{ p.y -= p.v*.0016*60; if(p.y < -.02){ p.y = 1.02; p.x = Math.random(); } c.fillStyle = 'rgba(255,255,255,'+(.08+.18*Math.abs(Math.sin(t*.8+p.ph)))+')'; c.beginPath(); c.arc(p.x*w+Math.sin(t*.3+p.ph)*8, p.y*h, p.r, 0, 7); c.fill(); });
+    requestAnimationFrame(f);
+  })();
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bg); else bg();
+})();
 </script>
 </body>
 </html>
