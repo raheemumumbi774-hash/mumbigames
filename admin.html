@@ -302,6 +302,12 @@
   .brand-logo{width:38px;height:38px;flex:none;border-radius:12px;box-shadow:0 4px 14px rgba(255,95,162,.35);}
   .brand-logo.big{width:64px;height:64px;margin:0 auto 16px;border-radius:18px;}
   .brand span{font-size:17px;}
+  .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 4px;}
+  .mini-t{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:14px;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.1);}
+  .mini-t.wide{grid-column:span 2;}
+  .mini-t>.ic{font-size:20px;color:var(--lime);}
+  .mini-t b{display:block;font-size:18px;line-height:1.1;color:var(--text);}
+  .mini-t span:not(.ic){font-size:10.5px;color:var(--sub);}
 </style>
 </head>
 <body>
@@ -361,7 +367,13 @@
         <div class="gcard c-amber"><div class="gc-icon"><i data-ic="inbox"></i></div><div class="gc-tx"><div class="gc-num" id="statRequests">0</div><div class="gc-lbl">Requests</div></div></div>
         <div class="gcard c-teal span2"><div class="gc-icon"><i data-ic="users"></i></div><div class="gc-tx"><div class="gc-num" id="statAccounts">0</div><div class="gc-lbl">Members</div></div></div>
       </div>
-      <div style="display:none;"><span id="statFree">0</span><span id="statDownloadsToday">0</span><span id="statVisits">0</span><span id="statAdsToday">0</span><span id="statAdsMonth">0</span></div>
+      <div class="mini-grid">
+        <div class="mini-t"><i data-ic="download"></i><div><b id="statDownloadsToday">0</b><span>Downloads leo</span></div></div>
+        <div class="mini-t"><i data-ic="globe"></i><div><b id="statVisits">0</b><span>Watembeleaji</span></div></div>
+        <div class="mini-t"><i data-ic="megaphone"></i><div><b id="statAdsToday">0</b><span>Matangazo leo</span></div></div>
+        <div class="mini-t"><i data-ic="calendar"></i><div><b id="statAdsMonth">0</b><span>Matangazo mwezi huu</span></div></div>
+        <div class="mini-t wide"><i data-ic="unlock"></i><div><b id="statFree">0</b><span>Games za bure</span></div></div>
+      </div>
       <div style="display:none;"><span id="statUnique">0</span></div>
       <div class="section-title"><h2>Tangaza machapisho mapya</h2></div>
       <div class="ann-row">
