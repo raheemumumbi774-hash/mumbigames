@@ -1215,6 +1215,20 @@
   .atd-send:active{transform:scale(.98);}
   .atd-send:disabled{opacity:.6;}
   #atAsk{min-height:92px;font-size:14px;}
+  .mg-notif .n-icon.img{background-size:cover;background-position:center;background-color:#222;}
+  .mg-notif .n-icon.svg{background:var(--lime);}
+  .mg-notif .n-head{display:flex;align-items:center;gap:7px;}
+  .mg-notif .n-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mg-notif .n-tag{display:none;flex:none;font-size:8.5px;font-weight:800;letter-spacing:.5px;color:#fff;background:#e0342c;border-radius:20px;padding:1px 6px;animation:mgTagPulse 1.6s infinite;}
+  @keyframes mgTagPulse{0%{box-shadow:0 0 0 0 rgba(224,52,44,.55);}70%{box-shadow:0 0 0 7px rgba(224,52,44,0);}100%{box-shadow:0 0 0 0 rgba(224,52,44,0);}}
+  .mg-bdg{display:none;position:absolute;align-items:center;justify-content:center;background:#e0342c;color:#fff;font-weight:800;border:2px solid var(--panel,#111);box-sizing:content-box;transition:all .35s cubic-bezier(.34,1.56,.64,1);}
+  .mg-bdg.show{display:flex;}
+  .mg-bdg.dot{width:9px;height:9px;min-width:9px;border-radius:50%;font-size:0;animation:mgDotPulse 1.5s infinite;}
+  .mg-bdg.num{min-width:17px;height:17px;padding:0 4px;border-radius:12px;font-size:10px;line-height:1;animation:mgPop .45s;}
+  .mg-bdg.top{top:-6px;right:-6px;}
+  .mg-bdg.inl{position:static;margin-right:8px;}
+  @keyframes mgDotPulse{0%{box-shadow:0 0 0 0 rgba(224,52,44,.6);}70%{box-shadow:0 0 0 8px rgba(224,52,44,0);}100%{box-shadow:0 0 0 0 rgba(224,52,44,0);}}
+  @keyframes mgPop{0%{transform:scale(.3);}60%{transform:scale(1.35);}100%{transform:scale(1);}}
 </style>
 </head>
 <body>
@@ -1227,7 +1241,7 @@
     <div class="gift" id="giftBtn" onclick="showEarnTokens()" aria-label="Ads"><span class="gift-txt" data-i18n="gift_txt">Tangazo</span><svg class="gift-box" viewBox="0 0 32 32" width="22" height="22"><defs><linearGradient id="gW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc83d"/><stop offset="1" stop-color="#f59a1b"/></linearGradient></defs><rect class="g-in" x="6" y="14" width="20" height="4" rx="1.5" fill="#262b3d"/><rect x="5" y="15" width="22" height="14" rx="3" fill="url(#gW)"/><rect x="14.5" y="15" width="3" height="14" fill="#7c5cff"/><g class="g-lid"><rect x="3" y="10" width="26" height="6.5" rx="2.5" fill="#ffd25e"/><rect x="14.5" y="10" width="3" height="6.5" fill="#7c5cff"/><path d="M16 10C13 4.5 8.5 6.5 11 9.5C12 10.5 14.5 10.3 16 10Z" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round"/><path d="M16 10C19 4.5 23.5 6.5 21 9.5C20 10.5 17.5 10.3 16 10Z" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round"/></g></svg></div>
     <div class="token-pill" id="headerTokenPill" onclick="showProfile()" style="display:none;margin-left:0;"><span class="coin">🪙</span><span id="headerTokenCount">0</span></div>
     <div class="search" onclick="showChangelog()" style="margin-left:0;position:relative;">🔔<span id="changelogBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#e0342c;color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:8px;line-height:16px;text-align:center;padding:0 3px;">0</span></div>
-    <div class="search" onclick="showSettings()" style="margin-left:0;">☰</div>
+    <div class="search" onclick="showSettings()" style="margin-left:0;position:relative;">☰<span class="mg-bdg top" id="acadMenuBadge"></span></div>
   </div>
 </header>
 
@@ -1773,6 +1787,7 @@
         <div class="si-title" id="acadItemTitle">Darasa la Mumbi</div>
         <div class="si-sub" id="acadItemSub">Hivi karibuni — jifunze TikTok na zaidi</div>
       </div>
+      <span class="mg-bdg inl" id="acadItemBadge"></span>
       <div class="si-arrow">›</div>
     </div>
 
@@ -2229,23 +2244,37 @@ function sortGamesAlphabetically(){
 
 // ---- In-app notification banner (slides down, like a system notification) ----
 let notifTimer = null;
-function showAppNotification(title, sub, icon){
+function showAppNotification(title, sub, icon, img, opts){
+  opts = opts || {};
   let el = document.getElementById('mgNotif');
   if(!el){
     el = document.createElement('div');
     el.id = 'mgNotif';
     el.className = 'mg-notif';
-    el.innerHTML = '<div class="n-icon" id="mgNotifIcon"></div><div class="n-text"><div class="n-title" id="mgNotifTitle"></div><div class="n-sub" id="mgNotifSub"></div></div>';
+    el.innerHTML = '<div class="n-icon" id="mgNotifIcon"></div><div class="n-text"><div class="n-head"><div class="n-title" id="mgNotifTitle"></div><span class="n-tag" id="mgNotifTag"></span></div><div class="n-sub" id="mgNotifSub"></div></div>';
     document.body.appendChild(el);
-    el.addEventListener('click', function(){ el.classList.remove('show'); });
+    el.addEventListener('click', function(){ el.classList.remove('show'); var f = el._act; el._act = null; if(f){ try{ f(); }catch(e){ console.error(e); } } });
   }
-  document.getElementById('mgNotifIcon').textContent = icon || '🔔';
+  const ic = document.getElementById('mgNotifIcon');
+  ic.className = 'n-icon'; ic.style.backgroundImage = ''; ic.innerHTML = ''; ic.textContent = '';
+  if(img){
+    ic.classList.add('img'); ic.style.backgroundImage = "url('" + String(img).replace(/['"\\\n]/g,'') + "')";
+  } else if(typeof icon === 'string' && icon.indexOf('<svg') === 0){
+    ic.classList.add('svg'); ic.innerHTML = icon;
+  } else { ic.textContent = icon || '🔔'; }
   document.getElementById('mgNotifTitle').textContent = title;
   document.getElementById('mgNotifSub').textContent = sub;
+  const tg = document.getElementById('mgNotifTag'); tg.textContent = opts.tag || ''; tg.style.display = opts.tag ? 'inline-block' : 'none';
+  el._act = opts.onclick || null;
   el.classList.add('show');
   if(notifTimer) clearTimeout(notifTimer);
-  notifTimer = setTimeout(function(){ el.classList.remove('show'); }, 5000);
+  notifTimer = setTimeout(function(){ el.classList.remove('show'); }, opts.ms || 6000);
 }
+const NOTIF_SVG = {
+  reply:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#1a1000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>',
+  ticket:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#1a1000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9a2 2 0 0 0 0 6v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-3a2 2 0 0 0 0-6V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>',
+  grad:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#1a1000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5L2 9z"/><path d="M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5"/><path d="M22 9v6"/></svg>'
+};
 
 function checkNewGameNotification(){
   if(!games.length) return;
@@ -2258,7 +2287,8 @@ function checkNewGameNotification(){
     return;
   }
   if(lastSeen !== latest.id){
-    showAppNotification('Kuna Kipya! 🔔', 'Fungua app: "' + latest.name + '" imeongezwa', '🎮');
+    const en = currentLang === 'en';
+    showAppNotification(en ? 'New game added 🎮' : 'Game mpya imeongezwa 🎮', '"' + latest.name + '" — ' + (en ? 'tap to open' : 'bonyeza kuifungua'), '🎮', latest.image || '', {tag: en ? 'NEW' : 'MPYA', onclick: function(){ try{ openGameModal(latest); }catch(e){} }});
     localStorage.setItem('mg_last_game_id', latest.id);
   }
 }
@@ -2295,9 +2325,9 @@ function checkNewBetTipNotification(){
     if(lastSeen !== latest.id){
       const isEn = currentLang === 'en';
       showAppNotification(
-        isEn ? 'New Bet Tip! 🎫' : 'Bet Tip Mpya! 🎫',
-        isEn ? 'A new betting code was posted — open Profile → Bet Tips.' : 'Msimbo mpya wa bet umewekwa — fungua Profile → Bet Tips.',
-        '🎫'
+        isEn ? 'New Bet Tip 🎫' : 'Bet Tip Mpya 🎫',
+        (latest.bookmaker ? latest.bookmaker + ' — ' : '') + (isEn ? 'tap to view the code' : 'bonyeza kuona msimbo'),
+        NOTIF_SVG.ticket, latest.logo || '', {tag: isEn ? 'NEW' : 'MPYA', onclick: function(){ try{ showProfile(); switchProfileTab('bettips'); }catch(e){} }}
       );
       localStorage.setItem('mg_last_bettip_id', latest.id);
       setNavDot('ptabBettipsDot', true);
@@ -3744,8 +3774,9 @@ try{ loadBanners(); }catch(e){ console.error('loadBanners failed', e); customBan
 function loadSocialUpdates(){
   db.collection('meta').doc('socialUpdates').onSnapshot(doc=>{
     const d = doc.exists ? doc.data() : {};
-    checkSocialBadge('tiktok', d.tiktokTs || 0, 'Kuna Kipya! 🔔', 'Fungua app: video mpya TikTok');
-    checkSocialBadge('youtube', d.youtubeTs || 0, 'Kuna Kipya! 🔔', 'Fungua app: video mpya YouTube');
+    const en = currentLang === 'en';
+    checkSocialBadge('tiktok', d.tiktokTs || 0, en ? 'Something new! 🔔' : 'Kuna Kipya! 🔔', en ? 'Open the app: new TikTok video' : 'Fungua app: video mpya TikTok');
+    checkSocialBadge('youtube', d.youtubeTs || 0, en ? 'Something new! 🔔' : 'Kuna Kipya! 🔔', en ? 'Open the app: new YouTube video' : 'Fungua app: video mpya YouTube');
   }, err=>console.error(err));
 }
 function checkSocialBadge(type, latestTs, title, sub){
@@ -5358,9 +5389,46 @@ function acThemeObj(w,h){
   return o;
 }
 let acadRun = false, acadT = 0, acadObj = null, acadTO = null;
+
+// ===== Alama ya "kipya" kwenye Darasa: doti nyekundu -> inabadilika kuwa namba =====
+let acWatchOn = false, acWatchInit = false, acNewCnt = 0, acBdgTimer = null;
+function acBadgeSet(n){
+  const els = ['acadMenuBadge','acadItemBadge'].map(id=>document.getElementById(id)).filter(Boolean);
+  if(acBdgTimer){ clearTimeout(acBdgTimer); acBdgTimer = null; }
+  if(n <= 0){ els.forEach(e=>{ e.className = e.className.replace(/\b(show|dot|num)\b/g,'').replace(/\s+/g,' ').trim(); e.textContent = ''; }); return; }
+  const txt = n > 99 ? '99+' : String(n);
+  els.forEach(e=>{ e.classList.remove('num'); e.classList.add('show','dot'); e.textContent = ''; });
+  acBdgTimer = setTimeout(function(){ els.forEach(e=>{ e.classList.remove('dot'); e.classList.add('num'); e.textContent = txt; }); }, 2200);
+}
+function acWatchNew(){
+  if(acWatchOn) return; acWatchOn = true;
+  try{
+    db.collection('academyTopics').orderBy('createdAt','desc').limit(60).onSnapshot(function(snap){
+      const list = snap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); }).filter(function(t){ return t.active !== false; });
+      const maxTs = list.reduce(function(m,t){ return Math.max(m, t.createdAt||0); }, 0);
+      let seen = parseInt(localStorage.getItem('mg_acad_seen') || '0', 10);
+      if(!seen){ seen = maxTs || 1; localStorage.setItem('mg_acad_seen', String(seen)); }
+      const fresh = list.filter(function(t){ return (t.createdAt||0) > seen; });
+      const prev = acNewCnt; acNewCnt = fresh.length;
+      if(acWatchInit && acNewCnt > prev && fresh.length){
+        const t = fresh[0], en = currentLang === 'en';
+        let im = t.img || ''; if(!im && t.videoType === 'yt' && t.videoId) im = 'https://img.youtube.com/vi/' + t.videoId + '/mqdefault.jpg';
+        try{ showAppNotification(en ? 'New lesson in Academy 🎓' : 'Somo jipya Darasani 🎓', (t.title || '') + ' — ' + (en ? 'tap to open' : 'bonyeza kufungua'), NOTIF_SVG.grad, im, {tag: en ? 'NEW' : 'MPYA', onclick: function(){ try{ showAcademy(); }catch(e){} }}); }catch(e){}
+      }
+      acWatchInit = true;
+      if(acNewCnt !== prev || !document.getElementById('acadMenuBadge').classList.contains('show')) acBadgeSet(acNewCnt);
+    }, function(err){ console.error(err); });
+  }catch(e){ console.error(e); }
+}
+function acMarkSeen(){
+  try{ const cur = Math.max(parseInt(localStorage.getItem('mg_acad_seen')||'0',10), Date.now()); localStorage.setItem('mg_acad_seen', String(cur)); }catch(e){}
+  acNewCnt = 0; acBadgeSet(0);
+}
+try{ acWatchNew(); }catch(e){ console.error('acWatchNew failed', e); }
 function showAcademy(){
   if(!auth.currentUser){ alert(currentLang==='en' ? 'Please log in first.' : 'Ingia kwenye akaunti yako kwanza.'); return; }
   hideAllViews();
+  try{ acMarkSeen(); }catch(e){}
   document.getElementById('academyView').style.display = 'flex';
   academyLang();
   acadStart();
@@ -5882,10 +5950,9 @@ async function checkFeedbackReplyNotification(){
     if(!unseen.length) return;
     const isEn = currentLang === 'en';
     showAppNotification(
-      isEn ? 'You got a reply! 💬' : 'Umejibiwa! 💬',
-      isEn ? 'Admin replied to your feedback/request — open Profile → Feedback to see it.'
-           : 'Admin amejibu maoni/ombi lako — fungua Profile → Maoni kuona jibu.',
-      '💬'
+      isEn ? 'Admin replied to you 💬' : 'Admin amekujibu 💬',
+      isEn ? 'Tap to read the reply in Profile → Feedback.' : 'Bonyeza kusoma jibu kwenye Profile → Maoni.',
+      NOTIF_SVG.reply, '', {tag: isEn ? 'REPLY' : 'JIBU', onclick: function(){ try{ showProfile(); switchProfileTab('feedback'); }catch(e){} }}
     );
     setNavDot('ptabFeedbackDot', true);
   }catch(e){ console.error(e); }
