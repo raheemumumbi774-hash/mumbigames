@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage-compat.js"></script>
 <script>
   const firebaseConfig = {
@@ -19,12 +18,9 @@
     messagingSenderId: "766746284201",
     appId: "1:766746284201:web:c5a74e1ea6d7778d4499b8"
   };
-  // App yenye jina tofauti: kuingia kwa admin hakuchanganyiki na akaunti ya mtumiaji kwenye app ya wateja
-  const adminApp = firebase.initializeApp(firebaseConfig, 'mumbiAdmin');
-  const db = adminApp.firestore();
-  const storage = adminApp.storage();
-  const auth = adminApp.auth();
-  const ADMIN_EMAIL = 'raheemumumbi774@gmail.com'; // si siri; password ndiyo siri na haiwekwi kwenye msimbo
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
 
   // ---- Imgbb (free image hosting, no billing needed — replace with your own key) ----
   const IMGBB_API_KEY = '4ba0b719dee411039527e4fca22b606c';
@@ -307,13 +303,6 @@
   .mini-t>.ic{font-size:20px;color:var(--lime);}
   .mini-t b{display:block;font-size:18px;line-height:1.1;color:var(--text);}
   .mini-t span:not(.ic){font-size:10.5px;color:var(--sub);}
-  .sec-banner{display:flex;align-items:center;gap:10px;margin:10px 14px 0;padding:10px 12px;border-radius:12px;background:rgba(255,92,92,.12);border:1px solid rgba(255,92,92,.4);color:#ffb3b3;font-size:12px;line-height:1.35;}
-  .sec-banner .ic{font-size:18px;color:#ff7a7a;}
-  .uid-bar{display:flex;align-items:center;gap:8px;margin:10px 14px 0;padding:9px 12px;border-radius:12px;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.35);color:#9fe6c8;font-size:11.5px;line-height:1.35;}
-  .uid-bar .ic{font-size:17px;color:#34d399;}
-  .uid-bar span{flex:1;min-width:0;word-break:break-all;}
-  .uid-bar b{color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;}
-  .uid-bar button{flex:none;border:1px solid rgba(52,211,153,.5);background:transparent;color:#9fe6c8;border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -322,8 +311,8 @@
   <div class="gate-card">
     <div class="brand-logo big"><svg viewBox="0 0 48 48" width="100%" height="100%"><defs><linearGradient id="bl2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".55" stop-color="#ff5fa2"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#bl2)"/><path d="M15 17h18a6 6 0 0 1 5.8 4.6l1.6 7A4.2 4.2 0 0 1 32.600 33l-1.500-2.200H16.900L15.400 33a4.200 4.200 0 0 1-7.800-4.400l1.600-7A6 6 0 0 1 15 17z" fill="#fff" fill-opacity=".95"/><path d="M16 21.500v5M13.500 24h5" stroke="#8b5cf6" stroke-width="2.200" stroke-linecap="round"/><circle cx="31" cy="22.500" r="1.700" fill="#ff5fa2"/><circle cx="34.500" cy="25.500" r="1.700" fill="#ffb347"/><path d="M36 8l1 2.600 2.600 1-2.600 1-1 2.600-1-2.600-2.600-1 2.600-1z" fill="#fff"/></svg></div>
     <h1>mumbigames admin</h1>
-    <p>Weka password yako kuingia kwenye dashibodi</p>
-    <input type="password" id="pinInput" placeholder="Password" maxlength="128" autocomplete="current-password">
+    <p>Weka PIN yako kuingia kwenye dashibodi</p>
+    <input type="password" id="pinInput" inputmode="numeric" placeholder="PIN (mfano 1234)" maxlength="12">
     <button class="btn btn-primary" onclick="tryEnter()">Ingia</button>
     <div class="gate-err" id="gateErr"></div>
   </div>
@@ -341,9 +330,6 @@
     </div>
     <button class="icon-btn" onclick="logout()">⎋</button>
   </div>
-
-  <div id="admUidBar" class="uid-bar" style="display:none;"><i data-ic="shield"></i><span>Umeingia kwa usalama kamili. UID ya admin: <b id="admUidTxt"></b></span><button type="button" onclick="copyAdminUid()">Nakili</button></div>
-  <div id="admSecBanner" class="sec-banner" style="display:none;"><i data-ic="alert"></i><span>Umeingia kwa njia ya zamani (bila akaunti ya Firebase). Ulinzi kamili haujawashwa — ingia kwa password ya akaunti ya admin.</span></div>
 
   <div class="tabs">
     <div class="tab active" data-view="overview"><i data-ic="layout"></i><span>Muhtasari</span></div>
@@ -811,60 +797,29 @@ let trendOn = false;
 let setupOn = false;
 
 // ---- Auth gate (PIN stored in Firestore) ----
-// Ulinzi wa kuingia: onyo mara ya 3, kufungiwa dakika 15 mara ya 5 (hesabu inakaa kwenye kifaa hiki)
-const PIN_MAX_TRIES = 5, PIN_WARN_AT = 3, PIN_LOCK_MIN = 15;
-function pinLsGet(k){ try{ return parseInt(localStorage.getItem(k)||'0',10) || 0; }catch(e){ return 0; } }
-function pinLsSet(k,v){ try{ localStorage.setItem(k,String(v)); }catch(e){} }
-function pinLockLeftMs(){ return Math.max(0, pinLsGet('mg_adm_lock') - Date.now()); }
-function pinLockMsg(){ const m = Math.ceil(pinLockLeftMs()/60000); return 'Umefungiwa kwa sababu ya makosa mengi. Jaribu tena baada ya dakika '+m+'.'; }
-function pinOk(){ pinLsSet('mg_adm_fail',0); pinLsSet('mg_adm_lock',0); try{ document.getElementById('gateErr').textContent=''; }catch(e){} enterApp(); }
-// Njia kuu: akaunti ya Firebase (email imefichwa ndani, unaandika password tu).
-// Akiba: PIN ya zamani kwenye meta/admin — inaendelea kufanya kazi hadi sheria za Firestore zifungwe.
 async function tryEnter(){
   const val = document.getElementById('pinInput').value.trim();
   const errEl = document.getElementById('gateErr');
-  if(pinLockLeftMs() > 0){ errEl.textContent = pinLockMsg(); return; }
-  if(!val){ errEl.textContent = 'Weka password kwanza.'; return; }
-  let fbCode = '', fbOk = false;
-  try{
-    await auth.signInWithEmailAndPassword(ADMIN_EMAIL, val);
-    fbOk = true;
-  }catch(e){ fbCode = (e && e.code) || ''; }
-  if(fbOk){ pinOk(); return; }
-  if(fbCode === 'auth/too-many-requests'){ errEl.textContent = 'Majaribio mengi mno. Subiri dakika chache kisha jaribu tena.'; return; }
-  if(fbCode === 'auth/network-request-failed'){ errEl.textContent = 'Hitilafu ya kuunganisha. Angalia mtandao wako.'; return; }
-  let legacyOk = false;
+  if(!val){ errEl.textContent = 'Weka PIN kwanza.'; return; }
   try{
     const ref = db.collection('meta').doc('admin');
     const snap = await ref.get();
     if(!snap.exists){
       await ref.set({pin: val});
-      legacyOk = true;
+      enterApp();
     } else if(snap.data().pin === val){
-      legacyOk = true;
+      enterApp();
+    } else {
+      errEl.textContent = 'PIN si sahihi. Jaribu tena.';
     }
   }catch(e){
-    if(!e || e.code !== 'permission-denied'){
-      console.error(e);
-      errEl.textContent = 'Hitilafu ya kuunganisha. Angalia mtandao wako.';
-      return;
-    }
+    console.error(e);
+    errEl.textContent = 'Hitilafu ya kuunganisha. Angalia mtandao wako.';
   }
-  if(legacyOk){ pinOk(); return; }
-  const f = pinLsGet('mg_adm_fail') + 1; pinLsSet('mg_adm_fail', f);
-  if(f >= PIN_MAX_TRIES){ pinLsSet('mg_adm_lock', Date.now() + PIN_LOCK_MIN*60000); pinLsSet('mg_adm_fail',0); errEl.textContent = pinLockMsg(); }
-  else if(f >= PIN_WARN_AT){ errEl.textContent = 'Password si sahihi. Umekosea mara '+f+'. Ukikosea mara '+(PIN_MAX_TRIES-f)+' zaidi utafungiwa dakika '+PIN_LOCK_MIN+'.'; }
-  else { errEl.textContent = 'Password si sahihi. Jaribu tena.'; }
-  document.getElementById('pinInput').value = '';
 }
 function enterApp(){
   document.getElementById('gate').style.display='none';
   document.getElementById('app').style.display='block';
-  try{
-    document.getElementById('admSecBanner').style.display = auth.currentUser ? 'none' : 'flex';
-    document.getElementById('admUidBar').style.display = auth.currentUser ? 'flex' : 'none';
-    if(auth.currentUser) document.getElementById('admUidTxt').textContent = auth.currentUser.uid;
-  }catch(e){}
   loadGames();
   loadSiteStats();
   loadPaymentRequests();
@@ -943,12 +898,7 @@ function loadDownloadStats(){
     document.getElementById('statDownloadsToday').textContent = snap.size;
   }, function(err){ console.error(err); });
 }
-function copyAdminUid(){
-  const t = (auth.currentUser && auth.currentUser.uid) || '';
-  try{ navigator.clipboard.writeText(t).then(()=>showToast('UID imenakiliwa ✓')); }catch(e){ showToast(t); }
-}
 function logout(){
-  try{ auth.signOut(); }catch(e){}
   document.getElementById('app').style.display='none';
   document.getElementById('gate').style.display='flex';
   document.getElementById('pinInput').value='';
