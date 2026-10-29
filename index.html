@@ -1248,13 +1248,7 @@
   </div>
 </header>
 
-<div class="overlay" id="pwHelpOverlay" onclick="if(event.target===this) closePwHelp()">
-  <div class="modal">
-    <h3 id="pwHelpTitle">🔑 Umesahau password?</h3>
-    <div id="pwHelpBody" style="max-height:62vh;overflow-y:auto;"></div>
-    <button class="btn btn-ghost" style="width:100%;margin-top:12px;" onclick="closePwHelp()">Funga</button>
-  </div>
-</div>
+<div class="overlay" id="pwHelpOverlay"></div>
 
 <div class="overlay" id="changelogOverlay" onclick="if(event.target===this) closeChangelog()">
   <div class="modal">
@@ -1824,6 +1818,13 @@
   </div>
 
   <div class="settings-body">
+    <div id="pwProfilePane" style="display:none;">
+      <div class="settings-section">
+        <div class="settings-label" id="pwHelpTitle">🔑 Umesahau password?</div>
+        <div id="pwHelpBody"></div>
+        <p style="text-align:center;font-size:11.5px;margin-top:14px;"><span id="pwPaneBack" style="color:var(--sub);cursor:pointer;text-decoration:underline;" onclick="closePwHelp()">← Rudi kuingia</span></p>
+      </div>
+    </div>
     <div id="profileLoggedOut">
       <div class="settings-section">
         <div class="settings-label" id="authModeLabel">Fungua Akaunti</div>
@@ -8600,11 +8601,22 @@ function pwEsc(v){ return escapeHtml(v||''); }
 function openPwHelp(){
   const em = (document.getElementById('authEmail')||{}).value || '';
   if(PW_RESET_API) pwA1(em.trim()); else renderPwHelpStep1(em.trim());
-  const ov = document.getElementById('pwHelpOverlay');
-  if(ov.parentElement !== document.body) document.body.appendChild(ov); // lazima iwe nje ya homeView (inafichwa ukiwa Profile)
-  ov.classList.add('show');
+  pwMount();
 }
-function closePwHelp(){ document.getElementById('pwHelpOverlay').classList.remove('show'); }
+function pwMount(){
+  try{ const pv = document.getElementById('profileView'); if(!pv || pv.style.display !== 'flex') showProfile(); }catch(e){}
+  document.getElementById('profileLoggedOut').style.display = 'none';
+  document.getElementById('profileLoggedIn').style.display = 'none';
+  document.getElementById('pwPaneBack').textContent = tvT('← Rudi kuingia','← Back to log in');
+  document.getElementById('pwProfilePane').style.display = 'block';
+  try{ document.querySelector('#profileView .settings-body').scrollTop = 0; window.scrollTo(0,0); }catch(e){}
+}
+function closePwHelp(){
+  const pane = document.getElementById('pwProfilePane'); if(pane) pane.style.display = 'none';
+  const inn = !!auth.currentUser;
+  document.getElementById('profileLoggedOut').style.display = inn ? 'none' : 'block';
+  document.getElementById('profileLoggedIn').style.display = inn ? 'block' : 'none';
+}
 function renderPwHelpStep1(email){
   document.getElementById('pwHelpTitle').textContent = tvT('🔑 Umesahau password?', '🔑 Forgot password?');
   document.getElementById('pwHelpBody').innerHTML = `
@@ -8620,10 +8632,8 @@ async function sendPwReset(){
   const btn = document.getElementById('pwHelpSendBtn'); btn.disabled = true;
   try{
     await auth.sendPasswordResetEmail(email);
-    document.getElementById('pwHelpTitle').textContent = tvT('📧 Angalia email yako','📧 Check your email');
-    document.getElementById('pwHelpBody').innerHTML = `
-      <div style="font-size:13px;line-height:1.65;margin-bottom:8px;">${pwEsc(tvT('Tumetuma link kwenda','We sent a link to'))} <b>${pwEsc(email)}</b>.</div>
-      <div style="font-size:12px;color:var(--sub);line-height:1.65;">${pwEsc(tvT('1. Fungua email yako (angalia pia Spam).\n2. Bonyeza link ya mumbigames.\n3. Utafunguliwa ukurasa wa kuweka password mpya.\n4. Ukimaliza utakuwa umeingia kwenye akaunti.','1. Open your email (check Spam too).\n2. Tap the mumbigames link.\n3. A page to set your new password will open.\n4. When done you will be logged in.')).replace(/\n/g,'<br>')}</div>`;
+    pwResetEmail = email;
+    pwStepCode();
     return;
   }catch(e){
     msg.style.color = '#ff5c5c';
@@ -8709,12 +8719,46 @@ async function pwA3Go(){
     <button class="post-btn" onclick="closePwHelp();showProfile();">${pwEsc(tvT('Endelea','Continue'))}</button>`);
 }
 
+// ---- Hatua ya code: mtu anapaste code/link kutoka email yake ----
+function pwStepCode(){
+  try{ document.getElementById('pwPaneBack').textContent = tvT('← Rudi kuingia','← Back to log in'); }catch(e){}
+  document.getElementById('pwHelpTitle').textContent = tvT('📧 Weka code ya email','📧 Enter email code');
+  document.getElementById('pwHelpBody').innerHTML = `
+    <div style="font-size:13px;line-height:1.6;margin-bottom:8px;">${pwEsc(tvT('Tumetuma ujumbe kwenda','We sent a message to'))} <b>${pwEsc(pwResetEmail)}</b></div>
+    <div style="font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:10px;">${pwEsc(tvT('1. Fungua email yako (angalia pia Spam).','1. Open your email (check Spam too).'))}<br>${pwEsc(tvT('2. Nakili (copy) link iliyo kwenye ujumbe — shikilia kwenye link kisha chagua Copy link.','2. Copy the link in the message — long-press it and choose Copy link.'))}<br>${pwEsc(tvT('3. Rudi hapa, paste kwenye kisanduku hiki.','3. Come back here and paste it in the box below.'))}</div>
+    <input type="text" id="pwCodeIn" class="auth-input" placeholder="${pwEsc(tvT('Paste code / link hapa','Paste code / link here'))}" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div id="pwCodeMsg" style="font-size:11.5px;color:#ff5c5c;margin:8px 0;min-height:14px;"></div>
+    <button class="post-btn" id="pwCodeBtn" onclick="pwVerifyCode()">${pwEsc(tvT('Thibitisha code','Verify code'))}</button>
+    <p style="text-align:center;font-size:11.5px;margin-top:12px;"><span style="color:var(--lime);cursor:pointer;text-decoration:underline;" onclick="renderPwHelpStep1(pwResetEmail)">← ${pwEsc(tvT('Badili email / tuma tena','Change email / resend'))}</span></p>`;
+}
+function pwExtractCode(t){
+  t = (t||'').trim();
+  const m = t.match(/[?&]oobCode=([^&\s#]+)/);
+  if(m){ try{ return decodeURIComponent(m[1]); }catch(e){ return m[1]; } }
+  return t.replace(/\s+/g,'');
+}
+async function pwVerifyCode(){
+  const msg = document.getElementById('pwCodeMsg');
+  const code = pwExtractCode(document.getElementById('pwCodeIn').value);
+  if(code.length < 10){ msg.textContent = tvT('Paste link au code kamili kutoka kwenye email.','Paste the full link or code from the email.'); return; }
+  const btn = document.getElementById('pwCodeBtn'); btn.disabled = true; btn.textContent = tvT('Inahakiki...','Verifying...');
+  try{
+    pwResetEmail = await auth.verifyPasswordResetCode(code);
+    pwResetCode = code;
+    pwStepNew();
+  }catch(e){
+    console.error(e);
+    msg.textContent = (e && e.code === 'auth/network-request-failed')
+      ? tvT('Hakuna mtandao. Jaribu tena.','No connection. Try again.')
+      : tvT('Code si sahihi au imeisha muda. Hakikisha umenakili link nzima, au omba nyingine.','Invalid or expired code. Make sure you copied the whole link, or request a new one.');
+    btn.disabled = false; btn.textContent = tvT('Thibitisha code','Verify code');
+  }
+}
+
 // ---- Ukurasa wa kuweka password mpya (mtu akibonyeza link ya email) ----
 var pwResetCode = '', pwResetEmail = '', pwResetNew = ''; // var: handleResetLink() inaitwa kabla ya mstari huu
 function pwOpenOverlay(){
-  const ov = document.getElementById('pwHelpOverlay');
-  if(ov.parentElement !== document.body) document.body.appendChild(ov);
-  ov.classList.add('show');
+  pwMount();
 }
 async function handleResetLink(){
   let q; try{ q = new URLSearchParams(location.search); }catch(e){ return; }
@@ -8858,7 +8902,7 @@ try{
       }).catch(err=>console.error(err));
       loadMyGames(user.uid);
     } else {
-      document.getElementById('profileLoggedOut').style.display = 'block';
+      { const pp = document.getElementById('pwProfilePane'); document.getElementById('profileLoggedOut').style.display = (pp && pp.style.display==='block') ? 'none' : 'block'; }
       document.getElementById('profileLoggedIn').style.display = 'none';
       const headerPill = document.getElementById('headerTokenPill');
       if(headerPill) headerPill.style.display = 'none';
