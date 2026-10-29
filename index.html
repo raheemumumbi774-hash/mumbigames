@@ -1921,7 +1921,7 @@
             <div class="req-pad">🎮</div>
             <div><div class="req-ti" data-i18n="req_title">Omba Game Unayoitaka</div><div class="req-su" data-i18n="req_sub">Tuambie game gani uone ikiwekwa hapa</div></div>
           </div>
-          <input type="text" id="reqGameTitle" data-i18n-placeholder="req_name_ph" placeholder="Jina la game, mfano: GTA V" maxlength="80">
+          <input type="text" id="reqGameTitle" oninput="mgHideReqFound()" data-i18n-placeholder="req_name_ph" placeholder="Jina la game, mfano: GTA V" maxlength="80">
           <textarea id="reqGameNote" rows="1" data-i18n-placeholder="req_note_ph" placeholder="Maelezo ya ziada (hiari)" maxlength="300"></textarea>
           <button class="req-btn" id="reqSendBtn" onclick="submitGameRequest()" data-i18n="req_btn">🚀 Tuma Ombi</button>
           <div class="req-hint" data-i18n="req_hint">Admin akijibu, utaliona jibu kwenye tab ya Maoni 🔴</div>
@@ -5862,10 +5862,39 @@ async function mgSendFeedbackDoc(data){
     return false;
   }
 }
+function mgNormTitle(x){ return String(x||'').toLowerCase().replace(/[^a-z0-9]+/g,''); }
+function mgFindGameForRequest(title){
+  const q = mgNormTitle(title);
+  if(q.length < 3 || !Array.isArray(games)) return null;
+  let best = null;
+  for(const g of games){
+    const n = mgNormTitle(g.name); if(!n) continue;
+    if(n === q) return g;
+    const sh = n.length < q.length ? n : q, lg = n.length < q.length ? q : n;
+    if(sh.length >= 4 && lg.indexOf(sh) >= 0 && sh.length >= lg.length*0.6) best = best || g;
+  }
+  return best;
+}
+function mgShowReqFound(g){
+  let el = document.getElementById('reqFound');
+  if(!el){
+    el = document.createElement('div'); el.id = 'reqFound';
+    el.style.cssText = 'margin-top:10px;padding:7px 9px;border-radius:10px;background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.45);color:#4be08a;font-size:10px;line-height:1.4;display:flex;align-items:center;gap:8px;';
+    const btn = document.getElementById('reqSendBtn'); btn.parentNode.insertBefore(el, btn.nextSibling);
+  }
+  el.innerHTML = '<span style="flex:1;min-width:0;">✅ ' + escapeHtml(tvT('Game hii tayari ipo kwenye app ya mumbigames:','This game is already in the mumbigames app:')) + ' <b>' + escapeHtml(g.name) + '</b></span>'
+    + '<button type="button" id="reqFoundOpen" style="flex:none;background:#2ecc71;color:#06260f;border:none;border-radius:8px;padding:6px 11px;font-size:10.5px;font-weight:700;cursor:pointer;">' + escapeHtml(tvT('Fungua','Open')) + ' ›</button>';
+  el.style.display = 'flex';
+  document.getElementById('reqFoundOpen').onclick = function(){ try{ showHome(); }catch(e){} setTimeout(function(){ openGameModal(g); }, 150); };
+}
+function mgHideReqFound(){ const el = document.getElementById('reqFound'); if(el) el.style.display = 'none'; }
 async function submitGameRequest(){
   const t = document.getElementById('reqGameTitle'), n = document.getElementById('reqGameNote');
   const title = t.value.trim(), note = n.value.trim();
   if(!title){ alert(tvT('Weka jina la game unayotaka.','Enter the name of the game you want.')); return; }
+  const found = mgFindGameForRequest(title);
+  if(found){ mgShowReqFound(found); return; } // game tayari ipo: usitume ombi
+  mgHideReqFound();
   const btn = document.getElementById('reqSendBtn'); btn.disabled = true;
   const ok = await mgSendFeedbackDoc({type:'request', gameTitle:title, text: note || title});
   btn.disabled = false;
