@@ -1232,6 +1232,14 @@
 
   .mic-btn svg,.img-btn svg,.send-btn svg{display:block;margin:auto;pointer-events:none;}
   .msg .time .tick2{display:inline-block;vertical-align:-1px;margin-left:3px;color:#4fc3f7;opacity:.95;}
+
+  .nt-like{display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:3px 9px;border-radius:14px;background:var(--panel-2);border:1px solid var(--line);cursor:pointer;font-size:11px;color:var(--sub);user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .12s;}
+  .nt-like:active{transform:scale(.92);}
+  .nt-like .nt-e{font-size:13px;filter:grayscale(1) brightness(.7);opacity:.45;transition:filter .2s,opacity .2s;}
+  .nt-like .nt-c{font-size:10.5px;font-weight:700;}
+  .nt-like.on .nt-e{filter:none;opacity:1;}
+  .nt-like.on .nt-c{color:var(--text);}
+  .nt-like.mine{border-color:var(--lime);background:rgba(166,255,0,0.12);}
 </style>
 </head>
 <body>
@@ -1921,7 +1929,7 @@
             <div class="req-pad">🎮</div>
             <div><div class="req-ti" data-i18n="req_title">Omba Game Unayoitaka</div><div class="req-su" data-i18n="req_sub">Tuambie game gani uone ikiwekwa hapa</div></div>
           </div>
-          <input type="text" id="reqGameTitle" oninput="mgHideReqFound()" data-i18n-placeholder="req_name_ph" placeholder="Jina la game, mfano: GTA V" maxlength="80">
+          <input type="text" id="reqGameTitle" oninput="mgReqLive()" data-i18n-placeholder="req_name_ph" placeholder="Jina la game, mfano: GTA V" maxlength="80">
           <textarea id="reqGameNote" rows="1" data-i18n-placeholder="req_note_ph" placeholder="Maelezo ya ziada (hiari)" maxlength="300"></textarea>
           <button class="req-btn" id="reqSendBtn" onclick="submitGameRequest()" data-i18n="req_btn">🚀 Tuma Ombi</button>
           <div class="req-hint" data-i18n="req_hint">Admin akijibu, utaliona jibu kwenye tab ya Maoni 🔴</div>
@@ -4977,6 +4985,8 @@ let noticesLoaded = false;
 function noticeSafeUrl(u){ u = String(u||''); return /^https?:\/\//i.test(u) ? u.replace(/["'<>\s]/g,'') : ''; }
 function renderChangelogList(){
   const el = document.getElementById('changelogList');
+  const keepTop = el.scrollTop;
+  setTimeout(function(){ try{ el.scrollTop = keepTop; }catch(e){} }, 0);
   if(!noticesLoaded){ el.innerHTML = '<div style="padding:18px 4px;color:var(--sub);font-size:12px;text-align:center;">…</div>'; return; }
   if(!APP_NOTICES.length){
     el.innerHTML = '<div style="padding:26px 6px;color:var(--sub);font-size:12.5px;text-align:center;line-height:1.6;">🔔<br>' + escapeHtml(tvT('Hakuna taarifa kwa sasa.', 'No notifications yet.')) + '</div>';
@@ -4992,9 +5002,33 @@ function renderChangelogList(){
         <div style="font-weight:800;font-size:13px;margin-bottom:4px;word-break:break-word;">${escapeHtml(n.title||'')}</div>
         <div style="color:var(--sub);font-size:12px;line-height:1.5;white-space:pre-line;word-break:break-word;">${escapeHtml(n.body||'')}</div>
         ${d ? `<div style="color:var(--sub);opacity:.7;font-size:10px;margin-top:5px;">${d}</div>` : ''}
+        ${noticeLikeBtn(n)}
       </div>
     </div>`;
   }).join('');
+}
+function noticeLikeBtn(n){
+  const cnt = Math.max(0, parseInt(n.likes)||0);
+  const uid = auth.currentUser ? auth.currentUser.uid : null;
+  const mine = !!(uid && n.likedBy && n.likedBy[uid]);
+  const on = cnt > 0;
+  return `<div class="nt-like ${on?'on':''} ${mine?'mine':''}" onclick="event.stopPropagation();likeNotice('${escapeHtml(n.id)}')"><span class="nt-e">👍</span><span class="nt-c">${cnt}</span></div>`;
+}
+async function likeNotice(id){
+  if(!auth.currentUser){ alert(tvT('Ingia kwenye akaunti yako kwanza.','Please log in first.')); return; }
+  const uid = auth.currentUser.uid;
+  const ref = db.collection('appNotices').doc(id);
+  try{
+    await db.runTransaction(async tx=>{
+      const doc = await tx.get(ref); if(!doc.exists) return;
+      const d = doc.data();
+      const likedBy = Object.assign({}, d.likedBy || {});
+      let likes = Math.max(0, parseInt(d.likes)||0);
+      if(likedBy[uid]){ delete likedBy[uid]; likes = Math.max(0, likes-1); }
+      else { likedBy[uid] = true; likes += 1; }
+      tx.update(ref, {likes, likedBy});
+    });
+  }catch(e){ console.error('likeNotice', e); alert(tvT('Imeshindwa. Jaribu tena.','Failed. Try again.')); }
 }
 function getNoticeLastSeen(){
   try{ return parseInt(localStorage.getItem('mg-notice-seen') || '0', 10) || 0; }catch(e){ return 0; }
@@ -5863,17 +5897,54 @@ async function mgSendFeedbackDoc(data){
   }
 }
 function mgNormTitle(x){ return String(x||'').toLowerCase().replace(/[^a-z0-9]+/g,''); }
+const MG_STOP = {game:1,games:1,apk:1,download:1,pc:1,mod:1,the:1,for:1,android:1,ppsspp:1,ps2:1,ps3:1,ps4:1,ps5:1,psp:1,iso:1,offline:1,mobile:1,free:1,full:1,version:1,naomba:1,nataka:1,ombi:1,tafadhali:1,please:1,of:1,and:1,na:1,ya:1};
+const MG_ROMAN = {ii:'2',iii:'3',iv:'4',v:'5',vi:'6',vii:'7',viii:'8',ix:'9',x:'10',xi:'11',xii:'12'};
+function mgLev(a,b){
+  if(a===b) return 0; if(Math.abs(a.length-b.length)>1) return 2;
+  const m=a.length,n=b.length; let prev=[]; for(let j=0;j<=n;j++) prev[j]=j;
+  for(let i=1;i<=m;i++){ const cur=[i]; for(let j=1;j<=n;j++) cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1)); prev=cur; }
+  return prev[n];
+}
+function mgToks(x){
+  return String(x||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().split(' ').filter(Boolean)
+    .map(t=>MG_ROMAN[t]||t).filter(t=>!MG_STOP[t]);
+}
+function mgTokEq(a,b){ return a===b || (a.length>=5 && b.length>=5 && mgLev(a,b)<=1); }
 function mgFindGameForRequest(title){
-  const q = mgNormTitle(title);
-  if(q.length < 3 || !Array.isArray(games)) return null;
-  let best = null;
+  if(!Array.isArray(games) || !games.length) return null;
+  const q = mgNormTitle(title); if(q.length < 3) return null;
+  const R = mgToks(title); if(!R.length) return null;
+  let best = null, bestScore = 0;
   for(const g of games){
     const n = mgNormTitle(g.name); if(!n) continue;
     if(n === q) return g;
-    const sh = n.length < q.length ? n : q, lg = n.length < q.length ? q : n;
-    if(sh.length >= 4 && lg.indexOf(sh) >= 0 && sh.length >= lg.length*0.6) best = best || g;
+    const G = mgToks(g.name); if(!G.length) continue;
+    const gj = G.join(''), rj = R.join('');
+    if(gj === rj){ return g; }
+    const rInG = R.every(r=>G.some(t=>mgTokEq(r,t)));
+    const gInR = G.every(t=>R.some(r=>mgTokEq(r,t)));
+    let ok = false;
+    if(rInG){ ok = (R.length >= 2 || (G.length <= 2 && R[0].length >= 4)); }
+    else if(gInR){
+      const extraNum = R.some(r=>/^\d+$/.test(r) && !G.some(t=>mgTokEq(r,t))); // mf. "god of war 2" si "God of War"
+      ok = !extraNum && (G.length >= 2 || G[0].length >= 4);
+    }
+    if(ok){
+      const sc = Math.min(R.length,G.length) / Math.max(R.length,G.length);
+      if(sc > bestScore){ best = g; bestScore = sc; }
+    }
   }
   return best;
+}
+let mgReqTimer = null;
+function mgReqLive(){
+  clearTimeout(mgReqTimer);
+  mgReqTimer = setTimeout(function(){
+    const el = document.getElementById('reqGameTitle'); if(!el) return;
+    const t = el.value.trim();
+    const f = t.length >= 3 ? mgFindGameForRequest(t) : null;
+    if(f) mgShowReqFound(f); else mgHideReqFound();
+  }, 700);
 }
 function mgShowReqFound(g){
   let el = document.getElementById('reqFound');
