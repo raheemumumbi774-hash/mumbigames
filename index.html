@@ -1229,6 +1229,9 @@
   .mg-bdg.inl{position:static;margin-right:8px;}
   @keyframes mgDotPulse{0%{box-shadow:0 0 0 0 rgba(224,52,44,.6);}70%{box-shadow:0 0 0 8px rgba(224,52,44,0);}100%{box-shadow:0 0 0 0 rgba(224,52,44,0);}}
   @keyframes mgPop{0%{transform:scale(.3);}60%{transform:scale(1.35);}100%{transform:scale(1);}}
+
+  .mic-btn svg,.img-btn svg,.send-btn svg{display:block;margin:auto;pointer-events:none;}
+  .msg .time .tick2{display:inline-block;vertical-align:-1px;margin-left:3px;color:#4fc3f7;opacity:.95;}
 </style>
 </head>
 <body>
@@ -1393,7 +1396,7 @@
     <div class="chat-input-row">
       <input type="text" id="chatMsgInput" placeholder="Andika ujumbe..." maxlength="300" onkeydown="if(event.key==='Enter')sendMsg()">
       <input type="file" id="chatImgInput" accept="image/*" style="display:none;" onchange="sendChatImage(this)">
-      <button class="img-btn" id="chatImgBtn" onclick="document.getElementById('chatImgInput').click()">📷</button>
+      <button class="img-btn" id="chatImgBtn" onclick="document.getElementById('chatImgInput').click()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
 
       <div class="overlay" id="chatImgPreviewOverlay" style="align-items:center;">
         <div class="modal" style="max-width:420px;padding:0;overflow:hidden;">
@@ -1407,8 +1410,8 @@
           </div>
         </div>
       </div>
-      <button class="mic-btn" id="chatMicBtn" onclick="toggleVoiceRecording()">🎤</button>
-      <button class="send-btn" onclick="sendMsg()">➤</button>
+      <button class="mic-btn" id="chatMicBtn" onclick="toggleVoiceRecording()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg></button><input type="file" id="chatVoiceFile" accept="audio/*" capture style="display:none;" onchange="voiceFileChosen(this)">
+      <button class="send-btn" onclick="sendMsg()"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
     </div>
   </div>
 </div>
@@ -2075,7 +2078,7 @@
         <a id="adBoxButton" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display:block;text-align:center;text-decoration:none;padding:12px;border-radius:10px;"></a>
       </div>
       <div class="modal-actions">
-        <button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button>
+        <button class="btn btn-ghost" style="width:100%;" onclick="closeModalAd()">Funga</button>
       </div>
     </div>
   </div>
@@ -2278,19 +2281,16 @@ const NOTIF_SVG = {
 
 function checkNewGameNotification(){
   if(!games.length) return;
-  const sorted = games.slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  const latest = sorted[0];
-  if(!latest || !latest.id) return;
-  const lastSeen = localStorage.getItem('mg_last_game_id');
-  if(lastSeen === null){
-    localStorage.setItem('mg_last_game_id', latest.id);
-    return;
-  }
-  if(lastSeen !== latest.id){
-    const en = currentLang === 'en';
-    showAppNotification(en ? 'New game added 🎮' : 'Game mpya imeongezwa 🎮', '"' + latest.name + '" — ' + (en ? 'tap to open' : 'bonyeza kuifungua'), '🎮', latest.image || '', {tag: en ? 'NEW' : 'MPYA', onclick: function(){ try{ openGameModal(latest); }catch(e){} }});
-    localStorage.setItem('mg_last_game_id', latest.id);
-  }
+  const ids = games.map(g=>g.id).filter(Boolean);
+  let seen = null;
+  try{ seen = JSON.parse(localStorage.getItem('mg_seen_games')||'null'); }catch(e){}
+  try{ localStorage.setItem('mg_seen_games', JSON.stringify(ids)); }catch(e){}
+  if(!Array.isArray(seen)) return; // mara ya kwanza: hakuna arifa
+  const fresh = games.filter(g=>g.id && seen.indexOf(g.id) < 0);
+  if(!fresh.length) return;
+  const latest = fresh.slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))[0];
+  const en = currentLang === 'en';
+  showAppNotification(en ? 'New game added 🎮' : 'Game mpya imeongezwa 🎮', '"' + latest.name + '" — ' + (en ? 'tap to open' : 'bonyeza kuifungua'), '🎮', latest.image || '', {tag: en ? 'NEW' : 'MPYA', onclick: function(){ try{ openGameModal(latest); }catch(e){} }});
 }
 
 // ============================================================
@@ -2662,7 +2662,7 @@ function renderPaySection(g, req, restoreState){
 
     ${adminContactRow()}
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal()">Funga</button>
+      <button class="btn btn-ghost" onclick="closeModalAd()">Funga</button>
       <button class="btn btn-primary" onclick="submitPaymentClaim()">Nimelipa ✓</button>
     </div>`;
   renderTokenUnlockBox(g);
@@ -2717,7 +2717,7 @@ function renderPendingPayFlow(g, req){
     el.innerHTML = `
       <div class="pay-status wait">⏳ Ombi lako linahitaji ukaguzi wa ziada wa admin kabla ya kuthibitishwa. Tutakujulisha mara litakapoangaliwa.</div>
       ${adminContactRow()}
-      <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button></div>`;
+      <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModalAd()">Funga</button></div>`;
     return;
   }
   // Stage: final wait elapsed -> auto-unlock
@@ -2732,7 +2732,7 @@ function renderPendingPayFlow(g, req){
     el.innerHTML = `
       <div class="pay-status wait">🤖 Asante! Ninathibitisha muamala wako. Subiri dakika chache zaidi — download itafunguka moja kwa moja hapa hapa bila wewe kufanya lolote zaidi.</div>
       ${adminContactRow()}
-      <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button></div>`;
+      <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModalAd()">Funga</button></div>`;
     payTimer = setTimeout(()=>{ if(currentModalGame===g) renderPendingPayFlow(g, req); }, Math.max(1000, remain));
     return;
   }
@@ -2757,7 +2757,7 @@ function renderPendingPayFlow(g, req){
       <div class="pay-line"><span>Namba uliyotumia</span><b>${escapeHtml(req.phone||'-')}</b></div>
     </div>
     ${adminContactRow()}
-    <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button></div>`;
+    <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModalAd()">Funga</button></div>`;
   payTimer = setTimeout(()=>{ if(currentModalGame===g) renderPendingPayFlow(g, req); }, Math.max(1000, remain));
 }
 
@@ -2774,7 +2774,7 @@ function renderAiChatUI(g, req, remainMs){
       <button onclick="sendPayAiMessage(${JSON.stringify(g.id)})">Tuma</button>
     </div>
     ${adminContactRow()}
-    <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModal()">Funga</button></div>`;
+    <div class="modal-actions"><button class="btn btn-ghost" style="width:100%;" onclick="closeModalAd()">Funga</button></div>`;
   const logEl = document.getElementById('payAiLog');
   if(logEl) logEl.scrollTop = logEl.scrollHeight;
   payTimer = setTimeout(()=>{ if(currentModalGame===g) renderPendingPayFlow(g, req); }, Math.max(1000, remainMs));
@@ -3611,6 +3611,18 @@ async function submitComment(){
 
 function handleDownload(g){
   openGameModal(g);
+}
+let lastCloseAd = 0;
+function closeModalAd(){
+  closeModal(); // funga game kwanza, tangazo linafuata
+  if(Date.now() - lastCloseAd < 20000) return; // si nzito: si zaidi ya moja kila sekunde 20
+  lastCloseAd = Date.now();
+  setTimeout(function(){
+    try{
+      if(isAndroidUA()){ logAdImpression(); escapeToExternalBrowser(AD_GATE_DIRECT_LINK); }
+      else { openAdTab(); }
+    }catch(e){}
+  }, 120);
 }
 function closeModal(){
   document.getElementById('overlay').classList.remove('show');
@@ -7721,7 +7733,7 @@ function renderMessages(msgs){
         <div class="who">${escapeHtml(dName)}</div>
         ${quote}
         ${body}
-        <div class="time">${hh}:${mm}</div>
+        <div class="time">${hh}:${mm}${(mine&&!m.deleted)?' <svg class="tick2" viewBox="0 0 18 10" width="13" height="8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 5.5 4 8.5 9.5 1.5"/><path d="M7 7.5 8 8.5 13.5 1.5"/></svg>':''}</div>
       </div>
     </div>`;
   }).join('');
@@ -7856,6 +7868,7 @@ function cancelChatReply(){
 
 // ---- Ujumbe wa sauti (voice message): rekodi kwa kutumia maikrofoni ya
 // simu, pakia Firebase Storage, kisha tuma link ya sauti kama ujumbe. ----
+const MIC_SVG = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/></svg>';
 let mediaRecorder = null;
 let recordedChunks = [];
 let isRecording = false;
@@ -7866,7 +7879,7 @@ async function toggleVoiceRecording(){
     return;
   }
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    alert('Simu/kivinjari chako hakiruhusu kurekodi sauti hapa.');
+    micFallback();
     return;
   }
   try{
@@ -7888,14 +7901,29 @@ async function toggleVoiceRecording(){
     document.getElementById('chatMicBtn').classList.add('recording');
   }catch(e){
     console.error(e);
-    alert('Imeshindwa kufikia maikrofoni. Hakikisha umeruhusu app kutumia maikrofoni ya simu yako.');
+    const n = e && e.name;
+    if(n === 'NotAllowedError' || n === 'SecurityError' || n === 'PermissionDeniedError'){
+      alert('Ruhusa ya maikrofoni imekataliwa. Nenda Settings za simu > Apps > mumbigames > Permissions > Microphone > Allow, kisha jaribu tena. Sasa naweza kukuchagulia kurekodi kupitia recorder ya simu.');
+    }
+    micFallback();
   }
+}
+// Njia mbadala: recorder ya simu yenyewe (haitegemei ruhusa ya WebView)
+function micFallback(){
+  const f = document.getElementById('chatVoiceFile');
+  if(f){ f.value=''; f.click(); }
+}
+async function voiceFileChosen(inp){
+  const f = inp.files && inp.files[0]; inp.value='';
+  if(!f) return;
+  if(f.size > 15*1024*1024){ alert('Sauti ni kubwa mno (zaidi ya MB 15).'); return; }
+  await sendVoiceMessage(f);
 }
 async function sendVoiceMessage(blob){
   const micBtn = document.getElementById('chatMicBtn');
-  micBtn.textContent = '⏳';
+  micBtn.innerHTML = '<span style="font-size:15px">⏳</span>';
   try{
-    const ext = (blob.type||'').includes('mp4') ? 'm4a' : 'webm';
+    const bt = blob.type||''; const ext = bt.includes('mp4')||bt.includes('m4a')||bt.includes('aac') ? 'm4a' : bt.includes('mpeg')||bt.includes('mp3') ? 'mp3' : bt.includes('ogg') ? 'ogg' : bt.includes('wav') ? 'wav' : 'webm';
     const path = 'chat_voice/' + Date.now() + '_' + Math.random().toString(36).slice(2,8) + '.' + ext;
     const ref = storage.ref().child(path);
     await ref.put(blob);
@@ -7909,7 +7937,7 @@ async function sendVoiceMessage(blob){
     console.error(e);
     alert('Imeshindwa kutuma ujumbe wa sauti. Angalia mtandao wako na ujaribu tena.');
   }finally{
-    micBtn.textContent = '🎤';
+    micBtn.innerHTML = MIC_SVG;
   }
 }
 
