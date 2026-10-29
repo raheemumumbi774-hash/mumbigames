@@ -4996,7 +4996,7 @@ function renderChangelogList(){
     const img = noticeSafeUrl(n.imageUrl);
     const d = n.createdAt ? new Date(n.createdAt).toLocaleDateString(currentLang==='en'?'en-GB':'sw-TZ',{day:'numeric',month:'short',year:'numeric'}) : '';
     return `
-    <div style="display:flex;gap:11px;border-bottom:1px solid var(--line);padding:12px 2px;align-items:flex-start;">
+    <div style="display:flex;gap:11px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:11px;margin-bottom:10px;align-items:flex-start;">
       ${img ? `<div style="flex:0 0 62px;width:62px;height:62px;border-radius:12px;background:#222 center/cover no-repeat url('${img}');border:1px solid var(--line);"></div>` : ''}
       <div style="flex:1;min-width:0;">
         <div style="font-weight:800;font-size:13px;margin-bottom:4px;word-break:break-word;">${escapeHtml(n.title||'')}</div>
@@ -5017,18 +5017,24 @@ function noticeLikeBtn(n){
 async function likeNotice(id){
   if(!auth.currentUser){ alert(tvT('Ingia kwenye akaunti yako kwanza.','Please log in first.')); return; }
   const uid = auth.currentUser.uid;
-  const ref = db.collection('appNotices').doc(id);
+  const n = APP_NOTICES.find(x=>x.id===id); if(!n) return;
+  const was = !!(n.likedBy && n.likedBy[uid]);
+  const FV = firebase.firestore.FieldValue;
+  // onyesha mara moja (optimistic), kisha andika kwa hesabu ya moja kwa moja (bila transaction)
+  n.likedBy = Object.assign({}, n.likedBy || {});
+  if(was){ delete n.likedBy[uid]; n.likes = Math.max(0,(parseInt(n.likes)||0)-1); } else { n.likedBy[uid] = true; n.likes = (parseInt(n.likes)||0)+1; }
+  renderChangelogList();
   try{
-    await db.runTransaction(async tx=>{
-      const doc = await tx.get(ref); if(!doc.exists) return;
-      const d = doc.data();
-      const likedBy = Object.assign({}, d.likedBy || {});
-      let likes = Math.max(0, parseInt(d.likes)||0);
-      if(likedBy[uid]){ delete likedBy[uid]; likes = Math.max(0, likes-1); }
-      else { likedBy[uid] = true; likes += 1; }
-      tx.update(ref, {likes, likedBy});
-    });
-  }catch(e){ console.error('likeNotice', e); alert(tvT('Imeshindwa. Jaribu tena.','Failed. Try again.')); }
+    const upd = {likes: FV.increment(was ? -1 : 1)};
+    upd['likedBy.' + uid] = was ? FV.delete() : true;
+    await db.collection('appNotices').doc(id).update(upd);
+  }catch(e){
+    console.error('likeNotice', e);
+    // rudisha hali ya awali
+    if(was){ n.likedBy[uid] = true; n.likes = (parseInt(n.likes)||0)+1; } else { delete n.likedBy[uid]; n.likes = Math.max(0,(parseInt(n.likes)||0)-1); }
+    renderChangelogList();
+    alert(tvT('Imeshindwa. Jaribu tena.','Failed. Try again.') + ' (' + ((e && (e.code||e.message)) || '?') + ')');
+  }
 }
 function getNoticeLastSeen(){
   try{ return parseInt(localStorage.getItem('mg-notice-seen') || '0', 10) || 0; }catch(e){ return 0; }
@@ -5048,7 +5054,7 @@ function updateChangelogBadge(){
 function listenNotices(){
   try{
     db.collection('appNotices').orderBy('createdAt','desc').limit(40).onSnapshot(snap=>{
-      APP_NOTICES = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      APP_NOTICES = snap.docs.map(d=>({...d.data(), id:d.id}));
       noticesLoaded = true;
       updateChangelogBadge();
       const ov = document.getElementById('changelogOverlay');
