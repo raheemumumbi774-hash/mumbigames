@@ -24,20 +24,64 @@
   const adminAuth = adminApp.auth();
   const db = adminApp.firestore();
   const storage = adminApp.storage();
-  const ADMIN_EMAIL = 'raheemumumbi774@gmail.com'; // inatumika ndani tu, haionekani kwenye skrini
+  const ADMIN_EMAIL = 'raheemumumbi774+admin@gmail.com'; // inatumika ndani tu, haionekani kwenye skrini
 
   // ---- Imgbb (free image hosting, no billing needed — replace with your own key) ----
   const IMGBB_API_KEY = '4ba0b719dee411039527e4fca22b606c';
   async function uploadToImgbb(file){
-    const formData = new FormData();
-    formData.append('image', file);
-    const res = await fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_API_KEY, {
-      method: 'POST',
-      body: formData
+    // Inapokea picha ya aina yoyote (jpg, png, webp, gif, heic n.k. kadri kivinjari kinavyoweza kuisoma).
+    // Njia: 1) Imgbb  2) Firebase Storage  3) picha ndogo ndani ya hifadhidata (usiposhindwa kamwe).
+    let blob = file;
+    try{ blob = await mgPrepImage(file); }catch(e){ console.warn('prep', e); }
+    try{ return await mgImgbbPut(blob); }catch(e){ console.warn('imgbb', e); }
+    try{
+      if(typeof storage !== 'undefined'){
+        const ref = storage.ref().child('images/' + Date.now() + '_' + Math.random().toString(36).slice(2,8) + '.jpg');
+        await ref.put(blob, {contentType: blob.type || 'image/jpeg'});
+        return await ref.getDownloadURL();
+      }
+    }catch(e){ console.warn('storage', e); }
+    return await mgSmallDataUrl(file);
+  }
+  function mgLoadImg(file){
+    return new Promise(function(resolve, reject){
+      const u = URL.createObjectURL(file);
+      const im = new Image();
+      im.onload = function(){ resolve({img: im, url: u}); };
+      im.onerror = function(){ URL.revokeObjectURL(u); reject(new Error('Faili hii si picha inayosomeka.')); };
+      im.src = u;
     });
-    const data = await res.json();
-    if(!data || !data.success) throw new Error((data && data.error && data.error.message) || 'Imgbb upload failed');
-    return data.data.url;
+  }
+  function mgCanvasBlob(img, maxSide, q){
+    let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+    if(Math.max(w,h) > maxSide){ const r = maxSide / Math.max(w,h); w = Math.round(w*r); h = Math.round(h*r); }
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0,0,w,h); cx.drawImage(img, 0, 0, w, h);
+    return new Promise(function(res, rej){ cv.toBlob(function(b){ b ? res(b) : rej(new Error('compress')); }, 'image/jpeg', q); });
+  }
+  async function mgPrepImage(file){
+    const okType = /^image\/(jpeg|png|webp|gif)$/i.test(file.type || '');
+    if(okType && file.size <= 2.5*1024*1024) return file;
+    const L = await mgLoadImg(file);
+    try{ return await mgCanvasBlob(L.img, 1400, 0.85); } finally { URL.revokeObjectURL(L.url); }
+  }
+  async function mgImgbbPut(blob){
+    const fd = new FormData(); fd.append('image', blob);
+    const ctrl = new AbortController(); const to = setTimeout(function(){ ctrl.abort(); }, 30000);
+    try{
+      const res = await fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_API_KEY, {method:'POST', body: fd, signal: ctrl.signal});
+      const data = await res.json();
+      if(!data || !data.success) throw new Error((data && data.error && data.error.message) || 'Imgbb upload failed');
+      return data.data.url;
+    } finally { clearTimeout(to); }
+  }
+  async function mgSmallDataUrl(file){
+    const L = await mgLoadImg(file);
+    try{
+      let b = await mgCanvasBlob(L.img, 640, 0.72);
+      if(b.size > 180*1024) b = await mgCanvasBlob(L.img, 480, 0.6);
+      return await new Promise(function(res, rej){ const fr = new FileReader(); fr.onload = function(){ res(fr.result); }; fr.onerror = rej; fr.readAsDataURL(b); });
+    } finally { URL.revokeObjectURL(L.url); }
   }
 </script>
 <style>
@@ -421,7 +465,7 @@
 
       <label>Picha ya jalada</label>
       <div id="imgPreviewWrap" style="display:none;margin-bottom:10px;">
-        <img id="imgPreview" src="" style="width:100%;max-height:160px;object-fit:cover;border-radius:10px;border:1px solid var(--line);">
+        <img id="imgPreview" src="" referrerpolicy="no-referrer" style="width:100%;max-height:160px;object-fit:cover;border-radius:10px;border:1px solid var(--line);">
       </div>
       <input type="file" id="gImageFile" accept="image/*" onchange="handleImageSelect()">
       <div id="imgUploadStatus" style="font-size:12px;color:var(--sub);margin-top:6px;"></div>
