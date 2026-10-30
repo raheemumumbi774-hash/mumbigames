@@ -8023,7 +8023,7 @@ function micFallback(){
 async function voiceFileChosen(inp){
   const f = inp.files && inp.files[0]; inp.value='';
   if(!f) return;
-  if(f.size > 15*1024*1024){ alert('Sauti ni kubwa mno (zaidi ya MB 15).'); return; }
+  if(f.size > 5*1024*1024){ alert(tvT('Sauti ni kubwa mno (zaidi ya MB 5).','Audio is too large (over 5 MB).')); return; }
   await sendVoiceMessage(f);
 }
 async function sendVoiceMessage(blob){

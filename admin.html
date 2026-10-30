@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage-compat.js"></script>
 <script>
@@ -18,9 +19,12 @@
     messagingSenderId: "766746284201",
     appId: "1:766746284201:web:c5a74e1ea6d7778d4499b8"
   };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const storage = firebase.storage();
+  // App yenye jina lake: kuingia kwa admin hakuathiri akaunti za watumiaji wa app kwenye kivinjari hiki
+  const adminApp = firebase.initializeApp(firebaseConfig, 'mumbiAdmin');
+  const adminAuth = adminApp.auth();
+  const db = adminApp.firestore();
+  const storage = adminApp.storage();
+  const ADMIN_EMAIL = 'raheemumumbi774@gmail.com'; // inatumika ndani tu, haionekani kwenye skrini
 
   // ---- Imgbb (free image hosting, no billing needed — replace with your own key) ----
   const IMGBB_API_KEY = '4ba0b719dee411039527e4fca22b606c';
@@ -311,10 +315,11 @@
   <div class="gate-card">
     <div class="brand-logo big"><svg viewBox="0 0 48 48" width="100%" height="100%"><defs><linearGradient id="bl2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".55" stop-color="#ff5fa2"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#bl2)"/><path d="M15 17h18a6 6 0 0 1 5.8 4.6l1.6 7A4.2 4.2 0 0 1 32.600 33l-1.500-2.200H16.900L15.400 33a4.200 4.200 0 0 1-7.800-4.400l1.600-7A6 6 0 0 1 15 17z" fill="#fff" fill-opacity=".95"/><path d="M16 21.500v5M13.500 24h5" stroke="#8b5cf6" stroke-width="2.200" stroke-linecap="round"/><circle cx="31" cy="22.500" r="1.700" fill="#ff5fa2"/><circle cx="34.500" cy="25.500" r="1.700" fill="#ffb347"/><path d="M36 8l1 2.600 2.600 1-2.600 1-1 2.600-1-2.600-2.600-1 2.600-1z" fill="#fff"/></svg></div>
     <h1>mumbigames admin</h1>
-    <p>Weka PIN yako kuingia kwenye dashibodi</p>
-    <input type="password" id="pinInput" inputmode="numeric" placeholder="PIN (mfano 1234)" maxlength="12">
-    <button class="btn btn-primary" onclick="tryEnter()">Ingia</button>
+    <p>Weka password yako kuingia kwenye dashibodi</p>
+    <input type="password" id="pinInput" placeholder="Password" maxlength="64" autocomplete="current-password" onkeydown="if(event.key==='Enter')tryEnter()">
+    <button class="btn btn-primary" id="gateBtn" onclick="tryEnter()">Ingia</button>
     <div class="gate-err" id="gateErr"></div>
+    <div style="margin-top:14px;font-size:12px;"><span style="color:var(--lime);cursor:pointer;text-decoration:underline;" onclick="adminForgot()">Nimesahau password</span></div>
   </div>
 </div>
 
@@ -796,27 +801,72 @@ function toggleTokenLocked(){
 let trendOn = false;
 let setupOn = false;
 
-// ---- Auth gate (PIN stored in Firestore) ----
+// ---- Auth gate: password ya admin (Firebase Authentication) ----
+// Ulinzi mdogo kwenye kifaa: onyo mara ya 3, kufungiwa dakika 15 mara ya 5. (Firebase yenyewe pia inazuia majaribio mengi.)
+const PW_MAX_TRIES = 5, PW_WARN_AT = 3, PW_LOCK_MIN = 15;
+function pwLsGet(k){ try{ return parseInt(localStorage.getItem(k)||'0',10) || 0; }catch(e){ return 0; } }
+function pwLsSet(k,v){ try{ localStorage.setItem(k,String(v)); }catch(e){} }
+function pwLockLeftMs(){ return Math.max(0, pwLsGet('mg_adm_lock') - Date.now()); }
+function pwLockMsg(){ return 'Umefungiwa kwa sababu ya makosa mengi. Jaribu tena baada ya dakika ' + Math.ceil(pwLockLeftMs()/60000) + '.'; }
+let adminEntered = false;
 async function tryEnter(){
-  const val = document.getElementById('pinInput').value.trim();
+  const val = document.getElementById('pinInput').value;
   const errEl = document.getElementById('gateErr');
-  if(!val){ errEl.textContent = 'Weka PIN kwanza.'; return; }
+  const btn = document.getElementById('gateBtn');
+  errEl.style.color = '';
+  if(pwLockLeftMs() > 0){ errEl.textContent = pwLockMsg(); return; }
+  if(!val){ errEl.textContent = 'Weka password kwanza.'; return; }
+  btn.disabled = true; errEl.textContent = '';
   try{
-    const ref = db.collection('meta').doc('admin');
-    const snap = await ref.get();
-    if(!snap.exists){
-      await ref.set({pin: val});
-      enterApp();
-    } else if(snap.data().pin === val){
-      enterApp();
-    } else {
-      errEl.textContent = 'PIN si sahihi. Jaribu tena.';
-    }
+    await adminAuth.signInWithEmailAndPassword(ADMIN_EMAIL, val);
+    pwLsSet('mg_adm_fail',0); pwLsSet('mg_adm_lock',0);
+    document.getElementById('pinInput').value = '';
+    enterAdmin();
   }catch(e){
     console.error(e);
-    errEl.textContent = 'Hitilafu ya kuunganisha. Angalia mtandao wako.';
+    const c = e && e.code;
+    if(c === 'auth/user-not-found'){
+      // mara ya kwanza kabisa: akaunti ya admin bado haijaundwa
+      if(val.length < 6){ errEl.textContent = 'Password iwe angalau herufi 6.'; btn.disabled = false; return; }
+      try{
+        await adminAuth.createUserWithEmailAndPassword(ADMIN_EMAIL, val);
+        document.getElementById('pinInput').value = '';
+        enterAdmin();
+      }catch(e2){ console.error(e2); errEl.textContent = 'Imeshindwa kuunda akaunti ya admin. Jaribu tena.'; }
+    } else if(c === 'auth/wrong-password' || c === 'auth/invalid-credential' || c === 'auth/invalid-login-credentials'){
+      const f = pwLsGet('mg_adm_fail') + 1; pwLsSet('mg_adm_fail', f);
+      if(f >= PW_MAX_TRIES){ pwLsSet('mg_adm_lock', Date.now() + PW_LOCK_MIN*60000); pwLsSet('mg_adm_fail',0); errEl.textContent = pwLockMsg(); }
+      else if(f >= PW_WARN_AT){ errEl.textContent = 'Password si sahihi. Umekosea mara ' + f + '. Ukikosea mara ' + (PW_MAX_TRIES-f) + ' zaidi utafungiwa dakika ' + PW_LOCK_MIN + '.'; }
+      else { errEl.textContent = 'Password si sahihi. Jaribu tena.'; }
+      document.getElementById('pinInput').value = '';
+    } else if(c === 'auth/too-many-requests'){
+      errEl.textContent = 'Majaribio mengi mno. Subiri dakika chache kisha ujaribu tena.';
+    } else if(c === 'auth/network-request-failed'){
+      errEl.textContent = 'Hakuna mtandao. Angalia mtandao wako.';
+    } else {
+      errEl.textContent = 'Hitilafu ya kuunganisha. Jaribu tena.';
+    }
+  }
+  btn.disabled = false;
+}
+async function adminForgot(){
+  const errEl = document.getElementById('gateErr');
+  try{
+    await adminAuth.sendPasswordResetEmail(ADMIN_EMAIL);
+    errEl.style.color = 'var(--lime)';
+    errEl.textContent = 'Link ya kuweka password mpya imetumwa kwenye email ya admin (angalia pia Spam).';
+  }catch(e){
+    console.error(e); errEl.style.color = '';
+    errEl.textContent = (e && e.code === 'auth/user-not-found') ? 'Akaunti ya admin bado haijaundwa. Weka password unayotaka kisha bonyeza Ingia.' : 'Imeshindwa kutuma. Jaribu tena.';
   }
 }
+function enterAdmin(){
+  if(adminEntered) return; adminEntered = true;
+  try{ const u = adminAuth.currentUser; const el = document.getElementById('adminUid'); if(u && el){ el.textContent = 'ID ya admin: ' + u.uid; el.style.display = 'block'; } }catch(e){}
+  enterApp();
+}
+// Ukiwa umeshaingia kwenye kifaa hiki, hauombwi password tena hadi utakapobonyeza Toka
+adminAuth.onAuthStateChanged(function(u){ if(u && u.email === ADMIN_EMAIL) enterAdmin(); });
 function enterApp(){
   document.getElementById('gate').style.display='none';
   document.getElementById('app').style.display='block';
@@ -899,6 +949,9 @@ function loadDownloadStats(){
   }, function(err){ console.error(err); });
 }
 function logout(){
+  try{ adminAuth.signOut(); }catch(e){}
+  adminEntered = false;
+  try{ document.getElementById('adminUid').style.display='none'; }catch(e){}
   document.getElementById('app').style.display='none';
   document.getElementById('gate').style.display='flex';
   document.getElementById('pinInput').value='';
@@ -2425,5 +2478,6 @@ function bg(){
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bg); else bg();
 })();
 </script>
+<div id="adminUid" style="display:none;text-align:center;font-size:10px;color:var(--sub);opacity:.6;padding:14px 10px 24px;word-break:break-all;user-select:all;position:relative;z-index:2;"></div>
 </body>
 </html>
