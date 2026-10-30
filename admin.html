@@ -363,7 +363,7 @@
     <input type="password" id="pinInput" placeholder="Password" maxlength="64" autocomplete="current-password" onkeydown="if(event.key==='Enter')tryEnter()">
     <button class="btn btn-primary" id="gateBtn" onclick="tryEnter()">Ingia</button>
     <div class="gate-err" id="gateErr"></div>
-    <div style="margin-top:14px;font-size:12px;"><span style="color:var(--lime);cursor:pointer;text-decoration:underline;" onclick="adminForgot()">Nimesahau password</span></div>
+    <div id="forgotWrap" style="display:none;margin-top:14px;font-size:12px;"><span style="color:var(--lime);cursor:pointer;text-decoration:underline;" onclick="adminForgot()">Nimesahau password</span></div>
   </div>
 </div>
 
@@ -860,7 +860,7 @@ async function tryEnter(){
   errEl.style.color = '';
   if(pwLockLeftMs() > 0){ errEl.textContent = pwLockMsg(); return; }
   if(!val){ errEl.textContent = 'Weka password kwanza.'; return; }
-  btn.disabled = true; errEl.textContent = '';
+  btn.disabled = true; errEl.textContent = ''; adminLoginInProgress = true;
   try{
     await adminAuth.signInWithEmailAndPassword(ADMIN_EMAIL, val);
     pwLsSet('mg_adm_fail',0); pwLsSet('mg_adm_lock',0);
@@ -871,7 +871,7 @@ async function tryEnter(){
     const c = e && e.code;
     if(c === 'auth/user-not-found'){
       // mara ya kwanza kabisa: akaunti ya admin bado haijaundwa
-      if(val.length < 6){ errEl.textContent = 'Password iwe angalau herufi 6.'; btn.disabled = false; return; }
+      if(val.length < 6){ errEl.textContent = 'Password iwe angalau herufi 6.'; adminLoginInProgress = false; btn.disabled = false; return; }
       try{
         await adminAuth.createUserWithEmailAndPassword(ADMIN_EMAIL, val);
         document.getElementById('pinInput').value = '';
@@ -883,6 +883,7 @@ async function tryEnter(){
       else if(f >= PW_WARN_AT){ errEl.textContent = 'Password si sahihi. Umekosea mara ' + f + '. Ukikosea mara ' + (PW_MAX_TRIES-f) + ' zaidi utafungiwa dakika ' + PW_LOCK_MIN + '.'; }
       else { errEl.textContent = 'Password si sahihi. Jaribu tena.'; }
       document.getElementById('pinInput').value = '';
+      try{ document.getElementById('forgotWrap').style.display = 'block'; }catch(_){}
     } else if(c === 'auth/too-many-requests'){
       errEl.textContent = 'Majaribio mengi mno. Subiri dakika chache kisha ujaribu tena.';
     } else if(c === 'auth/network-request-failed'){
@@ -891,6 +892,7 @@ async function tryEnter(){
       errEl.textContent = 'Hitilafu ya kuunganisha. Jaribu tena.';
     }
   }
+  adminLoginInProgress = false;
   btn.disabled = false;
 }
 async function adminForgot(){
@@ -904,13 +906,24 @@ async function adminForgot(){
     errEl.textContent = (e && e.code === 'auth/user-not-found') ? 'Akaunti ya admin bado haijaundwa. Weka password unayotaka kisha bonyeza Ingia.' : 'Imeshindwa kutuma. Jaribu tena.';
   }
 }
+function toggleAdminUid(el){
+  if(!el.dataset.uid) return;
+  const show = el.dataset.shown !== '1';
+  el.dataset.shown = show ? '1' : '0';
+  el.style.userSelect = show ? 'all' : 'none';
+  el.textContent = show ? ('ID ya admin: ' + el.dataset.uid) : 'ID ya admin: ••••••••••••  (gusa kuonyesha)';
+}
 function enterAdmin(){
   if(adminEntered) return; adminEntered = true;
-  try{ const u = adminAuth.currentUser; const el = document.getElementById('adminUid'); if(u && el){ el.textContent = 'ID ya admin: ' + u.uid; el.style.display = 'block'; } }catch(e){}
+  try{ const u = adminAuth.currentUser; const el = document.getElementById('adminUid'); if(u && el){ el.dataset.uid = u.uid; el.dataset.shown = '0'; el.textContent = 'ID ya admin: ••••••••••••  (gusa kuonyesha)'; el.style.display = 'block'; } }catch(e){}
   enterApp();
 }
-// Ukiwa umeshaingia kwenye kifaa hiki, hauombwi password tena hadi utakapobonyeza Toka
-adminAuth.onAuthStateChanged(function(u){ if(u && u.email === ADMIN_EMAIL) enterAdmin(); });
+// Hakuna kuingia kiotomatiki: kila ukifungua ukurasa huu lazima uweke password.
+// (Kikao hakihifadhiwi kwenye kifaa; kinakaa kwenye kumbukumbu tu hadi ukurasa ufungwe.)
+try{ adminAuth.setPersistence(firebase.auth.Auth.Persistence.NONE); }catch(e){}
+try{ if(adminAuth.currentUser) adminAuth.signOut(); }catch(e){}
+let adminLoginInProgress = false;
+adminAuth.onAuthStateChanged(function(u){ if(u && !adminEntered && !adminLoginInProgress){ try{ adminAuth.signOut(); }catch(e){} } });
 function enterApp(){
   document.getElementById('gate').style.display='none';
   document.getElementById('app').style.display='block';
@@ -2522,6 +2535,6 @@ function bg(){
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bg); else bg();
 })();
 </script>
-<div id="adminUid" style="display:none;text-align:center;font-size:10px;color:var(--sub);opacity:.6;padding:14px 10px 24px;word-break:break-all;user-select:all;position:relative;z-index:2;"></div>
+<div id="adminUid" style="display:none;text-align:center;font-size:10px;color:var(--sub);opacity:.6;padding:14px 10px 24px;word-break:break-all;position:relative;z-index:2;cursor:pointer;" onclick="toggleAdminUid(this)"></div>
 </body>
 </html>
