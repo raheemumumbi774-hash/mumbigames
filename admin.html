@@ -312,7 +312,7 @@
   .ac-card .ac button.del{color:var(--danger);}
 
   /* ---- Admin v2: wallpaper, icons, layout ---- */
-  #admBg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+  #admBg{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100lvh;z-index:0;pointer-events:none;transform:translateZ(0);}
   #app{position:relative;z-index:1;}
   #gate{position:relative;z-index:2;}
   .topbar{background:rgba(10,10,22,.72)!important;}
@@ -2515,61 +2515,46 @@ function sched(){ if(q) return; q = requestAnimationFrame(()=>{ q = 0; run(); })
 function start(){ run(); obs = new MutationObserver(()=>{ if(!busy) sched(); }); obs.observe(document.body,{childList:true,subtree:true,characterData:true}); }
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 
-// ---- wallpaper ya live (mtindo wa AI: anga la zambarau lenye nyota) — haibadiliki, imeongezewa vitu ----
+// ---- wallpaper tulivu: anga la zambarau iliyokolea, nyota zinazometameta taratibu tu. Haibadiliki rangi wala kutetemeka ukitelezesha. ----
 function bg(){
   const cv = document.getElementById('admBg'); if(!cv) return;
-  const c = cv.getContext('2d'); let w = 0, h = 0, t = 0, last = 0, O = null;
-  const R = Math.random;
-  function rs(){
-    const d = Math.min(devicePixelRatio||1,1.5); w = cv.clientWidth; h = cv.clientHeight; cv.width = w*d; cv.height = h*d; c.setTransform(d,0,0,d,0,0);
-    O = {stars:[], orbs:[], motes:[], rings:[], meteors:[]};
-    for(let i=0;i<90;i++) O.stars.push({x:R()*w,y:R()*h,r:.5+R()*1.5,ph:R()*6.28,sp:.6+R()*1.8,big:R()<.12});
-    for(let i=0;i<6;i++) O.orbs.push({x:R()*w,y:R()*h,r:130+R()*150,ax:20+R()*50,ay:20+R()*50,ph:R()*6.28,sp:.12+R()*.2,h:[262,275,290,205,315,250][i]});
-    for(let i=0;i<38;i++) O.motes.push({x:R()*w,y:R()*h,r:1+R()*2.8,v:.15+R()*.45,ph:R()*6.28,h:R()<.3?190:265});
-    for(let i=0;i<3;i++) O.rings.push({x:R()*w,y:R()*h,r:30+R()*40,ph:R()*6.28,sp:.4+R()*.4});
+  const c = cv.getContext('2d'); const R = Math.random;
+  let w = 0, h = 0, W0 = 0, base = null, stars = [], motes = [], last = 0, t = 0;
+  function build(){
+    // ukubwa mmoja thabiti (urefu mkubwa wa skrini) ili mstari wa anwani wa Chrome ukijificha/ukionekana usibadilishe kitu
+    const d = Math.min(devicePixelRatio||1,1.5);
+    w = Math.round(innerWidth); h = Math.round(Math.max(screen.height||0, innerHeight, 600)); W0 = w;
+    cv.width = Math.round(w*d); cv.height = Math.round(h*d); c.setTransform(d,0,0,d,0,0);
+    // mandharinyuma tuli (inachorwa mara moja tu)
+    base = document.createElement('canvas'); base.width = cv.width; base.height = cv.height;
+    const b = base.getContext('2d'); b.setTransform(d,0,0,d,0,0);
+    const g = b.createLinearGradient(0,0,0,h);
+    g.addColorStop(0,'#1d0f50'); g.addColorStop(.55,'#130a38'); g.addColorStop(1,'#0b0725');
+    b.fillStyle = g; b.fillRect(0,0,w,h);
+    [[.2,.18,.55,'130,100,230'],[.85,.5,.6,'120,90,215'],[.3,.85,.6,'110,80,200']].forEach(function(o){
+      const x = o[0]*w, y = o[1]*h, r = o[2]*Math.max(w,h)*.7; const rg = b.createRadialGradient(x,y,0,x,y,r);
+      rg.addColorStop(0,'rgba('+o[3]+',.16)'); rg.addColorStop(1,'rgba('+o[3]+',0)'); b.fillStyle = rg; b.fillRect(0,0,w,h);
+    });
+    stars = Array.from({length:48},function(){ return {x:R()*w,y:R()*h,r:.5+R()*1.2,ph:R()*6.28,sp:.4+R()*1.0}; });
+    motes = Array.from({length:10},function(){ return {x:R()*w,y:R()*h,r:1+R()*1.8,v:.08+R()*.18,ph:R()*6.28}; });
   }
-  rs(); addEventListener('resize', rs);
+  build();
+  // jenga upya tu upana ukibadilika (mf. kugeuza simu), si urefu
+  addEventListener('resize', function(){ if(Math.abs(innerWidth - W0) > 40) build(); });
   function frame(ts){
     requestAnimationFrame(frame);
-    if(document.hidden || ts - last < 34 || !O) return; // ~29fps
-    last = ts; t += .034;
-    const g = c.createLinearGradient(0,0,0,h);
-    g.addColorStop(0,'#2a1566'); g.addColorStop(.55,'#1a0f4a'); g.addColorStop(1,'#0f0a30');
-    c.globalCompositeOperation = 'source-over'; c.fillStyle = g; c.fillRect(0,0,w,h);
-    c.globalCompositeOperation = 'lighter';
-    O.orbs.forEach(function(o){
-      const x = o.x + Math.sin(t*o.sp+o.ph)*o.ax, y = o.y + Math.cos(t*o.sp*1.3+o.ph)*o.ay;
-      const rg = c.createRadialGradient(x,y,0,x,y,o.r);
-      rg.addColorStop(0,'hsla('+o.h+',90%,62%,.28)'); rg.addColorStop(1,'hsla('+o.h+',90%,62%,0)');
-      c.fillStyle = rg; c.beginPath(); c.arc(x,y,o.r,0,6.283); c.fill();
-    });
-    // mwanga mpana unaopita polepole
-    const bx = w*(.5+.5*Math.sin(t*.12)), bg2 = c.createLinearGradient(bx-w*.25,0,bx+w*.25,h);
-    bg2.addColorStop(0,'rgba(160,120,255,0)'); bg2.addColorStop(.5,'rgba(160,120,255,.07)'); bg2.addColorStop(1,'rgba(160,120,255,0)');
-    c.fillStyle = bg2; c.fillRect(0,0,w,h);
+    if(document.hidden || ts - last < 50) return; // ~20fps, nyepesi sana
+    last = ts; t += .05;
     c.globalCompositeOperation = 'source-over';
-    O.stars.forEach(function(st){
-      const a = .25 + .65*Math.abs(Math.sin(t*st.sp+st.ph));
-      c.fillStyle = 'rgba(225,215,255,'+a.toFixed(2)+')'; c.beginPath(); c.arc(st.x,st.y,st.r,0,6.283); c.fill();
-      if(st.big){ c.strokeStyle = 'rgba(225,215,255,'+(a*.55).toFixed(2)+')'; c.lineWidth = .8; const L = 3+st.r*3*a;
-        c.beginPath(); c.moveTo(st.x-L,st.y); c.lineTo(st.x+L,st.y); c.moveTo(st.x,st.y-L); c.lineTo(st.x,st.y+L); c.stroke(); }
+    c.drawImage(base,0,0,w,h);
+    stars.forEach(function(st){
+      const a = .18 + .5*Math.abs(Math.sin(t*st.sp+st.ph));
+      c.fillStyle = 'rgba(220,212,255,'+a.toFixed(2)+')'; c.beginPath(); c.arc(st.x,st.y,st.r,0,6.283); c.fill();
     });
-    O.motes.forEach(function(m){
+    motes.forEach(function(m){
       m.y -= m.v; if(m.y < -6){ m.y = h+6; m.x = R()*w; }
-      const x = m.x + Math.sin(t*.8+m.ph)*8;
-      c.fillStyle = 'hsla('+m.h+',100%,75%,.35)'; c.beginPath(); c.arc(x,m.y,m.r,0,6.283); c.fill();
+      c.fillStyle = 'rgba(180,160,255,.22)'; c.beginPath(); c.arc(m.x+Math.sin(t*.6+m.ph)*6,m.y,m.r,0,6.283); c.fill();
     });
-    // pete laini zinazopumua
-    O.rings.forEach(function(r){
-      const k = (Math.sin(t*r.sp+r.ph)+1)/2; c.strokeStyle = 'rgba(170,140,255,'+(.05+.12*k).toFixed(3)+')'; c.lineWidth = 1.4;
-      c.beginPath(); c.arc(r.x,r.y,r.r*(.8+.5*k),0,6.283); c.stroke();
-    });
-    // vimondo
-    if(R() < .012 && O.meteors.length < 2) O.meteors.push({x:R()*w*.9+w*.1, y:-10, vx:-(3+R()*3), vy:4+R()*3, life:1});
-    O.meteors = O.meteors.filter(function(m){ return m.life > 0 && m.y < h; });
-    O.meteors.forEach(function(m){ m.x += m.vx; m.y += m.vy; m.life -= .012;
-      const gr = c.createLinearGradient(m.x,m.y,m.x-m.vx*10,m.y-m.vy*10); gr.addColorStop(0,'rgba(255,255,255,'+m.life+')'); gr.addColorStop(1,'rgba(200,170,255,0)');
-      c.strokeStyle = gr; c.lineWidth = 1.8; c.beginPath(); c.moveTo(m.x,m.y); c.lineTo(m.x-m.vx*10,m.y-m.vy*10); c.stroke(); });
   }
   requestAnimationFrame(frame);
 }
