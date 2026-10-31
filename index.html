@@ -1280,6 +1280,38 @@
   .nt-like.on .nt-e{filter:none;opacity:1;}
   .nt-like.on .nt-c{color:var(--text);}
   .nt-like.mine{border-color:var(--lime);background:rgba(166,255,0,0.12);}
+
+  .mg-copy{margin:22px 0 22px !important;}
+  .mg-copy .mg-cp{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:1.6px;background:linear-gradient(100deg,#8e96a8 0%,#f4f7ff 25%,#aeb6c8 50%,#ffffff 75%,#8e96a8 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:mgSilver 3.6s linear infinite,mgSilverGlow 2.4s ease-in-out infinite alternate;}
+  @keyframes mgSilver{0%{background-position:0% 50%}100%{background-position:250% 50%}}
+  @keyframes mgSilverGlow{0%{filter:drop-shadow(0 0 2px rgba(220,230,255,.25))}100%{filter:drop-shadow(0 0 8px rgba(230,238,255,.85))}}
+  .ai-sec{margin:12px 0 4px;font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--lime);text-transform:uppercase;}
+  .ai-p{font-size:12.5px;line-height:1.6;color:var(--text);opacity:.92;margin:0 0 6px;}
+  .ai-li{display:flex;gap:9px;align-items:flex-start;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:9px 10px;margin-bottom:7px;}
+  .ai-li .ai-e{font-size:17px;line-height:1.2;flex:none;}
+  .ai-li b{display:block;font-size:12.5px;margin-bottom:2px;}
+  .ai-li span{display:block;font-size:11.5px;line-height:1.5;color:var(--sub);}
+
+  .mg-foot2{margin:26px 4px 20px;padding-top:16px;border-top:1px solid var(--line);text-align:center;}
+  .mg-foot2 .mf-links{display:flex;justify-content:center;gap:26px;margin-bottom:10px;}
+  .mg-foot2 a,.mg-foot2 .mf-help{color:#b9c0d0;font-size:13px;text-decoration:none;cursor:pointer;text-shadow:0 0 6px rgba(220,230,255,.35);animation:mfPulse 2.8s ease-in-out infinite alternate;}
+  .mg-foot2 .mf-mail{display:block;margin-bottom:10px;}
+  .mg-foot2 .mf-help{display:inline-flex;align-items:center;gap:6px;color:#e6ebf7;margin-bottom:6px;}
+  .mg-foot2 .mf-help svg{transition:transform .25s;}
+  .mg-foot2 .mf-help.open svg{transform:rotate(180deg);}
+  @keyframes mfPulse{0%{text-shadow:0 0 3px rgba(220,230,255,.15)}100%{text-shadow:0 0 9px rgba(235,241,255,.7)}}
+  .mf-helpbody{display:none;text-align:left;margin:6px 0 8px;}
+  .mf-helpbody.show{display:block;}
+  .mf-q{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:7px;}
+  .mf-q b{display:block;font-size:12.5px;color:#e6ebf7;margin-bottom:3px;}
+  .mf-q span{font-size:11.5px;line-height:1.55;color:var(--sub);}
+  .mg-foot2 .mg-copy{margin:12px 0 0 !important;cursor:default;}
+
+  .mf-helpbody{border-top:1px solid var(--line);padding-top:12px;margin-top:8px !important;}
+  .hc-p{font-size:11.5px;font-weight:300;line-height:1.7;color:#aab2c4;margin:0 0 10px;}
+  .mg-foot2 a.hc-a{display:block;font-size:11.5px;font-weight:300;color:#cfd6e6;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:.5px;margin:0 0 11px;animation:none;text-shadow:none;}
+  .mg-foot2 .mf-links a,.mg-foot2 .mf-mail,.mg-foot2 .mf-help{font-size:11.5px !important;font-weight:300 !important;}
+  .mg-copy .mg-cp{font-size:11px !important;font-weight:400 !important;letter-spacing:1.2px !important;}
 </style>
 </head>
 <body>
@@ -1359,8 +1391,33 @@
   <a class="fb" href="https://www.facebook.com/share/1N4KuK8MhV/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
   <a class="yt" href="https://youtube.com/@mumbi_gaming" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
 </div>
-<div class="mg-footer" onclick="openAbout()">
-  <span class="ff">from</span><span class="fb">mumbigames</span>
+<div class="mg-foot2">
+  <div class="mf-links">
+    <a onclick="openLegal('privacy')">Privacy Policy</a>
+    <a onclick="openLegal('terms')">Terms of Service</a>
+  </div>
+  <a class="mf-mail" href="mailto:raheemmumbi374@gmail.com">raheemmumbi374@gmail.com</a>
+  <div class="mf-help" id="mfHelp" onclick="toggleHelp()">Help Center <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+  <div class="mf-helpbody" id="mfHelpBody"></div>
+  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span></div>
+</div>
+<div class="overlay" id="legalOverlay" onclick="if(event.target===this) closeLegal()">
+  <div class="modal" style="max-width:480px;">
+    <h3 id="lgTitle" style="margin:0 0 8px;font-size:16px;"></h3>
+    <div id="lgBody" style="max-height:66vh;overflow-y:auto;"></div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:12px;" onclick="closeLegal()">✕</button>
+  </div>
+</div>
+<div class="overlay" id="appInfoOverlay" onclick="if(event.target===this) closeAppInfo()">
+  <div class="modal" style="max-width:480px;">
+    <div class="ab-head">
+      <div class="ab-ic">🎮</div>
+      <div><h3 id="aiTitle">Kuhusu mumbigames</h3><p id="aiSub"></p></div>
+      <div class="ab-x" onclick="closeAppInfo()">✕</div>
+    </div>
+    <div id="aiBody" style="max-height:66vh;overflow-y:auto;padding:4px 2px 2px;"></div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:12px;" onclick="closeAppInfo()" id="aiClose">Funga</button>
+  </div>
 </div>
 </div>
 
@@ -4736,6 +4793,111 @@ function mgMemOpen(){
   mgMemSheetOpen = true; mgMemFill(mgMemList()); ov.style.display = 'flex';
 }
 function mgMemClose(){ mgMemSheetOpen = false; const ov = document.getElementById('mgMemOv'); if(ov) ov.style.display = 'none'; }
+
+// ---- Ukurasa wa "Kuhusu app" (unafunguka ukigusa © mumbigames chini ya Home) ----
+
+// ---- Footer: Help Center, Privacy, Terms ----
+function toggleHelp(){
+  const b=document.getElementById('mfHelpBody'), h=document.getElementById('mfHelp');
+  const T=tvT;
+  const L=(typeof currentLang!=='undefined'?currentLang:'');
+  const links=[
+    ['Pakua game na uulize msaada','Download a game and ask for help','Habari mumbigames, nahitaji msaada wa kupakua game.','Hello mumbigames, I need help downloading a game.'],
+    ['Omba game unayoitaka','Request a game you want','Habari mumbigames, naomba mniwekee game hii: ','Hello mumbigames, please add this game: '],
+    ['Nunua token au fungua game ya kulipia','Buy tokens or unlock a paid game','Habari mumbigames, nataka kununua token / kufungua game ya kulipia.','Hello mumbigames, I want to buy tokens / unlock a paid game.'],
+    ['Weka emulator na mwongozo wa kucheza','Set up an emulator and play guide','Habari mumbigames, nahitaji msaada wa kuweka emulator.','Hello mumbigames, I need help setting up an emulator.'],
+    ['Uza au nunua kwenye Duka la wachezaji','Sell or buy in the players\' shop','Habari mumbigames, nataka kuuza / kununua kwenye Duka.','Hello mumbigames, I want to sell / buy in the shop.'],
+    ['Nimesahau password au nina tatizo la akaunti','Forgot password or account problem','Habari mumbigames, nina tatizo la akaunti yangu.','Hello mumbigames, I have a problem with my account.'],
+    ['Ripoti tatizo au toa maoni','Report a problem or give feedback','Habari mumbigames, nina tatizo / maoni: ','Hello mumbigames, I have a problem / feedback: ']
+  ];
+  if(b.dataset.l!==L){
+    b.innerHTML='<p class="hc-p">'+escapeHtml(T('mumbigames ni app ya wachezaji wa Tanzania: pakua games za simu na emulator, pata token, ongea na jumuiya, nunua na uza kwenye Duka, na jifunze Darasa. Chagua hapa chini nikusaidie moja kwa moja WhatsApp.','mumbigames is an app for players in Tanzania: download mobile and emulator games, earn tokens, chat with the community, buy and sell in the shop and learn in the Academy. Pick an option below and we will help you directly on WhatsApp.'))+'</p>'
+      +links.map(q=>'<a class="hc-a" target="_blank" rel="noopener" href="https://wa.me/255611153086?text='+encodeURIComponent(T(q[2],q[3]))+'">'+escapeHtml(T(q[0],q[1]))+'</a>').join('')
+      +'<p class="hc-p">'+escapeHtml(T('Maswali yanajibiwa moja kwa moja na timu yetu, kwa hiyo unaweza kuuliza kabla ya kulipia huduma yoyote.','Questions are answered directly by our team, so you can ask before paying for any service.'))+'</p>';
+    b.dataset.l=L;
+  }
+  const o=b.classList.toggle('show'); h.classList.toggle('open',o);
+  if(o) setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+function openLegal(kind){
+  const T=tvT;
+  const P={
+    privacy:[T('Sera ya Faragha','Privacy Policy'),[
+      ['Tunachokusanya','What we collect','Email, jina na taarifa za akaunti yako, pamoja na ujumbe na maoni unayotuma ndani ya app.','Your email, name and account details, plus the messages and feedback you send inside the app.'],
+      ['Tunavyotumia','How we use it','Kuendesha akaunti yako, kukupa games na huduma, kuzuia udanganyifu na kuboresha app.','To run your account, provide games and services, prevent fraud and improve the app.'],
+      ['Matangazo','Ads','App inaonyesha matangazo ya washirika (Adsterra) ambayo yanaweza kutumia vidakuzi vyao.','The app shows partner ads (Adsterra) which may use their own cookies.'],
+      ['Usalama','Security','Data huhifadhiwa kwa Firebase. Hatuuzi taarifa zako kwa mtu yeyote.','Data is stored with Firebase. We never sell your information.'],
+      ['Haki zako','Your rights','Unaweza kuomba kufutiwa akaunti au taarifa zako kwa kutuandikia email.','You can ask for your account or data to be deleted by emailing us.']]],
+    terms:[T('Masharti ya Huduma','Terms of Service'),[
+      ['Kutumia app','Using the app','Kwa kutumia mumbigames unakubali masharti haya. Tumia app kwa njia halali tu.','By using mumbigames you accept these terms. Use the app lawfully only.'],
+      ['Akaunti','Accounts','Linda password yako. Wewe ndiye unayewajibika kwa shughuli za akaunti yako.','Keep your password safe. You are responsible for activity on your account.'],
+      ['Token na malipo','Tokens & payments','Token na malipo yaliyokamilika hayarudishwi, isipokuwa pale hitilafu ni yetu.','Completed token purchases and payments are non-refundable unless the fault is ours.'],
+      ['Duka na maudhui','Shop & content','Wauzaji wanawajibika kwa matangazo yao. Tunaweza kuondoa maudhui yanayokiuka sheria au udanganyifu.','Sellers are responsible for their listings. We may remove unlawful or fraudulent content.'],
+      ['Mabadiliko','Changes','Tunaweza kubadilisha masharti haya wakati wowote; kuendelea kutumia app ni kukubali.','We may update these terms at any time; continued use means acceptance.']]]
+  }[kind];
+  document.getElementById('lgTitle').textContent=P[0];
+  document.getElementById('lgBody').innerHTML=P[1].map(q=>'<div class="mf-q"><b>'+escapeHtml(T(q[0],q[1]))+'</b><span>'+escapeHtml(T(q[2],q[3]))+'</span></div>').join('');
+  document.getElementById('legalOverlay').classList.add('show');
+}
+function closeLegal(){ document.getElementById('legalOverlay').classList.remove('show'); }
+
+function openAppInfo(){
+  const T = tvT;
+  document.getElementById('aiTitle').textContent = T('Kuhusu mumbigames','About mumbigames');
+  document.getElementById('aiSub').textContent = T('Games, jumuiya, Duka na zaidi — sehemu moja.','Games, community, a shop and more — all in one place.');
+  document.getElementById('aiClose').textContent = T('Funga','Close');
+  const items = [
+    ['🎮','Games za kupakua','Games',
+      'Pakua games za simu na emulator — bure na za kulipia. Kila game ina picha, maelezo, viungo vya kupakua na maoni.',
+      'Download mobile and emulator games — free and paid. Every game has pictures, a description, download links and feedback.'],
+    ['⚙️','Mwongozo wa kuweka game','Setup guide',
+      'Game zinazohitaji emulator zinakuja na hatua za kuweka, ili uweze kucheza bila kuchanganyikiwa.',
+      'Games that need an emulator come with setup steps so you can start playing without confusion.'],
+    ['🪙','Token','Tokens',
+      'Pata token kwa kutazama matangazo (matangazo 3 = token 15), zawadi ya kila siku na kuwaalika marafiki. Token zinatumika kufungua games na huduma.',
+      'Earn tokens by watching ads (3 ads = 15 tokens), a daily reward and inviting friends. Tokens unlock games and services.'],
+    ['💬','Chat ya jumuiya','Community chat',
+      'Ongea na wachezaji wengine, tuma picha na ujumbe wa sauti, jibu ujumbe, na uone ujumbe wako ukifika.',
+      'Talk with other players, send pictures and voice messages, reply to messages and see when yours is delivered.'],
+    ['🛍️','Duka la wachezaji','Players\' shop',
+      'Weka na ununue akaunti, vitu vya game na huduma. Kila tangazo hukaguliwa na admin kabla ya kuonekana.',
+      'List and buy accounts, game items and services. Every listing is reviewed by admin before it appears.'],
+    ['📺','TV','TV',
+      'Tazama chaneli rasmi za YouTube ndani ya app, na tangazo fupi kati ya vipindi.',
+      'Watch official YouTube channels inside the app, with a short ad now and then.'],
+    ['🏆','Mashindano','Tournaments',
+      'Jiunge au tengeneza mashindano na wachezaji wengine.',
+      'Join or create tournaments with other players.'],
+    ['🎓','Darasa la Mumbi','Mumbi Academy',
+      'Masomo mafupi yenye video, kama kupost TikTok ili upate likes, views na followers.',
+      'Short video lessons, like posting on TikTok to gain likes, views and followers.'],
+    ['🎫','Bet Tips','Bet Tips',
+      'Ushauri wa mechi kutoka kwa admin, ukiwa na nembo ya kampuni husika.',
+      'Match tips from the admin, shown with each bookmaker\'s logo.'],
+    ['🤖','Mumbigames AI','Mumbigames AI',
+      'Msaidizi wa kukuongoza: kupata game, kulipa, kuweka emulator na kuelewa kila sehemu ya app.',
+      'An assistant that helps you find games, pay, set up emulators and understand every part of the app.'],
+    ['🔔','Taarifa na maoni','Notifications & feedback',
+      'Pata taarifa za games mpya na habari za admin, bonyeza 👍, omba game unayoitaka na upate majibu kwenye Maoni.',
+      'Get alerts for new games and admin news, tap 👍, request a game you want and read replies under Feedback.'],
+    ['🌍','Lugha mbili','Two languages',
+      'App inapatikana kwa Kiswahili na Kiingereza. Badilisha wakati wowote kwenye menyu.',
+      'The app is available in Swahili and English. Switch any time from the menu.']
+  ];
+  let h = '<div class="ai-p">' + escapeHtml(T('mumbigames ni app ya wachezaji wa Tanzania na zaidi. Hapa chini ni kila unachoweza kufanya:','mumbigames is an app for players in Tanzania and beyond. Here is everything you can do:')) + '</div>';
+  items.forEach(function(it){
+    h += '<div class="ai-li"><div class="ai-e">' + it[0] + '</div><div><b>' + escapeHtml(T(it[1],it[2])) + '</b><span>' + escapeHtml(T(it[3],it[4])) + '</span></div></div>';
+  });
+  h += '<div class="ai-sec">' + escapeHtml(T('Jinsi inavyofanya kazi','How it works')) + '</div>'
+    + '<div class="ai-p">' + escapeHtml(T('1. Fungua akaunti (bure) na upate token za kuanzia.  2. Chagua game, soma maelezo kisha bonyeza kupakua.  3. Kama inahitaji emulator, fuata mwongozo wa kuweka.  4. Ongea na jumuiya, tazama TV, jifunze Darasa na ushiriki mashindano.','1. Create a free account and get starter tokens.  2. Pick a game, read the details and tap download.  3. If it needs an emulator, follow the setup guide.  4. Chat with the community, watch TV, learn in the Academy and join tournaments.')) + '</div>'
+    + '<div class="ai-p" style="text-align:center;opacity:.7;margin-top:10px;">© mumbigames ' + new Date().getFullYear() + '</div>';
+  document.getElementById('aiBody').innerHTML = h;
+  document.getElementById('aiBody').scrollTop = 0;
+  document.getElementById('appInfoOverlay').classList.add('show');
+}
+function closeAppInfo(){ document.getElementById('appInfoOverlay').classList.remove('show'); }
+try{ const y = document.getElementById('mgCopyYear'); if(y) y.textContent = new Date().getFullYear(); }catch(e){}
+
 function openAbout(){ document.getElementById('aboutOverlay').classList.add('show'); }
 function closeAbout(){ document.getElementById('aboutOverlay').classList.remove('show'); }
 
