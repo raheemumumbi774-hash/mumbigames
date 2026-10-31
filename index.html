@@ -1312,6 +1312,77 @@
   .mg-foot2 a.hc-a{display:block;font-size:11.5px;font-weight:300;color:#cfd6e6;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:.5px;margin:0 0 11px;animation:none;text-shadow:none;}
   .mg-foot2 .mf-links a,.mg-foot2 .mf-mail,.mg-foot2 .mf-help{font-size:11.5px !important;font-weight:300 !important;}
   .mg-copy .mg-cp{font-size:11px !important;font-weight:400 !important;letter-spacing:1.2px !important;}
+
+  .rw-box{text-align:center;border:1px solid rgba(255,196,60,.35);background:linear-gradient(180deg,#1d1a2e,#12121c);box-shadow:0 0 40px rgba(255,190,50,.12);}
+  .rw-hero{position:relative;height:84px;display:flex;align-items:center;justify-content:center;}
+  .rw-gift{font-size:54px;position:relative;z-index:2;animation:rwBob 2.4s ease-in-out infinite;}
+  .rw-glow{position:absolute;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,70,.45),transparent 70%);animation:rwPulse 2.4s ease-in-out infinite;}
+  @keyframes rwBob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-6px) rotate(4deg)}}
+  @keyframes rwPulse{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.1)}}
+  .rw-t{font-size:17px;font-weight:800;margin:6px 0 6px;color:#ffd466;}
+  .rw-p{font-size:12.5px;line-height:1.65;color:var(--text);opacity:.88;margin:0 6px 12px;}
+  .rw-tok{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:30px;background:rgba(255,190,50,.12);border:1px solid rgba(255,190,50,.4);margin-bottom:14px;font-size:18px;}
+  .rw-tok b{color:#ffd466;}
+  .rw-go{width:100%;background:linear-gradient(135deg,#ffc83c,#ff9a2e);color:#1a1200;font-weight:800;border:none;}
+  .rw-later{margin-top:10px;font-size:11.5px;color:var(--sub);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  .rw-games{max-height:56vh;overflow-y:auto;text-align:left;padding:2px;}
+  .rw-g{display:flex;gap:11px;align-items:center;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:8px;margin-bottom:9px;}
+  .rw-gi{flex:0 0 64px;width:64px;height:64px;border-radius:11px;background:#222 center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:24px;}
+  .rw-gn{flex:1;min-width:0;}
+  .rw-gn b{display:block;font-size:13px;word-break:break-word;}
+  .rw-gn span{font-size:11px;color:var(--sub);text-decoration:line-through;}
+  .rw-gb{flex:none;padding:8px 12px;border-radius:10px;border:none;background:linear-gradient(135deg,#ffc83c,#ff9a2e);color:#1a1200;font-weight:800;font-size:11.5px;cursor:pointer;}
+  .rw-gb:disabled{opacity:.5;}
+
+  .overlay.rw-center{align-items:center;justify-content:center;padding:18px;}
+  .rw-box{width:100%;max-width:300px !important;padding:16px 18px 14px !important;border-radius:20px !important;background:radial-gradient(120% 90% at 50% 0%,#3a2a0e 0%,#1a1830 55%,#12121c 100%) !important;border:1px solid rgba(255,200,80,.45) !important;animation:rwPop .35s cubic-bezier(.2,1.2,.4,1);}
+  @keyframes rwPop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
+  .rw-hero{height:66px !important;}
+  .rw-gift{font-size:42px !important;}
+  .rw-glow{width:90px !important;height:90px !important;}
+  .rw-t{font-size:15px !important;}
+  .rw-p{font-size:12px !important;margin:0 0 10px !important;}
+  .rw-tok{font-size:15px !important;padding:4px 14px !important;margin-bottom:12px !important;}
+  .rw-go{padding:11px !important;font-size:13px !important;border-radius:12px !important;}
+  .rw-games{max-height:none;overflow:visible;}
+  .rw-g{background:linear-gradient(135deg,rgba(255,200,80,.10),rgba(255,255,255,.03)) !important;border:1px solid rgba(255,200,80,.25) !important;}
+  .rw-gi{flex:0 0 72px !important;width:72px !important;height:72px !important;border-radius:12px !important;box-shadow:0 2px 10px rgba(0,0,0,.4);}
+  .rw-gn span{display:inline-block;margin-right:6px;}
+  .rw-gn em{font-style:normal;font-size:10px;font-weight:800;color:#1a1200;background:#4ade80;border-radius:8px;padding:2px 7px;}
+
+  .rw-box{max-width:340px !important;padding:22px 22px 18px !important;}
+  .rw-hero{height:84px !important;}
+  .rw-gift{font-size:56px !important;display:inline-block;transform-origin:50% 90%;animation:rwShake 1.8s ease-in-out infinite !important;}
+  .rw-glow{width:120px !important;height:120px !important;}
+  .rw-t{font-size:17px !important;}
+  .rw-p{font-size:13px !important;}
+  .rw-tok{font-size:17px !important;}
+  .rw-go{padding:13px !important;font-size:14px !important;}
+  @keyframes rwShake{0%,55%,100%{transform:rotate(0) scale(1)}8%{transform:rotate(-14deg) scale(1.08)}16%{transform:rotate(12deg) scale(1.08)}24%{transform:rotate(-10deg)}32%{transform:rotate(8deg)}40%{transform:rotate(-4deg)}48%{transform:rotate(2deg)}}
+
+  .fp-box{position:relative;width:100%;max-width:330px;border-radius:24px;padding:26px 20px 20px;text-align:center;background:linear-gradient(160deg,rgba(124,58,237,.28),rgba(236,72,153,.14) 55%,rgba(20,18,36,.96)),#15132a;border:1px solid rgba(190,140,255,.35);box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 40px rgba(168,85,247,.18);animation:rwPop .3s ease-out;}
+  .fp-x{position:absolute;top:10px;right:14px;font-size:15px;color:var(--sub);cursor:pointer;padding:4px;}
+  .fp-orb{width:62px;height:62px;margin:-6px auto 10px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8b5cf6,#ec4899);box-shadow:0 6px 24px rgba(168,85,247,.55);}
+  .fp-t{font-size:17px;font-weight:800;margin:0 0 6px;}
+  .fp-p{font-size:12px;line-height:1.6;color:var(--sub);margin:0 4px 14px;}
+  .fp-in{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:14px;border:1px solid rgba(190,140,255,.3);background:rgba(0,0,0,.3);color:var(--text);font-size:14px;outline:none;margin-bottom:10px;text-align:left;}
+  .fp-in:focus{border-color:#c084fc;box-shadow:0 0 0 3px rgba(192,132,252,.2);}
+  .fp-btn{width:100%;padding:13px;border:none;border-radius:14px;font-weight:800;font-size:13.5px;color:#fff;cursor:pointer;background:linear-gradient(135deg,#8b5cf6,#ec4899);box-shadow:0 6px 20px rgba(168,85,247,.4);}
+  .fp-btn:disabled{opacity:.55;}
+  .fp-msg{min-height:16px;font-size:11.5px;line-height:1.5;margin:0 0 8px;}
+  .fp-link{display:inline-block;margin-top:12px;font-size:11.5px;color:#c4a3ff;text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
+  .fp-steps{text-align:left;font-size:12px;line-height:1.75;color:var(--text);opacity:.92;background:rgba(0,0,0,.25);border-radius:14px;padding:10px 12px;margin-bottom:12px;}
+  .fp-mail{font-weight:800;color:#f0abfc;word-break:break-all;}
+
+  .fp-box{background:radial-gradient(120% 90% at 50% 0%,#3a2a0e 0%,#1a1830 55%,#12121c 100%) !important;border:1px solid rgba(255,200,80,.45) !important;box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 40px rgba(245,166,35,.15) !important;}
+  .fp-orb{background:linear-gradient(135deg,#ffc83c,#f5a623) !important;box-shadow:0 6px 24px rgba(245,166,35,.5) !important;}
+  .fp-orb svg{stroke:#1a1200 !important;}
+  .fp-orb svg circle{fill:#1a1200 !important;}
+  .fp-btn{background:linear-gradient(135deg,#ffc83c,#ff9a2e) !important;color:#1a1200 !important;box-shadow:0 6px 20px rgba(245,166,35,.35) !important;}
+  .fp-in{border:1px solid rgba(255,200,80,.3) !important;}
+  .fp-in:focus{border-color:#f5a623 !important;box-shadow:0 0 0 3px rgba(245,166,35,.2) !important;}
+  .fp-link{color:#f5a623 !important;}
+  .fp-mail{color:#ffd466 !important;}
 </style>
 </head>
 <body>
@@ -1421,6 +1492,24 @@
 </div>
 </div>
 
+<div class="overlay rw-center" id="fpOverlay" onclick="if(event.target===this) closeForgot()">
+  <div class="fp-box">
+    <div class="fp-x" onclick="closeForgot()">✕</div>
+    <div class="fp-orb"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><circle cx="12" cy="15.5" r="1.2" fill="#fff"/></svg></div>
+    <h3 class="fp-t" id="fpT"></h3>
+    <div id="fpBody"></div>
+  </div>
+</div>
+<div class="overlay rw-center" id="rwOverlay" onclick="if(event.target===this) closeReward()">
+  <div class="modal rw-box">
+    <div class="rw-hero"><div class="rw-glow"></div><div class="rw-gift">🎁</div></div>
+    <h3 class="rw-t" id="rwT"></h3>
+    <p class="rw-p" id="rwP"></p>
+    <div class="rw-tok"><span>🪙</span><b id="rwTok">500</b></div>
+    <button class="btn rw-go" id="rwGo" onclick="rewardContinue()"></button>
+    <div class="rw-later" id="rwLater" onclick="closeReward()"></div>
+  </div>
+</div>
 <div class="overlay" id="aboutOverlay" onclick="if(event.target===this) closeAbout()">
   <div class="modal">
     <div class="ab-head">
@@ -2336,6 +2425,7 @@ function loadGames(){
     // reach the public list, banners, trending, search, or deep links —
     // they're simply left out of the `games` array from this point on.
     games = snap.docs.map(d=>d.data()).filter(g=>!g.hidden);
+    try{ if(window._rdState) renderRedeemSection(window._rdState[0], window._rdState[1]); }catch(e){}
     sortGamesAlphabetically();
     checkNewGameNotification();
     render();
@@ -8906,7 +8996,107 @@ function authErrorMessage(e){
 
 // ---- Umesahau password ----
 function pwEsc(v){ return escapeHtml(v||''); }
-function openPwHelp(){
+
+// ---- Umesahau password: kibango (popup) ----
+var fpEmail='', fpCode='', fpCool=0, fpTimer=null;
+function fpSet(tSw,tEn,html){ document.getElementById('fpT').textContent = tvT(tSw,tEn); document.getElementById('fpBody').innerHTML = html; }
+function fpMsg(t,ok){ const m=document.getElementById('fpMsg'); if(m){ m.style.color = ok?'#4ade80':'#ff6b8a'; m.textContent=t; } }
+function openForgot(){
+  const em = ((document.getElementById('authEmail')||{}).value||'').trim();
+  fpStep1(em);
+  document.getElementById('fpOverlay').classList.add('show');
+}
+function closeForgot(){ document.getElementById('fpOverlay').classList.remove('show'); }
+function fpStep1(email){
+  fpSet('Umesahau password?','Forgot password?', `
+    <p class="fp-p">${pwEsc(tvT('Andika email ya akaunti yako. Tutakutumia ujumbe wenye link ya kuweka password mpya.','Enter your account email. We will send you a message with a link to set a new password.'))}</p>
+    <input type="email" id="fpEm" class="fp-in" placeholder="${pwEsc(tvT('Email yako','Your email'))}" value="${pwEsc(email||'')}" autocomplete="email">
+    <div class="fp-msg" id="fpMsg"></div>
+    <button class="fp-btn" id="fpSend" onclick="fpSendMail()">${pwEsc(tvT('Tuma ujumbe','Send message'))}</button>`);
+}
+async function fpSendMail(resend){
+  const em = resend ? fpEmail : document.getElementById('fpEm').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ fpMsg(tvT('Andika email sahihi.','Enter a valid email.')); return; }
+  const btn = document.getElementById(resend?'fpResend':'fpSend'); if(btn){ btn.disabled = true; }
+  try{
+    await auth.sendPasswordResetEmail(em);
+    fpEmail = em; fpStep2();
+  }catch(e){
+    console.error(e);
+    if(btn) btn.disabled = false;
+    const c = e && e.code;
+    fpMsg(c==='auth/invalid-email' ? tvT('Email si sahihi.','Invalid email.')
+      : c==='auth/user-not-found' ? tvT('Hakuna akaunti yenye email hii.','No account with this email.')
+      : c==='auth/too-many-requests' ? tvT('Umejaribu mara nyingi. Subiri dakika chache.','Too many attempts. Wait a few minutes.')
+      : c==='auth/network-request-failed' ? tvT('Hakuna mtandao. Jaribu tena.','No connection. Try again.')
+      : tvT('Imeshindwa kutuma. Jaribu tena.','Could not send. Try again.'));
+  }
+}
+function fpStep2(){
+  fpSet('Angalia email yako','Check your email', `
+    <p class="fp-p" style="margin-bottom:10px;">${pwEsc(tvT('Tumetuma ujumbe kwenda','We sent a message to'))}<br><span class="fp-mail">${pwEsc(fpEmail)}</span></p>
+    <div class="fp-steps">1. ${pwEsc(tvT('Fungua email yako (angalia pia Spam).','Open your email (check Spam too).'))}<br>2. ${pwEsc(tvT('Bonyeza link ya kuweka password mpya.','Tap the link to set a new password.'))}<br>3. ${pwEsc(tvT('Weka password mpya, kisha rudi hapa uingie.','Set the new password, then come back here to log in.'))}</div>
+    <a class="fp-btn" style="display:block;text-decoration:none;box-sizing:border-box;" href="https://mail.google.com/" target="_blank" rel="noopener">${pwEsc(tvT('Fungua Gmail','Open Gmail'))}</a>
+    <div class="fp-msg" id="fpMsg" style="margin-top:10px;"></div>
+    <button class="fp-btn" id="fpResend" style="background:rgba(255,255,255,.08) !important;color:var(--text) !important;box-shadow:none !important;" onclick="fpSendMail(true)">${pwEsc(tvT('Tuma tena','Send again'))}</button>
+    <div><span class="fp-link" onclick="fpStep3Code()">${pwEsc(tvT('Nina code / link — weka hapa','I have the code / link — paste here'))}</span></div>`);
+  fpCooldown();
+}
+function fpCooldown(){
+  const b = document.getElementById('fpResend'); if(!b) return;
+  fpCool = 30; b.disabled = true; clearInterval(fpTimer);
+  const lbl = tvT('Tuma tena','Send again');
+  fpTimer = setInterval(function(){
+    const bb = document.getElementById('fpResend');
+    if(!bb){ clearInterval(fpTimer); return; }
+    fpCool--; if(fpCool<=0){ clearInterval(fpTimer); bb.disabled=false; bb.textContent=lbl; } else bb.textContent = lbl + ' (' + fpCool + ')';
+  },1000);
+  b.textContent = lbl + ' (30)';
+}
+function fpStep3Code(){
+  fpSet('Weka code','Enter code', `
+    <p class="fp-p">${pwEsc(tvT('Nakili link nzima kutoka kwenye email na uibandike hapa.','Copy the whole link from the email and paste it here.'))}</p>
+    <input type="text" id="fpCodeIn" class="fp-in" placeholder="${pwEsc(tvT('Bandika link / code','Paste link / code'))}" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="fp-msg" id="fpMsg"></div>
+    <button class="fp-btn" id="fpVer" onclick="fpVerify()">${pwEsc(tvT('Endelea','Continue'))}</button>
+    <div><span class="fp-link" onclick="fpStep2()">← ${pwEsc(tvT('Rudi','Back'))}</span></div>`);
+}
+async function fpVerify(){
+  const code = pwExtractCode(document.getElementById('fpCodeIn').value);
+  if(code.length < 10){ fpMsg(tvT('Bandika link au code kamili.','Paste the full link or code.')); return; }
+  const b = document.getElementById('fpVer'); b.disabled = true;
+  try{
+    fpEmail = await auth.verifyPasswordResetCode(code); fpCode = code; fpStep4();
+  }catch(e){
+    console.error(e); b.disabled = false;
+    fpMsg(tvT('Code si sahihi au imeisha muda. Omba nyingine.','Invalid or expired code. Request a new one.'));
+  }
+}
+function fpStep4(){
+  fpSet('Password mpya','New password', `
+    <p class="fp-p"><span class="fp-mail">${pwEsc(fpEmail)}</span></p>
+    <input type="password" id="fpN1" class="fp-in" placeholder="${pwEsc(tvT('Password mpya (angalau herufi 6)','New password (min 6 characters)'))}" autocomplete="new-password">
+    <input type="password" id="fpN2" class="fp-in" placeholder="${pwEsc(tvT('Rudia password mpya','Repeat new password'))}" autocomplete="new-password">
+    <div class="fp-msg" id="fpMsg"></div>
+    <button class="fp-btn" id="fpSave" onclick="fpSavePw()">${pwEsc(tvT('Badili password','Change password'))}</button>`);
+}
+async function fpSavePw(){
+  const a = document.getElementById('fpN1').value, b = document.getElementById('fpN2').value;
+  if(a.length < 6){ fpMsg(tvT('Password iwe angalau herufi 6.','Password must be at least 6 characters.')); return; }
+  if(a !== b){ fpMsg(tvT('Password hazifanani.','Passwords do not match.')); return; }
+  const btn = document.getElementById('fpSave'); btn.disabled = true;
+  try{ await auth.confirmPasswordReset(fpCode, a); }
+  catch(e){ console.error(e); btn.disabled=false; fpMsg(tvT('Imeshindwa. Link inaweza kuwa imeisha muda — omba nyingine.','Failed. The link may have expired — request a new one.')); return; }
+  let ok = true;
+  try{ await auth.signInWithEmailAndPassword(fpEmail, a); }catch(e){ ok = false; }
+  fpCode=''; 
+  fpSet('Imefanikiwa ✓','Success ✓', `
+    <p class="fp-p" style="font-size:13px;">${pwEsc(tvT('Password yako imebadilishwa.','Your password has been changed.'))}<br>${pwEsc(ok ? tvT('Umeingia kwenye akaunti yako.','You are now logged in.') : tvT('Sasa ingia kwa password mpya.','Now log in with your new password.'))}</p>
+    <button class="fp-btn" onclick="closeForgot()">${pwEsc(tvT('Sawa','OK'))}</button>`);
+}
+
+function openPwHelp(){ openForgot(); return; }
+function openPwHelpOld(){
   const em = (document.getElementById('authEmail')||{}).value || '';
   if(PW_RESET_API) pwA1(em.trim()); else renderPwHelpStep1(em.trim());
   pwMount();
@@ -9207,6 +9397,7 @@ try{
         const inviteBlock = document.getElementById('inviteFriendsBlock');
         if(inviteBlock) inviteBlock.style.display = data.freeGameRedeemed ? 'none' : 'block';
         renderRedeemSection(points, !!data.freeGameRedeemed);
+        rwSchedule(points, !!data.freeGameRedeemed);
       }).catch(err=>console.error(err));
       loadMyGames(user.uid);
     } else {
@@ -9324,6 +9515,7 @@ function shareReferralLink(){
 const POINTS_REQUIRED = 500;
 
 function renderRedeemSection(points, alreadyRedeemed){
+  window._rdState = [points, alreadyRedeemed];
   const wrap = document.getElementById('redeemSection');
   const list = document.getElementById('redeemGamesList');
   if(alreadyRedeemed){
@@ -9335,18 +9527,64 @@ function renderRedeemSection(points, alreadyRedeemed){
     wrap.style.display = 'none';
     return;
   }
-  const paidGames = games.filter(g => g.paid);
+  const paidGames = games.filter(g => g.paid && !g.tokenLocked);
   if(paidGames.length === 0){
     wrap.style.display = 'none';
     return;
   }
   wrap.style.display = 'block';
-  list.innerHTML = paidGames.map(g => `
-    <div class="dl-item" style="cursor:pointer;" onclick='redeemPointsForGame(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
-      <span class="dl-icon">🎁</span>
-      <span class="dl-name">${escapeHtml(g.name)} <span style="color:var(--sub);">(TZS ${escapeHtml(g.price||'0')})</span></span>
-    </div>`).join('');
+  list.innerHTML = '<div class="rw-games">' + rwGameCards(paidGames) + '</div>';
 }
+
+function rwFindGame(id){ return games.find(g => String(g.id) === String(id)); }
+function rwGameCards(arr){
+  return arr.map(g => {
+    const img = g.image ? "background-image:url('" + escapeHtml(mgImg(g.image,160)).replace(/'/g,'%27') + "')" : '';
+    return '<div class="rw-g"><div class="rw-gi" style="' + img + '">' + (g.image ? '' : '🎮') + '</div>'
+      + '<div class="rw-gn"><b>' + escapeHtml(g.name) + '</b><span>TZS ' + escapeHtml(g.price||'0') + '</span><em>' + escapeHtml(tvT('BURE','FREE')) + '</em></div>'
+      + '<button class="rw-gb" onclick="redeemPointsForGame(\'' + escapeHtml(String(g.id)).replace(/'/g,'') + '\',this)">' + escapeHtml(tvT('Chukua bure','Get free')) + '</button></div>';
+  }).join('');
+}
+
+// ---- Ujumbe wa zawadi: unaonekana mtu akifikisha token 500+ ----
+function rwSchedule(points, redeemed){
+  // subiri games zipakie kisha sekunde 5 za utulivu, ndipo kiboksi kitokee
+  if(window._rwTimer) return;
+  let waited = 0;
+  window._rwTimer = setInterval(function(){
+    waited += 500;
+    if(games.length || waited >= 15000){
+      clearInterval(window._rwTimer);
+      setTimeout(function(){ window._rwTimer = null; maybeShowReward(points, redeemed); }, 5000);
+    }
+  }, 500);
+}
+function maybeShowReward(points, redeemed){
+  try{
+    if(redeemed || points < POINTS_REQUIRED) return;
+    if(!games.some(g => g.paid && !g.tokenLocked)) return;
+    if(sessionStorage.getItem('mg_rw_seen')) return;
+    sessionStorage.setItem('mg_rw_seen','1');
+  }catch(e){}
+  showRewardPopup(points);
+}
+function showRewardPopup(points){
+  const T = tvT;
+  document.getElementById('rwT').textContent = T('Hongera! Zawadi yako iko tayari','Congratulations! Your reward is ready');
+  document.getElementById('rwP').textContent = T('Umefikisha token 500. Sasa unaweza kuchukua game moja ya kulipia BURE, mara moja kwa kila akaunti.','You have reached 500 tokens. You can now take one paid game for FREE, once per account.');
+  document.getElementById('rwTok').textContent = points;
+  document.getElementById('rwGo').textContent = T('Endelea','Continue');
+  document.getElementById('rwLater').textContent = T('Baadaye','Later');
+  document.getElementById('rwOverlay').classList.add('show');
+}
+function rewardContinue(){
+  closeReward();
+  try{ showProfile(); switchProfileTab('promo'); }catch(e){ console.error(e); }
+  setTimeout(function(){
+    try{ const el=document.getElementById('redeemSection'); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+  }, 800);
+}
+function closeReward(){ document.getElementById('rwOverlay').classList.remove('show'); }
 
 async function redeemReferralCode(){
   if(!auth.currentUser){ return; }
@@ -9389,29 +9627,32 @@ async function redeemReferralCode(){
   }
 }
 
-async function redeemPointsForGame(g){
-  if(!auth.currentUser) return;
-  if(!confirm('Tumia token 500 kupata "' + g.name + '" bure? (Fursa hii ni mara moja tu kwa kila akaunti)')) return;
+async function redeemPointsForGame(gid, btn){
+  const g = rwFindGame(gid);
+  if(!g || g.tokenLocked || !auth.currentUser) return;
+  if(!confirm(tvT('Tumia token 500 kupata "' + g.name + '" bure? (Mara moja tu kwa kila akaunti)','Use 500 tokens to get "' + g.name + '" free? (Once per account)'))) return;
+  if(btn) btn.disabled = true;
   const uid = auth.currentUser.uid;
   const userRef = db.collection('users').doc(uid);
   const payRef = db.collection('paymentRequests').doc(paymentDocId(uid, g.id));
   try{
-    await db.runTransaction(async (tx)=>{
-      const doc = await tx.get(userRef);
-      const data = doc.exists ? doc.data() : {};
-      if(data.freeGameRedeemed) throw new Error('already-redeemed');
-      const points = data.points || 0;
-      if(points < POINTS_REQUIRED) throw new Error('not-enough-points');
-      tx.update(userRef, {points: points - POINTS_REQUIRED, freeGameRedeemed: true});
-      tx.set(payRef, {
-        uid, userEmail: auth.currentUser.email || '',
-        gameId: g.id, gameName: g.name, price: g.price || '0',
-        status: 'approved', redeemedWithPoints: true,
-        createdAt: Date.now(), updatedAt: Date.now()
-      });
+    const snap = await userRef.get();
+    const data = snap.exists ? snap.data() : {};
+    if(data.freeGameRedeemed) throw new Error('already-redeemed');
+    const points = parseInt(data.points) || 0;
+    if(points < POINTS_REQUIRED) throw new Error('not-enough-points');
+    const batch = db.batch();
+    batch.set(userRef, {points: points - POINTS_REQUIRED, freeGameRedeemed: true}, {merge:true});
+    batch.set(payRef, {
+      uid: uid, userEmail: auth.currentUser.email || '',
+      gameId: String(g.id), gameName: String(g.name || ''), price: String(g.price || '0'),
+      status: 'approved', redeemedWithPoints: true,
+      createdAt: Date.now(), updatedAt: Date.now()
     });
-    alert('Hongera! Umepata "' + g.name + '" bure kwa token zako. Fungua game hili kudownload.');
-    const newPoints = Math.max(0, (parseInt(document.getElementById('pointsCount').textContent,10)||0) - POINTS_REQUIRED);
+    await batch.commit();
+    closeReward();
+    alert(tvT('Hongera! Umepata "' + g.name + '" bure. Fungua game hii kupakua.','Congratulations! You got "' + g.name + '" free. Open the game to download.'));
+    const newPoints = Math.max(0, points - POINTS_REQUIRED);
     document.getElementById('pointsCount').textContent = newPoints;
     const headerCount = document.getElementById('headerTokenCount');
     if(headerCount) headerCount.textContent = newPoints;
@@ -9419,14 +9660,15 @@ async function redeemPointsForGame(g){
     if(inviteBlock) inviteBlock.style.display = 'none';
     renderRedeemSection(newPoints, true);
   }catch(e){
-    console.error(e);
+    console.error('redeem failed', e);
+    if(btn) btn.disabled = false;
     if(e.message === 'not-enough-points'){
-      alert('Token zako hazitoshi tena. Onesha upya ukurasa.');
+      alert(tvT('Token zako hazitoshi tena.','Not enough tokens.'));
     } else if(e.message === 'already-redeemed'){
-      alert('Tayari umeshatumia zawadi hii ya token 500 huko nyuma (mara moja tu kwa kila akaunti).');
-      renderRedeemSection(0, true);
+      alert(tvT('Tayari umeshatumia zawadi hii (mara moja tu kwa kila akaunti).','You already used this reward (once per account).'));
+      closeReward(); renderRedeemSection(0, true);
     } else {
-      alert('Imeshindwa. Jaribu tena.');
+      alert(tvT('Imeshindwa. Jaribu tena.','Failed. Try again.') + ' (' + ((e && (e.code||e.message)) || '?') + ')');
     }
   }
 }
