@@ -59,7 +59,7 @@
     const okType = /^image\/(jpeg|png|webp|gif)$/i.test(file.type || '');
     if(okType && file.size <= 1.2*1024*1024) return file;
     const L = await mgLoadImg(file);
-    try{ return await mgCanvasBlob(L.img, 1280, 0.82); } finally { URL.revokeObjectURL(L.url); }
+    try{ return await mgCanvasBlob(L.img, 1600, 0.88); } finally { URL.revokeObjectURL(L.url); }
   }
   async function mgImgbbPut(blob){
     const fd = new FormData(); fd.append('image', blob);
