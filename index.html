@@ -1385,6 +1385,11 @@
   .fp-in:focus{border-color:#f5a623 !important;box-shadow:0 0 0 3px rgba(245,166,35,.2) !important;}
   .fp-link{color:#f5a623 !important;}
   .fp-mail{color:#ffd466 !important;}
+
+  .g-thumb{background:linear-gradient(110deg,var(--panel-2) 30%,rgba(255,255,255,.06) 50%,var(--panel-2) 70%);background-size:200% 100%;animation:gThumbSh 1.4s linear 5;}
+  @keyframes gThumbSh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  .g-card{content-visibility:auto;contain-intrinsic-size:auto 330px;}
 </style>
 </head>
 <body>
@@ -2408,6 +2413,12 @@ function mgImg(u,w){
   try{ u=String(u||''); if(!/^https?:\/\//i.test(u) || u.indexOf('wsrv.nl')>-1 || /\.gif(\?|$)/i.test(u)) return u;
     return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&q=84&output=webp'; }catch(e){ return u; }
 }
+// Kazi zisizo za haraka (taarifa, chat, darasa) zinaanza baada ya skrini kuu kuonekana, ili app ifunguke kwa kasi.
+function mgLater(fn, ms){
+  const run = function(){ try{ fn(); }catch(e){ console.error(e); } };
+  const go = function(){ setTimeout(run, ms); };
+  if(document.readyState === 'complete') go(); else window.addEventListener('load', go, {once:true});
+}
 function loadGames(){
   const listEl = document.getElementById('gameList');
   // Fast path: paint instantly from the last known list on disk (e.g. right
@@ -2562,7 +2573,7 @@ function render(){
   document.getElementById('gameList').innerHTML = list.length ? list.map((g,gi)=>`
     <div class="g-card" onclick='handleDownload(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
       <div class="g-thumb">
-        ${g.image ? `<img src="${escapeHtml(mgImg(g.image,900))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="${gi<3?'eager':'lazy'}" ${gi<3?'fetchpriority="high" ':''}decoding="async">` : ''}
+        ${g.image ? `<img src="${escapeHtml(mgImg(g.image,900))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="eager" fetchpriority="${gi<3?'high':'low'}" decoding="async">` : ''}
         <span class="g-badge ${g.paid?'paid':''}">${g.paid?'🔒 Kulipia':'Bure'}</span>
       </div>
       <div class="g-body">
@@ -4012,7 +4023,7 @@ function markSocialSeen(type){
     if(badge) badge.style.display = 'none';
   }).catch(()=>{});
 }
-try{ loadSocialUpdates(); }catch(e){ console.error('loadSocialUpdates failed', e); }
+mgLater(function(){ try{ loadSocialUpdates(); }catch(e){ console.error('loadSocialUpdates failed', e); } }, 1200);
 
 const YT_CHANNEL = 'https://youtube.com/@mumbi_gaming';
 // ===================== mumbiBot / Mumbigames AI — ubongo mpya =====================
@@ -5771,7 +5782,7 @@ function acMarkSeen(){
   try{ const cur = Math.max(parseInt(localStorage.getItem('mg_acad_seen')||'0',10), Date.now()); localStorage.setItem('mg_acad_seen', String(cur)); }catch(e){}
   acNewCnt = 0; acBadgeSet(0);
 }
-try{ acWatchNew(); }catch(e){ console.error('acWatchNew failed', e); }
+mgLater(function(){ try{ acWatchNew(); }catch(e){ console.error('acWatchNew failed', e); } }, 3500);
 function showAcademy(){
   if(!auth.currentUser){ alert(currentLang==='en' ? 'Please log in first.' : 'Ingia kwenye akaunti yako kwanza.'); return; }
   hideAllViews();
@@ -8864,9 +8875,9 @@ function initSettings(){
 }
 initSettings();
 updateChangelogBadge();
-try{ listenNotices(); }catch(e){ console.error(e); }
 try{ handleResetLink(); }catch(e){ console.error(e); }
-startChatUnreadListener();
+mgLater(function(){ try{ listenNotices(); }catch(e){ console.error(e); } }, 2000);
+mgLater(function(){ try{ startChatUnreadListener(); }catch(e){ console.error(e); } }, 3000);
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(err => console.error('SW register failed', err));
