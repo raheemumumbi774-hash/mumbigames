@@ -356,6 +356,15 @@
   .gcard{padding:13px 13px !important;}
   .gcard .gc-icon{margin-bottom:8px !important;}
   #view-overview > div[style*="margin-bottom:20px"]{margin-bottom:6px !important;}
+
+  html{background:#0b0725;min-height:100%;}
+  body{min-height:100vh;min-height:100lvh;background-color:#0b0725 !important;}
+  #admBg{height:100lvh;min-height:100%;}
+  #app{padding-bottom:calc(24px + env(safe-area-inset-bottom));}
+  /* muonekano wa kipekee: kadi za kioo zenye mstari wa mwanga */
+  .gcard,.stat-card,.stat2,.mini-t{background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.02)) !important;border:1px solid rgba(190,160,255,.22) !important;box-shadow:0 8px 24px rgba(5,2,20,.35),inset 0 1px 0 rgba(255,255,255,.08) !important;backdrop-filter:blur(2px);}
+  .dash-header h1{background:linear-gradient(90deg,#ffd68a,#ff8fc7 55%,#b9a2ff);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;}
+  header{border-bottom:1px solid transparent !important;border-image:linear-gradient(90deg,transparent,rgba(255,170,80,.6),rgba(190,140,255,.6),transparent) 1;}
 </style>
 </head>
 <body>
@@ -382,7 +391,7 @@
         <small>Admin Dashboard</small>
       </div>
     </div>
-    <button class="icon-btn" onclick="logout()">⎋</button>
+    <button class="icon-btn" id="langBtn" onclick="admToggleLang()" style="font-size:12px;font-weight:800;letter-spacing:.5px;margin-right:6px;">EN</button><button class="icon-btn" onclick="logout()">⎋</button>
   </div>
 
   <div class="tabs">
@@ -2561,5 +2570,90 @@ function bg(){
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bg); else bg();
 })();
 </script>
+<script>
+/* ===== English / Kiswahili ya dashibodi ===== */
+(function(){
+var EN = {
+'+ Ongeza Link Nyingine':'+ Add Another Link','-- Chagua (si lazima) --':'-- Choose (optional) --','1 · Somo':'1 · Lesson','2 · Habari':'2 · Info','3 · Picha na video':'3 · Pictures and video',
+'Aina ya tangazo':'Ad type','Alama ya LIVE (inaonekana kwa watumiaji kwa muda huo)':'LIVE badge (visible to users for that time)','Banner zilizopo':'Existing banners','Bei (TZS)':'Price (TZS)','Bet Tips zilizopo':'Existing Bet Tips',
+'Bookmaker (mfano: BetPawa, 1Win)':'Bookmaker (e.g. BetPawa, 1Win)','Bure':'Free','Burudani':'Entertainment','Channel zilizopo':'Existing channels','Chapisha Bet Tip':'Publish Bet Tip','Chini ya wastani (chini ya 25 FPS, lag inawezekana)':'Below average (under 25 FPS, lag possible)',
+'Darasa':'Academy','Dini':'Religion','Downloads Leo':'Downloads Today','Futa Fomu':'Clear Form','Game inahitaji kusetiwa (mf. emulator)?':'Does the game need setup (e.g. emulator)?','Game ya kulipia?':'Paid game?','Games zote':'All games',
+'Ghairi':'Cancel','Ghairi Uhariri':'Cancel Editing','Habari':'News','Hapana':'No','Hifadhi Banner':'Save Banner','Hifadhi Channel':'Save Channel','Hifadhi Game':'Save Game','Hifadhi Mipangilio ya AI':'Save AI Settings','Hifadhi Topic':'Save Topic','Hifadhi Mabadiliko':'Save Changes',
+'Highlights za Mipira':'Football Highlights','Inatumika Offline?':'Works offline?','Ingia':'Log in','Jina la Game':'Game name','Jina la channel':'Channel name','Jina la mpokeaji':'Recipient name','Jina la mteja/kampuni':'Customer / company name',
+'Karibu Admin, dhibiti games na maombi hapa':'Welcome Admin, manage games and requests here','Kichwa (title)':'Title','Kichwa cha habari':'Headline','Kichwa cha tip (mfano: Wednesday Multi Bet)':'Tip title (e.g. Wednesday Multi Bet)','Kuedit Video (InShot)':'Video Editing (InShot)','Kundi':'Group',
+'Lebo/Badge (si lazima)':'Label/Badge (optional)','Link ya YouTube live':'YouTube live link','Link ya tangazo (mtu akibonyeza "Endelea", anaenda wapi)':'Ad link (where the user goes after tapping "Continue")','Link ya video (.mp4)':'Video link (.mp4)','Link ya video (YouTube au TikTok)':'Video link (YouTube or TikTok)',
+'Link za kudownload':'Download links','Live daima (masaa 24 kila siku)':'Always live (24 hours a day)','Live otomatiki (channel ikiwepo)':'Auto live (when channel is on)','Live — saa 1':'Live — 1 hour','Live — saa 24':'Live — 24 hours','Live — saa 3':'Live — 3 hours','Live — saa 6':'Live — 6 hours',
+'Maandishi ya button':'Button text','Maelekezo ya kuseti (hatua kwa hatua)':'Setup instructions (step by step)','Maelekezo ya malipo (games za kulipia)':'Payment instructions (paid games)','Maelezo':'Description','Maelezo (English - hiari)':'Description (English - optional)',
+'Maelezo kamili — kila nukta (.) huanzisha aya mpya yenye ▪':'Full description — each full stop (.) starts a new ▪ paragraph','Maelezo mafupi':'Short description','Maelezo mafupi (Kiswahili)':'Short description (Swahili)','Maelezo mafupi (si lazima)':'Short description (optional)','Maelezo mafupi (yanaonekana kwenye kadi)':'Short description (shown on the card)',
+'Malipo':'Payments','Maoni':'Feedback','Matangazo (Mwezi Huu)':'Ads (This Month)','Matangazo Leo':'Ads Today','Matangazo Yaliyopo':'Existing Ads','Michezo':'Sports','Michezo / Mpira':'Sports / Football','Mpangilio (namba ndogo inatangulia)':'Order (smaller number comes first)','Mpangilio (order)':'Order',
+'Mtandao':'Network','Muhtasari':'Overview','Muziki':'Music','Namba':'Number','Namba ya kimataifa':'International number','Ndiyo':'Yes','Nembo ya Bookmaker (si lazima)':'Bookmaker logo (optional)','Nembo ya channel':'Channel logo','Nimesahau password':'I forgot my password','Nyingine':'Other',
+'Nzuri (60 FPS+)':'Good (60 FPS+)','Odds jumla':'Total odds','Ondoa picha':'Remove picture','Ongeza Banner Mpya':'Add New Banner','Ongeza Channel ya TV':'Add TV Channel','Ongeza Tangazo':'Add Ad','Ongeza Topic':'Add Topic','Onyesha Tangazo Hili?':'Show this ad?','Onyesha kwenye Trending':'Show in Trending',
+'Picha (si lazima)':'Picture (optional)','Picha ya banner':'Banner picture','Picha ya jalada':'Cover picture','Picha ya kadi (hiari)':'Card picture (optional)','Picha ya tangazo':'Ad picture','Subiri dakika ngapi kabla AI haijaingilia':'Minutes to wait before the AI steps in',
+'Taarifa':'Notices','Taarifa Zilizotumwa':'Sent Notices','Tangazo':'Ad','Topics zilizopo':'Existing topics','Tumia':'Use','Uhakika unaohitajika (0.5 - 1.0)':'Required confidence (0.5 - 1.0)','Usiruhusu kufungua kwa Token (lazima alipe pesa tu)':'Do not allow unlocking with Tokens (must pay with money only)',
+'Utendaji Unaotarajiwa (Performance)':'Expected Performance','Video ya tangazo (dakika 1.5–2)':'Ad video (1.5–2 minutes)','Washa AI ya msaada':'Turn on support AI','Wastani (25-40 FPS)':'Average (25-40 FPS)','Watembeleaji':'Visitors','Watoto':'Kids','Weka Game':'Add Game','Weka Game Mpya':'Add New Game',
+'Weka password yako kuingia kwenye dashibodi':'Enter your password to open the dashboard','Yaliyokataliwa':'Rejected','Yaliyothibitishwa':'Approved','Yanasubiri uthibitisho':'Awaiting approval','Yote':'All','Zilizokataliwa':'Rejected','Zilizothibitishwa (zinaonekana kwa umma)':'Approved (visible to the public)',
+'Zima alama ya Live':'Turn off Live badge','Zinasubiri kibali':'Awaiting approval','▶ YouTube Mpya':'▶ New YouTube','♪ TikTok Mpya':'♪ New TikTok','🎓 Darasa la Mumbi':'🎓 Mumbi Academy','🎓 Link ya YouTube ya video ya kuseti':'🎓 YouTube link of the setup video','🎫 Weka Bet Tip Mpya':'🎫 Add New Bet Tip',
+'🎬🎵 Orodha ya movie au nyimbo ndani ya channel hii (si lazima)':'🎬🎵 List of movies or songs inside this channel (optional)','🎮 Maombi ya Games':'🎮 Game Requests','🏆 Tournaments Zote':'🏆 All Tournaments','💬 Maoni / Maswali ya Darasa':'💬 Academy Feedback / Questions','💬 Maoni ya Games':'💬 Game Feedback',
+'📢 Tangaza machapisho mapya':'📢 Announce new posts','📢 Weka Tangazo Jipya (Sponsored)':'📢 Add New Ad (Sponsored)','📣 Tuma Taarifa':'📣 Send Notice','📷 Chagua picha':'📷 Choose picture','🔔 Andika Taarifa Mpya':'🔔 Write New Notice','🔴 Hazijajibiwa':'🔴 Unanswered','🖼️ Picha':'🖼️ Picture',
+'🗑 Futa taarifa zote':'🗑 Delete all notices','🚩 Ripoti za matapeli':'🚩 Scam reports','🤖 AI ya Msaada (unapokosa muda wa kuangalia)':'🤖 Support AI (when you have no time to check)','🎬 Video':'🎬 Video',
+'Imeshindwa.':'Failed.','Imeshindwa. Jaribu tena.':'Failed. Try again.','Imefutwa.':'Deleted.','Kataa':'Reject','Tuma':'Send','Hifadhi':'Save','Futa':'Delete','Hariri':'Edit','Jibu...':'Reply...',
+'Hakuna mtandao. Angalia mtandao wako.':'No connection. Check your network.','Hitilafu ya kuunganisha. Jaribu tena.':'Connection error. Try again.','Andika jibu kwanza.':'Write a reply first.','Andika kichwa cha habari.':'Enter a headline.','Andika maelezo kamili.':'Enter the full description.','Andika maelezo.':'Enter a description.',
+'Alama ya Live imewashwa 🔴':'Live badge turned on 🔴','Alama ya Live imezimwa.':'Live badge turned off.','Game imefichwa — haitaonekana kwa watumiaji.':'Game hidden — users will not see it.','Hakuna za kufuta.':'Nothing to delete.','Futa taarifa hii?':'Delete this notice?','Futa topic hii?':'Delete this topic?',
+'Imeshindwa kufuta.':'Failed to delete.','Imeshindwa kufuta. Jaribu tena.':'Failed to delete. Try again.','Imeshindwa kuhifadhi.':'Failed to save.','Imeshindwa kuhifadhi. Angalia mtandao wako.':'Failed to save. Check your network.','Imeshindwa kuhifadhi. Jaribu tena.':'Failed to save. Try again.',
+'Imeshindwa kupakia games.':'Failed to load games.','Imeshindwa kupakia malipo.':'Failed to load payments.','Imeshindwa kupakia duka.':'Failed to load the shop.','Imeshindwa kupakia taarifa.':'Failed to load notices.','Imeshindwa kupakia topics.':'Failed to load topics.','Imeshindwa kupakia channel za TV.':'Failed to load TV channels.',
+'Imeshindwa kupakia picha. Jaribu tena.':'Failed to upload the picture. Try again.','Imeshindwa kutuma. Jaribu tena.':'Failed to send. Try again.','Imeshindwa kutuma jibu.':'Failed to send the reply.','Jibu limetumwa ✓':'Reply sent ✓','Inapakia picha...':'Uploading picture...','Inapakia video...':'Uploading video...','Inapakia nembo...':'Uploading logo...',
+'Subiri, picha inaendelea kupakia...':'Wait, the picture is still uploading...','Mipangilio ya AI imehifadhiwa.':'AI settings saved.','Ombi limekataliwa na kufutwa kabisa.':'Request rejected and permanently deleted.','Watumiaji wataona alama ya kipya sasa.':'Users will now see the new badge.',
+'Weka jina la game kwanza.':'Enter the game name first.','Weka jina la channel kwanza.':'Enter the channel name first.','Weka kichwa cha banner kwanza.':'Enter the banner title first.','Weka link ya picha kwanza.':'Enter the picture link first.','Weka password kwanza.':'Enter the password first.','Weka angalau Bookmaker na Booking Code.':'Enter at least the Bookmaker and Booking Code.',
+'Link lazima lianze na http:// au https://':'Link must start with http:// or https://','Link ya video si sahihi (YouTube au TikTok).':'Invalid video link (YouTube or TikTok).','Majaribio mengi mno. Subiri dakika chache kisha ujaribu tena.':'Too many attempts. Wait a few minutes and try again.',
+'Bado hujaongeza game yoyote. Bonyeza "+ Weka Game" kuanza.':'You have not added any game yet. Tap "+ Add Game" to start.','Hakuna ripoti kwa sasa':'No reports right now','🔒 Weka Imeuzwa':'🔒 Mark as Sold','🗑️ Futa Kabisa':'🗑️ Delete Permanently','⚠️ Hakuna picha za muamala zilizotumwa':'⚠️ No transaction screenshots were sent'
+};
+var PH = {'Maelezo mafupi ya game...':'Short description of the game...','Andika maelezo hapa...':'Write the description here...','mfano: 1000':'e.g. 1000','mfano: BetPawa':'e.g. BetPawa','mfano: Bofya Uendelee':'e.g. Tap to continue','mfano: Subway Rush':'e.g. Subway Rush','mfano: TANGAZA NA SISI HAPA':'e.g. ADVERTISE WITH US HERE','mfano: Mpya':'e.g. New','mfano: Wednesday Multi Bet':'e.g. Wednesday Multi Bet'};
+var WORDS = [[/Imeshindwa/g,'Failed'],[/Jaribu tena/g,'Try again'],[/Hakuna/g,'No'],[/Kulipia/g,'Paid'],[/Bure/g,'Free'],[/Futa/g,'Delete'],[/Hifadhi/g,'Save'],[/Weka/g,'Add'],[/Imefanikiwa/g,'Success'],[/Inapakia/g,'Loading'],[/Subiri/g,'Wait'],[/zimewekwa/g,'added'],[/Maoni/g,'Feedback'],[/Muhtasari/g,'Overview'],[/Leo/g,'Today'],[/Jina/g,'Name'],[/Bei/g,'Price']];
+var EN2 = {}; Object.keys(EN).forEach(function(k){ var ks = k.replace(/^[^A-Za-z0-9]+/,''); if(ks && ks !== k) EN2[ks] = EN[k].replace(/^[^A-Za-z0-9]+/,''); });
+var lang = 'sw', orig = new WeakMap(), busy = false;
+try{ lang = localStorage.getItem('adm-lang') === 'en' ? 'en' : 'sw'; }catch(e){}
+function tr(t){
+  var k = t.trim(); if(!k) return t;
+  var v = EN[k];
+  if(v === undefined){ var ks = k.replace(/^[^A-Za-z0-9]+/,''); if(ks && EN2[ks] !== undefined){ return t.replace(ks, EN2[ks]); } }
+  if(v === undefined){ var h = k; WORDS.forEach(function(w){ h = h.replace(w[0], w[1]); }); if(h === k) return t; v = h; }
+  return t.replace(k, v);
+}
+function skip(n){ var p = n.parentNode; if(!p) return true; var tg = p.nodeName; return tg==='SCRIPT'||tg==='STYLE'||tg==='TEXTAREA'||tg==='NOSCRIPT'; }
+function doNode(n){
+  if(n.nodeType === 3){
+    if(skip(n)) return;
+    var o = orig.get(n);
+    if(lang === 'en'){
+      if(o && n.data === o.en) return;
+      var en = tr(n.data); if(en !== n.data){ orig.set(n,{sw:n.data,en:en}); n.data = en; }
+    } else if(o){ if(n.data === o.en) n.data = o.sw; orig.delete(n); }
+  } else if(n.nodeType === 1){
+    if(n.nodeName==='SCRIPT'||n.nodeName==='STYLE') return;
+    if(n.placeholder !== undefined && n.getAttribute){
+      var ph = n.getAttribute('placeholder');
+      if(ph !== null){
+        if(lang === 'en'){ if(!n.dataset.phSw && PH[ph]){ n.dataset.phSw = ph; n.setAttribute('placeholder', PH[ph]); } }
+        else if(n.dataset.phSw){ n.setAttribute('placeholder', n.dataset.phSw); delete n.dataset.phSw; }
+      }
+    }
+    for(var c = n.firstChild; c; c = c.nextSibling) doNode(c);
+  }
+}
+function run(){ busy = true; try{ doNode(document.body); }catch(e){ console.error(e); } busy = false; }
+var tm = null;
+var mo = new MutationObserver(function(){ if(busy || lang !== 'en') return; clearTimeout(tm); tm = setTimeout(run, 60); });
+function btnLabel(){ var b = document.getElementById('langBtn'); if(b) b.textContent = lang === 'en' ? 'SW' : 'EN'; }
+window.admToggleLang = function(){
+  lang = lang === 'en' ? 'sw' : 'en';
+  try{ localStorage.setItem('adm-lang', lang); }catch(e){}
+  run(); btnLabel();
+};
+['alert','confirm','prompt'].forEach(function(f){ var o = window[f]; window[f] = function(m, d){ if(lang === 'en' && typeof m === 'string'){ var e = EN[m.trim()]; if(e === undefined){ var h = m; WORDS.forEach(function(w){ h = h.replace(w[0], w[1]); }); e = h; } m = e; } return o.call(window, m, d); }; });
+function init(){ btnLabel(); mo.observe(document.body,{childList:true,subtree:true,characterData:true}); if(lang === 'en') run(); }
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+
 </body>
 </html>
