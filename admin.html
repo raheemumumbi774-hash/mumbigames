@@ -382,71 +382,43 @@
 </div>
 
 <script>
-/* ===== Ulinzi wa picha v2: foleni (6 kwa wakati) + njia mbadala za haraka =====
-   Kila picha ina njia kadhaa (wsrv, images.weserv, moja kwa moja). Isipopakia ndani ya sekunde chache,
-   inabadilishwa kwenda njia inayofuata mara moja (bila kusubiri hitilafu), na mzunguko unarudiwa mara 2. */
+/* ===== Ulinzi wa picha v3 (nyepesi): picha zinapakia kama kawaida, zikichelewa au kushindwa zinajaribiwa njia nyingine ===== */
 (function(){
   try{
     var RE = /^(https?:)?\/\/(i\.ibb\.co|ibb\.co|i\.imgbb\.com|wsrv\.nl|images\.weserv\.nl)\//i;
-    var q = [], active = 0, MAX = 6;
     function orig(u){ try{ var m = u.match(/[?&]url=([^&]+)/); return m ? decodeURIComponent(m[1]) : u; }catch(e){ return u; } }
-    function wparam(u){ var m = u.match(/[?&]w=(\d+)/); return m ? m[1] : '900'; }
-    function cands(u){
-      var o = orig(u), w = wparam(u), b = '_r=' + Date.now().toString(36);
-      function prox(host){ return 'https://' + host + '/?url=' + encodeURIComponent(o) + '&w=' + w + '&q=82&output=webp'; }
-      var viaProxy = /(wsrv\.nl|weserv\.nl)/i.test(u);
-      var direct = o + (o.indexOf('?')>-1 ? '&' : '?') + b;
-      return viaProxy ? [u, o, prox('images.weserv.nl'), prox('wsrv.nl') + '&' + b, direct]
-                      : [u, prox('wsrv.nl'), o, prox('images.weserv.nl'), direct];
+    function w(u){ var m = u.match(/[?&]w=(\d+)/); return m ? m[1] : '800'; }
+    function alts(u){
+      var o = orig(u), b = '_r=' + Date.now().toString(36);
+      var via = /(wsrv\.nl|weserv\.nl)/i.test(u);
+      var p = 'https://images.weserv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=80&output=webp';
+      return via ? [o, p, o + (o.indexOf('?')>-1?'&':'?') + b] : ['https://wsrv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=80&output=webp', p, o + (o.indexOf('?')>-1?'&':'?') + b];
     }
-    function take(im){
-      im.dataset.q = im.getAttribute('src'); im._c = cands(im.dataset.q); im._i = 0; im._cy = 0;
-      im.removeAttribute('src'); q.push(im);
-      setTimeout(function(){ if(!im.getAttribute('src') && q.indexOf(im) < 0 && !im._busy){ im.src = im.dataset.q; } }, 30000);
-      pump();
+    function retry(im){
+      var n = parseInt(im.dataset.rt || '0', 10);
+      var a = im._alts || (im._alts = alts(im.getAttribute('src') || ''));
+      if(n >= a.length || !im.isConnected) return;
+      im.dataset.rt = String(n + 1);
+      setTimeout(function(){ if(im.isConnected && !(im.complete && im.naturalWidth > 0)) im.src = a[n]; }, 200);
     }
-    function score(im){ var r = im.getBoundingClientRect(), h = window.innerHeight || 800; return r.top < 0 ? -r.top * 2 : Math.max(0, r.top - h) + r.top * 0.01; }
-    function pump(){
-      while(active < MAX && q.length){
-        var bi = -1, bs = 1e12;
-        for(var i = q.length - 1; i >= 0; i--){
-          if(!q[i].isConnected){ q.splice(i,1); continue; }
-          var s = score(q[i]); if(s <= bs){ bs = s; bi = i; }
-        }
-        if(bi < 0) return;
-        start(q.splice(bi,1)[0]);
-      }
-    }
-    function start(im){
-      active++; im._busy = true;
-      var done = false, t = null;
-      var ms = im._i === 0 ? 4500 : 7000;
-      function release(){ active = Math.max(0, active-1); im._busy = false; pump(); }
-      function next(){
-        im._i++;
-        if(im._i >= im._c.length){
-          im._i = 0; im._cy++;
-          if(im._cy > 2 || !im.isConnected) return;
-          setTimeout(function(){ q.push(im); pump(); }, 12000);
-          return;
-        }
-        setTimeout(function(){ if(im.isConnected){ q.unshift(im); pump(); } }, 250);
-      }
-      function ok(){ if(done) return; done = true; clearTimeout(t); release(); }
-      function bad(){ if(done) return; done = true; clearTimeout(t); release(); next(); }
-      im.addEventListener('load', ok, {once:true});
-      im.addEventListener('error', bad, {once:true});
-      t = setTimeout(bad, ms);
-      im.src = im._c[im._i];
+    function watch(im){
+      if(im.dataset.gw) return; var s = im.getAttribute('src') || ''; if(!RE.test(s)) return;
+      im.dataset.gw = '1';
+      im.addEventListener('error', function(){ retry(im); });
+      // inachelewa sana (bila hitilafu): jaribu njia nyingine baada ya sekunde 6 ikiwa iko karibu na skrini
+      setTimeout(function(){
+        if(!im.isConnected || (im.complete && im.naturalWidth > 0)) return;
+        var r = im.getBoundingClientRect();
+        if(r.top < (window.innerHeight || 800) * 2.5 && r.bottom > -400) retry(im);
+      }, 6000);
     }
     function scan(n){
       if(n.nodeType !== 1) return;
-      if(n.nodeName === 'IMG'){ var s = n.getAttribute('src'); if(s && !n.dataset.q && RE.test(s)) take(n); return; }
-      var list = n.getElementsByTagName ? n.getElementsByTagName('img') : [];
-      for(var i = 0; i < list.length; i++){ var im = list[i], s2 = im.getAttribute('src'); if(s2 && !im.dataset.q && RE.test(s2)) take(im); }
+      if(n.nodeName === 'IMG'){ watch(n); return; }
+      var l = n.getElementsByTagName ? n.getElementsByTagName('img') : [];
+      for(var i = 0; i < l.length; i++) watch(l[i]);
     }
     new MutationObserver(function(ms){ ms.forEach(function(m){ m.addedNodes.forEach(scan); }); }).observe(document.documentElement,{childList:true,subtree:true});
-    window.addEventListener('scroll', function(){ if(q.length) pump(); }, {passive:true});
   }catch(e){ console.error('img guard', e); }
 })();
 </script>

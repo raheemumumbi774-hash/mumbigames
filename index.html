@@ -40,71 +40,43 @@
 <link rel="dns-prefetch" href="https://firestore.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
-/* ===== Ulinzi wa picha v2: foleni (6 kwa wakati) + njia mbadala za haraka =====
-   Kila picha ina njia kadhaa (wsrv, images.weserv, moja kwa moja). Isipopakia ndani ya sekunde chache,
-   inabadilishwa kwenda njia inayofuata mara moja (bila kusubiri hitilafu), na mzunguko unarudiwa mara 2. */
+/* ===== Ulinzi wa picha v3 (nyepesi): picha zinapakia kama kawaida, zikichelewa au kushindwa zinajaribiwa njia nyingine ===== */
 (function(){
   try{
     var RE = /^(https?:)?\/\/(i\.ibb\.co|ibb\.co|i\.imgbb\.com|wsrv\.nl|images\.weserv\.nl)\//i;
-    var q = [], active = 0, MAX = 6;
     function orig(u){ try{ var m = u.match(/[?&]url=([^&]+)/); return m ? decodeURIComponent(m[1]) : u; }catch(e){ return u; } }
-    function wparam(u){ var m = u.match(/[?&]w=(\d+)/); return m ? m[1] : '900'; }
-    function cands(u){
-      var o = orig(u), w = wparam(u), b = '_r=' + Date.now().toString(36);
-      function prox(host){ return 'https://' + host + '/?url=' + encodeURIComponent(o) + '&w=' + w + '&q=82&output=webp'; }
-      var viaProxy = /(wsrv\.nl|weserv\.nl)/i.test(u);
-      var direct = o + (o.indexOf('?')>-1 ? '&' : '?') + b;
-      return viaProxy ? [u, o, prox('images.weserv.nl'), prox('wsrv.nl') + '&' + b, direct]
-                      : [u, prox('wsrv.nl'), o, prox('images.weserv.nl'), direct];
+    function w(u){ var m = u.match(/[?&]w=(\d+)/); return m ? m[1] : '800'; }
+    function alts(u){
+      var o = orig(u), b = '_r=' + Date.now().toString(36);
+      var via = /(wsrv\.nl|weserv\.nl)/i.test(u);
+      var p = 'https://images.weserv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=80&output=webp';
+      return via ? [o, p, o + (o.indexOf('?')>-1?'&':'?') + b] : ['https://wsrv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=80&output=webp', p, o + (o.indexOf('?')>-1?'&':'?') + b];
     }
-    function take(im){
-      im.dataset.q = im.getAttribute('src'); im._c = cands(im.dataset.q); im._i = 0; im._cy = 0;
-      im.removeAttribute('src'); q.push(im);
-      setTimeout(function(){ if(!im.getAttribute('src') && q.indexOf(im) < 0 && !im._busy){ im.src = im.dataset.q; } }, 30000);
-      pump();
+    function retry(im){
+      var n = parseInt(im.dataset.rt || '0', 10);
+      var a = im._alts || (im._alts = alts(im.getAttribute('src') || ''));
+      if(n >= a.length || !im.isConnected) return;
+      im.dataset.rt = String(n + 1);
+      setTimeout(function(){ if(im.isConnected && !(im.complete && im.naturalWidth > 0)) im.src = a[n]; }, 200);
     }
-    function score(im){ var r = im.getBoundingClientRect(), h = window.innerHeight || 800; return r.top < 0 ? -r.top * 2 : Math.max(0, r.top - h) + r.top * 0.01; }
-    function pump(){
-      while(active < MAX && q.length){
-        var bi = -1, bs = 1e12;
-        for(var i = q.length - 1; i >= 0; i--){
-          if(!q[i].isConnected){ q.splice(i,1); continue; }
-          var s = score(q[i]); if(s <= bs){ bs = s; bi = i; }
-        }
-        if(bi < 0) return;
-        start(q.splice(bi,1)[0]);
-      }
-    }
-    function start(im){
-      active++; im._busy = true;
-      var done = false, t = null;
-      var ms = im._i === 0 ? 4500 : 7000;
-      function release(){ active = Math.max(0, active-1); im._busy = false; pump(); }
-      function next(){
-        im._i++;
-        if(im._i >= im._c.length){
-          im._i = 0; im._cy++;
-          if(im._cy > 2 || !im.isConnected) return;
-          setTimeout(function(){ q.push(im); pump(); }, 12000);
-          return;
-        }
-        setTimeout(function(){ if(im.isConnected){ q.unshift(im); pump(); } }, 250);
-      }
-      function ok(){ if(done) return; done = true; clearTimeout(t); release(); }
-      function bad(){ if(done) return; done = true; clearTimeout(t); release(); next(); }
-      im.addEventListener('load', ok, {once:true});
-      im.addEventListener('error', bad, {once:true});
-      t = setTimeout(bad, ms);
-      im.src = im._c[im._i];
+    function watch(im){
+      if(im.dataset.gw) return; var s = im.getAttribute('src') || ''; if(!RE.test(s)) return;
+      im.dataset.gw = '1';
+      im.addEventListener('error', function(){ retry(im); });
+      // inachelewa sana (bila hitilafu): jaribu njia nyingine baada ya sekunde 6 ikiwa iko karibu na skrini
+      setTimeout(function(){
+        if(!im.isConnected || (im.complete && im.naturalWidth > 0)) return;
+        var r = im.getBoundingClientRect();
+        if(r.top < (window.innerHeight || 800) * 2.5 && r.bottom > -400) retry(im);
+      }, 6000);
     }
     function scan(n){
       if(n.nodeType !== 1) return;
-      if(n.nodeName === 'IMG'){ var s = n.getAttribute('src'); if(s && !n.dataset.q && RE.test(s)) take(n); return; }
-      var list = n.getElementsByTagName ? n.getElementsByTagName('img') : [];
-      for(var i = 0; i < list.length; i++){ var im = list[i], s2 = im.getAttribute('src'); if(s2 && !im.dataset.q && RE.test(s2)) take(im); }
+      if(n.nodeName === 'IMG'){ watch(n); return; }
+      var l = n.getElementsByTagName ? n.getElementsByTagName('img') : [];
+      for(var i = 0; i < l.length; i++) watch(l[i]);
     }
     new MutationObserver(function(ms){ ms.forEach(function(m){ m.addedNodes.forEach(scan); }); }).observe(document.documentElement,{childList:true,subtree:true});
-    window.addEventListener('scroll', function(){ if(q.length) pump(); }, {passive:true});
   }catch(e){ console.error('img guard', e); }
 })();
 </script>
@@ -1547,7 +1519,7 @@
   <a class="mf-mail" href="mailto:raheemmumbi374@gmail.com">raheemmumbi374@gmail.com</a>
   <div class="mf-help" id="mfHelp" onclick="toggleHelp()">Help Center <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
   <div class="mf-helpbody" id="mfHelpBody"></div>
-  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.04-c</div></div>
+  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.04-d</div></div>
 </div>
 <div class="overlay" id="legalOverlay" onclick="if(event.target===this) closeLegal()">
   <div class="modal" style="max-width:480px;">
@@ -2481,7 +2453,7 @@ function tryOpenDeepLinkGame(){
 
 function mgImg(u,w){
   try{ u=String(u||''); if(!/^https?:\/\//i.test(u) || u.indexOf('wsrv.nl')>-1 || /\.gif(\?|$)/i.test(u)) return u;
-    return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&q=84&output=webp'; }catch(e){ return u; }
+    return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&q=78&output=webp'; }catch(e){ return u; }
 }
 // Kazi zisizo za haraka (taarifa, chat, darasa) zinaanza baada ya skrini kuu kuonekana, ili app ifunguke kwa kasi.
 function mgLater(fn, ms){
@@ -2643,7 +2615,7 @@ function render(){
   document.getElementById('gameList').innerHTML = list.length ? list.map((g,gi)=>`
     <div class="g-card" onclick='handleDownload(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
       <div class="g-thumb">
-        ${g.image ? `<img src="${escapeHtml(mgImg(g.image,900))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="eager" fetchpriority="${gi<3?'high':'low'}" decoding="async">` : ''}
+        ${g.image ? `<img src="${escapeHtml(mgImg(g.image,720))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="${gi<8?'eager':'lazy'}" ${gi<3?'fetchpriority="high" ':''}decoding="async">` : ''}
         <span class="g-badge ${g.paid?'paid':''}">${g.paid?'🔒 Kulipia':'Bure'}</span>
       </div>
       <div class="g-body">
@@ -5494,30 +5466,122 @@ function mgShowComeback(reward, days, total){
     '🎉', reward, total);
 }
 
-// ---- Ofa ya muda: token 100 bure, mara moja kwa kila akaunti ----
-const MG_PROMO = {id:'p20261104', start:Date.parse('2026-11-04T00:00:00+03:00'), end:Date.parse('2026-11-05T00:00:00+03:00'), tokens:100};
-async function mgPromoCheck(){
-  const now = Date.now();
-  if(!auth.currentUser || now < MG_PROMO.start || now >= MG_PROMO.end) return;
-  const ref = db.collection('users').doc(auth.currentUser.uid);
-  let got = 0, total = 0;
+// ---- Ofa ya muda: token 100 bure, mara moja kwa kila akaunti (anabonyeza "Chukua", token zinaongezwa papo hapo) ----
+const MG_PROMO = {id:'p20261104b', start:Date.parse('2026-11-04T00:00:00+03:00'), end:Date.parse('2026-11-05T00:00:00+03:00'), tokens:100};
+function mgSetTokens(n){
+  try{ const pc = document.getElementById('pointsCount'); if(pc) pc.textContent = n; }catch(e){}
+  try{ const hc = document.getElementById('headerTokenCount'); if(hc) hc.textContent = n; }catch(e){}
+}
+const MG_COIN_SVG = '<svg viewBox="0 0 100 100" width="100%" height="100%"><defs><radialGradient id="mgc1" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fff3b0"/><stop offset=".45" stop-color="#ffc83c"/><stop offset="1" stop-color="#c77a0a"/></radialGradient><linearGradient id="mgc2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe07a"/><stop offset="1" stop-color="#d98c1a"/></linearGradient></defs><circle cx="50" cy="50" r="46" fill="url(#mgc1)" stroke="#8a5200" stroke-width="3"/><circle cx="50" cy="50" r="36" fill="none" stroke="url(#mgc2)" stroke-width="3" stroke-dasharray="2 4"/><text x="50" y="64" text-anchor="middle" font-family="Baloo 2,Arial" font-weight="800" font-size="44" fill="#8a5200">M</text><path d="M24 30 Q34 18 50 16" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="4" stroke-linecap="round"/></svg>';
+function mgPromoCss(){
+  if(document.getElementById('pmCss')) return;
+  const st = document.createElement('style'); st.id = 'pmCss';
+  st.textContent = `
+  .pm-ov{position:fixed;inset:0;z-index:470;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(4,3,12,.78);animation:pmIn .25s ease-out;}
+  @keyframes pmIn{from{opacity:0}to{opacity:1}}
+  .pm-card{position:relative;width:100%;max-width:340px;border-radius:26px;padding:22px 20px 18px;text-align:center;overflow:hidden;background:radial-gradient(110% 70% at 50% 0%,#5a3a06 0%,#241a3c 55%,#12101f 100%);border:1px solid rgba(255,205,90,.55);box-shadow:0 20px 70px rgba(0,0,0,.7),0 0 50px rgba(255,180,40,.25);animation:rwPop .4s cubic-bezier(.2,1.3,.4,1);}
+  .pm-rays{position:absolute;left:50%;top:-40px;width:360px;height:360px;margin-left:-180px;background:conic-gradient(from 0deg,rgba(255,210,90,.0),rgba(255,210,90,.22),rgba(255,210,90,0) 12%,rgba(255,210,90,.22) 25%,rgba(255,210,90,0) 37%,rgba(255,210,90,.22) 50%,rgba(255,210,90,0) 62%,rgba(255,210,90,.22) 75%,rgba(255,210,90,0) 87%);border-radius:50%;animation:pmSpin 14s linear infinite;pointer-events:none;-webkit-mask-image:radial-gradient(circle,#000 25%,transparent 70%);mask-image:radial-gradient(circle,#000 25%,transparent 70%);}
+  @keyframes pmSpin{to{transform:rotate(360deg)}}
+  .pm-x{position:absolute;top:10px;right:14px;font-size:15px;color:#cbb98a;cursor:pointer;z-index:3;padding:4px;}
+  .pm-coin{position:relative;z-index:2;width:104px;height:104px;margin:2px auto 6px;filter:drop-shadow(0 8px 18px rgba(255,170,30,.55));animation:pmFlip 2.6s ease-in-out infinite;}
+  @keyframes pmFlip{0%,100%{transform:rotateY(0) translateY(0)}50%{transform:rotateY(180deg) translateY(-6px)}}
+  .pm-big{position:relative;z-index:2;font-size:46px;font-weight:900;line-height:1;background:linear-gradient(180deg,#fff6c4,#ffc83c 60%,#e08d10);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;text-shadow:none;margin:4px 0 2px;}
+  .pm-big small{font-size:17px;font-weight:800;margin-left:4px;}
+  .pm-t{position:relative;z-index:2;font-size:17px;font-weight:800;color:#fff;margin:2px 0 0;}
+  .pm-t2{position:relative;z-index:2;font-size:12.5px;font-weight:700;color:#ffd466;opacity:.9;margin:2px 0 10px;}
+  .pm-p{position:relative;z-index:2;font-size:12px;line-height:1.6;color:#e8e2f5;margin:0 4px 4px;}
+  .pm-p2{position:relative;z-index:2;font-size:11.5px;line-height:1.55;color:#b9b0cf;margin:0 4px 12px;}
+  .pm-cd{position:relative;z-index:2;display:inline-block;font-size:11px;font-weight:700;color:#ffd466;background:rgba(255,200,80,.12);border:1px solid rgba(255,200,80,.35);padding:4px 11px;border-radius:20px;margin-bottom:12px;}
+  .pm-btn{position:relative;z-index:2;overflow:hidden;width:100%;border:0;border-radius:15px;padding:14px;font-weight:900;font-size:15px;color:#2a1700;background:linear-gradient(180deg,#ffe27a,#f5a623 60%,#d98c1a);box-shadow:0 6px 22px rgba(245,166,35,.5);cursor:pointer;animation:dpBtn 1.8s ease-in-out infinite;}
+  .pm-btn:disabled{animation:none;opacity:.85;}
+  .pm-bal{position:relative;z-index:2;font-size:13px;color:#fff;margin:0 0 10px;}
+  .pm-bal b{color:#ffd466;font-size:20px;}
+  .pm-fx{position:absolute;left:0;right:0;top:-30px;z-index:1;pointer-events:none;height:100%;overflow:hidden;}
+  .pm-fx i{position:absolute;top:-24px;font-style:normal;font-size:20px;animation:pmFall 2.2s linear forwards;}
+  @keyframes pmFall{to{transform:translateY(420px) rotate(360deg);opacity:.2}}
+  `;
+  document.head.appendChild(st);
+}
+function mgPromoCd(){
+  const el = document.getElementById('pmCd'); if(!el) return;
+  const ms = MG_PROMO.end - Date.now();
+  if(ms <= 0){ el.textContent = 'Imeisha / Ended'; return; }
+  const h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000), s = Math.floor(ms%60000/1000);
+  el.textContent = '⏳ ' + String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0') + ' — Inaisha / Ends';
+}
+function mgPromoClose(){ const o = document.getElementById('pmOv'); if(o) o.remove(); clearInterval(window.__pmTimer); }
+function mgPromoShow(){
+  if(document.getElementById('pmOv')) return;
+  mgPromoCss();
+  const ov = document.createElement('div'); ov.className = 'pm-ov'; ov.id = 'pmOv';
+  ov.innerHTML = '<div class="pm-card"><div class="pm-rays"></div><div class="pm-x" onclick="mgPromoClose()">✕</div>'
+    + '<div class="pm-coin">' + MG_COIN_SVG + '</div>'
+    + '<div class="pm-big">+' + MG_PROMO.tokens + '<small>TOKEN</small></div>'
+    + '<div class="pm-t">Zawadi Maalum! 🎁</div><div class="pm-t2">Special Gift!</div>'
+    + '<div class="pm-p">Karibu! Chukua token ' + MG_PROMO.tokens + ' bure kwa ofa ya masaa 24 tu. Mara moja kwa kila akaunti.</div>'
+    + '<div class="pm-p2">Welcome! Claim ' + MG_PROMO.tokens + ' free tokens in this 24-hour offer. One time per account.</div>'
+    + '<div class="pm-cd" id="pmCd"></div>'
+    + '<button class="pm-btn" id="pmBtn" onclick="mgPromoClaim()">Chukua / Claim +' + MG_PROMO.tokens + ' 🪙</button></div>';
+  ov.addEventListener('click', function(e){ if(e.target === ov) mgPromoClose(); });
+  document.body.appendChild(ov);
+  mgPromoCd(); window.__pmTimer = setInterval(mgPromoCd, 1000);
+}
+async function mgPromoClaim(){
+  const btn = document.getElementById('pmBtn'); if(!btn || btn.disabled) return;
+  if(!auth.currentUser){ mgPromoClose(); return; }
+  if(Date.now() >= MG_PROMO.end){ btn.textContent = 'Imeisha / Ended'; btn.disabled = true; return; }
+  btn.disabled = true; btn.textContent = '… ';
+  const ref = db.collection('users').doc(auth.currentUser.uid), now = Date.now();
+  let total = 0, already = false;
   try{
     await db.runTransaction(async function(tx){
-      got = 0;
+      already = false;
       const snap = await tx.get(ref);
-      if(!snap.exists) return;
+      if(!snap.exists) throw new Error('no-user-doc');
       const u = snap.data();
-      if(u.promoClaimed && u.promoClaimed[MG_PROMO.id]) return;
+      if(u.promoClaimed && u.promoClaimed[MG_PROMO.id]){ already = true; total = parseInt(u.points,10) || 0; return; }
       total = Math.min(TOKEN_CAP, (parseInt(u.points,10) || 0) + MG_PROMO.tokens);
-      got = MG_PROMO.tokens;
       const pc = Object.assign({}, u.promoClaimed || {}); pc[MG_PROMO.id] = now;
       tx.set(ref, {points: total, promoClaimed: pc}, {merge:true});
     });
-    if(got) mgGiftPopup('promo', 'Zawadi Maalum! 🎁', 'Special Gift! 🎁',
-      'Hongera! Umepata token ' + got + ' bure kwa ofa ya muda mfupi. Zinapatikana mara moja tu kwa kila akaunti.',
-      'Congratulations! You got ' + got + ' free tokens from a limited-time offer. One time only per account.',
-      '🎁', got, total);
-  }catch(e){ console.error('promo', e); try{ if(!window.__promoErrShown){ window.__promoErrShown = true; showAppNotification('Ofa ya token 100', 'Imeshindwa: ' + ((e && (e.code||e.message)) || '?') + ' — The offer could not be added', '🎁', ''); } }catch(e2){} }
+    // thibitisha kutoka kwenye seva kisha onyesha salio halisi
+    try{ const fresh = await ref.get({source:'server'}); const fp = parseInt(fresh.data().points,10); if(!isNaN(fp)) total = fp; }catch(e){}
+    mgSetTokens(total);
+    const card = document.querySelector('#pmOv .pm-card');
+    if(already){
+      btn.textContent = 'Tayari umechukua / Already claimed ✓';
+      return;
+    }
+    if(card){
+      const fx = document.createElement('div'); fx.className = 'pm-fx';
+      for(let i = 0; i < 18; i++){ const c = document.createElement('i'); c.textContent = '🪙'; c.style.left = (Math.random()*92) + '%'; c.style.animationDelay = (Math.random()*0.9) + 's'; fx.appendChild(c); }
+      card.appendChild(fx);
+      const bal = document.createElement('div'); bal.className = 'pm-bal'; bal.innerHTML = 'Salio lako / Your balance: <b>' + total + '</b> 🪙';
+      btn.parentNode.insertBefore(bal, btn);
+    }
+    btn.textContent = '✅ Imeongezwa / Added +' + MG_PROMO.tokens;
+    setTimeout(mgPromoClose, 3200);
+  }catch(e){
+    console.error('promo claim', e);
+    btn.disabled = false; btn.textContent = 'Jaribu tena / Try again';
+    const code = (e && (e.code || e.message)) || '?';
+    let m = document.getElementById('pmErr');
+    if(!m){ m = document.createElement('div'); m.id = 'pmErr'; m.style.cssText = 'position:relative;z-index:2;font-size:11px;color:#ff8aa0;margin:8px 0 0;'; btn.parentNode.appendChild(m); }
+    m.textContent = 'Imeshindwa / Failed: ' + code;
+  }
+}
+async function mgPromoCheck(){
+  const now = Date.now();
+  if(!auth.currentUser || now < MG_PROMO.start || now >= MG_PROMO.end || window.__pmDismissed) return;
+  if(document.getElementById('pmOv')) return;
+  try{
+    const snap = await db.collection('users').doc(auth.currentUser.uid).get();
+    if(!snap.exists) return;
+    const u = snap.data();
+    if(u.promoClaimed && u.promoClaimed[MG_PROMO.id]) { window.__pmDismissed = true; return; }
+    window.__pmDismissed = true; // onyesha mara moja kwa kila kikao
+    mgPromoShow();
+  }catch(e){ console.error('promo check', e); }
 }
 setInterval(function(){ try{ mgPromoCheck(); }catch(e){} }, 60000);
 
