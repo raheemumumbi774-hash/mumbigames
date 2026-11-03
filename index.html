@@ -40,25 +40,27 @@
 <link rel="dns-prefetch" href="https://firestore.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
-/* ===== Ulinzi wa picha: foleni (4 kwa wakati) + jaribu tena + njia mbadala =====
-   imgbb ikipokea maombi mengi kwa pamoja inajibu picha ya "service unavailable".
-   Hapa picha zinapakiwa taratibu kwa foleni, zilizo karibu na skrini kwanza, na zikishindwa zinajaribiwa tena. */
+/* ===== Ulinzi wa picha v2: foleni (6 kwa wakati) + njia mbadala za haraka =====
+   Kila picha ina njia kadhaa (wsrv, images.weserv, moja kwa moja). Isipopakia ndani ya sekunde chache,
+   inabadilishwa kwenda njia inayofuata mara moja (bila kusubiri hitilafu), na mzunguko unarudiwa mara 2. */
 (function(){
   try{
-    var RE = /^(https?:)?\/\/(i\.ibb\.co|ibb\.co|i\.imgbb\.com|wsrv\.nl)\//i;
-    var q = [], active = 0, MAX = 4;
+    var RE = /^(https?:)?\/\/(i\.ibb\.co|ibb\.co|i\.imgbb\.com|wsrv\.nl|images\.weserv\.nl)\//i;
+    var q = [], active = 0, MAX = 6;
     function orig(u){ try{ var m = u.match(/[?&]url=([^&]+)/); return m ? decodeURIComponent(m[1]) : u; }catch(e){ return u; } }
-    function alt(u, n){
-      var o = orig(u), bust = '_r=' + Date.now().toString(36), w = 'https://wsrv.nl/?url=' + encodeURIComponent(o) + '&w=900&q=84&output=webp';
-      var direct = /wsrv\.nl/i.test(u) ? false : true;
-      if(n === 0) return direct ? w : o;
-      if(n === 1) return o + (o.indexOf('?')>-1?'&':'?') + bust;
-      return w + '&' + bust;
+    function wparam(u){ var m = u.match(/[?&]w=(\d+)/); return m ? m[1] : '900'; }
+    function cands(u){
+      var o = orig(u), w = wparam(u), b = '_r=' + Date.now().toString(36);
+      function prox(host){ return 'https://' + host + '/?url=' + encodeURIComponent(o) + '&w=' + w + '&q=82&output=webp'; }
+      var viaProxy = /(wsrv\.nl|weserv\.nl)/i.test(u);
+      var direct = o + (o.indexOf('?')>-1 ? '&' : '?') + b;
+      return viaProxy ? [u, o, prox('images.weserv.nl'), prox('wsrv.nl') + '&' + b, direct]
+                      : [u, prox('wsrv.nl'), o, prox('images.weserv.nl'), direct];
     }
     function take(im){
-      im.dataset.q = im.getAttribute('src'); im.dataset.qt = '0';
+      im.dataset.q = im.getAttribute('src'); im._c = cands(im.dataset.q); im._i = 0; im._cy = 0;
       im.removeAttribute('src'); q.push(im);
-      setTimeout(function(){ if(!im.getAttribute('src') && im.dataset.q && q.indexOf(im) < 0){ im.src = im.dataset.q; } }, 25000);
+      setTimeout(function(){ if(!im.getAttribute('src') && q.indexOf(im) < 0 && !im._busy){ im.src = im.dataset.q; } }, 30000);
       pump();
     }
     function score(im){ var r = im.getBoundingClientRect(), h = window.innerHeight || 800; return r.top < 0 ? -r.top * 2 : Math.max(0, r.top - h) + r.top * 0.01; }
@@ -74,19 +76,26 @@
       }
     }
     function start(im){
-      active++; var done = false, t = null;
-      function fin(ok, timeout){
-        if(done) return; done = true; clearTimeout(t); active = Math.max(0, active-1);
-        if(!ok && !timeout){
-          var n = parseInt(im.dataset.qt,10) || 0;
-          if(n < 3 && im.isConnected){ im.dataset.qt = String(n+1); im.dataset.q = alt(im.dataset.q, n); setTimeout(function(){ q.push(im); pump(); }, 700*(n+1)); }
+      active++; im._busy = true;
+      var done = false, t = null;
+      var ms = im._i === 0 ? 4500 : 7000;
+      function release(){ active = Math.max(0, active-1); im._busy = false; pump(); }
+      function next(){
+        im._i++;
+        if(im._i >= im._c.length){
+          im._i = 0; im._cy++;
+          if(im._cy > 2 || !im.isConnected) return;
+          setTimeout(function(){ q.push(im); pump(); }, 12000);
+          return;
         }
-        pump();
+        setTimeout(function(){ if(im.isConnected){ q.unshift(im); pump(); } }, 250);
       }
-      im.addEventListener('load', function(){ fin(true); }, {once:true});
-      im.addEventListener('error', function(){ fin(false); }, {once:true});
-      t = setTimeout(function(){ fin(false, true); }, 12000);
-      im.src = im.dataset.q;
+      function ok(){ if(done) return; done = true; clearTimeout(t); release(); }
+      function bad(){ if(done) return; done = true; clearTimeout(t); release(); next(); }
+      im.addEventListener('load', ok, {once:true});
+      im.addEventListener('error', bad, {once:true});
+      t = setTimeout(bad, ms);
+      im.src = im._c[im._i];
     }
     function scan(n){
       if(n.nodeType !== 1) return;
@@ -1538,7 +1547,7 @@
   <a class="mf-mail" href="mailto:raheemmumbi374@gmail.com">raheemmumbi374@gmail.com</a>
   <div class="mf-help" id="mfHelp" onclick="toggleHelp()">Help Center <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
   <div class="mf-helpbody" id="mfHelpBody"></div>
-  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span></div>
+  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.04-c</div></div>
 </div>
 <div class="overlay" id="legalOverlay" onclick="if(event.target===this) closeLegal()">
   <div class="modal" style="max-width:480px;">
@@ -5469,10 +5478,10 @@ function mgGiftPopup(key, titleSw, titleEn, pSw, pEn, icon, reward, total){
     document.body.appendChild(ov);
   }
   ov.querySelector('.rw-gift').textContent = icon;
-  ov.querySelector('.rw-t').textContent = tvT(titleSw, titleEn);
-  ov.querySelector('.rw-p').textContent = tvT(pSw, pEn);
+  ov.querySelector('.rw-t').innerHTML = escapeHtml(titleSw) + '<div style="font-size:13px;font-weight:700;opacity:.85;margin-top:3px;">' + escapeHtml(titleEn) + '</div>';
+  ov.querySelector('.rw-p').innerHTML = escapeHtml(pSw) + '<br><span style="opacity:.8;display:block;margin-top:6px;">' + escapeHtml(pEn) + '</span>';
   ov.querySelector('.rw-tok b').textContent = '+' + reward;
-  ov.querySelector('button').textContent = tvT('Asante','Thanks');
+  ov.querySelector('button').textContent = 'Asante / Thanks';
   ov.classList.add('show');
 }
 function mgShowComeback(reward, days, total){
@@ -5508,8 +5517,9 @@ async function mgPromoCheck(){
       'Hongera! Umepata token ' + got + ' bure kwa ofa ya muda mfupi. Zinapatikana mara moja tu kwa kila akaunti.',
       'Congratulations! You got ' + got + ' free tokens from a limited-time offer. One time only per account.',
       '🎁', got, total);
-  }catch(e){ console.error('promo', e); }
+  }catch(e){ console.error('promo', e); try{ if(!window.__promoErrShown){ window.__promoErrShown = true; showAppNotification('Ofa ya token 100', 'Imeshindwa: ' + ((e && (e.code||e.message)) || '?') + ' — The offer could not be added', '🎁', ''); } }catch(e2){} }
 }
+setInterval(function(){ try{ mgPromoCheck(); }catch(e){} }, 60000);
 
 function getNoticeLastSeen(){
   try{ return parseInt(localStorage.getItem('mg-notice-seen') || '0', 10) || 0; }catch(e){ return 0; }
@@ -9572,7 +9582,7 @@ try{
         loadFeedbackHistory();
         checkFeedbackReplyNotification();
         const points = data.points || 0;
-        try{ dailyStateFromUser(data); lbSync(points, false, data.username, data.photoURL||''); setTimeout(maybeShowDailyPopup, 1800); setTimeout(function(){ mgComebackCheck(true); }, 900); }catch(e){}
+        try{ dailyStateFromUser(data); lbSync(points, false, data.username, data.photoURL||''); setTimeout(maybeShowDailyPopup, 1800); setTimeout(function(){ mgComebackCheck(true); }, 900); setTimeout(function(){ mgPromoCheck(); }, 3500); }catch(e){}
         document.getElementById('pointsCount').textContent = points;
         const headerPill = document.getElementById('headerTokenPill');
         if(headerPill){
