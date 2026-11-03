@@ -39,6 +39,67 @@
 <link rel="dns-prefetch" href="https://www.gstatic.com">
 <link rel="dns-prefetch" href="https://firestore.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+/* ===== Ulinzi wa picha: foleni (4 kwa wakati) + jaribu tena + njia mbadala =====
+   imgbb ikipokea maombi mengi kwa pamoja inajibu picha ya "service unavailable".
+   Hapa picha zinapakiwa taratibu kwa foleni, zilizo karibu na skrini kwanza, na zikishindwa zinajaribiwa tena. */
+(function(){
+  try{
+    var RE = /^(https?:)?\/\/(i\.ibb\.co|ibb\.co|i\.imgbb\.com|wsrv\.nl)\//i;
+    var q = [], active = 0, MAX = 4;
+    function orig(u){ try{ var m = u.match(/[?&]url=([^&]+)/); return m ? decodeURIComponent(m[1]) : u; }catch(e){ return u; } }
+    function alt(u, n){
+      var o = orig(u), bust = '_r=' + Date.now().toString(36), w = 'https://wsrv.nl/?url=' + encodeURIComponent(o) + '&w=900&q=84&output=webp';
+      var direct = /wsrv\.nl/i.test(u) ? false : true;
+      if(n === 0) return direct ? w : o;
+      if(n === 1) return o + (o.indexOf('?')>-1?'&':'?') + bust;
+      return w + '&' + bust;
+    }
+    function take(im){
+      im.dataset.q = im.getAttribute('src'); im.dataset.qt = '0';
+      im.removeAttribute('src'); q.push(im);
+      setTimeout(function(){ if(!im.getAttribute('src') && im.dataset.q && q.indexOf(im) < 0){ im.src = im.dataset.q; } }, 25000);
+      pump();
+    }
+    function score(im){ var r = im.getBoundingClientRect(), h = window.innerHeight || 800; return r.top < 0 ? -r.top * 2 : Math.max(0, r.top - h) + r.top * 0.01; }
+    function pump(){
+      while(active < MAX && q.length){
+        var bi = -1, bs = 1e12;
+        for(var i = q.length - 1; i >= 0; i--){
+          if(!q[i].isConnected){ q.splice(i,1); continue; }
+          var s = score(q[i]); if(s <= bs){ bs = s; bi = i; }
+        }
+        if(bi < 0) return;
+        start(q.splice(bi,1)[0]);
+      }
+    }
+    function start(im){
+      active++; var done = false, t = null;
+      function fin(ok, timeout){
+        if(done) return; done = true; clearTimeout(t); active = Math.max(0, active-1);
+        if(!ok && !timeout){
+          var n = parseInt(im.dataset.qt,10) || 0;
+          if(n < 3 && im.isConnected){ im.dataset.qt = String(n+1); im.dataset.q = alt(im.dataset.q, n); setTimeout(function(){ q.push(im); pump(); }, 700*(n+1)); }
+        }
+        pump();
+      }
+      im.addEventListener('load', function(){ fin(true); }, {once:true});
+      im.addEventListener('error', function(){ fin(false); }, {once:true});
+      t = setTimeout(function(){ fin(false, true); }, 12000);
+      im.src = im.dataset.q;
+    }
+    function scan(n){
+      if(n.nodeType !== 1) return;
+      if(n.nodeName === 'IMG'){ var s = n.getAttribute('src'); if(s && !n.dataset.q && RE.test(s)) take(n); return; }
+      var list = n.getElementsByTagName ? n.getElementsByTagName('img') : [];
+      for(var i = 0; i < list.length; i++){ var im = list[i], s2 = im.getAttribute('src'); if(s2 && !im.dataset.q && RE.test(s2)) take(im); }
+    }
+    new MutationObserver(function(ms){ ms.forEach(function(m){ m.addedNodes.forEach(scan); }); }).observe(document.documentElement,{childList:true,subtree:true});
+    window.addEventListener('scroll', function(){ if(q.length) pump(); }, {passive:true});
+  }catch(e){ console.error('img guard', e); }
+})();
+</script>
+
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
@@ -5302,7 +5363,7 @@ function renderChangelogList(){
     const d = n.createdAt ? new Date(n.createdAt).toLocaleDateString(currentLang==='en'?'en-GB':'sw-TZ',{day:'numeric',month:'short',year:'numeric'}) : '';
     return `
     <div style="display:flex;gap:11px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:11px;margin-bottom:10px;align-items:flex-start;">
-      ${img ? `<div style="flex:0 0 62px;width:62px;height:62px;border-radius:12px;background:#222 center/cover no-repeat url('${img}');border:1px solid var(--line);"></div>` : ''}
+      ${img ? `<div style="flex:0 0 62px;width:62px;height:62px;border-radius:12px;background:#222 center/cover no-repeat url('${mgImg(img,200)}');border:1px solid var(--line);"></div>` : ''}
       <div style="flex:1;min-width:0;">
         <div style="font-weight:800;font-size:13px;margin-bottom:4px;word-break:break-word;">${escapeHtml(n.title||'')}</div>
         <div style="color:var(--sub);font-size:12px;line-height:1.5;white-space:pre-line;word-break:break-word;">${escapeHtml(n.body||'')}</div>
@@ -5341,6 +5402,115 @@ async function likeNotice(id){
     alert(tvT('Imeshindwa. Jaribu tena.','Failed. Try again.') + ' (' + ((e && (e.code||e.message)) || '?') + ')');
   }
 }
+
+// ============================================================
+// ---- Siku mpya, kurudi kwenye app, na ofa ya kurudi ----
+// ============================================================
+window.__mgDay = dayKey(0);
+function mgDayRoll(){
+  try{
+    const d = dayKey(0);
+    if(d !== window.__mgDay){
+      window.__mgDay = d;
+      window.__dpShown = false; // siku mpya: zawadi ya kila siku itoke tena
+      if(auth.currentUser){ setTimeout(function(){ try{ maybeShowDailyPopup(); }catch(e){} }, 1200); mgComebackCheck(true); }
+    }
+  }catch(e){ console.error(e); }
+}
+setInterval(mgDayRoll, 30000);
+let __mgHiddenAt = 0;
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden){ __mgHiddenAt = Date.now(); return; }
+  const away = __mgHiddenAt ? Date.now() - __mgHiddenAt : 0;
+  mgDayRoll();
+  // alirudi baada ya muda: unganisha upya Firestore ili data mpya ifike papo hapo
+  if(away > 90000){ try{ db.disableNetwork().then(function(){ return db.enableNetwork(); }).catch(function(){}); }catch(e){} }
+  if(auth.currentUser && away > 20*60000) mgComebackCheck(true);
+});
+window.addEventListener('online', function(){ try{ db.enableNetwork(); }catch(e){} });
+
+function mgDayKeyOf(ts){ return new Date(ts + 3*3600000).toISOString().slice(0,10); }
+var __mgCbBusy = false, __mgCbLast = 0;
+async function mgComebackCheck(force){
+  if(__mgCbBusy || !auth.currentUser) return;
+  if(!force && Date.now() - __mgCbLast < 60000) return;
+  __mgCbBusy = true; __mgCbLast = Date.now();
+  const uid = auth.currentUser.uid, ref = db.collection('users').doc(uid), now = Date.now();
+  let reward = 0, days = 0, total = 0;
+  try{
+    await db.runTransaction(async function(tx){
+      reward = 0;
+      const snap = await tx.get(ref);
+      if(!snap.exists) return;
+      const u = snap.data(), last = parseInt(u.lastActiveAt, 10) || 0;
+      if(!last){ tx.set(ref, {lastActiveAt: now}, {merge:true}); return; } // mara ya kwanza: anza kuhesabu tu
+      days = Math.round((Date.parse(dayKey(0)) - Date.parse(mgDayKeyOf(last))) / 86400000);
+      if(days >= 30) reward = 300; else if(days >= 8) reward = 150;
+      const upd = {lastActiveAt: now};
+      if(reward){ total = Math.min(TOKEN_CAP, (parseInt(u.points,10) || 0) + reward); upd.points = total; upd.comebackAt = now; upd.comebackReward = reward; }
+      tx.set(ref, upd, {merge:true});
+    });
+    if(reward) mgShowComeback(reward, days, total);
+  }catch(e){ console.error('comeback', e); }
+  __mgCbBusy = false;
+  try{ await mgPromoCheck(); }catch(e){ console.error(e); }
+}
+function mgGiftPopup(key, titleSw, titleEn, pSw, pEn, icon, reward, total){
+  try{
+    const pc = document.getElementById('pointsCount'); if(pc) pc.textContent = total;
+    const hc = document.getElementById('headerTokenCount'); if(hc) hc.textContent = total;
+  }catch(e){}
+  const id = 'gf_' + key;
+  let ov = document.getElementById(id);
+  if(!ov){
+    ov = document.createElement('div'); ov.id = id; ov.className = 'overlay rw-center'; ov.style.zIndex = '460';
+    ov.innerHTML = '<div class="modal rw-box"><div class="rw-hero"><div class="rw-glow"></div><div class="rw-gift"></div></div><h3 class="rw-t"></h3><p class="rw-p"></p><div class="rw-tok"><span>🪙</span><b></b></div><button class="btn rw-go"></button></div>';
+    ov.addEventListener('click', function(e){ if(e.target === ov || e.target.tagName === 'BUTTON') ov.classList.remove('show'); });
+    document.body.appendChild(ov);
+  }
+  ov.querySelector('.rw-gift').textContent = icon;
+  ov.querySelector('.rw-t').textContent = tvT(titleSw, titleEn);
+  ov.querySelector('.rw-p').textContent = tvT(pSw, pEn);
+  ov.querySelector('.rw-tok b').textContent = '+' + reward;
+  ov.querySelector('button').textContent = tvT('Asante','Thanks');
+  ov.classList.add('show');
+}
+function mgShowComeback(reward, days, total){
+  const month = reward >= 300;
+  mgGiftPopup('back',
+    month ? 'Karibu tena, umetukumbusha! 💛' : 'Karibu tena! Zawadi ya kuingia 🎁',
+    month ? 'Welcome back, we missed you! 💛' : 'Welcome back! Login gift 🎁',
+    'Umerudi baada ya siku ' + days + '. Tumekuongezea token kama zawadi ya kurudi.',
+    'You are back after ' + days + ' days. We added tokens as a welcome-back gift.',
+    '🎉', reward, total);
+}
+
+// ---- Ofa ya muda: token 100 bure, mara moja kwa kila akaunti ----
+const MG_PROMO = {id:'p20261104', start:Date.parse('2026-11-04T00:00:00+03:00'), end:Date.parse('2026-11-05T00:00:00+03:00'), tokens:100};
+async function mgPromoCheck(){
+  const now = Date.now();
+  if(!auth.currentUser || now < MG_PROMO.start || now >= MG_PROMO.end) return;
+  const ref = db.collection('users').doc(auth.currentUser.uid);
+  let got = 0, total = 0;
+  try{
+    await db.runTransaction(async function(tx){
+      got = 0;
+      const snap = await tx.get(ref);
+      if(!snap.exists) return;
+      const u = snap.data();
+      if(u.promoClaimed && u.promoClaimed[MG_PROMO.id]) return;
+      total = Math.min(TOKEN_CAP, (parseInt(u.points,10) || 0) + MG_PROMO.tokens);
+      got = MG_PROMO.tokens;
+      const pc = Object.assign({}, u.promoClaimed || {}); pc[MG_PROMO.id] = now;
+      tx.set(ref, {points: total, promoClaimed: pc}, {merge:true});
+    });
+    if(got) mgGiftPopup('promo', 'Zawadi Maalum! 🎁', 'Special Gift! 🎁',
+      'Hongera! Umepata token ' + got + ' bure kwa ofa ya muda mfupi. Zinapatikana mara moja tu kwa kila akaunti.',
+      'Congratulations! You got ' + got + ' free tokens from a limited-time offer. One time only per account.',
+      '🎁', got, total);
+  }catch(e){ console.error('promo', e); }
+}
+
 function getNoticeLastSeen(){
   try{ return parseInt(localStorage.getItem('mg-notice-seen') || '0', 10) || 0; }catch(e){ return 0; }
 }
@@ -5359,6 +5529,22 @@ function updateChangelogBadge(){
 function listenNotices(){
   try{
     db.collection('appNotices').orderBy('createdAt','desc').limit(40).onSnapshot(snap=>{
+      try{
+        // taarifa mpya inayoingia wakati app iko wazi: ujumbe unaonekana juu papo hapo
+        if(window.__noticeBase && !snap.metadata.fromCache){
+          snap.docChanges().forEach(function(ch){
+            if(ch.type !== 'added') return;
+            const n = ch.doc.data(), id = ch.doc.id;
+            if(window.__noticeSeenIds && window.__noticeSeenIds[id]) return;
+            const ov0 = document.getElementById('changelogOverlay');
+            if(ov0 && ov0.classList.contains('show')) return;
+            showAppNotification(tvT('Taarifa mpya 🔔','New notice 🔔'), n.title || '', '🔔', n.imageUrl || '', {tag: tvT('Taarifa','Notice'), onclick: function(){ showChangelog(); }});
+          });
+        }
+        window.__noticeSeenIds = window.__noticeSeenIds || {};
+        snap.docs.forEach(function(d){ window.__noticeSeenIds[d.id] = 1; });
+        if(!snap.metadata.fromCache) window.__noticeBase = true;
+      }catch(e){ console.error(e); }
       APP_NOTICES = snap.docs.map(d=>({...d.data(), id:d.id}));
       noticesLoaded = true;
       updateChangelogBadge();
@@ -6509,7 +6695,7 @@ function renderBetTips(list){
     return `
     <div class="bt-card">
       <div class="bt-head">
-        <div class="bt-logo">${t.logo ? `<img src="${escapeHtml(t.logo)}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">` : '🎫'}</div>
+        <div class="bt-logo">${t.logo ? `<img src="${escapeHtml(mgImg(t.logo,160))}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">` : '🎫'}</div>
         <div>
           <div class="bt-bookmaker">${escapeHtml(t.bookmaker||'Bookmaker')}</div>
           <div class="bt-day">${swahiliDayName(t.createdAt)}</div>
@@ -7359,7 +7545,7 @@ function tvRender(){
   sub.textContent = (liveN ? '🔴 ' + liveN + tvT(' live sasa · ',' live now · ') : '') + items.length + tvT(' channel',' channels');
   list.innerHTML = items.map(c=>{
     const col = TV_CAT_COLORS[c.cat] || TV_CAT_COLORS.Nyingine;
-    const logo = (c.logo && /^https?:/i.test(c.logo)) ? '<img src="'+escapeHtml(c.logo)+'" alt="">' : '<span>📺</span>';
+    const logo = (c.logo && /^https?:/i.test(c.logo)) ? '<img src="'+escapeHtml(mgImg(c.logo,160))+'" alt="">' : '<span>📺</span>';
     return '<div class="tvc" style="--c1:'+col[0]+';--c2:'+col[1]+'" onclick="openTvChannel(\''+c.id+'\')">'
       + '<div class="tvc-screen"><div class="tvc-live'+(isLive(c)?'':' off')+'"><i></i>LIVE</div><div class="tvc-cat">'+escapeHtml(c.cat||'')+'</div><div class="tvc-logo">'+logo+'</div></div>'
       + '<div class="tvc-body"><div class="tvc-t"><div class="tvc-n">'+escapeHtml(c.name||'')+'</div>'+(c.desc?'<div class="tvc-d">'+escapeHtml(c.desc)+'</div>':'')+'</div><div class="tvc-go">▶</div></div>'
@@ -7815,7 +8001,7 @@ function loadListings(){
       return `
       <div class="d-gcard" onclick="openListingDetail('${l.id}')">
         <div class="d-gthumb">
-          ${l.image ? `<img src="${l.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(l.title)}" loading="eager" decoding="async">` : ''}
+          ${l.image ? `<img src="${escapeHtml(mgImg(l.image,700))}" data-o="${escapeHtml(l.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(l.title)}" decoding="async">` : ''}
           ${l.condition ? `<div class="d-gbadge">${CONDITION_LABELS[l.condition]||l.condition}</div>` : ''}
           ${stockNum !== null ? `<div class="d-gstock">${outOfStock ? 'Imeisha' : stockNum + ' zilizopo'}</div>` : ''}
           ${outOfStock ? `<div class="d-gsold-overlay"><div class="d-gsold-stamp">Imeuzwa</div></div>` : ''}
@@ -7851,7 +8037,7 @@ function openListingDetail(id){
   const outOfStock = stockNum !== null && stockNum <= 0;
   const isOwner = auth.currentUser && l.ownerUid === auth.currentUser.uid;
   document.getElementById('listingDetailBody').innerHTML = `
-    ${l.image ? `<div class="ld-img"><img src="${l.image.replace(/"/g,'&quot;')}" alt="${escapeHtml(l.title)}">${outOfStock ? `<div class="d-gsold-overlay"><div class="d-gsold-stamp">Imeuzwa</div></div>` : ''}</div>` : ''}
+    ${l.image ? `<div class="ld-img"><img src="${escapeHtml(mgImg(l.image,1100))}" data-o="${escapeHtml(l.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(l.title)}">${outOfStock ? `<div class="d-gsold-overlay"><div class="d-gsold-stamp">Imeuzwa</div></div>` : ''}</div>` : ''}
     <div class="ld-title">${escapeHtml(l.title)}</div>
     <div class="ld-price-row"><span class="ld-price">TZS ${escapeHtml(l.price)}</span>${l.wasPrice ? `<span class="ld-was">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}</div>
     <div class="ld-meta-row">
@@ -8133,7 +8319,7 @@ function renderMessages(msgs){
       : m.type === 'voice'
       ? `<div class="voice-player"><audio controls preload="none" src="${escapeHtml(m.audioUrl)}"></audio></div>`
       : m.type === 'image'
-      ? `<img class="chat-img" src="${escapeHtml(m.imageUrl)}" alt="picha" loading="lazy" data-full="${escapeHtml(m.imageUrl)}">` + (m.text ? `<div class="txt">${linkifyChat(escapeHtml(m.text))}${editedTag}</div>` : '')
+      ? `<img class="chat-img" src="${escapeHtml(mgImg(m.imageUrl,700))}" onerror="this.onerror=null;this.src=this.dataset.full" alt="picha" loading="lazy" data-full="${escapeHtml(m.imageUrl)}">` + (m.text ? `<div class="txt">${linkifyChat(escapeHtml(m.text))}${editedTag}</div>` : '')
       : `<div class="txt">${linkifyChat(escapeHtml(m.text))}${editedTag}</div>`;
     const initial = (m.name||'?').trim().charAt(0).toUpperCase() || '?';
     const avatar = dPhoto
@@ -9386,7 +9572,7 @@ try{
         loadFeedbackHistory();
         checkFeedbackReplyNotification();
         const points = data.points || 0;
-        try{ dailyStateFromUser(data); lbSync(points, false, data.username, data.photoURL||''); setTimeout(maybeShowDailyPopup, 1800); }catch(e){}
+        try{ dailyStateFromUser(data); lbSync(points, false, data.username, data.photoURL||''); setTimeout(maybeShowDailyPopup, 1800); setTimeout(function(){ mgComebackCheck(true); }, 900); }catch(e){}
         document.getElementById('pointsCount').textContent = points;
         const headerPill = document.getElementById('headerTokenPill');
         if(headerPill){

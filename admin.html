@@ -381,6 +381,69 @@
   </div>
 </div>
 
+<script>
+/* ===== Ulinzi wa picha: foleni (4 kwa wakati) + jaribu tena + njia mbadala =====
+   imgbb ikipokea maombi mengi kwa pamoja inajibu picha ya "service unavailable".
+   Hapa picha zinapakiwa taratibu kwa foleni, zilizo karibu na skrini kwanza, na zikishindwa zinajaribiwa tena. */
+(function(){
+  try{
+    var RE = /^(https?:)?\/\/(i\.ibb\.co|ibb\.co|i\.imgbb\.com|wsrv\.nl)\//i;
+    var q = [], active = 0, MAX = 4;
+    function orig(u){ try{ var m = u.match(/[?&]url=([^&]+)/); return m ? decodeURIComponent(m[1]) : u; }catch(e){ return u; } }
+    function alt(u, n){
+      var o = orig(u), bust = '_r=' + Date.now().toString(36), w = 'https://wsrv.nl/?url=' + encodeURIComponent(o) + '&w=900&q=84&output=webp';
+      var direct = /wsrv\.nl/i.test(u) ? false : true;
+      if(n === 0) return direct ? w : o;
+      if(n === 1) return o + (o.indexOf('?')>-1?'&':'?') + bust;
+      return w + '&' + bust;
+    }
+    function take(im){
+      im.dataset.q = im.getAttribute('src'); im.dataset.qt = '0';
+      im.removeAttribute('src'); q.push(im);
+      setTimeout(function(){ if(!im.getAttribute('src') && im.dataset.q && q.indexOf(im) < 0){ im.src = im.dataset.q; } }, 25000);
+      pump();
+    }
+    function score(im){ var r = im.getBoundingClientRect(), h = window.innerHeight || 800; return r.top < 0 ? -r.top * 2 : Math.max(0, r.top - h) + r.top * 0.01; }
+    function pump(){
+      while(active < MAX && q.length){
+        var bi = -1, bs = 1e12;
+        for(var i = q.length - 1; i >= 0; i--){
+          if(!q[i].isConnected){ q.splice(i,1); continue; }
+          var s = score(q[i]); if(s <= bs){ bs = s; bi = i; }
+        }
+        if(bi < 0) return;
+        start(q.splice(bi,1)[0]);
+      }
+    }
+    function start(im){
+      active++; var done = false, t = null;
+      function fin(ok, timeout){
+        if(done) return; done = true; clearTimeout(t); active = Math.max(0, active-1);
+        if(!ok && !timeout){
+          var n = parseInt(im.dataset.qt,10) || 0;
+          if(n < 3 && im.isConnected){ im.dataset.qt = String(n+1); im.dataset.q = alt(im.dataset.q, n); setTimeout(function(){ q.push(im); pump(); }, 700*(n+1)); }
+        }
+        pump();
+      }
+      im.addEventListener('load', function(){ fin(true); }, {once:true});
+      im.addEventListener('error', function(){ fin(false); }, {once:true});
+      t = setTimeout(function(){ fin(false, true); }, 12000);
+      im.src = im.dataset.q;
+    }
+    function scan(n){
+      if(n.nodeType !== 1) return;
+      if(n.nodeName === 'IMG'){ var s = n.getAttribute('src'); if(s && !n.dataset.q && RE.test(s)) take(n); return; }
+      var list = n.getElementsByTagName ? n.getElementsByTagName('img') : [];
+      for(var i = 0; i < list.length; i++){ var im = list[i], s2 = im.getAttribute('src'); if(s2 && !im.dataset.q && RE.test(s2)) take(im); }
+    }
+    new MutationObserver(function(ms){ ms.forEach(function(m){ m.addedNodes.forEach(scan); }); }).observe(document.documentElement,{childList:true,subtree:true});
+    window.addEventListener('scroll', function(){ if(q.length) pump(); }, {passive:true});
+  }catch(e){ console.error('img guard', e); }
+})();
+</script>
+<script>
+function admImg(u,w){ try{ u=String(u||''); if(!/^https?:\/\//i.test(u)||u.indexOf('wsrv.nl')>-1||/\.gif(\?|$)/i.test(u)) return u; return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+(w||240)+'&q=80&output=webp'; }catch(e){ return u; } }
+</script>
 <canvas id="admBg" aria-hidden="true"></canvas>
 <div id="app">
   <div class="topbar">
@@ -391,7 +454,7 @@
         <small>Admin Dashboard</small>
       </div>
     </div>
-    <button class="icon-btn" id="langBtn" onclick="admToggleLang()" style="font-size:12px;font-weight:800;letter-spacing:.5px;margin-right:6px;">EN</button><button class="icon-btn" onclick="logout()">⎋</button>
+    <div class="hdr-actions" style="display:flex;align-items:center;gap:8px;margin-left:auto;"><button class="icon-btn" onclick="logout()">⎋</button><button class="icon-btn" id="langBtn" onclick="admToggleLang()" style="font-size:12px;font-weight:800;letter-spacing:.5px;">EN</button></div>
   </div>
 
   <div class="tabs">
@@ -1231,7 +1294,7 @@ function loadBannersAdmin(){
     const list = snap.docs.map(d=>({id:d.id, ...d.data()}));
     document.getElementById('bannerList').innerHTML = list.length ? list.map(b=>`
       <div class="game-card">
-        <div class="thumb" style="${b.image?`background-image:url('${b.image.replace(/'/g,"")}');background-size:cover;background-position:center;`:''}">${b.image?'':'🖼️'}</div>
+        <div class="thumb" style="${b.image?`background-image:url('${admImg(b.image.replace(/'/g,""),320)}');background-size:cover;background-position:center;`:''}">${b.image?'':'🖼️'}</div>
         <div class="g-info">
           <div class="name">${escapeHtmlAdmin(b.title)}</div>
           <div class="g-tags"><span class="tag">order: ${b.order||0}</span>${b.badge?`<span class="tag paid">${escapeHtmlAdmin(b.badge)}</span>`:''}</div>
@@ -1349,7 +1412,7 @@ function loadTvAdmin(){
     tvItems = snap.docs.map(d=>({id:d.id, ...d.data()})).sort(__az('name'));
     document.getElementById('tvAdminList').innerHTML = tvItems.length ? tvItems.map(c=>`
       <div class="game-card" style="${c.active===false?'opacity:.55;':''}">
-        <div class="thumb" style="${c.logo?`background-image:url('${String(c.logo).replace(/'/g,"")}');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#fff;`:''}">${c.logo?'':'📺'}</div>
+        <div class="thumb" style="${c.logo?`background-image:url('${admImg(String(c.logo).replace(/'/g,""),200)}');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#fff;`:''}">${c.logo?'':'📺'}</div>
         <div class="g-info">
           <div class="name">${escapeHtmlAdmin(c.name)}</div>
           <div class="g-tags"><span class="tag">${escapeHtmlAdmin(c.cat||'')}</span><span class="tag">order: ${c.order||0}</span>${(c.playlist&&c.playlist.length)?'<span class="tag">🎬 '+c.playlist.length+' movie</span>':''}${c.active===false?'<span class="tag paid">Imefichwa</span>':''}</div>
@@ -1442,7 +1505,7 @@ function loadAcademyAdmin(){
   if(acListening) return; acListening = true;
   db.collection('academyTopics').orderBy('createdAt','desc').onSnapshot(snap=>{
     acItems = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    const TH = t=> t.img ? 'background-image:url('+t.img+')' : (t.videoType==='yt' ? 'background-image:url(https://img.youtube.com/vi/'+t.videoId+'/mqdefault.jpg)' : '');
+    const TH = t=> t.img ? 'background-image:url('+admImg(t.img,240)+')' : (t.videoType==='yt' ? 'background-image:url(https://img.youtube.com/vi/'+t.videoId+'/mqdefault.jpg)' : '');
     document.getElementById('acList').innerHTML = acItems.length ? acItems.map(t=>`
       <div class="ac-card" style="${t.active===false?'opacity:.55;':''}">
         <div class="th" style="${TH(t)}">${TH(t)?'':(AC_COURSE_LBL[t.course]||'🎓').split(' ')[0]}</div>
@@ -1499,7 +1562,7 @@ function loadNoticesAdmin(){
     noticeItems = snap.docs.map(d=>({id:d.id, ...d.data()}));
     document.getElementById('noticeAdminList').innerHTML = noticeItems.length ? noticeItems.map(n=>`
       <div class="game-card">
-        <div class="thumb" style="${n.imageUrl?`background-image:url('${String(n.imageUrl).replace(/['"]/g,'')}');background-size:cover;background-position:center;`:''}"></div>
+        <div class="thumb" style="${n.imageUrl?`background-image:url('${admImg(String(n.imageUrl).replace(/['"]/g,''),240)}');background-size:cover;background-position:center;`:''}"></div>
         <div class="g-info">
           <div class="name">${escapeHtmlAdmin(n.title)}</div>
           <div style="font-size:11.5px;color:var(--sub);white-space:pre-line;">${escapeHtmlAdmin((n.body||'').slice(0,140))}${(n.body||'').length>140?'…':''}</div>
@@ -1612,7 +1675,7 @@ function loadBetTipsAdmin(){
       const dd = String(d.getDate()).padStart(2,'0'), mo = String(d.getMonth()+1).padStart(2,'0');
       return `
       <div class="game-card">
-        <div class="thumb" style="${t.logo?`background-image:url('${t.logo.replace(/'/g,"")}');background-size:cover;background-position:center;`:''}">${t.logo?'':'🎫'}</div>
+        <div class="thumb" style="${t.logo?`background-image:url('${admImg(t.logo.replace(/'/g,""),200)}');background-size:cover;background-position:center;`:''}">${t.logo?'':'🎫'}</div>
         <div class="g-info">
           <div class="name">${escapeHtmlAdmin(t.bookmaker)} — ${escapeHtmlAdmin(t.code)}</div>
           <div class="g-tags"><span class="tag">${dd}/${mo}</span>${t.odds?`<span class="tag paid">Odds: ${escapeHtmlAdmin(t.odds)}</span>`:''}<span class="tag">❤ ${t.likes||0}</span></div>
@@ -1676,7 +1739,7 @@ function fbCardHtml(f){
     const isReq = f.type === 'request';
     const u = (f.uid && fbUserCache[f.uid]) || {};
     const name = u.username || f.userName || 'Mtumiaji';
-    const photo = u.photoURL ? escapeHtmlAdmin(u.photoURL) : FB_DEFAULT_AV;
+    const photo = u.photoURL ? escapeHtmlAdmin(admImg(u.photoURL,120)) : FB_DEFAULT_AV;
     const country = u.nationality ? '🌍 ' + escapeHtmlAdmin(u.nationality) : '🌍 —';
     const replied = !!f.adminReply;
     const showBox = !replied || fbEditing[f.id];
@@ -1846,7 +1909,7 @@ async function toggleGameHidden(id, hideIt){
 
 // ---- Rendering ----
 function gameCardHtml(g){
-  const thumbStyle = g.image ? `style="background-image:url('${g.image.replace(/'/g,"")}')"` : '';
+  const thumbStyle = g.image ? `style="background-image:url('${admImg(g.image.replace(/'/g,""),240)}')"` : '';
   return `
     <div class="game-card ${g.trending?'trending':''}" ${g.hidden?'style="opacity:0.45;"':''}>
       <div class="thumb" ${thumbStyle}>${g.image?'':'IMG'}</div>
@@ -1911,7 +1974,7 @@ function isSoldOut(l){
 }
 function listingCard(l){
   const sold = isSoldOut(l);
-  const thumbStyle = l.image ? `style="background-image:url('${l.image.replace(/'/g,"")}')"` : '';
+  const thumbStyle = l.image ? `style="background-image:url('${admImg(l.image.replace(/'/g,""),240)}')"` : '';
   const delBtn = `<button class="btn-sm btn-remove" onclick="deleteListing('${l.id}')">🗑️ Futa Kabisa</button>`;
   let actions = '';
   if(l.status==='pending'){
@@ -2366,7 +2429,7 @@ function loadSponsoredAdsAdmin(){
     adsCache = snap.docs.map(d=>({id:d.id, ...d.data()})).sort(__az('title'));
     document.getElementById('adsList').innerHTML = adsCache.length ? adsCache.map(a=>`
       <div class="game-card">
-        <div class="thumb" ${a.image?`style="background-image:url('${a.image.replace(/'/g,"")}')"`:''}>${a.image?'':(a.adType==='video'?'🎬':'🖼️')}</div>
+        <div class="thumb" ${a.image?`style="background-image:url('${admImg(a.image.replace(/'/g,""),240)}')"`:''}>${a.image?'':(a.adType==='video'?'🎬':'🖼️')}</div>
         <div class="g-info">
           <div class="name">${escapeHtmlAdmin(a.title||'(bila jina)')}</div>
           <div class="g-tags">
