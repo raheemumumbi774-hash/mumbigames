@@ -391,8 +391,8 @@
     function alts(u){
       var o = orig(u), b = '_r=' + Date.now().toString(36);
       var via = /(wsrv\.nl|weserv\.nl)/i.test(u);
-      var p = 'https://images.weserv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=80&output=webp';
-      return via ? [o, p, o + (o.indexOf('?')>-1?'&':'?') + b] : ['https://wsrv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=80&output=webp', p, o + (o.indexOf('?')>-1?'&':'?') + b];
+      var p = 'https://images.weserv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=86&output=webp';
+      return via ? [o, p, o + (o.indexOf('?')>-1?'&':'?') + b] : ['https://wsrv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=86&output=webp', p, o + (o.indexOf('?')>-1?'&':'?') + b];
     }
     function retry(im){
       var n = parseInt(im.dataset.rt || '0', 10);
@@ -423,7 +423,7 @@
 })();
 </script>
 <script>
-function admImg(u,w){ try{ u=String(u||''); if(!/^https?:\/\//i.test(u)||u.indexOf('wsrv.nl')>-1||/\.gif(\?|$)/i.test(u)) return u; return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+(w||240)+'&q=80&output=webp'; }catch(e){ return u; } }
+function admImg(u,w){ try{ u=String(u||''); if(!/^https?:\/\//i.test(u)||u.indexOf('wsrv.nl')>-1||/\.gif(\?|$)/i.test(u)) return u; return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+(w||240)+'&q=86&output=webp'; }catch(e){ return u; } }
 </script>
 <canvas id="admBg" aria-hidden="true"></canvas>
 <div id="app">

@@ -49,8 +49,8 @@
     function alts(u){
       var o = orig(u), b = '_r=' + Date.now().toString(36);
       var via = /(wsrv\.nl|weserv\.nl)/i.test(u);
-      var p = 'https://images.weserv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=80&output=webp';
-      return via ? [o, p, o + (o.indexOf('?')>-1?'&':'?') + b] : ['https://wsrv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=80&output=webp', p, o + (o.indexOf('?')>-1?'&':'?') + b];
+      var p = 'https://images.weserv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=86&output=webp';
+      return via ? [o, p, o + (o.indexOf('?')>-1?'&':'?') + b] : ['https://wsrv.nl/?url=' + encodeURIComponent(o) + '&w=' + w(u) + '&q=86&output=webp', p, o + (o.indexOf('?')>-1?'&':'?') + b];
     }
     function retry(im){
       var n = parseInt(im.dataset.rt || '0', 10);
@@ -96,6 +96,7 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
+  try{ db.enablePersistence({synchronizeTabs:true}).catch(function(e){ console.warn('persistence', e && e.code); }); }catch(e){}
   const auth = firebase.auth();
   const storage = firebase.storage();
 
@@ -1432,6 +1433,18 @@
   @keyframes gThumbSh{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
   .g-card{content-visibility:auto;contain-intrinsic-size:auto 330px;}
+
+  .pm-card{max-width:290px !important;padding:16px 16px 14px !important;border-radius:22px !important;}
+  .pm-coin{width:70px !important;height:70px !important;margin:0 auto 2px !important;}
+  .pm-big{font-size:34px !important;}
+  .pm-big small{font-size:13px !important;}
+  .pm-t{font-size:15px !important;}
+  .pm-t2{font-size:11.5px !important;margin-bottom:6px !important;}
+  .pm-p{font-size:11px !important;line-height:1.5 !important;margin:0 2px 3px !important;}
+  .pm-p2{font-size:10.5px !important;line-height:1.45 !important;margin:0 2px 9px !important;}
+  .pm-cd{font-size:10px !important;padding:3px 9px !important;margin-bottom:9px !important;}
+  .pm-btn{padding:11px !important;font-size:13px !important;border-radius:13px !important;}
+  .pm-rays{top:-70px !important;}
 </style>
 </head>
 <body>
@@ -1519,7 +1532,7 @@
   <a class="mf-mail" href="mailto:raheemmumbi374@gmail.com">raheemmumbi374@gmail.com</a>
   <div class="mf-help" id="mfHelp" onclick="toggleHelp()">Help Center <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
   <div class="mf-helpbody" id="mfHelpBody"></div>
-  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.04-d</div></div>
+  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.04-e</div></div>
 </div>
 <div class="overlay" id="legalOverlay" onclick="if(event.target===this) closeLegal()">
   <div class="modal" style="max-width:480px;">
@@ -2453,7 +2466,7 @@ function tryOpenDeepLinkGame(){
 
 function mgImg(u,w){
   try{ u=String(u||''); if(!/^https?:\/\//i.test(u) || u.indexOf('wsrv.nl')>-1 || /\.gif(\?|$)/i.test(u)) return u;
-    return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&q=78&output=webp'; }catch(e){ return u; }
+    return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&q=86&output=webp'; }catch(e){ return u; }
 }
 // Kazi zisizo za haraka (taarifa, chat, darasa) zinaanza baada ya skrini kuu kuonekana, ili app ifunguke kwa kasi.
 function mgLater(fn, ms){
@@ -2615,7 +2628,7 @@ function render(){
   document.getElementById('gameList').innerHTML = list.length ? list.map((g,gi)=>`
     <div class="g-card" onclick='handleDownload(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
       <div class="g-thumb">
-        ${g.image ? `<img src="${escapeHtml(mgImg(g.image,720))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="${gi<8?'eager':'lazy'}" ${gi<3?'fetchpriority="high" ':''}decoding="async">` : ''}
+        ${g.image ? `<img src="${escapeHtml(mgImg(g.image,1200))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="${gi<8?'eager':'lazy'}" ${gi<3?'fetchpriority="high" ':''}decoding="async">` : ''}
         <span class="g-badge ${g.paid?'paid':''}">${g.paid?'🔒 Kulipia':'Bure'}</span>
       </div>
       <div class="g-body">
@@ -4005,7 +4018,7 @@ function renderBanner(){
   if(!track) return;
   track.innerHTML = banners.map(b=>`
     <div class="b-slide"${b.gameRef?` onclick='handleDownload(${JSON.stringify(b.gameRef).replace(/'/g,"&#39;")})'`:''}>
-      ${b.image ? `<img src="${escapeHtml(mgImg(b.image,800))}" data-o="${escapeHtml(b.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(b.title||'')}" loading="eager" fetchpriority="high" decoding="async">` : ''}
+      ${b.image ? `<img src="${escapeHtml(mgImg(b.image,1400))}" data-o="${escapeHtml(b.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(b.title||'')}" loading="eager" fetchpriority="high" decoding="async">` : ''}
       ${b.badge?`<span class="b-badge">${escapeHtml(b.badge)}</span>`:''}
       <div class="b-title">${escapeHtml(b.title||'')}</div>
       ${b.subtitle?`<div class="b-sub">${escapeHtml(b.subtitle)}</div>`:''}
@@ -4901,7 +4914,7 @@ function mgMemRender(){
 function mgMemSub(){
   if(mgMemUnsub) return;
   try{
-    mgMemUnsub = db.collection('chat_members').limit(2000).onSnapshot(snap=>{
+    mgMemUnsub = db.collection('chat_members').limit(500).onSnapshot(snap=>{
       const m = {}; snap.forEach(d=>{ const v = d.data() || {}; const k = mgMemKey(v.name); if(k) m[k] = {name:v.name, joinedAt:v.joinedAt||0, photoURL:v.photoURL||''}; });
       mgMembers = m; mgMemRender();
     }, err=>{ console.error(err); mgMemUnsub = null; });
@@ -5187,7 +5200,7 @@ async function postChannelMessage(){
 
 function subscribeChannelPosts(){
   if(channelPostsUnsub) return;
-  channelPostsUnsub = db.collection('channelPosts').orderBy('time','asc').limit(200)
+  channelPostsUnsub = db.collection('channelPosts').orderBy('time','asc').limit(80)
     .onSnapshot(snap=>{
       currentChannelPosts = snap.docs.map(d=>({_id: d.id, ...d.data()}));
       renderChannelPosts();
@@ -5567,7 +5580,7 @@ async function mgPromoClaim(){
     const code = (e && (e.code || e.message)) || '?';
     let m = document.getElementById('pmErr');
     if(!m){ m = document.createElement('div'); m.id = 'pmErr'; m.style.cssText = 'position:relative;z-index:2;font-size:11px;color:#ff8aa0;margin:8px 0 0;'; btn.parentNode.appendChild(m); }
-    m.textContent = 'Imeshindwa / Failed: ' + code;
+    m.textContent = (code === 'resource-exhausted') ? 'Seva ina watu wengi mno sasa (kikomo cha siku). Jaribu tena baada ya saa 5 asubuhi. / Server is very busy (daily limit). Try again after 11:00 AM.' : ('Imeshindwa / Failed: ' + code);
   }
 }
 async function mgPromoCheck(){
@@ -5602,7 +5615,7 @@ function updateChangelogBadge(){
 }
 function listenNotices(){
   try{
-    db.collection('appNotices').orderBy('createdAt','desc').limit(40).onSnapshot(snap=>{
+    db.collection('appNotices').orderBy('createdAt','desc').limit(20).onSnapshot(snap=>{
       try{
         // taarifa mpya inayoingia wakati app iko wazi: ujumbe unaonekana juu papo hapo
         if(window.__noticeBase && !snap.metadata.fromCache){
@@ -6021,7 +6034,7 @@ function acBadgeSet(n){
 function acWatchNew(){
   if(acWatchOn) return; acWatchOn = true;
   try{
-    db.collection('academyTopics').orderBy('createdAt','desc').limit(60).onSnapshot(function(snap){
+    db.collection('academyTopics').orderBy('createdAt','desc').limit(15).onSnapshot(function(snap){
       const list = snap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); }).filter(function(t){ return t.active !== false; });
       const maxTs = list.reduce(function(m,t){ return Math.max(m, t.createdAt||0); }, 0);
       let seen = parseInt(localStorage.getItem('mg_acad_seen') || '0', 10);
@@ -8075,7 +8088,7 @@ function loadListings(){
       return `
       <div class="d-gcard" onclick="openListingDetail('${l.id}')">
         <div class="d-gthumb">
-          ${l.image ? `<img src="${escapeHtml(mgImg(l.image,700))}" data-o="${escapeHtml(l.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(l.title)}" decoding="async">` : ''}
+          ${l.image ? `<img src="${escapeHtml(mgImg(l.image,1000))}" data-o="${escapeHtml(l.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(l.title)}" decoding="async">` : ''}
           ${l.condition ? `<div class="d-gbadge">${CONDITION_LABELS[l.condition]||l.condition}</div>` : ''}
           ${stockNum !== null ? `<div class="d-gstock">${outOfStock ? 'Imeisha' : stockNum + ' zilizopo'}</div>` : ''}
           ${outOfStock ? `<div class="d-gsold-overlay"><div class="d-gsold-stamp">Imeuzwa</div></div>` : ''}
@@ -8111,7 +8124,7 @@ function openListingDetail(id){
   const outOfStock = stockNum !== null && stockNum <= 0;
   const isOwner = auth.currentUser && l.ownerUid === auth.currentUser.uid;
   document.getElementById('listingDetailBody').innerHTML = `
-    ${l.image ? `<div class="ld-img"><img src="${escapeHtml(mgImg(l.image,1100))}" data-o="${escapeHtml(l.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(l.title)}">${outOfStock ? `<div class="d-gsold-overlay"><div class="d-gsold-stamp">Imeuzwa</div></div>` : ''}</div>` : ''}
+    ${l.image ? `<div class="ld-img"><img src="${escapeHtml(mgImg(l.image,1400))}" data-o="${escapeHtml(l.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(l.title)}">${outOfStock ? `<div class="d-gsold-overlay"><div class="d-gsold-stamp">Imeuzwa</div></div>` : ''}</div>` : ''}
     <div class="ld-title">${escapeHtml(l.title)}</div>
     <div class="ld-price-row"><span class="ld-price">TZS ${escapeHtml(l.price)}</span>${l.wasPrice ? `<span class="ld-was">TZS ${escapeHtml(l.wasPrice)}</span>` : ''}</div>
     <div class="ld-meta-row">
@@ -8361,7 +8374,7 @@ function joinChat(){
 
 function subscribeMessages(){
   if(chatUnsub) return; // already listening
-  chatUnsub = db.collection('chat_messages').orderBy('time','desc').limit(200)
+  chatUnsub = db.collection('chat_messages').orderBy('time','desc').limit(80)
     .onSnapshot(snap=>{
       const msgs = snap.docs.map(d=>Object.assign({_id:d.id}, d.data())).reverse();
       renderMessages(msgs);
