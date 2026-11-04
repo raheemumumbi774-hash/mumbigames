@@ -1532,7 +1532,7 @@
   <a class="mf-mail" href="mailto:raheemmumbi374@gmail.com">raheemmumbi374@gmail.com</a>
   <div class="mf-help" id="mfHelp" onclick="toggleHelp()">Help Center <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
   <div class="mf-helpbody" id="mfHelpBody"></div>
-  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.04-e</div></div>
+  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.04-f</div></div>
 </div>
 <div class="overlay" id="legalOverlay" onclick="if(event.target===this) closeLegal()">
   <div class="modal" style="max-width:480px;">
@@ -2466,7 +2466,7 @@ function tryOpenDeepLinkGame(){
 
 function mgImg(u,w){
   try{ u=String(u||''); if(!/^https?:\/\//i.test(u) || u.indexOf('wsrv.nl')>-1 || /\.gif(\?|$)/i.test(u)) return u;
-    return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&q=86&output=webp'; }catch(e){ return u; }
+    return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&q=85&output=webp'; }catch(e){ return u; }
 }
 // Kazi zisizo za haraka (taarifa, chat, darasa) zinaanza baada ya skrini kuu kuonekana, ili app ifunguke kwa kasi.
 function mgLater(fn, ms){
@@ -2496,6 +2496,7 @@ function loadGames(){
     try{ if(window._rdState) renderRedeemSection(window._rdState[0], window._rdState[1]); }catch(e){}
     sortGamesAlphabetically();
     checkNewGameNotification();
+    try{ mgPreloadGames(); }catch(e){}
     render();
     try{ refreshBanners(); }catch(e){ console.error(e); }
     cacheGamesLocally(games);
@@ -2543,6 +2544,30 @@ const NOTIF_SVG = {
   grad:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#1a1000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5L2 9z"/><path d="M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5"/><path d="M22 9v6"/></svg>'
 };
 
+// ---- Pakia picha zote mapema (nyuma ya pazia) ili mtu akiteremka azikute tayari. Zinahifadhiwa kwenye kumbukumbu ya simu, kwa hiyo ufunguzi wa pili ni wa papo hapo. ----
+var __mgPre = {urls:{}, q:[], active:0, started:false};
+function mgPreloadGames(){
+  try{
+    const c = navigator.connection || {};
+    const slow = !!c.saveData || /(^|-)(2g|3g)$/.test(c.effectiveType || '');
+    const list = games.filter(g => g.image).slice(0, slow ? 12 : 400);
+    list.forEach(function(g){
+      const u = mgImg(g.image, 1000);
+      if(!__mgPre.urls[u]){ __mgPre.urls[u] = 1; __mgPre.q.push(u); }
+    });
+    if(!__mgPre.started){ __mgPre.started = true; setTimeout(mgPreloadPump, 1800); } else mgPreloadPump();
+  }catch(e){ console.error(e); }
+}
+function mgPreloadPump(){
+  if(document.hidden){ setTimeout(mgPreloadPump, 3000); return; }
+  while(__mgPre.active < 3 && __mgPre.q.length){
+    const u = __mgPre.q.shift(); __mgPre.active++;
+    const im = new Image(); im.decoding = 'async';
+    const done = function(){ if(im._d) return; im._d = 1; __mgPre.active--; setTimeout(mgPreloadPump, 60); };
+    im.onload = done; im.onerror = done; setTimeout(done, 9000);
+    im.src = u;
+  }
+}
 function checkNewGameNotification(){
   if(!games.length) return;
   const ids = games.map(g=>g.id).filter(Boolean);
@@ -2628,7 +2653,7 @@ function render(){
   document.getElementById('gameList').innerHTML = list.length ? list.map((g,gi)=>`
     <div class="g-card" onclick='handleDownload(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
       <div class="g-thumb">
-        ${g.image ? `<img src="${escapeHtml(mgImg(g.image,1200))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="${gi<8?'eager':'lazy'}" ${gi<3?'fetchpriority="high" ':''}decoding="async">` : ''}
+        ${g.image ? `<img src="${escapeHtml(mgImg(g.image,1000))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="${gi<8?'eager':'lazy'}" ${gi<3?'fetchpriority="high" ':''}decoding="async">` : ''}
         <span class="g-badge ${g.paid?'paid':''}">${g.paid?'🔒 Kulipia':'Bure'}</span>
       </div>
       <div class="g-body">
