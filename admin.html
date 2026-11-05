@@ -365,6 +365,14 @@
   .gcard,.stat-card,.stat2,.mini-t{background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.02)) !important;border:1px solid rgba(190,160,255,.22) !important;box-shadow:0 8px 24px rgba(5,2,20,.35),inset 0 1px 0 rgba(255,255,255,.08) !important;backdrop-filter:blur(2px);}
   .dash-header h1{background:linear-gradient(90deg,#ffd68a,#ff8fc7 55%,#b9a2ff);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;}
   header{border-bottom:1px solid transparent !important;border-image:linear-gradient(90deg,transparent,rgba(255,170,80,.6),rgba(190,140,255,.6),transparent) 1;}
+  .onl-tile{border-color:rgba(60,220,140,.35) !important;}
+  .onl-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#2ee59d;margin-right:6px;vertical-align:middle;box-shadow:0 0 0 0 rgba(46,229,157,.6);animation:onlPulse 1.8s infinite;}
+  @keyframes onlPulse{0%{box-shadow:0 0 0 0 rgba(46,229,157,.55)}70%{box-shadow:0 0 0 8px rgba(46,229,157,0)}100%{box-shadow:0 0 0 0 rgba(46,229,157,0)}}
+  .gift-box{border:1px solid rgba(255,200,80,.35);background:linear-gradient(160deg,rgba(255,200,80,.10),rgba(255,255,255,.02));border-radius:16px;padding:14px;margin-bottom:18px;}
+  .gift-box .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .gift-quick{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px;}
+  .gift-quick button{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:20px;padding:5px 11px;font-size:11.5px;cursor:pointer;}
+  .gift-state{font-size:12px;margin:0 0 10px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.05);color:var(--text);line-height:1.5;}
 </style>
 </head>
 <body>
@@ -374,7 +382,7 @@
     <div class="brand-logo big"><svg viewBox="0 0 48 48" width="100%" height="100%"><defs><linearGradient id="bl2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".55" stop-color="#ff5fa2"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#bl2)"/><path d="M15 17h18a6 6 0 0 1 5.8 4.6l1.6 7A4.2 4.2 0 0 1 32.600 33l-1.500-2.200H16.900L15.400 33a4.200 4.200 0 0 1-7.800-4.400l1.600-7A6 6 0 0 1 15 17z" fill="#fff" fill-opacity=".95"/><path d="M16 21.500v5M13.500 24h5" stroke="#8b5cf6" stroke-width="2.200" stroke-linecap="round"/><circle cx="31" cy="22.500" r="1.700" fill="#ff5fa2"/><circle cx="34.500" cy="25.500" r="1.700" fill="#ffb347"/><path d="M36 8l1 2.600 2.600 1-2.600 1-1 2.600-1-2.600-2.600-1 2.600-1z" fill="#fff"/></svg></div>
     <h1>mumbigames admin</h1>
     <p>Weka password yako kuingia kwenye dashibodi</p>
-    <input type="password" id="pinInput" placeholder="Password" maxlength="64" autocomplete="current-password" onkeydown="if(event.key==='Enter')tryEnter()">
+    <input type="password" inputmode="numeric" pattern="[0-9]*" id="pinInput" placeholder="Password" maxlength="64" autocomplete="current-password" onkeydown="if(event.key==='Enter')tryEnter()">
     <button class="btn btn-primary" id="gateBtn" onclick="tryEnter()">Ingia</button>
     <div class="gate-err" id="gateErr"></div>
     <div id="forgotWrap" style="display:none;margin-top:14px;font-size:12px;"><span style="color:var(--lime);cursor:pointer;text-decoration:underline;" onclick="adminForgot()">Nimesahau password</span></div>
@@ -478,6 +486,7 @@ function admImg(u,w){ try{ u=String(u||''); if(!/^https?:\/\//i.test(u)||u.index
         <div class="mini-stat"><div class="num" id="statVisits">0</div><div class="lbl">Watembeleaji</div></div>
         <div class="mini-stat"><div class="num" id="statAdsToday">0</div><div class="lbl">Matangazo Leo</div></div>
         <div class="mini-stat"><div class="num" id="statAdsMonth">0</div><div class="lbl">Matangazo (Mwezi Huu)</div></div>
+        <div class="mini-stat onl-tile"><div class="num"><span class="onl-dot"></span><span id="statOnline">0</span></div><div class="lbl">Online sasa</div><div class="lbl" id="statOnlineSub" style="opacity:.75;"></div></div>
       </div>
       <div style="display:none;"><span id="statUnique">0</span></div>
       <div class="section-title"><h2>📢 Tangaza machapisho mapya</h2></div>
@@ -811,6 +820,33 @@ function admImg(u,w){ try{ u=String(u||''); if(!/^https?:\/\//i.test(u)||u.index
 
     <!-- SOCIAL -->
     <div class="view" id="view-notices">
+      <div class="section-title"><h2>🎁 Zawadi ya Token</h2></div>
+      <div class="gift-box">
+        <div class="gift-state" id="giftState">Inapakia...</div>
+        <div class="row2">
+          <div><label>Idadi ya token</label><input type="number" id="gTokens" min="1" max="1000" placeholder="mfano: 50"></div>
+          <div><label>Inaisha lini</label><input type="datetime-local" id="gEnd"></div>
+        </div>
+        <div class="gift-quick">
+          <button type="button" onclick="giftQuick(3)">Masaa 3</button>
+          <button type="button" onclick="giftQuick(6)">Masaa 6</button>
+          <button type="button" onclick="giftQuick(12)">Masaa 12</button>
+          <button type="button" onclick="giftQuick(24)">Masaa 24</button>
+          <button type="button" onclick="giftQuick(72)">Siku 3</button>
+          <button type="button" onclick="giftQuick(168)">Siku 7</button>
+        </div>
+        <label>Kichwa (si lazima)</label>
+        <input type="text" id="gTitle" maxlength="60" placeholder="Zawadi Maalum! 🎁">
+        <label>Ujumbe kwa Kiswahili (si lazima)</label>
+        <textarea id="gMsgSw" rows="2" maxlength="200" placeholder="mfano: Leo tunatoa token 50 bure kwa kila mtu!"></textarea>
+        <label>Message in English (optional)</label>
+        <textarea id="gMsgEn" rows="2" maxlength="200" placeholder="e.g. Today we give 50 free tokens to everyone!"></textarea>
+        <div style="display:flex;gap:10px;margin-top:10px;">
+          <button class="btn" id="gPostBtn" onclick="postGift()" style="flex:2;">🎁 Tuma Zawadi</button>
+          <button class="btn btn-ghost" id="gStopBtn" onclick="stopGift()" style="flex:1;">⏹ Zima</button>
+        </div>
+        <div style="font-size:10.5px;color:var(--sub);margin-top:8px;line-height:1.5;">Kila mtu anapata mara moja tu. Itaonekana kwa wanaofungua app wakati zawadi inaendelea (hadi dakika 5 kuchelewa).</div>
+      </div>
       <div class="section-title"><h2>🔔 Andika Taarifa Mpya</h2></div>
             <label>Kichwa cha habari</label>
       <input type="text" id="nTitle" placeholder="mfano: Games Mpya Zimeongezwa 🎮" maxlength="90">
@@ -1010,6 +1046,7 @@ function loadSiteStats(){
   loadDownloadStats();
   loadAdStatsToday();
   loadAdStatsMonth();
+  try{ loadPresence(); loadGiftAdmin(); }catch(e){ console.error(e); }
   // Siku/mwezi vinaweza kubadilika wakati dashboard iko wazi (mfano saa 6
   // usiku), kwa hiyo tunaangalia kila dakika 5 kama "leo"/"mwezi huu"
   // umebadilika na kubadilisha listener kwenda document sahihi mpya.
@@ -1566,6 +1603,78 @@ async function deleteAllNotices(){
     await batch.commit(); showToast('Zote zimefutwa.');
   }catch(e){ console.error(e); showToast('Imeshindwa kufuta.'); }
 }
+
+// ---- Zawadi ya Token (meta/promo) ----
+let giftUnsub = null, giftCur = null;
+function pad2g(n){ return String(n).padStart(2,'0'); }
+function giftToLocalInput(ms){ const d = new Date(ms); return d.getFullYear()+'-'+pad2g(d.getMonth()+1)+'-'+pad2g(d.getDate())+'T'+pad2g(d.getHours())+':'+pad2g(d.getMinutes()); }
+function giftQuick(h){ document.getElementById('gEnd').value = giftToLocalInput(Date.now() + h*3600000); }
+function loadGiftAdmin(){
+  if(giftUnsub) return;
+  giftUnsub = db.collection('meta').doc('promo').onSnapshot(function(doc){
+    giftCur = doc.exists ? doc.data() : null;
+    const el = document.getElementById('giftState'); if(!el) return;
+    const now = Date.now();
+    if(giftCur && giftCur.active && giftCur.endAt > now){
+      el.innerHTML = '🟢 <b>Inaendelea:</b> +' + (giftCur.tokens|0) + ' token — inaisha ' + new Date(giftCur.endAt).toLocaleString('sw-TZ');
+    } else if(giftCur && giftCur.endAt){
+      el.innerHTML = '⚪ Zawadi ya mwisho (+' + (giftCur.tokens|0) + ') ' + (giftCur.active ? 'imeisha ' : 'imezimwa — ') + new Date(giftCur.endAt).toLocaleString('sw-TZ');
+    } else el.textContent = '⚪ Hakuna zawadi inayoendelea.';
+  }, function(e){ console.error(e); const el = document.getElementById('giftState'); if(el) el.textContent = 'Imeshindwa kusoma (angalia Firestore rules za meta/promo).'; giftUnsub = null; });
+}
+async function postGift(){
+  const tokens = parseInt(document.getElementById('gTokens').value, 10);
+  const endV = document.getElementById('gEnd').value;
+  if(!(tokens >= 1 && tokens <= 1000)){ showToast('Weka token kati ya 1 na 1000.'); return; }
+  if(!endV){ showToast('Chagua muda inapoisha (au bonyeza Masaa 24).'); return; }
+  const endAt = new Date(endV).getTime();
+  if(!(endAt > Date.now() + 60000)){ showToast('Muda wa kuisha lazima uwe baadaye.'); return; }
+  if(!confirm('Tuma zawadi ya token ' + tokens + ' kwa kila mtu hadi ' + new Date(endAt).toLocaleString('sw-TZ') + '?')) return;
+  const btn = document.getElementById('gPostBtn'); btn.disabled = true;
+  try{
+    const id = 'g' + Date.now().toString(36);
+    await db.collection('meta').doc('promo').set({
+      id, tokens, active: true, startAt: Date.now(), endAt,
+      titleSw: document.getElementById('gTitle').value.trim(), titleEn: document.getElementById('gTitle').value.trim(),
+      msgSw: document.getElementById('gMsgSw').value.trim(), msgEn: document.getElementById('gMsgEn').value.trim(),
+      createdAt: Date.now()
+    });
+    showToast('Zawadi imetumwa ✓');
+  }catch(e){ console.error(e); showToast('Imeshindwa (weka Firestore rules mpya za meta/promo).'); }
+  btn.disabled = false;
+}
+async function stopGift(){
+  if(!giftCur || !giftCur.active){ showToast('Hakuna zawadi ya kuzima.'); return; }
+  if(!confirm('Zima zawadi hii sasa hivi?')) return;
+  try{ await db.collection('meta').doc('promo').set({active:false}, {merge:true}); showToast('Imezimwa.'); }
+  catch(e){ console.error(e); showToast('Imeshindwa kuzima.'); }
+}
+
+// ---- Online sasa hivi (presence) ----
+let presUnsub = null, presDocs = {};
+function presRender(){
+  const now = Date.now(); let on = 0, mem = 0;
+  Object.keys(presDocs).forEach(function(k){
+    const d = presDocs[k]; if(!d.on || !d.t) return;
+    if(now - d.t <= 330000){ on++; if(d.u) mem++; }
+  });
+  const a = document.getElementById('statOnline'), b = document.getElementById('statOnlineSub');
+  if(a) a.textContent = on;
+  if(b) b.textContent = on ? ('wanachama ' + mem + ' · wageni ' + (on - mem)) : '';
+}
+function loadPresence(){
+  if(presUnsub) return;
+  const since = firebase.firestore.Timestamp.fromMillis(Date.now() - 600000);
+  presUnsub = db.collection('presence').where('t', '>', since).onSnapshot(function(snap){
+    snap.docChanges().forEach(function(c){
+      if(c.type === 'removed'){ delete presDocs[c.doc.id]; return; }
+      const d = c.doc.data(); presDocs[c.doc.id] = {t: d.t && d.t.toMillis ? d.t.toMillis() : 0, on: d.on !== false, u: !!d.u};
+    });
+    presRender();
+  }, function(e){ console.error('presence', e); presUnsub = null; const b = document.getElementById('statOnlineSub'); if(b) b.textContent = 'rules?'; });
+}
+setInterval(presRender, 20000);
+setInterval(function(){ try{ if(presUnsub){ presUnsub(); presUnsub = null; presDocs = {}; loadPresence(); } }catch(e){} }, 30*60*1000);
 
 async function toggleTvChannel(id){
   const c = tvItems.find(x=>x.id===id); if(!c) return;
@@ -2653,6 +2762,7 @@ var EN = {
 };
 var PH = {'Maelezo mafupi ya game...':'Short description of the game...','Andika maelezo hapa...':'Write the description here...','mfano: 1000':'e.g. 1000','mfano: BetPawa':'e.g. BetPawa','mfano: Bofya Uendelee':'e.g. Tap to continue','mfano: Subway Rush':'e.g. Subway Rush','mfano: TANGAZA NA SISI HAPA':'e.g. ADVERTISE WITH US HERE','mfano: Mpya':'e.g. New','mfano: Wednesday Multi Bet':'e.g. Wednesday Multi Bet'};
 var WORDS = [[/Imeshindwa/g,'Failed'],[/Jaribu tena/g,'Try again'],[/Hakuna/g,'No'],[/Kulipia/g,'Paid'],[/Bure/g,'Free'],[/Futa/g,'Delete'],[/Hifadhi/g,'Save'],[/Weka/g,'Add'],[/Imefanikiwa/g,'Success'],[/Inapakia/g,'Loading'],[/Subiri/g,'Wait'],[/zimewekwa/g,'added'],[/Maoni/g,'Feedback'],[/Muhtasari/g,'Overview'],[/Leo/g,'Today'],[/Jina/g,'Name'],[/Bei/g,'Price']];
+EN['Online sasa']='Online now'; EN['Zawadi ya Token']='Token Gift'; EN['Idadi ya token']='Token amount'; EN['Inaisha lini']='Ends at'; EN['Kichwa (si lazima)']='Title (optional)'; EN['Ujumbe kwa Kiswahili (si lazima)']='Message in Swahili (optional)'; EN['🎁 Tuma Zawadi']='🎁 Send Gift'; EN['⏹ Zima']='⏹ Stop'; EN['🎁 Zawadi ya Token']='🎁 Token Gift'; EN['Masaa 3']='3 hours'; EN['Masaa 6']='6 hours'; EN['Masaa 12']='12 hours'; EN['Masaa 24']='24 hours'; EN['Siku 3']='3 days'; EN['Siku 7']='7 days';
 var EN2 = {}; Object.keys(EN).forEach(function(k){ var ks = k.replace(/^[^A-Za-z0-9]+/,''); if(ks && ks !== k) EN2[ks] = EN[k].replace(/^[^A-Za-z0-9]+/,''); });
 var lang = 'sw', orig = new WeakMap(), busy = false;
 try{ lang = localStorage.getItem('adm-lang') === 'en' ? 'en' : 'sw'; }catch(e){}
