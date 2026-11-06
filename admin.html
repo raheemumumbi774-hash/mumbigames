@@ -23,6 +23,7 @@
   const adminApp = firebase.initializeApp(firebaseConfig, 'mumbiAdmin');
   const adminAuth = adminApp.auth();
   const db = adminApp.firestore();
+  try{ db.enablePersistence({synchronizeTabs:true}).catch(function(){}); }catch(e){} // data ya mara ya pili inafunguka papo hapo kutoka kwenye simu
   const storage = adminApp.storage();
   const ADMIN_EMAIL = 'raheemumumbi774+admin@gmail.com'; // inatumika ndani tu, haionekani kwenye skrini
 
@@ -1024,7 +1025,7 @@ function enterApp(){
   document.getElementById('app').style.display='block';
   loadGames();
   loadSiteStats();
-  loadPaymentRequests();
+  setTimeout(loadPaymentRequests, 1500); // baada ya skrini kuu kuonekana
 }
 // ---- Visitor + account stats ----
 function announceSocial(type){
@@ -1040,9 +1041,7 @@ function loadSiteStats(){
     document.getElementById('statVisits').textContent = d.totalVisits || 0;
     document.getElementById('statUnique').textContent = d.uniqueVisitors || 0;
   }, function(err){ console.error(err); });
-  db.collection('users').onSnapshot(function(snap){
-    document.getElementById('statAccounts').textContent = snap.size;
-  }, function(err){ console.error(err); });
+  loadMemberCount();
   loadDownloadStats();
   loadAdStatsToday();
   loadAdStatsMonth();
@@ -1088,6 +1087,21 @@ function loadAdStatsMonth(){
   }, function(e){ console.error('loadAdStatsMonth failed', e); });
 }
 
+// Idadi ya wanachama: HAISOMI watumiaji wote tena (ilichelewesha admin). Inatumia hesabu ya seva (count) au namba iliyohifadhiwa.
+function loadMemberCount(){
+  const el = document.getElementById('statAccounts');
+  try{ const c = localStorage.getItem('mg-adm-members'); if(c) el.textContent = c; }catch(e){}
+  const col = db.collection('users');
+  const put = function(n){ el.textContent = n; try{ localStorage.setItem('mg-adm-members', String(n)); localStorage.setItem('mg-adm-members-t', String(Date.now())); }catch(e){} };
+  const fallback = function(){
+    let t = 0; try{ t = parseInt(localStorage.getItem('mg-adm-members-t')||'0',10) || 0; }catch(e){}
+    if(Date.now() - t < 6*3600*1000 && el.textContent !== '0') return;
+    col.get().then(function(sn){ put(sn.size); }).catch(function(e){ console.error(e); });
+  };
+  if(typeof col.count === 'function'){
+    col.count().get().then(function(sn){ put(sn.data().count); }).catch(fallback);
+  } else fallback();
+}
 function loadDownloadStats(){
   db.collection('games').onSnapshot(function(snap){
     let total = 0;
@@ -1097,9 +1111,14 @@ function loadDownloadStats(){
 
   const startOfToday = new Date();
   startOfToday.setHours(0,0,0,0);
-  db.collection('downloadLogs').where('time','>=', startOfToday.getTime()).onSnapshot(function(snap){
-    document.getElementById('statDownloadsToday').textContent = snap.size;
-  }, function(err){ console.error(err); });
+  const dlQ = db.collection('downloadLogs').where('time','>=', startOfToday.getTime());
+  const dlEl = document.getElementById('statDownloadsToday');
+  if(typeof dlQ.count === 'function'){
+    const dlGo = function(){ dlQ.count().get().then(function(sn){ dlEl.textContent = sn.data().count; }).catch(function(e){ console.error(e); }); };
+    dlGo(); setInterval(dlGo, 120000);
+  } else {
+    dlQ.limit(3000).onSnapshot(function(snap){ dlEl.textContent = snap.size; }, function(err){ console.error(err); });
+  }
 }
 function logout(){
   try{ adminAuth.signOut(); }catch(e){}
