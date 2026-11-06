@@ -1532,7 +1532,7 @@
   <a class="mf-mail" href="mailto:raheemmumbi374@gmail.com">raheemmumbi374@gmail.com</a>
   <div class="mf-help" id="mfHelp" onclick="toggleHelp()">Help Center <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
   <div class="mf-helpbody" id="mfHelpBody"></div>
-  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.06-a</div></div>
+  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.06-b</div></div>
 </div>
 <div class="overlay" id="legalOverlay" onclick="if(event.target===this) closeLegal()">
   <div class="modal" style="max-width:480px;">
@@ -2322,6 +2322,7 @@
         <div class="sv-frame" id="svFrame" onclick="svPlay()"><div class="sv-play"></div></div><div class="sv-stand"></div>
         <div class="sv-t" id="svTitle"></div>
         <div class="sv-s" id="svSub"></div>
+        <div style="text-align:center;margin:8px 0 2px;"><a href="javascript:void(0)" onclick="svOpenYt(event)" style="font-size:11.5px;font-weight:600;color:#9fd3ff;text-decoration:underline;" id="svOpenLink">▶ Haichezi? Fungua kwenye YouTube</a></div>
       </div></div>
       <div id="sponsoredAdBox" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
         <div style="font-size:9.5px;letter-spacing:1px;color:var(--sub);font-weight:700;margin-bottom:8px;">SPONSORED</div>
@@ -3550,6 +3551,7 @@ function showModalDownloads(g, restoreState){
     document.getElementById('svLab').textContent = tvT('Namna ya kuseti game','How to set up the game');
     document.getElementById('svTitle').textContent = tvT('Tazama jinsi ya kuseti ','Watch how to set up ') + g.name;
     document.getElementById('svSub').textContent = tvT('Fuata hatua kwenye video hii ndipo game ifanye kazi vizuri.','Follow the steps in this video so the game runs well.');
+    document.getElementById('svOpenLink').textContent = tvT('▶ Haichezi? Fungua kwenye YouTube','▶ Not playing? Open on YouTube');
     const fr = document.getElementById('svFrame');
     fr.innerHTML = '<div class="sv-play"></div>';
     fr.style.backgroundImage = "url('https://img.youtube.com/vi/" + svId + "/hqdefault.jpg')";
@@ -3576,7 +3578,13 @@ function mgYtId(url){
 function svPlay(){
   const sb = document.getElementById('setupVideoBox'); const id = sb && sb.dataset.id; if(!id) return;
   const fr = document.getElementById('svFrame');
-  fr.innerHTML = '<iframe src="https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+  let org = ''; try{ if(/^https?:/.test(location.origin)) org = '&origin=' + encodeURIComponent(location.origin); }catch(e){}
+  fr.innerHTML = '<iframe src="https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1&modestbranding=1&enablejsapi=1' + org + '" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+}
+function svOpenYt(ev){
+  try{ ev && ev.stopPropagation(); }catch(e){}
+  const sb = document.getElementById('setupVideoBox'); const id = sb && sb.dataset.id; if(!id) return;
+  window.open('https://www.youtube.com/watch?v=' + id, '_blank', 'noopener');
 }
 function svReset(){
   const sb = document.getElementById('setupVideoBox'); if(!sb) return;
@@ -5978,7 +5986,7 @@ function acPlayVideo(){
   const t = acCurTopic, v = acVid(t), box = document.getElementById('atVideo'); if(!v || !box) return;
   if(v.type === 'yt'){
     box.className = 'atd-video playing'+(t.vOrient==='v'?' vert':''); box.style.cssText = ''; box.onclick = null;
-    box.innerHTML = '<iframe src="https://www.youtube.com/embed/'+v.id+'?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen frameborder="0"></iframe>';
+    box.innerHTML = '<iframe src="https://www.youtube.com/embed/'+v.id+'?autoplay=1&rel=0&playsinline=1&modestbranding=1" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen frameborder="0"></iframe>';
   } else if(v.id){
     box.className = 'atd-video playing tt'; box.style.cssText = ''; box.onclick = null;
     box.innerHTML = '<iframe src="https://www.tiktok.com/embed/v2/'+v.id+'" allow="autoplay; encrypted-media; fullscreen" allowfullscreen frameborder="0"></iframe>';
