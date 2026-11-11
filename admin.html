@@ -83,14 +83,14 @@
 </script>
 <style>
   :root{
-    --bg:#0a0a16;
-    --panel:#14152a;
-    --panel-2:#1c1e3a;
-    --line:#2c2f52;
-    --lime:#f5a623;
-    --lime-dim:#d98c1a;
+    --bg:#121923;
+    --panel:#1a2230;
+    --panel-2:#222c3d;
+    --line:#2e394c;
+    --lime:#f4736d;
+    --lime-dim:#d9605b;
     --text:#eaf0fb;
-    --sub:#9095b8;
+    --sub:#93a0b5;
     --danger:#ff5c5c;
     --radius:14px;
   }
@@ -158,7 +158,7 @@
   .gcard.c-purple .gc-num{color:#c1b3ff;}
   .gcard.c-amber{background:linear-gradient(160deg,rgba(251,191,36,0.16),rgba(15,23,32,0.35));border-color:rgba(251,191,36,0.4);}
   .gcard.c-amber .gc-icon{background:rgba(251,191,36,0.2);color:#fbbf24;}
-  .gcard.c-amber .gc-num{color:#ffd772;}
+  .gcard.c-amber .gc-num{color:#ffd0cc;}
   .gcard.c-teal{background:linear-gradient(160deg,rgba(45,212,191,0.16),rgba(15,23,32,0.35));border-color:rgba(45,212,191,0.4);}
   .gcard.c-teal .gc-icon{background:rgba(45,212,191,0.2);color:#2dd4bf;}
   .gcard.c-teal .gc-num{color:#67e8d3;}
@@ -234,34 +234,34 @@
   .btn-remove{background:var(--panel-2);color:var(--sub);border:1px solid var(--line);}
 
   /* ============ STUDIO THEME ============ */
-  :root{--glass:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.025));--glass-line:rgba(255,255,255,.10);--violet:#8b5cf6;--pink:#ff5fa2;}
+  :root{--glass:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.025));--glass-line:rgba(255,255,255,.10);--violet:#46566e;--pink:#e8605a;}
   html{scroll-behavior:smooth;}
-  body{background:radial-gradient(900px 480px at 8% -8%,rgba(139,92,246,.22),transparent 60%),radial-gradient(800px 460px at 100% 2%,rgba(245,166,35,.16),transparent 55%),radial-gradient(700px 500px at 50% 110%,rgba(255,95,162,.10),transparent 60%),#07070f;background-attachment:fixed;}
+  body{background:radial-gradient(900px 480px at 8% -8%,rgba(70,86,110,.22),transparent 60%),radial-gradient(800px 460px at 100% 2%,rgba(244,115,109,.16),transparent 55%),radial-gradient(700px 500px at 50% 110%,rgba(232,96,90,.10),transparent 60%),#07070f;background-attachment:fixed;}
   ::-webkit-scrollbar{width:8px;height:8px;} ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px;}
-  .cartridge-mark{background:linear-gradient(135deg,#ffc15a,#f5a623 45%,#ff6b6b);box-shadow:0 0 18px rgba(245,166,35,.45);border-radius:10px;}
-  .gate-card{background:var(--glass);border:1px solid var(--glass-line);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(139,92,246,.12);backdrop-filter:blur(14px);}
-  .topbar{background:rgba(9,9,20,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-line);padding:12px 16px;}
-  .brand span{background:linear-gradient(90deg,#fff,#ffd98a);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:.2px;}
-  .brand small{color:#a994ff;}
-  .tabs{position:sticky;top:61px;z-index:4;gap:7px;padding:10px 14px;background:rgba(8,8,18,.66);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--glass-line);}
+  .cartridge-mark{background:linear-gradient(135deg,#ff8f87,#f4736d 45%,#ff6b6b);box-shadow:0 0 18px rgba(244,115,109,.45);border-radius:10px;}
+  .gate-card{background:var(--glass);border:1px solid var(--glass-line);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(70,86,110,.12);backdrop-filter:blur(14px);}
+  .topbar{background:rgba(18,25,35,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-line);padding:12px 16px;}
+  .brand span{background:linear-gradient(90deg,#fff,#ffd0cc);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:.2px;}
+  .brand small{color:#93a0b5;}
+  .tabs{position:sticky;top:61px;z-index:4;gap:7px;padding:10px 14px;background:rgba(18,25,35,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--glass-line);}
   .tab{background:rgba(255,255,255,.045);border:1px solid var(--glass-line);color:#b9bddb;transition:all .18s ease;}
   .tab:hover{background:rgba(255,255,255,.09);color:#fff;}
-  .tab.active{background:linear-gradient(135deg,#ffc15a,#f5a623 55%,#ff7a45);color:#1c1200;border-color:transparent;box-shadow:0 6px 20px rgba(245,166,35,.38);}
+  .tab.active{background:linear-gradient(135deg,#ff8f87,#f4736d 55%,#e8605a);color:#fff;border-color:transparent;box-shadow:0 6px 20px rgba(244,115,109,.38);}
   main{max-width:780px;padding:18px 16px 40px;}
   .view.active{animation:none;}
   @keyframes vIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .game-card,.pay-card,.listing-card,.link-card,.stat,.mini-stat,.switch-row{background:var(--glass);border:1px solid var(--glass-line);border-radius:16px;box-shadow:0 8px 26px rgba(0,0,0,.28);}
   .game-card,.listing-card,.link-card{transition:border-color .15s ease;}
-  .game-card:hover,.listing-card:hover{border-color:rgba(245,166,35,.35);}
+  .game-card:hover,.listing-card:hover{border-color:rgba(244,115,109,.35);}
   .gcard{border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.3);}
   .section-title h2{display:flex;align-items:center;gap:9px;color:#d9dcf5;font-size:13.5px;letter-spacing:.09em;}
-  .section-title h2:before{content:"";width:4px;height:16px;border-radius:3px;background:linear-gradient(180deg,#f5a623,#8b5cf6);flex:none;}
+  .section-title h2:before{content:"";width:4px;height:16px;border-radius:3px;background:linear-gradient(180deg,#f4736d,#46566e);flex:none;}
   input,textarea,select{background:rgba(255,255,255,.04);border:1px solid var(--glass-line);border-radius:12px;transition:border-color .15s,box-shadow .15s,background .15s;}
-  input:focus,textarea:focus,select:focus{outline:none;border-color:#f5a623;box-shadow:0 0 0 3px rgba(245,166,35,.18);background:rgba(255,255,255,.06);}
-  select option{background:#14152a;}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:#f4736d;box-shadow:0 0 0 3px rgba(244,115,109,.18);background:rgba(255,255,255,.06);}
+  select option{background:#1a2230;}
   .btn{border-radius:12px;}
-  .btn-primary{background:linear-gradient(135deg,#ffc15a,#f5a623 55%,#ff7a45);color:#1c1200;font-weight:700;box-shadow:0 8px 22px rgba(245,166,35,.30);}
-  .btn-primary:hover{opacity:1;box-shadow:0 12px 28px rgba(245,166,35,.42);}
+  .btn-primary{background:linear-gradient(135deg,#ff8f87,#f4736d 55%,#e8605a);color:#fff;font-weight:700;box-shadow:0 8px 22px rgba(244,115,109,.30);}
+  .btn-primary:hover{opacity:1;box-shadow:0 12px 28px rgba(244,115,109,.42);}
   .btn-ghost{background:rgba(255,255,255,.04);border:1px solid var(--glass-line);}
   .icon-btn{background:rgba(255,255,255,.05);border:1px solid var(--glass-line);border-radius:10px;transition:all .15s;}
   .icon-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
@@ -269,7 +269,7 @@
   .tag{background:rgba(255,255,255,.06);border:1px solid var(--glass-line);}
   .switch{background:rgba(255,255,255,.06);}
   .empty{border:1px dashed var(--glass-line);border-radius:14px;margin:6px 0;}
-  .toast{background:linear-gradient(135deg,#ffc15a,#f5a623);box-shadow:0 10px 30px rgba(0,0,0,.4);}
+  .toast{background:linear-gradient(135deg,#ff8f87,#f4736d);box-shadow:0 10px 30px rgba(0,0,0,.4);}
   /* ---- Maoni: kadi ndogo ---- */
   .fb-card{background:var(--glass);border:1px solid var(--glass-line);border-radius:18px;padding:12px 12px 10px;margin-bottom:11px;box-shadow:0 8px 26px rgba(0,0,0,.28);}
   .fb-top{display:flex;gap:11px;align-items:center;}
@@ -281,7 +281,7 @@
   .fb-date{font-size:10.5px;color:var(--sub);}
   .fb-done{font-size:10px;font-weight:700;color:#7dffb0;background:rgba(61,220,132,.14);border:1px solid rgba(61,220,132,.4);padding:2px 8px;border-radius:20px;}
   .fb-new{font-size:10px;font-weight:700;color:#ff8a8a;background:rgba(255,92,92,.13);border:1px solid rgba(255,92,92,.4);padding:2px 8px;border-radius:20px;}
-  .fb-kind{display:inline-block;font-size:10px;font-weight:700;color:#a994ff;margin-top:9px;}
+  .fb-kind{display:inline-block;font-size:10px;font-weight:700;color:#93a0b5;margin-top:9px;}
   .fb-msg{margin-top:5px;background:rgba(0,0,0,.25);border:1px solid var(--glass-line);border-radius:12px;padding:9px 11px;font-size:13px;line-height:1.5;word-break:break-word;}
   .fb-reply{display:flex;gap:8px;margin-top:9px;align-items:flex-end;}
   .fb-reply textarea{min-height:42px;font-size:13px;padding:9px 12px;}
@@ -322,9 +322,9 @@
   .tabs{gap:8px;padding:10px 14px;background:rgba(10,10,22,.55);backdrop-filter:blur(8px);position:sticky;top:57px;z-index:4;}
   .tab{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:68px;padding:9px 12px 8px;border-radius:14px;font-size:11px;font-weight:700;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
   .tab .ic{width:20px;height:20px;}
-  .tab.active{background:linear-gradient(135deg,#ffb347,#ff7a3d);color:#1a1000;border-color:transparent;box-shadow:0 6px 16px rgba(255,122,61,.28);}
+  .tab.active{background:linear-gradient(135deg,#ff8f87,#ff7a3d);color:#1a1000;border-color:transparent;box-shadow:0 6px 16px rgba(255,122,61,.28);}
   .tab:not([data-view]){flex-direction:row;justify-content:center;min-width:0;font-size:13px;}
-  .dash-hero{display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:16px;border-radius:20px;background:linear-gradient(135deg,rgba(139,92,246,.28),rgba(255,95,162,.16) 60%,rgba(255,179,71,.14));border:1px solid rgba(255,255,255,.12);}
+  .dash-hero{display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:16px;border-radius:20px;background:linear-gradient(135deg,rgba(70,86,110,.28),rgba(232,96,90,.16) 60%,rgba(255,179,71,.14));border:1px solid rgba(255,255,255,.12);}
   .dash-hero .dh-icon{width:52px;height:52px;border-radius:16px;flex:none;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;}
   .dash-hero h1{font-size:19px;font-weight:800;color:#fff;}
   .dash-hero p{font-size:12px;color:#c9cdea;margin:3px 0 0;}
@@ -339,7 +339,7 @@
   .ann-btn .ic{font-size:20px;}
   .ann-btn.tt .ic{color:#5eead4;}
   .icon-btn{display:inline-flex;align-items:center;justify-content:center;}
-  .brand-logo{width:38px;height:38px;flex:none;border-radius:12px;box-shadow:0 4px 14px rgba(255,95,162,.35);}
+  .brand-logo{width:38px;height:38px;flex:none;border-radius:12px;box-shadow:0 4px 14px rgba(232,96,90,.35);}
   .brand-logo.big{width:64px;height:64px;margin:0 auto 16px;border-radius:18px;}
   .brand span{font-size:17px;}
   .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 4px;}
@@ -363,9 +363,9 @@
   #admBg{height:100lvh;min-height:100%;}
   #app{padding-bottom:calc(24px + env(safe-area-inset-bottom));}
   /* muonekano wa kipekee: kadi za kioo zenye mstari wa mwanga */
-  .gcard,.stat-card,.stat2,.mini-t{background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.02)) !important;border:1px solid rgba(190,160,255,.22) !important;box-shadow:0 8px 24px rgba(5,2,20,.35),inset 0 1px 0 rgba(255,255,255,.08) !important;backdrop-filter:blur(2px);}
-  .dash-header h1{background:linear-gradient(90deg,#ffd68a,#ff8fc7 55%,#b9a2ff);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;}
-  header{border-bottom:1px solid transparent !important;border-image:linear-gradient(90deg,transparent,rgba(255,170,80,.6),rgba(190,140,255,.6),transparent) 1;}
+  .gcard,.stat-card,.stat2,.mini-t{background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.02)) !important;border:1px solid rgba(255,255,255,.10) !important;box-shadow:0 8px 24px rgba(5,2,20,.35),inset 0 1px 0 rgba(255,255,255,.08) !important;backdrop-filter:blur(2px);}
+  .dash-header h1{background:linear-gradient(90deg,#ffd0cc,#ff8f87 55%,#93a0b5);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;}
+  header{border-bottom:1px solid transparent !important;border-image:linear-gradient(90deg,transparent,rgba(244,115,109,.6),rgba(147,160,181,.5),transparent) 1;}
   .onl-tile{border-color:rgba(60,220,140,.35) !important;}
   .onl-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#2ee59d;margin-right:6px;vertical-align:middle;box-shadow:0 0 0 0 rgba(46,229,157,.6);animation:onlPulse 1.8s infinite;}
   @keyframes onlPulse{0%{box-shadow:0 0 0 0 rgba(46,229,157,.55)}70%{box-shadow:0 0 0 8px rgba(46,229,157,0)}100%{box-shadow:0 0 0 0 rgba(46,229,157,0)}}
@@ -374,13 +374,27 @@
   .gift-quick{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px;}
   .gift-quick button{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:20px;padding:5px 11px;font-size:11.5px;cursor:pointer;}
   .gift-state{font-size:12px;margin:0 0 10px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.05);color:var(--text);line-height:1.5;}
+
+  /* ===== MG3: muonekano mpya (coral + bluu-nyeusi) ===== */
+  html,body{background:#121923 !important;background-color:#121923 !important;}
+  #admBg{display:none !important;}
+  .btn-primary,.tab.active,.btn-approve,.toast{color:#fff !important;}
+  .tabs{border-radius:0 0 20px 20px;}
+  .tab{border-radius:20px;}
+  .gcard,.stat-card,.stat2,.mini-t,.game-card,.pay-card,.listing-card,.link-card,.stat,.mini-stat,.switch-row,.fb-card{background:var(--panel) !important;border:1px solid var(--line) !important;box-shadow:0 4px 14px rgba(0,0,0,.22) !important;}
+  .gate-card{background:var(--panel);border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.5);}
+  .dash-header h1,.brand span{background:linear-gradient(90deg,#fff,#ff8f87);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;}
+  input,textarea,select{background:var(--panel-2);border:1px solid var(--line);}
+  .btn-primary,.tab.active,.cartridge-mark{background:linear-gradient(135deg,#f4736d,#46566e) !important;}
+  .toast{background:linear-gradient(135deg,#f4736d,#46566e) !important;}
+  header,.topbar{background:rgba(18,25,35,.94) !important;}
 </style>
 </head>
 <body>
 
 <div id="gate">
   <div class="gate-card">
-    <div class="brand-logo big"><svg viewBox="0 0 48 48" width="100%" height="100%"><defs><linearGradient id="bl2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".55" stop-color="#ff5fa2"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#bl2)"/><path d="M15 17h18a6 6 0 0 1 5.8 4.6l1.6 7A4.2 4.2 0 0 1 32.600 33l-1.500-2.200H16.900L15.400 33a4.200 4.200 0 0 1-7.800-4.400l1.600-7A6 6 0 0 1 15 17z" fill="#fff" fill-opacity=".95"/><path d="M16 21.500v5M13.500 24h5" stroke="#8b5cf6" stroke-width="2.200" stroke-linecap="round"/><circle cx="31" cy="22.500" r="1.700" fill="#ff5fa2"/><circle cx="34.500" cy="25.500" r="1.700" fill="#ffb347"/><path d="M36 8l1 2.600 2.600 1-2.600 1-1 2.600-1-2.600-2.600-1 2.600-1z" fill="#fff"/></svg></div>
+    <div class="brand-logo big"><svg viewBox="0 0 48 48" width="100%" height="100%"><defs><linearGradient id="bl2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8f87"/><stop offset=".55" stop-color="#e8605a"/><stop offset="1" stop-color="#46566e"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#bl2)"/><path d="M15 17h18a6 6 0 0 1 5.8 4.6l1.6 7A4.2 4.2 0 0 1 32.600 33l-1.500-2.200H16.900L15.400 33a4.200 4.200 0 0 1-7.800-4.400l1.600-7A6 6 0 0 1 15 17z" fill="#fff" fill-opacity=".95"/><path d="M16 21.500v5M13.500 24h5" stroke="#46566e" stroke-width="2.200" stroke-linecap="round"/><circle cx="31" cy="22.500" r="1.700" fill="#e8605a"/><circle cx="34.500" cy="25.500" r="1.700" fill="#ff8f87"/><path d="M36 8l1 2.600 2.600 1-2.600 1-1 2.600-1-2.600-2.600-1 2.600-1z" fill="#fff"/></svg></div>
     <h1>mumbigames admin</h1>
     <p>Weka password yako kuingia kwenye dashibodi</p>
     <input type="password" inputmode="numeric" pattern="[0-9]*" id="pinInput" placeholder="Password" maxlength="64" autocomplete="current-password" onkeydown="if(event.key==='Enter')tryEnter()">
@@ -438,7 +452,7 @@ function admImg(u,w){ try{ u=String(u||''); if(!/^https?:\/\//i.test(u)||u.index
 <div id="app">
   <div class="topbar">
     <div class="brand">
-      <div class="brand-logo"><svg viewBox="0 0 48 48" width="100%" height="100%"><defs><linearGradient id="bl1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".55" stop-color="#ff5fa2"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#bl1)"/><path d="M15 17h18a6 6 0 0 1 5.8 4.6l1.6 7A4.2 4.2 0 0 1 32.600 33l-1.500-2.200H16.900L15.400 33a4.200 4.200 0 0 1-7.800-4.400l1.600-7A6 6 0 0 1 15 17z" fill="#fff" fill-opacity=".95"/><path d="M16 21.500v5M13.500 24h5" stroke="#8b5cf6" stroke-width="2.200" stroke-linecap="round"/><circle cx="31" cy="22.500" r="1.700" fill="#ff5fa2"/><circle cx="34.500" cy="25.500" r="1.700" fill="#ffb347"/><path d="M36 8l1 2.600 2.600 1-2.600 1-1 2.600-1-2.600-2.600-1 2.600-1z" fill="#fff"/></svg></div>
+      <div class="brand-logo"><svg viewBox="0 0 48 48" width="100%" height="100%"><defs><linearGradient id="bl1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8f87"/><stop offset=".55" stop-color="#e8605a"/><stop offset="1" stop-color="#46566e"/></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#bl1)"/><path d="M15 17h18a6 6 0 0 1 5.8 4.6l1.6 7A4.2 4.2 0 0 1 32.600 33l-1.500-2.200H16.900L15.400 33a4.200 4.200 0 0 1-7.800-4.400l1.600-7A6 6 0 0 1 15 17z" fill="#fff" fill-opacity=".95"/><path d="M16 21.500v5M13.500 24h5" stroke="#46566e" stroke-width="2.200" stroke-linecap="round"/><circle cx="31" cy="22.500" r="1.700" fill="#e8605a"/><circle cx="34.500" cy="25.500" r="1.700" fill="#ff8f87"/><path d="M36 8l1 2.600 2.600 1-2.600 1-1 2.600-1-2.600-2.600-1 2.600-1z" fill="#fff"/></svg></div>
       <div>
         <span>mumbigames</span>
         <small>Admin Dashboard</small>
@@ -1556,7 +1570,7 @@ function loadAcademyAdmin(){
   }, err=>{ console.error(err); acListening = false; showToast('Imeshindwa kupakia topics.'); });
   db.collection('academyCourses').onSnapshot(snap=>{
     const m = {}; snap.docs.forEach(d=>{ m[d.id] = d.data().learners || 0; });
-    const GR = {edit:'linear-gradient(135deg,#ff5fa2,#8b5cf6)',sport:'linear-gradient(135deg,#1fb86b,#0b6b7a)',gaming:'linear-gradient(135deg,#ff8a3d,#c2255c)'};
+    const GR = {edit:'linear-gradient(135deg,#e8605a,#46566e)',sport:'linear-gradient(135deg,#1fb86b,#0b6b7a)',gaming:'linear-gradient(135deg,#ff8a3d,#c2255c)'};
     document.getElementById('acStats').innerHTML = ['edit','sport','gaming'].map(k=>`<div class="ac-stat" style="background:${GR[k]}"><div class="n">👥 ${Math.max(0,m[k]||0)}</div><div class="l">${AC_COURSE_LBL[k]}</div></div>`).join('');
   }, err=>console.error(err));
 }
