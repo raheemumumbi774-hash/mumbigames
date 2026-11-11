@@ -1690,6 +1690,7 @@
 #mgOff button{margin-top:14px;padding:12px 34px;border:0;border-radius:26px;background:#d4756f;color:#fff;font:700 16px 'Baloo 2',sans-serif;}
 
 #mgOnb.has-user .onb-log,#mgOnb.has-user .onb-guest{display:none!important;}
+
 </style>
 </head>
 <body>
@@ -1780,7 +1781,7 @@
   <a class="mf-mail" href="mailto:raheemmumbi374@gmail.com">raheemmumbi374@gmail.com</a>
   <div class="mf-help" id="mfHelp" onclick="toggleHelp()">Help Center <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
   <div class="mf-helpbody" id="mfHelpBody"></div>
-  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.12-e</div></div>
+  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.12-h</div></div>
 </div>
 <div class="overlay" id="legalOverlay" onclick="if(event.target===this) closeLegal()">
   <div class="modal" style="max-width:480px;">
@@ -2716,9 +2717,29 @@ function tryOpenDeepLinkGame(){
   }
 }
 
+// Ubora wa picha unafuata kasi ya mtandao: nzuri sana = ~2K-4K, kawaida = kawaida, dhaifu = ndogo.
+var __mgTier = 1;
+function mgTierCalc(){
+  try{
+    var c = navigator.connection || {}, et = c.effectiveType || '', dl = c.downlink || 0, rtt = c.rtt || 0;
+    var t = 1;
+    if(c.saveData || et === 'slow-2g' || et === '2g') t = .4;
+    else if(et === '3g') t = .6;
+    else if(et === '4g' || !et){ if(dl >= 8 && (!rtt || rtt <= 120)) t = 2; else if(dl >= 3 && (!rtt || rtt <= 250)) t = 1.5; else if(dl && dl < 1.2) t = .7; else t = 1; }
+    __mgTier = Math.min(t, __mgPingCap || 9);
+  }catch(e){}
+}
+var __mgPingCap = 9;
+window.__mgPing = function(ms){ // inaitwa na kipimo cha internet; inapunguza tu (haipandishi) ili picha zilizopakiwa zisibadilike
+  __mgPingCap = ms > 2500 ? .6 : (ms > 1200 ? 1 : 9); mgTierCalc();
+};
+mgTierCalc();
+try{ if(navigator.connection && navigator.connection.addEventListener) navigator.connection.addEventListener('change', mgTierCalc); }catch(e){}
 function mgImg(u,w){
   try{ u=String(u||''); if(!/^https?:\/\//i.test(u) || u.indexOf('wsrv.nl')>-1 || /\.gif(\?|$)/i.test(u)) return u;
-    return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&q='+(w>=1500?90:88)+'&output=webp'; }catch(e){ return u; }
+    var f = w >= 600 ? __mgTier : Math.min(__mgTier, 1);
+    var ww = Math.max(120, Math.min(w >= 600 ? 3200 : w, Math.round(w * f / 20) * 20));
+    return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+ww+'&q='+(ww>=1500?90:(ww<500?80:86))+'&output=webp'; }catch(e){ return u; }
 }
 // Kazi zisizo za haraka (taarifa, chat, darasa) zinaanza baada ya skrini kuu kuonekana, ili app ifunguke kwa kasi.
 function mgLater(fn, ms){
@@ -10718,6 +10739,12 @@ async function mgDeleteAccountDo(){
   }
   var LOCAL_G = ['onb-g1.webp','onb-g2.webp','onb-g3.webp','onb-g4.webp','onb-g5.webp','onb-g6.webp','onb-g7.webp'];
   var LOCAL_P = ['onb-p1.webp','onb-p2.webp','onb-p3.webp','onb-p4.webp'];
+  var LOCAL_T = ['tv-1.webp','tv-2.webp','tv-3.webp','tv-4.webp','tv-5.webp'];
+  function collageT(){
+    var h = '';
+    for(var i = 0; i < 9; i++){ h += '<i style="background-image:url(\'' + LOCAL_T[i % LOCAL_T.length] + '\');background-position:center top"></i>'; }
+    return '<div class="onb-col"><div class="onb-grid">' + h + '</div></div><div class="onb-ov"></div>';
+  }
   function collageL(list, seed, fb){
     var h = '';
     for(var i = 0; i < 8; i++){
@@ -10744,7 +10771,7 @@ async function mgDeleteAccountDo(){
     return [
       {bg: collageL(LOCAL_G, 0, imgs.games), t: T('Games Kali Zote Hapa','All the Best Games Here'), p: T('APK, PC, PlayStation na zaidi — pakua kirahisi, pamoja na maelekezo ya kuseti kila game.','APK, PC, PlayStation and more — download easily, with setup guides for every game.')},
       {bg: collageL(LOCAL_P, 0, imgs.shop.length ? imgs.shop : imgs.games), t: T('Nunua na Uza Bidhaa','Buy & Sell Products'), p: T('Tafuta bidhaa unazozipenda, au weka bidhaa yako uuze. Ongea na muuzaji moja kwa moja WhatsApp.','Find products you love, or list your own to sell. Chat with the seller directly on WhatsApp.')},
-      {bg: collageL(LOCAL_G, 3, imgs.games) + '<div class="onb-play"></div>', t: T('TV, Movie na Muziki','TV, Movies & Music'), p: T('Tazama chaneli za LIVE, movie na muziki bila kutoka kwenye app.','Watch LIVE channels, movies and music without leaving the app.')},
+      {bg: collageT() + '<div class="onb-play"></div>', t: T('TV, Movie na Muziki','TV, Movies & Music'), p: T('Tazama chaneli za LIVE, movie na muziki bila kutoka kwenye app.','Watch LIVE channels, movies and music without leaving the app.')},
       {bg: coinIll(), t: T('Pata Token na Zawadi','Earn Tokens & Gifts'), p: T('Kusanya token kila siku na zawadi maalum, kisha zitumie kupata games za kulipia bure.','Collect tokens every day plus special gifts, then use them to unlock paid games for free.')},
       {bg: chatIll(), t: T('Jumuiya ya Gamers','Gamers Community'), p: T('Piga story na gamers wengine, uliza msaada, na ufuatilie mashindano na matangazo mapya.','Chat with other gamers, ask for help, and follow tournaments and fresh announcements.')}
     ];
@@ -10782,7 +10809,7 @@ async function mgDeleteAccountDo(){
     ob.querySelector('#onbSkip').style.display = last ? 'none' : 'block';
   }
   function done(mode){
-    LS.set('mg-onb', '1'); LS.set('mg-onb2', '1');
+    LS.set('mg-onb', '1'); LS.set('mg-onb3', '1');
     if(!ob) return;
     ob.style.transition = 'opacity .35s'; ob.style.opacity = '0';
     setTimeout(function(){ try{ ob.remove(); }catch(e){} ob = null; }, 380);
@@ -10803,10 +10830,14 @@ async function mgDeleteAccountDo(){
     ob.querySelectorAll('.onb-lbtn').forEach(function(b){
       b.onclick = function(){
         try{ setLang(b.getAttribute('data-l')); }catch(e){ LS.set('mg-lang', b.getAttribute('data-l')); }
-        loadImgs(drawMain);
+        // subiri picha zote za mwanzo zipakie (hadi sekunde 3) kabla ya kuonyesha slides, ili zisikute tupu
+        var all = LOCAL_G.concat(LOCAL_P, LOCAL_T), left = all.length, fired = false;
+        function go2(){ if(fired) return; fired = true; loadImgs(drawMain); }
+        all.forEach(function(u){ var im = new Image(); im.onload = im.onerror = function(){ if(--left <= 0) go2(); }; im.src = u; });
+        setTimeout(go2, 3000);
       };
     });
-    try{ LOCAL_G.concat(LOCAL_P).forEach(function(u){ (new Image()).src = u; }); }catch(e){}
+    try{ LOCAL_G.concat(LOCAL_P, LOCAL_T).forEach(function(u){ (new Image()).src = u; }); }catch(e){}
     loadImgs(function(){}); // anza kupakia picha mapema
   }
 
@@ -10821,7 +10852,7 @@ async function mgDeleteAccountDo(){
         var skip = /[?&](game|ref)=/.test(location.search) && false;
         // Inatokea MARA MOJA tu kwa kila mtu (mwenyeji na mgeni); baada ya kumaliza haitokei tena.
         if(/[?&]onb=1/.test(location.search)){ showOnb(); }
-        else if(!LS.get('mg-onb2') && !/[?&]game=/.test(location.search)){ showOnb(); }
+        else if(!LS.get('mg-onb3') && !/[?&]game=/.test(location.search)){ showOnb(); }
       }catch(e){ console.error(e); }
       var sp = document.getElementById('mgSplash');
       if(sp){ sp.classList.add('out'); setTimeout(function(){ try{ sp.remove(); }catch(e){} }, window.__mgApp ? 0 : 500); }
@@ -10865,7 +10896,7 @@ async function mgDeleteAccountDo(){
       one(location.protocol.indexOf('http') === 0 ? location.origin + '/favicon.ico' + q : 'https://www.gstatic.com/generate_204?b' + Date.now());
     });
   }
-  var fails = 0;
+  var fails = 0, badN = 0;
   function show(mode){ // 'ok' | 'slow' | 'off'
     txt();
     var en = L();
@@ -10873,10 +10904,16 @@ async function mgDeleteAccountDo(){
       document.getElementById('mgNetT').textContent = en ? 'Weak internet' : 'Internet ni mbaya';
       document.getElementById('mgNetS').textContent = en ? 'Some things may take long to open.' : 'Baadhi ya vitu vinaweza kuchelewa kufunguka.';
     }
+    if(mode === 'bad'){
+      document.getElementById('mgNetT').textContent = en ? 'Very poor internet' : 'Internet ni mbovu sana';
+      document.getElementById('mgNetS').textContent = en ? "Can't open right now." : 'Haiwezi kufunguka kwa sasa.';
+      document.getElementById('mgOffT').textContent = en ? 'Network is too weak' : 'Mtandao ni mbovu sana';
+      document.getElementById('mgOffS').textContent = en ? 'Move to a place with better signal or switch to Wi-Fi. It will open automatically when the network improves.' : 'Hamia sehemu yenye mtandao mzuri au tumia WiFi. Itafunguka yenyewe mtandao ukiwa mzuri.';
+    }
     net.classList.toggle('show', mode !== 'ok');
-    off.classList.toggle('show', mode === 'off');
+    off.classList.toggle('show', mode === 'off' || mode === 'bad');
     if(mode === 'ok' && isOff){ try{ db.enableNetwork(); }catch(e){} }
-    isOff = (mode === 'off');
+    isOff = (mode === 'off' || mode === 'bad');
   }
   function check(){
     if(busy) return; busy = true;
@@ -10886,7 +10923,9 @@ async function mgDeleteAccountDo(){
       if(navigator.onLine === false){ show('off'); return; }
       if(!r.ok){ fails++; if(fails >= 2){ show('off'); } else { setTimeout(check, 1500); } return; }
       fails = 0;
-      show(r.ms > 3500 ? 'slow' : 'ok');
+      try{ window.__mgPing(r.ms); }catch(e){}
+      if(r.ms >= 9999){ badN++; } else { badN = 0; }
+      show(badN >= 2 ? 'bad' : (r.ms > 3500 ? 'slow' : 'ok'));
     });
   }
   window.addEventListener('offline', function(){ fails = 2; show('off'); });
