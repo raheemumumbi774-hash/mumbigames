@@ -1691,6 +1691,10 @@
 
 #mgOnb.has-user .onb-log,#mgOnb.has-user .onb-guest{display:none!important;}
 
+
+.mgf{opacity:0;transition:opacity .35s ease;animation:mgfShow 0s 10s forwards;}
+.mgf.ok{opacity:1;animation:none;}
+@keyframes mgfShow{to{opacity:1;}}
 </style>
 </head>
 <body>
@@ -1781,7 +1785,7 @@
   <a class="mf-mail" href="mailto:raheemmumbi374@gmail.com">raheemmumbi374@gmail.com</a>
   <div class="mf-help" id="mfHelp" onclick="toggleHelp()">Help Center <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
   <div class="mf-helpbody" id="mfHelpBody"></div>
-  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.12-h</div></div>
+  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.12-i</div></div>
 </div>
 <div class="overlay" id="legalOverlay" onclick="if(event.target===this) closeLegal()">
   <div class="modal" style="max-width:480px;">
@@ -2735,9 +2739,13 @@ window.__mgPing = function(ms){ // inaitwa na kipimo cha internet; inapunguza tu
 };
 mgTierCalc();
 try{ if(navigator.connection && navigator.connection.addEventListener) navigator.connection.addEventListener('change', mgTierCalc); }catch(e){}
+function mgLow(u){ // picha ndogo sana (kama 8KB) inayojaza kisanduku papo hapo wakati picha kubwa inapakia
+  try{ u=String(u||''); if(!/^https?:\/\//i.test(u) || u.indexOf('wsrv.nl')>-1 || /\.gif(\?|$)/i.test(u)) return u;
+    return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w=220&q=45&output=webp'; }catch(e){ return u; }
+}
 function mgImg(u,w){
   try{ u=String(u||''); if(!/^https?:\/\//i.test(u) || u.indexOf('wsrv.nl')>-1 || /\.gif(\?|$)/i.test(u)) return u;
-    var f = w >= 600 ? __mgTier : Math.min(__mgTier, 1);
+    var f = w >= 1400 ? __mgTier : Math.min(__mgTier, 1);
     var ww = Math.max(120, Math.min(w >= 600 ? 3200 : w, Math.round(w * f / 20) * 20));
     return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+ww+'&q='+(ww>=1500?90:(ww<500?80:86))+'&output=webp'; }catch(e){ return u; }
 }
@@ -2831,7 +2839,7 @@ function mgPreloadGames(){
     const c = navigator.connection || {};
     const slow = !!c.saveData || /(^|-)(2g|3g)$/.test(c.effectiveType || '');
     const list = games.filter(g => g.image).slice(0, slow ? 24 : 400);
-    mgPreQueue(list.map(function(g){ return mgImg(g.image, 1100); }));
+    var hq = list.map(function(g){ return mgImg(g.image, 1100); }); mgPreQueue(hq.slice(0,6).concat(list.map(function(g){ return mgLow(g.image); }), hq.slice(6)));
   }catch(e){ console.error(e); }
 }
 var __mgPreHold = [];
@@ -2933,8 +2941,8 @@ function render(){
 
   document.getElementById('gameList').innerHTML = list.length ? list.map((g,gi)=>`
     <div class="g-card" onclick='handleDownload(${JSON.stringify(g).replace(/'/g,"&#39;")})'>
-      <div class="g-thumb">
-        ${g.image ? `<img src="${escapeHtml(mgImg(g.image,1100))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="${gi<8?'eager':'lazy'}" ${gi<3?'fetchpriority="high" ':''}decoding="async">` : ''}
+      <div class="g-thumb"${g.image ? ` style="background:url('${escapeHtml(mgLow(g.image)).replace(/'/g,'%27')}') center/cover no-repeat"` : ''}>
+        ${g.image ? `<img class="mgf" onload="this.classList.add('ok')" src="${escapeHtml(mgImg(g.image,1100))}" data-o="${escapeHtml(g.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(g.name)}" loading="${gi<8?'eager':'lazy'}" ${gi<3?'fetchpriority="high" ':''}decoding="async">` : ''}
         <span class="g-badge ${g.paid?'paid':''}">${g.paid?'🔒 Kulipia':'Bure'}</span>
       </div>
       <div class="g-body">
@@ -8482,8 +8490,8 @@ function renderDukaList(){
     const fav=favs.indexOf(l.id)>=0;
     return `
       <div class="d-gcard" onclick="openListingDetail('${l.id}')">
-        <div class="d-gthumb">
-          ${l.image ? `<img src="${escapeHtml(mgImg(l.image,1000))}" data-o="${escapeHtml(l.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(l.title)}" decoding="async">` : ''}
+        <div class="d-gthumb"${l.image ? ` style="background:url('${escapeHtml(mgLow(l.image)).replace(/'/g,'%27')}') center/cover no-repeat"` : ''}>
+          ${l.image ? `<img class="mgf" onload="this.classList.add('ok')" src="${escapeHtml(mgImg(l.image,1000))}" data-o="${escapeHtml(l.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(l.title)}" decoding="async">` : ''}
           ${off?`<div class="d-gbadge">${off}% OFF</div>`:''}
           ${outOfStock ? `<div class="d-gsold-overlay"><div class="d-gsold-stamp">${tvT('Imeuzwa','Sold')}</div></div>` : ''}
         </div>
@@ -8503,7 +8511,7 @@ function loadListings(){
     dukaListingsCache = {};
     approved.forEach(l=>{ dukaListingsCache[l.id] = l; });
     renderDukaList();
-    try{ mgPreQueue(approved.filter(function(l){ return l.image; }).map(function(l){ return mgImg(l.image,1000); })); }catch(e){}
+    try{ var _al = approved.filter(function(l){ return l.image; }); var _hq = _al.map(function(l){ return mgImg(l.image,1000); }); mgPreQueue(_hq.slice(0,4).concat(_al.map(function(l){ return mgLow(l.image); }), _hq.slice(4))); }catch(e){}
   }, err=>{
     console.error(err);
     document.getElementById('dukaList').innerHTML = '<div class="empty">Imeshindwa kupakia. Jaribu tena.</div>';
