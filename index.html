@@ -1695,6 +1695,179 @@
 .mgf{opacity:0;transition:opacity .35s ease;animation:mgfShow 0s 10s forwards;}
 .mgf.ok{opacity:1;animation:none;}
 @keyframes mgfShow{to{opacity:1;}}
+
+/* MG13: Tournament Pro */
+#tournamentView .chat-header,#tournDetailView .tnd-hero .back{background:transparent;}
+.tn-search{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:0 14px;margin-bottom:12px;color:var(--sub);}
+.tn-search input{flex:1;background:none;border:0;outline:0;color:var(--text);padding:13px 0;font-size:14px;font-family:inherit;}
+.tn-tabs{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:4px;margin-bottom:12px;}
+.tn-tabs div{flex:1;text-align:center;padding:9px 0;border-radius:12px;font-size:12.5px;font-weight:700;color:var(--sub);cursor:pointer;}
+.tn-tabs div.on{background:var(--lime);color:#fff;}
+.tn-create{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border:0;border-radius:16px;background:linear-gradient(120deg,var(--lime),var(--grad2));color:#fff;font:800 14.5px 'Baloo 2',sans-serif;margin-bottom:16px;}
+.tn-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;margin-bottom:14px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);}
+.tn-cover{position:relative;height:132px;background:center/cover no-repeat;display:flex;align-items:center;justify-content:center;}
+.tn-cover.nocover{background:linear-gradient(135deg,var(--lime) 0%,var(--grad2) 100%);}
+.tn-cov-ic{color:rgba(255,255,255,.9);opacity:.85;}
+.tn-st,.tn-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;background:rgba(15,20,28,.72);color:#fff;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+.tn-st{position:absolute;left:10px;top:10px;}
+.tn-st b,.tn-chip b{width:7px;height:7px;border-radius:50%;background:#ff5a5f;animation:mgNetP 1.2s infinite;}
+.st-live{color:#ffb4b0;} .st-done{color:#7be7a5;} .st-soon{color:#cdd6e6;}
+.tn-star{position:absolute;right:10px;top:10px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(15,20,28,.72);color:#fff;display:flex;align-items:center;justify-content:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+.tn-star.on{color:#ffcf4a;}
+.tn-newdot{position:absolute;right:6px;top:6px;width:11px;height:11px;border-radius:50%;background:#ff4d4d;border:2px solid var(--panel);}
+.tn-info{padding:12px 14px 14px;}
+.tn-name{font-size:17px;font-weight:800;line-height:1.2;}
+.tn-sub{font-size:12px;color:var(--sub);margin-top:3px;}
+.tn-stats{display:flex;align-items:center;gap:14px;margin-top:10px;font-size:12.5px;color:var(--sub);flex-wrap:wrap;}
+.tn-stats span{display:inline-flex;align-items:center;gap:5px;}
+.tn-by{margin-left:auto;max-width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tn-bar{height:5px;background:var(--panel-2);border-radius:5px;margin-top:10px;overflow:hidden;}
+.tn-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--lime),var(--grad2));border-radius:5px;}
+.tn-empty{text-align:center;color:var(--sub);padding:34px 20px;}
+.tn-empty p{margin:10px 0 0;font-size:13.5px;line-height:1.5;}
+.tn-empty.small{padding:20px;}
+.tn-empty svg{color:var(--lime);opacity:.8;}
+/* detail */
+#tournDetailView{background:var(--bg);}
+.tnd-hero{padding:calc(12px + env(safe-area-inset-top)) 16px 16px;background:linear-gradient(135deg,var(--lime) 0%,#a35f5c 40%,var(--grad2) 100%) center/cover no-repeat;border-radius:0 0 26px 26px;box-shadow:0 10px 26px rgba(0,0,0,.3);}
+.tnd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.tnd-top .back{color:#fff;font-size:24px;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:rgba(15,20,28,.45);border-radius:50%;}
+.tnd-actions{display:flex;gap:8px;}
+.tnd-ib{width:40px;height:40px;border-radius:50%;border:0;background:rgba(15,20,28,.45);color:#fff;display:flex;align-items:center;justify-content:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+.tnd-ib.on{color:#ffcf4a;}
+.tnd-id{display:flex;align-items:center;gap:14px;}
+.tnd-logo{width:68px;height:68px;border-radius:20px;background:rgba(15,20,28,.55);border:2px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;color:#fff;overflow:hidden;flex:none;}
+.tnd-logo img{width:100%;height:100%;object-fit:cover;}
+.tnd-name{font-size:22px;font-weight:800;color:#fff;line-height:1.15;word-break:break-word;}
+.tnd-meta{font-size:12.5px;color:rgba(255,255,255,.85);margin-top:3px;}
+.tnd-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;}
+.tn-invite{display:flex;align-items:center;gap:12px;margin:14px 16px 0;padding:12px 14px;border-radius:16px;background:linear-gradient(120deg,rgba(212,117,111,.25),rgba(70,86,110,.3));border:1px solid var(--lime);font-size:13px;}
+.tn-invite span{color:var(--sub);font-size:12px;}
+.tn-invite button{margin-left:auto;display:inline-flex;align-items:center;gap:6px;border:0;border-radius:20px;background:var(--lime);color:#fff;padding:9px 16px;font:800 13px 'Baloo 2',sans-serif;flex:none;}
+.tn-champ{display:flex;align-items:center;gap:14px;margin:14px 16px 0;padding:14px 16px;border-radius:18px;background:linear-gradient(120deg,#6b4a0f,#c9951f 55%,#6b4a0f);color:#fff;box-shadow:0 8px 22px rgba(201,149,31,.3);}
+.tn-champ-ic{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex:none;}
+.tn-champ-b span{font-size:11px;letter-spacing:.16em;font-weight:800;opacity:.9;}
+.tn-champ-b div{display:flex;align-items:center;gap:8px;margin-top:3px;font-size:18px;}
+.tnd-tabs{display:flex;gap:4px;margin:14px 16px 0;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:4px;}
+.td-tab{flex:1;text-align:center;padding:9px 0;border-radius:12px;font-size:12.5px;font-weight:700;cursor:pointer;}
+.td-tab.active{background:var(--lime);color:#fff;} .td-tab:not(.active){color:var(--sub);}
+.tn-sec{margin-bottom:16px;}
+.tn-sec-t{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--lime);text-transform:uppercase;letter-spacing:.08em;margin:6px 2px 8px;}
+.tn-crest{display:inline-block;flex:none;line-height:0;}
+.tnm{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:10px 12px 12px;margin-bottom:10px;}
+.tnm-top{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--sub);font-weight:700;margin-bottom:8px;min-height:18px;}
+.tnm-st{padding:3px 9px;border-radius:20px;background:var(--panel-2);font-size:10.5px;font-weight:800;color:var(--sub);}
+.tnm-st.done{background:rgba(61,220,132,.15);color:#52e08f;} .tnm-st.bye{background:var(--panel-2);}
+.tnm-row{display:flex;align-items:center;gap:8px;}
+.tnm-t{flex:1;min-width:0;display:flex;align-items:center;gap:9px;}
+.tnm-t.r{flex-direction:row-reverse;text-align:right;}
+.tnm-t b{font-size:13.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+.tnm-t.win b{color:var(--lime);}
+.tnm-sc{min-width:62px;text-align:center;font-size:12px;font-weight:800;color:var(--sub);background:var(--panel-2);border-radius:12px;padding:7px 8px;flex:none;}
+.tnm-sc.done{font-size:17px;color:var(--text);}
+.tnm-in{display:flex;align-items:center;gap:4px;flex:none;color:var(--sub);}
+.tnm-in input{width:42px;height:38px;text-align:center;background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:10px;font:800 16px 'Baloo 2',sans-serif;}
+.tnm-when{margin-top:9px;font-size:11.5px;color:var(--sub);display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.tnm-ctl{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.tnm-save{flex:1;min-width:120px;background:var(--lime);color:#fff;border:0;border-radius:12px;padding:10px;font:800 13px 'Baloo 2',sans-serif;}
+.tnm-mini{display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid var(--line);color:var(--sub);border-radius:12px;padding:9px 12px;font:700 12px 'Baloo 2',sans-serif;}
+.tn-bracket{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;}
+.tn-bcol{min-width:262px;display:flex;flex-direction:column;justify-content:space-around;}
+.tn-bhead{text-align:center;font-size:11px;font-weight:800;color:var(--sub);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.tn-table{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;}
+.tn-th,.tn-tr{display:grid;grid-template-columns:26px 1fr 26px 26px 26px 26px 34px 34px;align-items:center;gap:2px;padding:9px 10px;font-size:12px;text-align:center;}
+.tn-th{color:var(--sub);font-weight:800;background:var(--panel-2);font-size:11px;}
+.tn-tr{border-top:1px solid var(--line);}
+.tn-tr.q{box-shadow:inset 3px 0 0 var(--lime);}
+.tn-tn{text-align:left;display:flex;align-items:center;gap:8px;min-width:0;}
+.tn-tn b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tn-pos{color:var(--sub);font-weight:700;} .tn-pts{font-weight:800;color:var(--lime);font-size:13.5px;}
+.tn-teams{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.tn-team{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 6px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;}
+.tn-team b{font-size:12.5px;font-weight:700;word-break:break-word;}
+.tn-team span{font-size:11px;color:var(--lime);font-weight:800;}
+.tn-info-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:6px 16px;}
+.tn-desc{font-size:13.5px;line-height:1.55;color:var(--text);padding:12px 0 6px;margin:0;border-bottom:1px solid var(--line);}
+.tn-irow{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);color:var(--lime);}
+.tn-irow:last-child{border-bottom:0;}
+.tn-irow div{display:flex;flex-direction:column;color:var(--text);}
+.tn-irow span{font-size:11.5px;color:var(--sub);} .tn-irow b{font-size:14px;font-weight:700;}
+.tn-linkbtn,.tn-delbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;padding:13px;border-radius:16px;font:800 14px 'Baloo 2',sans-serif;}
+.tn-linkbtn{background:var(--lime);color:#fff;border:0;}
+.tn-delbtn{background:none;border:1px solid #c0504d;color:#e5736f;}
+
+/* MG14: Tournament Pro+ */
+.tn-hero{border-radius:22px;padding:18px 16px;margin-bottom:14px;background:linear-gradient(135deg,#d4756f 0%,#7e4f78 55%,#2a3550 100%);color:#fff;box-shadow:0 10px 26px rgba(0,0,0,.28);}
+.tn-hero-t{font-size:20px;font-weight:800;line-height:1.15;}
+.tn-hero-s{font-size:12.5px;opacity:.92;margin-top:6px;line-height:1.4;}
+.tn-hero-f{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.tn-hero-f span{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.16);border-radius:20px;padding:5px 10px;font-size:11.5px;font-weight:700;}
+.tn-hero-b{display:flex;gap:8px;margin-top:14px;}
+.tn-hero-b button{flex:1;padding:11px;border:0;border-radius:14px;background:#fff;color:#7a3f3a;font:800 14px 'Baloo 2',sans-serif;}
+.tn-hero-b button.ghost{background:rgba(255,255,255,.18);color:#fff;}
+.tn-intro-ic{width:128px;height:128px;border-radius:50%;background:linear-gradient(135deg,#d4756f,#7e4f78);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 14px 40px rgba(212,117,111,.35);}
+.tn-lg-pick{width:36px;height:36px;border-radius:50%;background:var(--panel-2);border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden;cursor:pointer;font-size:14px;}
+.tn-lg-pick img{width:100%;height:100%;object-fit:cover;}
+.tn-crest-img{display:inline-flex;border-radius:50%;overflow:hidden;background:var(--panel-2);align-items:center;justify-content:center;}
+.tn-crest-img img{width:100%;height:100%;object-fit:cover;}
+.td-tab{font-size:12px!important;padding:9px 0!important;}
+.tn-hint{font-size:11.5px;color:var(--sub);margin:0 2px 10px;}
+.tnm-goals{display:flex;justify-content:space-between;gap:10px;margin-top:8px;font-size:11px;color:var(--sub);padding-top:8px;border-top:1px dashed var(--line);}
+.tnm-goals div:last-child{text-align:right;}
+.tn-sc-list{display:flex;flex-direction:column;gap:8px;}
+.tn-sc-row{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;}
+.tn-sc-row.top{border-color:#d4756f;}
+.tn-sc-pos{width:22px;text-align:center;font-weight:800;color:var(--sub);}
+.tn-sc-row.top .tn-sc-pos{color:#d4756f;}
+.tn-sc-n{flex:1;min-width:0;display:flex;flex-direction:column;}
+.tn-sc-n b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tn-sc-n span{font-size:11px;color:var(--sub);}
+.tn-sc-g{font-weight:800;font-size:15px;}
+.tn-share{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:14px;}
+.tn-share-t{font-weight:800;font-size:14px;margin-bottom:6px;}
+.tn-share-l{font-size:11px;color:var(--sub);word-break:break-all;background:var(--panel-2);border-radius:10px;padding:8px 10px;margin-bottom:10px;}
+.tn-share-b{display:flex;gap:8px;}
+.tn-share-b button{flex:1;padding:10px 4px;border:0;border-radius:12px;background:var(--panel-2);color:var(--text);font:700 12.5px 'Baloo 2',sans-serif;}
+.tn-share-b button.wa{background:#25d366;color:#06260f;}
+.tn-sheet{width:100%;max-width:520px;background:var(--panel);border-radius:22px 22px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:86vh;overflow:auto;}
+.tn-sheet-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:16px;}
+.tn-sheet-h span{padding:4px 10px;color:var(--sub);}
+.tn-sc-col{background:var(--panel-2);border-radius:14px;padding:10px;margin-bottom:10px;}
+.tn-sc-h{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.tn-sc-edit{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.tn-sc-edit .sn{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 11px;font:13px 'Baloo 2',sans-serif;}
+.tn-sc-edit .sg{width:56px;background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 6px;text-align:center;font:13px 'Baloo 2',sans-serif;}
+.tn-sc-edit b{color:var(--sub);padding:4px 8px;}
+.tn-sc-col .add{width:100%;background:none;border:1px dashed var(--line);color:var(--lime);border-radius:10px;padding:8px;font:700 12.5px 'Baloo 2',sans-serif;}
+.tn-sheet-save{width:100%;padding:13px;border:0;border-radius:14px;background:var(--lime);color:#fff;font:800 15px 'Baloo 2',sans-serif;}
+
+/* MG15: makundi, washindi, chaguzi */
+.tn-bar2{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;margin-bottom:10px;border-radius:12px;background:var(--panel);border:1px solid var(--line);font-size:12px;color:var(--sub);}
+.tn-bar2 button{flex:none;border:0;background:none;color:var(--lime);font:700 12px 'Baloo 2',sans-serif;}
+.tn-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin-top:10px;border-radius:12px;background:var(--panel);border:1px solid var(--line);}
+.tn-opt div{display:flex;flex-direction:column;min-width:0;} .tn-opt b{font-size:13px;} .tn-opt span{font-size:11px;color:var(--sub);margin-top:2px;}
+.tn-opt input{display:none;} .tn-opt i{flex:none;width:44px;height:24px;border-radius:24px;background:var(--line);position:relative;transition:.2s;}
+.tn-opt i:after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;}
+.tn-opt input:checked + i{background:var(--lime);} .tn-opt input:checked + i:after{left:23px;}
+.tn-opt2{margin-top:10px;padding:12px 14px;border-radius:12px;background:var(--panel);border:1px solid var(--line);}
+.tn-opt2 label{display:block;font-size:12px;font-weight:700;margin:6px 0 4px;}
+.tn-opt2 select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--text);font:13px 'Baloo 2',sans-serif;}
+.tn-grp{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:14px;}
+.tn-grp-h{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.tn-grp-h span{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#d4756f,#7e4f78);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.tn-grp-h b{flex:1;font-size:15px;} .tn-grp-h em{font-style:normal;font-size:11px;color:var(--sub);}
+.tn-grp-m{margin-top:10px;}
+.tn-third{margin-top:12px;padding-top:6px;border-top:1px dashed var(--line);}
+.tn-pod{background:linear-gradient(160deg,rgba(212,117,111,.18),rgba(126,79,120,.14));border:1px solid var(--line);border-radius:20px;padding:14px;margin:12px 16px 0;}
+.tn-pod-t{font-weight:800;font-size:15px;margin-bottom:10px;text-align:center;}
+.tn-pod-top{display:flex;align-items:flex-end;justify-content:center;gap:8px;}
+.tn-pod-c{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:10px 4px;border-radius:14px;background:var(--panel);}
+.tn-pod-c.p1{padding-top:18px;padding-bottom:16px;border:1px solid #e5b84a;} .tn-pod-c.p2{border:1px solid #b9c2d0;} .tn-pod-c.p3{border:1px solid #c98a5a;}
+.tn-pod-c .m{font-size:24px;line-height:1;} .tn-pod-c b{font-size:12px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tn-pod-list{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
+.tn-pod-r{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--panel);}
+.tn-pod-r .n{width:22px;text-align:center;font-weight:800;color:var(--sub);} .tn-pod-r b{font-size:13px;}
+.tn-pod-share{width:100%;margin-top:12px;padding:11px;border:0;border-radius:12px;background:#25d366;color:#06260f;font:800 13px 'Baloo 2',sans-serif;}
 </style>
 </head>
 <body>
@@ -1785,7 +1958,7 @@
   <a class="mf-mail" href="mailto:raheemmumbi374@gmail.com">raheemmumbi374@gmail.com</a>
   <div class="mf-help" id="mfHelp" onclick="toggleHelp()">Help Center <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
   <div class="mf-helpbody" id="mfHelpBody"></div>
-  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.12-i</div></div>
+  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.16-e</div></div>
 </div>
 <div class="overlay" id="legalOverlay" onclick="if(event.target===this) closeLegal()">
   <div class="modal" style="max-width:480px;">
@@ -1879,10 +2052,10 @@
 
   <div id="nameGate" class="name-gate">
     <div class="mark"></div>
-    <h3 data-i18n="chat_join_title">Jiunge na Chati</h3>
-    <p data-i18n="chat_join_sub">Weka jina utakalotumia kuchati na wachezaji wengine</p>
-    <input type="text" id="chatNameInput" placeholder="Jina lako" maxlength="24">
-    <button onclick="joinChat()" data-i18n="chat_join_btn">Ingia Chatini</button>
+    <h3 id="ngTitle">Jiunge na Chati</h3>
+    <p id="ngSub">Ingia kwenye akaunti yako ili uchati. Jina la akaunti yako (username) ndilo litakalotumika kwenye chat.</p>
+    <input type="text" id="chatNameInput" style="display:none">
+    <button id="ngBtn" onclick="mgChatGoLogin()">Ingia / Jisajili</button>
   </div>
 
   <div id="chatBody" style="display:none;flex-direction:column;flex:1;min-height:0;">
@@ -2070,16 +2243,16 @@
   <div class="chat-header">
     <div class="back" onclick="showHome()">←</div>
     <div style="flex:1;">
-      <div class="title" data-i18n="tourn_title">Tournaments</div>
-      <div class="sub" data-i18n="tourn_sub">Unda ligi yako, alika marafiki</div>
+      <div class="title" id="tnTitle">🏆 Mashindano</div>
+      <div class="sub" id="tnSub">Unda ligi yako, fuata, alika marafiki</div>
     </div>
   </div>
 
   <div class="settings-body" id="tournListPanel">
-    <div style="position:relative;margin-bottom:14px;">
-      <input type="text" id="tournSearchInput" oninput="renderTournamentList()" data-i18n-placeholder="tourn_search" placeholder="Search tournaments..." style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:12px;font-size:12.5px;font-family:'Baloo 2',sans-serif;">
-    </div>
-    <button class="post-btn" onclick="openCreateTournament()" style="margin-bottom:16px;" data-i18n="tourn_create_btn">+ Create New Tournament</button>
+    <div id="tnHero"></div>
+    <div class="tn-search"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="text" id="tournSearchInput" oninput="renderTournamentList()" placeholder="Tafuta tournament..."></div>
+    <div class="tn-tabs" id="tnTabs"><div class="on" data-f="all" onclick="tnSetFilter('all')"></div><div data-f="follow" onclick="tnSetFilter('follow')"></div><div data-f="mine" onclick="tnSetFilter('mine')"></div></div>
+    <button class="tn-create" onclick="openCreateTournament()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span id="tnCreateLbl">Unda Tournament Mpya</span></button>
     <div id="tournList"></div>
   </div>
 
@@ -2116,6 +2289,13 @@
       <div id="tSportGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;"></div>
       <input type="hidden" id="tSport" value="">
 
+      <label style="margin-top:14px;">Maelezo (hiari)</label>
+      <textarea id="tDesc" rows="2" maxlength="300" placeholder="mfano: Ligi ya eFootball ya mtaa, zawadi kwa bingwa..." style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 13px;border-radius:10px;font-family:inherit;font-size:12px;"></textarea>
+      <label>Mahali / Mtandao (hiari)</label>
+      <input type="text" id="tLoc" maxlength="60" placeholder="mfano: Dar es Salaam, au Online">
+      <label>Tarehe ya kuanza (hiari)</label>
+      <input type="date" id="tStart">
+
       <div style="display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:16px;">
         <div>
           <div style="font-weight:700;font-size:11.5px;" data-i18n="tourn_f_public">Public</div>
@@ -2136,6 +2316,7 @@
       <label data-i18n="tourn_f_format">Tournament Format</label>
       <div id="tFormatList" style="display:flex;flex-direction:column;gap:10px;margin-top:6px;"></div>
       <input type="hidden" id="tFormat" value="">
+      <div id="tFormatOpts"></div>
       <div style="display:flex;gap:10px;margin-top:18px;">
         <button class="post-btn" style="background:var(--panel);color:var(--text);border:1px solid var(--line);" onclick="tournamentBack()" data-i18n="tourn_back">← Back</button>
         <button class="post-btn" onclick="tournamentNext()" data-i18n="tourn_next">Next →</button>
@@ -2159,24 +2340,41 @@
 </div>
 
 <div id="tournDetailView">
-  <div class="chat-header">
-    <div class="back" onclick="showTournaments()">←</div>
-    <div style="flex:1;">
-      <div class="title" id="tdName">—</div>
-      <div class="sub" id="tdMeta">—</div>
+  <div class="tnd-hero" id="tdHero">
+    <div class="tnd-top">
+      <div class="back" onclick="showTournaments()" style="position:static;">←</div>
+      <div class="tnd-actions">
+        <button class="tnd-ib" id="tdFollowBtn" onclick="tnToggleFollowCur()"></button>
+        <button class="tnd-ib" onclick="shareTournamentDetail()" aria-label="Share"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></button>
+        <button class="tnd-ib" onclick="exportTournamentResults()" aria-label="Download"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></button>
+      </div>
     </div>
-    <div onclick="exportTournamentResults()" style="font-size:16px;cursor:pointer;padding:6px;">⬇️</div>
-    <div onclick="shareTournamentDetail()" style="font-size:18px;cursor:pointer;padding:6px;">🔗</div>
+    <div class="tnd-id">
+      <div class="tnd-logo" id="tdLogo"></div>
+      <div style="min-width:0;flex:1;">
+        <div class="tnd-name" id="tdName">—</div>
+        <div class="tnd-meta" id="tdMeta">—</div>
+      </div>
+    </div>
+    <div class="tnd-chips" id="tdChips"></div>
   </div>
-  <div id="tdCover" style="display:none;width:100%;height:120px;background-size:cover;background-position:center;"></div>
-  <div style="display:flex;gap:0;margin:14px 16px 0;background:var(--panel);border-radius:12px;padding:4px;">
-    <div class="td-tab active" data-tab="matches" onclick="setTournDetailTab('matches')" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;">Matches</div>
-    <div class="td-tab" data-tab="standings" onclick="setTournDetailTab('standings')" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;">Standings</div>
+  <div id="tdInvite"></div>
+  <div id="tdChampion"></div>
+  <div id="tdPodium"></div>
+  <div class="tnd-tabs">
+    <div class="td-tab active" data-tab="matches" onclick="setTournDetailTab('matches')"></div>
+    <div class="td-tab" data-tab="standings" onclick="setTournDetailTab('standings')"></div>
+    <div class="td-tab" data-tab="scorers" onclick="setTournDetailTab('scorers')"></div>
+    <div class="td-tab" data-tab="teams" onclick="setTournDetailTab('teams')"></div>
+    <div class="td-tab" data-tab="info" onclick="setTournDetailTab('info')"></div>
   </div>
-  <div class="settings-body">
-    <div id="tdNote" style="font-size:10px;color:var(--sub);margin-bottom:10px;display:none;"></div>
+  <div class="settings-body" style="padding-top:12px;">
+    <div id="tdNote" style="font-size:11px;color:var(--sub);margin-bottom:10px;display:none;"></div>
     <div id="tdMatchesPanel"></div>
     <div id="tdStandingsPanel" style="display:none;"></div>
+    <div id="tdScorersPanel" style="display:none;"></div>
+    <div id="tdTeamsPanel" style="display:none;"></div>
+    <div id="tdInfoPanel" style="display:none;"></div>
   </div>
 </div>
 
@@ -2834,10 +3032,18 @@ function mgPreQueue(urls){
     __mgPre.started = true; mgPreloadPump();
   }catch(e){ console.error(e); }
 }
+function mgPreFront(urls){ // picha muhimu (banner/trending) zinapakiwa KWANZA, kabla ya zingine
+  try{
+    var fresh = urls.filter(function(u){ return u && !__mgPre.urls[u]; });
+    fresh.forEach(function(u){ __mgPre.urls[u] = 1; });
+    __mgPre.q = fresh.concat(__mgPre.q); __mgPre.started = true; mgPreloadPump();
+  }catch(e){ console.error(e); }
+}
 function mgPreloadGames(){
   try{
     const c = navigator.connection || {};
     const slow = !!c.saveData || /(^|-)(2g|3g)$/.test(c.effectiveType || '');
+    try{ var _tr = games.filter(function(g){ return g.trending && g.image; }); mgPreFront(_tr.map(function(g){ return mgLow(g.image); }).concat(_tr.map(function(g){ return mgImg(g.image,1200); }))); }catch(e){}
     const list = games.filter(g => g.image).slice(0, slow ? 24 : 400);
     var hq = list.map(function(g){ return mgImg(g.image, 1100); }); mgPreQueue(hq.slice(0,6).concat(list.map(function(g){ return mgLow(g.image); }), hq.slice(6)));
   }catch(e){ console.error(e); }
@@ -4340,6 +4546,7 @@ function computeEffectiveBanners(){
 
 function refreshBanners(){
   banners = computeEffectiveBanners();
+  try{ var _bi = banners.filter(function(b){ return b.image; }); mgPreFront(_bi.map(function(b){ return mgLow(b.image); }).concat(_bi.map(function(b){ return mgImg(b.image,1200); }))); }catch(e){}
   if(bannerIdx >= banners.length) bannerIdx = 0;
   renderBanner();
 }
@@ -4349,8 +4556,8 @@ function renderBanner(){
   const dots = document.getElementById('bannerDots');
   if(!track) return;
   track.innerHTML = banners.map(b=>`
-    <div class="b-slide"${b.gameRef?` onclick='handleDownload(${JSON.stringify(b.gameRef).replace(/'/g,"&#39;")})'`:''}>
-      ${b.image ? `<img src="${escapeHtml(mgImg(b.image,1600))}" data-o="${escapeHtml(b.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(b.title||'')}" loading="eager" fetchpriority="high" decoding="async">` : ''}
+    <div class="b-slide"${b.gameRef?` onclick='handleDownload(${JSON.stringify(b.gameRef).replace(/'/g,"&#39;")})'`:''}${b.image ? ` style="background:var(--panel-2) url('${escapeHtml(mgLow(b.image)).replace(/'/g,'%27')}') center/cover no-repeat"` : ''}>
+      ${b.image ? `<img class="mgf" onload="this.classList.add('ok')" src="${escapeHtml(mgImg(b.image,1200))}" data-o="${escapeHtml(b.image)}" onerror="this.onerror=null;this.src=this.dataset.o" alt="${escapeHtml(b.title||'')}" loading="eager" fetchpriority="high" decoding="async">` : ''}
       ${b.badge?`<span class="b-badge">${escapeHtml(b.badge)}</span>`:''}
       <div class="b-title">${escapeHtml(b.title||'')}</div>
       ${b.subtitle?`<div class="b-sub">${escapeHtml(b.subtitle)}</div>`:''}
@@ -5399,12 +5606,7 @@ function showChat(){
   pickRandomChatTheme();
   startChatBg();
   mgMemSub(); mgMemRender();
-  if(chatName){
-    mgMemRegister();
-    document.getElementById('nameGate').style.display = 'none';
-    document.getElementById('chatBody').style.display = 'flex';
-    subscribeMessages();
-  }
+  mgChatSync();
 }
 function showDuka(){
   hideAllViews();
@@ -6845,6 +7047,7 @@ function switchProfileTab(name){
 // from admin.html; the reply shows back here once posted.
 // ============================================================
 async function mgSendFeedbackDoc(data){
+  try{ if(data && data.type === 'request'){ const _f = mgFindGamesForRequest(data.gameTitle || data.text || ''); if(_f.length){ try{ mgShowReqFound(_f[0], _f); }catch(e){} return false; } } }catch(e){}
   if(!auth.currentUser){ alert(tvT('Ingia kwenye akaunti yako kwanza.','Please log in first.')); return false; }
   const uname = ((document.getElementById('profileUsername')||{}).textContent||'').trim();
   try{
@@ -6875,61 +7078,73 @@ function mgToks(x){
     .map(t=>MG_ROMAN[t]||t).filter(t=>!MG_STOP[t]);
 }
 function mgTokEq(a,b){ return a===b || (a.length>=5 && b.length>=5 && mgLev(a,b)<=1); }
-function mgFindGameForRequest(title){
-  if(!Array.isArray(games) || !games.length) return null;
-  const q = mgNormTitle(title); if(q.length < 3) return null;
-  const R = mgToks(title); if(!R.length) return null;
-  let best = null, bestScore = 0;
+function mgFindGamesForRequest(title){
+  if(!Array.isArray(games) || !games.length) return [];
+  const q = mgNormTitle(title); if(q.length < 2) return [];
+  const R = mgToks(title); if(!R.length) return [];
+  const hits = [];
   for(const g of games){
     const n = mgNormTitle(g.name); if(!n) continue;
-    if(n === q) return g;
-    const G = mgToks(g.name); if(!G.length) continue;
-    const gj = G.join(''), rj = R.join('');
-    if(gj === rj){ return g; }
-    const rInG = R.every(r=>G.some(t=>mgTokEq(r,t)));
-    const gInR = G.every(t=>R.some(r=>mgTokEq(r,t)));
-    let ok = false;
-    if(rInG){ ok = (R.length >= 2 || (G.length <= 2 && R[0].length >= 4)); }
-    else if(gInR){
-      const extraNum = R.some(r=>/^\d+$/.test(r) && !G.some(t=>mgTokEq(r,t))); // mf. "god of war 2" si "God of War"
-      ok = !extraNum && (G.length >= 2 || G[0].length >= 4);
+    const G = mgToks(g.name);
+    let sc = 0;
+    if(n === q) sc = 10;
+    else if(G.length){
+      const rj = R.join(''), gj = G.join('');
+      if(gj === rj) sc = 9;
+      else {
+        const rInG = R.every(r=>G.some(t=>mgTokEq(r,t)));
+        const gInR = G.every(t=>R.some(r=>mgTokEq(r,t)));
+        if(rInG){
+          const okLen = R.length >= 2 || (R[0].length >= 3 && !/^\d+$/.test(R[0]));
+          if(okLen) sc = 5 + R.length / G.length;
+        } else if(gInR){
+          const extraNum = R.some(r=>/^\d+$/.test(r) && !G.some(t=>mgTokEq(r,t)));
+          if(!extraNum && (G.length >= 2 || G[0].length >= 3)) sc = 4 + G.length / R.length;
+        }
+        // jina limeandikwa bila nafasi (mf. "godofwar", "gta5")
+        if(!sc && q.length >= 4 && (n.indexOf(q) === 0 || (n.length >= 5 && q.indexOf(n) === 0))){
+          const rest = n.indexOf(q) === 0 ? n.slice(q.length) : q.slice(n.length);
+          if(!(/\d$/.test(q) && /^\d/.test(rest))) sc = 3;
+        }
+      }
     }
-    if(ok){
-      const sc = Math.min(R.length,G.length) / Math.max(R.length,G.length);
-      if(sc > bestScore){ best = g; bestScore = sc; }
-    }
+    if(sc) hits.push({g:g, sc:sc});
   }
-  return best;
+  hits.sort(function(a,b){ return b.sc - a.sc; });
+  return hits.slice(0,3).map(function(h){ return h.g; });
 }
+function mgFindGameForRequest(title){ const r = mgFindGamesForRequest(title); return r.length ? r[0] : null; }
 let mgReqTimer = null;
 function mgReqLive(){
   clearTimeout(mgReqTimer);
   mgReqTimer = setTimeout(function(){
     const el = document.getElementById('reqGameTitle'); if(!el) return;
     const t = el.value.trim();
-    const f = t.length >= 3 ? mgFindGameForRequest(t) : null;
-    if(f) mgShowReqFound(f); else mgHideReqFound();
+    const fl = t.length >= 2 ? mgFindGamesForRequest(t) : [];
+    if(fl.length) mgShowReqFound(fl[0], fl); else mgHideReqFound();
   }, 700);
 }
-function mgShowReqFound(g){
+function mgShowReqFound(g, all){
   let el = document.getElementById('reqFound');
   if(!el){
     el = document.createElement('div'); el.id = 'reqFound';
-    el.style.cssText = 'margin-top:10px;padding:7px 9px;border-radius:10px;background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.45);color:#4be08a;font-size:10px;line-height:1.4;display:flex;align-items:center;gap:8px;';
+    el.style.cssText = 'margin-top:10px;padding:9px 10px;border-radius:10px;background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.45);color:#4be08a;font-size:11px;line-height:1.4;display:flex;flex-direction:column;gap:8px;';
     const btn = document.getElementById('reqSendBtn'); btn.parentNode.insertBefore(el, btn.nextSibling);
   }
-  el.innerHTML = '<span style="flex:1;min-width:0;">✅ ' + escapeHtml(tvT('Game hii tayari ipo kwenye app ya mumbigames:','This game is already in the mumbigames app:')) + ' <b>' + escapeHtml(g.name) + '</b></span>'
-    + '<button type="button" id="reqFoundOpen" style="flex:none;background:#2ecc71;color:#06260f;border:none;border-radius:8px;padding:6px 11px;font-size:10.5px;font-weight:700;cursor:pointer;">' + escapeHtml(tvT('Fungua','Open')) + ' ›</button>';
+  const list = (all && all.length) ? all : [g];
+  window.__reqFoundList = list;
+  el.innerHTML = '<div>✅ ' + escapeHtml(tvT('Game hii tayari ipo kwenye app ya mumbigames, hakuna haja ya kuomba:','This game is already in the mumbigames app, no need to request it:')) + '</div>'
+    + list.map(function(x,i){ return '<div style="display:flex;align-items:center;gap:8px;"><b style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(x.name) + '</b><button type="button" data-fi="' + i + '" style="flex:none;background:#2ecc71;color:#06260f;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;">' + escapeHtml(tvT('Fungua','Open')) + ' ›</button></div>'; }).join('');
   el.style.display = 'flex';
-  document.getElementById('reqFoundOpen').onclick = function(){ try{ showHome(); }catch(e){} setTimeout(function(){ openGameModal(g); }, 150); };
+  el.querySelectorAll('button[data-fi]').forEach(function(b){ b.onclick = function(){ const x = window.__reqFoundList[parseInt(b.getAttribute('data-fi'),10)]; try{ showHome(); }catch(e){} setTimeout(function(){ openGameModal(x); }, 150); }; });
 }
 function mgHideReqFound(){ const el = document.getElementById('reqFound'); if(el) el.style.display = 'none'; }
 async function submitGameRequest(){
   const t = document.getElementById('reqGameTitle'), n = document.getElementById('reqGameNote');
   const title = t.value.trim(), note = n.value.trim();
   if(!title){ alert(tvT('Weka jina la game unayotaka.','Enter the name of the game you want.')); return; }
-  const found = mgFindGameForRequest(title);
-  if(found){ mgShowReqFound(found); return; } // game tayari ipo: usitume ombi
+  const fl0 = mgFindGamesForRequest(title);
+  if(fl0.length){ mgShowReqFound(fl0[0], fl0); return; } // game tayari ipo: usitume ombi
   mgHideReqFound();
   const btn = document.getElementById('reqSendBtn'); btn.disabled = true;
   const ok = await mgSendFeedbackDoc({type:'request', gameTitle:title, text: note || title});
@@ -7331,6 +7546,7 @@ function openCreateTournament(){
   document.getElementById('tSport').value = '';
   document.getElementById('tFormat').value = '';
   document.getElementById('tPublic').checked = false;
+  ['tDesc','tLoc','tStart'].forEach(function(i){ var e = document.getElementById(i); if(e) e.value = ''; });
   document.getElementById('teamRows').innerHTML = '';
   tournTeamCount = 0;
   addTeamRow(); addTeamRow(); addTeamRow(); addTeamRow();
@@ -7373,6 +7589,7 @@ function renderFormatList(){
 }
 function selectFormat(key){
   document.getElementById('tFormat').value = key;
+  try{ tnRenderFormatOpts(key); }catch(e){ console.error(e); }
   document.querySelectorAll('#tFormatList [data-format]').forEach(el=>{
     const active = el.dataset.format === key;
     el.style.borderColor = active ? 'var(--lime)' : 'var(--line)';
@@ -7386,7 +7603,8 @@ function addTeamRow(){
   row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:10px;';
   row.innerHTML = `
     <div style="width:30px;height:30px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--sub);flex:none;">${tournTeamCount}</div>
-    <input type="text" class="team-name-input" placeholder="Team ${tournTeamCount}" style="flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 13px;border-radius:9px;font-size:12px;font-family:'Baloo 2',sans-serif;">
+    <label class="tn-lg-pick" title="Nembo"><span class="tn-lg-ph">📷</span><input type="file" accept="image/*" style="display:none" onchange="tnTeamLogoRow(this)"></label>
+    <input type="text" class="team-name-input" placeholder="Team ${tournTeamCount}" style="flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 13px;border-radius:9px;font-size:12px;font-family:'Baloo 2',sans-serif;">
     <div onclick="this.parentElement.remove()" style="color:var(--sub);cursor:pointer;font-size:14.5px;padding:4px 8px;">✕</div>`;
   document.getElementById('teamRows').appendChild(row);
 }
@@ -7462,21 +7680,23 @@ function generateSingleElimFixtures(teamNames, bracketTag, startId){
 }
 
 // Split teams into groups of ~4 for Group Stage + Knockout
-function makeGroups(teamNames){
+function makeGroups(teamNames, wanted){
   const groupSize = 4;
-  const numGroups = Math.max(1, Math.ceil(teamNames.length / groupSize));
+  let numGroups = Math.max(1, Math.ceil(teamNames.length / groupSize));
+  if(wanted && wanted > 0) numGroups = Math.max(1, Math.min(wanted, Math.floor(teamNames.length / 2) || 1));
   const groups = {};
   for(let i=0;i<numGroups;i++) groups[String.fromCharCode(65+i)] = [];
   teamNames.forEach((name,i)=>{ groups[String.fromCharCode(65 + (i % numGroups))].push(name); });
   return groups;
 }
 
-function generateFixtures(format, teamNames){
+function generateFixtures(format, teamNames, opts){
+  opts = opts || {};
   if(format === 'single' || format === 'double'){
     return {matches: generateSingleElimFixtures(teamNames, 'winners'), groups:null};
   }
   if(format === 'group_knockout'){
-    const groups = makeGroups(teamNames);
+    const groups = makeGroups(teamNames, opts.groupCount);
     let matches = [];
     let mid = 1;
     Object.keys(groups).forEach(g=>{
@@ -7486,11 +7706,17 @@ function generateFixtures(format, teamNames){
     });
     return {matches, groups};
   }
-  return {matches: generateRoundRobinFixtures(teamNames), groups:null}; // round_robin
+  let rr = generateRoundRobinFixtures(teamNames); // round_robin
+  if(opts.legs === 2){ // nyumbani na ugenini: mzunguko wa pili kwa mpangilio wa kinyume
+    const maxR = Math.max.apply(null, rr.map(function(x){ return x.round; }));
+    let nid = rr.length + 1;
+    rr = rr.concat(rr.map(function(x){ return {id: nid++, round: x.round + maxR, teamA: x.teamB, teamB: x.teamA, scoreA:null, scoreB:null, status:'pending'}; }));
+  }
+  return {matches: rr, groups:null};
 }
 
 function isKnockoutMatch(m){
-  return m.bracket==='winners' || m.bracket==='losers' || m.bracket==='final';
+  return m.bracket==='winners' || m.bracket==='losers' || m.bracket==='final' || m.bracket==='third';
 }
 
 function nextMatchId(matches){
@@ -7588,7 +7814,7 @@ function maybeGenerateKnockoutFromGroups(t, matches){
   let qualifiers = [];
   Object.keys(groups).sort().forEach(g=>{
     const standings = computeStandings(groupMatches.filter(m=>m.group===g), groups[g]);
-    qualifiers = qualifiers.concat(standings.slice(0,2).map(s=>s.name));
+    qualifiers = qualifiers.concat(standings.slice(0, Math.max(1, t.qualify || 2)).map(s=>s.name));
   });
   if(qualifiers.length < 2) return matches;
   const mid = nextMatchId(matches);
@@ -7624,7 +7850,8 @@ async function submitTournament(){
   const sport = document.getElementById('tSport').value;
   const format = document.getElementById('tFormat').value;
   const isPublic = document.getElementById('tPublic').checked;
-  const teamNames = Array.from(document.querySelectorAll('.team-name-input')).map(i=>i.value.trim()).filter(Boolean);
+  const teamRowData = Array.from(document.querySelectorAll('#teamRows > div')).map(function(r){ var i = r.querySelector('.team-name-input'); return {name: (i ? i.value.trim() : ''), logo: r.dataset.logo || ''}; }).filter(function(x){ return x.name; });
+  const teamNames = teamRowData.map(function(x){ return x.name; });
   if(teamNames.length < 4){
     alert('Weka angalau timu/wachezaji 4 kabla ya kuunda tournament.');
     return;
@@ -7635,16 +7862,24 @@ async function submitTournament(){
     return;
   }
   try{
-    const {matches, groups} = generateFixtures(format, teamNames);
+    const fo = tnReadFormatOpts(format);
+    const {matches, groups} = generateFixtures(format, teamNames, fo);
     const docData = {
       name, image, sport, format, public: isPublic,
-      teams: teamNames.map(n=>({name:n})),
+      teams: teamRowData.map(function(x){ var o = {name:x.name}; if(x.logo) o.logo = x.logo; return o; }),
       matches,
       ownerUid: auth.currentUser.uid,
       ownerName: (auth.currentUser.email||'').split('@')[0],
       ownerEmail: auth.currentUser.email || '',
+      description: (document.getElementById('tDesc')||{}).value ? document.getElementById('tDesc').value.trim() : '',
+      location: (document.getElementById('tLoc')||{}).value ? document.getElementById('tLoc').value.trim() : '',
+      startDate: (document.getElementById('tStart')||{}).value || '',
+      followers: 0,
       createdAt: Date.now()
     };
+    if(fo.third) docData.third = true;
+    if(format === 'group_knockout'){ docData.qualify = fo.qualify || 2; if(fo.groupCount) docData.groupCount = fo.groupCount; }
+    if(format === 'round_robin' && fo.legs === 2) docData.legs = 2;
     if(groups) docData.groups = groups;
     if(format === 'double'){
       docData.losersPool = [];
@@ -7653,9 +7888,10 @@ async function submitTournament(){
       docData.grandFinalDone = false;
     }
     const docRef = await db.collection('tournaments').add(docData);
-    alert('Tournament "'+name+'" imeundwa! Alika marafiki zako kupitia "Share".');
     closeTournamentWizard();
-    shareTournament(docRef.id, name);
+    try{ tnFollowAdd(docRef.id, true); }catch(e){}
+    openTournamentDetail(docRef.id);
+    showAppNotification(tvT('Tournament imeundwa ✅','Tournament created ✅'), tvT('Bonyeza ikoni ya link kualika marafiki.','Tap the link icon to invite friends.'), '🏆');
   }catch(e){
     console.error(e);
     alert('Imeshindwa kuunda tournament. Angalia mtandao wako na jaribu tena.');
@@ -7882,6 +8118,18 @@ function renderMatchRow(tournId, m, isOwner){
   </div>`;
 }
 
+// Mchezo wa nafasi ya 3: unaundwa nusu fainali zikiisha (kama mwandaaji ameuchagua)
+function tnMaybeThird(t, matches){
+  if(!t.third || matches.some(function(x){ return x.bracket === 'third'; })) return matches;
+  var w = matches.filter(function(x){ return x.bracket === 'winners'; }); if(!w.length) return matches;
+  var mr = Math.max.apply(null, w.map(function(x){ return x.round; }));
+  var fin = w.filter(function(x){ return x.round === mr; }); if(fin.length !== 1 || mr < 2) return matches;
+  var semi = w.filter(function(x){ return x.round === mr - 1; });
+  if(semi.length !== 2 || !semi.every(function(x){ return x.status === 'done'; })) return matches;
+  var l = semi.map(function(x){ return x.winner === x.teamA ? x.teamB : x.teamA; });
+  matches.push({id: nextMatchId(matches), round: mr, teamA: l[0], teamB: l[1], scoreA:null, scoreB:null, status:'pending', bracket:'third'});
+  return matches;
+}
 async function saveMatchResult(tournId, matchId){
   const aInput = document.getElementById(`ms_${tournId}_${matchId}_a`);
   const bInput = document.getElementById(`ms_${tournId}_${matchId}_b`);
@@ -7928,12 +8176,14 @@ async function saveMatchResult(tournId, matchId){
     updateData = {matches, losersPool: result.losersPool, wbChampion: result.wbChampion, lbChampion: result.lbChampion, grandFinalDone: result.grandFinalDone};
   } else if(t.format === 'single'){
     matches = advanceBracketRound(matches, 'winners');
+    matches = tnMaybeThird(t, matches);
     updateData = {matches};
   } else if(t.format === 'group_knockout'){
     if(m.bracket === 'group'){
       matches = maybeGenerateKnockoutFromGroups(t, matches);
     } else if(m.bracket === 'winners'){
       matches = advanceBracketRound(matches, 'winners');
+      matches = tnMaybeThird(t, matches);
     }
     updateData = {matches};
   } else {
@@ -9022,6 +9272,7 @@ async function sendVoiceMessage(blob){
     await ref.put(blob);
     const audioUrl = await ref.getDownloadURL();
     const msg = {name: chatName, type: 'voice', audioUrl, time: Date.now()};
+    if(auth.currentUser) msg.uid = auth.currentUser.uid;
     if(myChatPhotoURL) msg.photoURL = myChatPhotoURL;
     if(auth.currentUser) msg.uid = auth.currentUser.uid;
     if(chatReplyTo){ msg.replyToName = chatReplyTo.name; msg.replyToText = chatReplyTo.text; cancelChatReply(); }
@@ -9099,6 +9350,7 @@ async function confirmSendChatImage(){
   try{
     const imageUrl = await uploadToImgbb(pendingChatImageBlob);
     const msg = {name: chatName, type: 'image', imageUrl, time: Date.now()};
+    if(auth.currentUser) msg.uid = auth.currentUser.uid;
     if(caption) msg.text = caption;
     if(myChatPhotoURL) msg.photoURL = myChatPhotoURL;
     if(auth.currentUser) msg.uid = auth.currentUser.uid;
@@ -9565,7 +9817,7 @@ if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').catch(err => console.error('SW register failed', err));
   });
 }
-if(window.__mgDeepLinkTournId){ showTournaments(); }
+
 
 // ---- Profile: Firebase Auth (email/password + extra profile fields) ----
 let authMode = 'signup'; // or 'login'
@@ -10872,6 +11124,667 @@ async function mgDeleteAccountDo(){
   setTimeout(function(){ authKnown = true; finish(); }, 3500); // kinga: usikwame kwenye splash
   setTimeout(function(){ var sp = document.getElementById('mgSplash'); if(sp){ sp.classList.add('out'); setTimeout(function(){ try{ sp.remove(); }catch(e){} }, 500); } }, 7000);
 })();
+</script>
+<script>
+// ================= CHAT: lazima uwe umejisajili; username ya profile ndiyo jina la chat =================
+function mgChatGoLogin(){ try{ showProfile(); }catch(e){} }
+var __mgChatSyncBusy = false;
+async function mgChatSync(){
+  const gate = document.getElementById('nameGate'), body = document.getElementById('chatBody');
+  if(!gate || !body) return;
+  const u = auth.currentUser;
+  if(!u){
+    chatName = ''; try{ localStorage.removeItem('mg-chat-name'); }catch(e){}
+    try{ if(chatUnsub){ chatUnsub(); chatUnsub = null; } }catch(e){}
+    document.getElementById('ngTitle').textContent = tvT('Jiunge na Chati','Join the Chat');
+    document.getElementById('ngSub').textContent = tvT('Ingia kwenye akaunti yako ili uchati. Kama bado hujajisajili, jisajili kwanza. Jina la akaunti yako (username) ndilo litakalotumika kwenye chat.','Log in to your account to chat. If you have not registered yet, sign up first. Your account username will be your chat name.');
+    document.getElementById('ngBtn').textContent = tvT('Ingia / Jisajili','Log in / Sign up');
+    document.getElementById('ngBtn').onclick = mgChatGoLogin;
+    gate.style.display = 'flex'; body.style.display = 'none';
+    return;
+  }
+  if(__mgChatSyncBusy) return; __mgChatSyncBusy = true;
+  try{
+    let name = ((document.getElementById('profileUsername')||{}).textContent||'').trim();
+    if(!name || name === '—' || name === 'Mtumiaji'){
+      try{ const d = await db.collection('users').doc(u.uid).get(); name = d.exists ? String((d.data()||{}).username||'').trim() : ''; }catch(e){}
+    }
+    if(!name){
+      document.getElementById('ngTitle').textContent = tvT('Kamilisha akaunti yako','Complete your account');
+      document.getElementById('ngSub').textContent = tvT('Akaunti yako haina username bado. Weka username kwenye Profile kisha urudi kuchati.','Your account has no username yet. Set one in Profile, then come back to chat.');
+      document.getElementById('ngBtn').textContent = tvT('Fungua Profile','Open Profile');
+      document.getElementById('ngBtn').onclick = mgChatGoLogin;
+      gate.style.display = 'flex'; body.style.display = 'none';
+      return;
+    }
+    chatName = name; try{ localStorage.setItem('mg-chat-name', name); }catch(e){}
+    try{ mgMemRegister(); }catch(e){}
+    gate.style.display = 'none'; body.style.display = 'flex';
+    subscribeMessages();
+  } finally { __mgChatSyncBusy = false; }
+}
+auth.onAuthStateChanged(function(){ var v = document.getElementById('chatView'); if(v && v.style.display !== 'none' && v.style.display !== ''){ mgChatSync(); } });
+
+// ================= ONYO KALI (admin anatuma, mhusika analiiona skrini nzima) =================
+
+// ---- Akaunti iliyofungwa kwa masaa 24 (maonyo 3) ----
+var __mgLockT = null;
+function mgLockCheck(){
+  var until = 0; try{ until = parseInt(localStorage.getItem('mg-lock') || '0', 10) || 0; }catch(e){}
+  var ov = document.getElementById('mgLock');
+  if(!until || until <= Date.now()){
+    try{ localStorage.removeItem('mg-lock'); }catch(e){}
+    if(ov) ov.remove(); clearInterval(__mgLockT); return;
+  }
+  try{ if(isSuperAdmin()){ if(ov) ov.remove(); return; } }catch(e){}
+  if(document.getElementById('mgWarn')) return; // onyo linaonyeshwa kwanza
+  var en = (typeof currentLang !== 'undefined' && currentLang === 'en');
+  if(!ov){
+    ov = document.createElement('div'); ov.id = 'mgLock';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:100004;background:#120808;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px;text-align:center;font-family:"Baloo 2",sans-serif;color:#f1dcdc;';
+    ov.innerHTML = '<div style="font-size:60px;">⛔</div><div style="font-size:23px;font-weight:800;color:#ff6b6b;">' + (en ? 'Account locked' : 'Akaunti imefungwa') + '</div>'
+      + '<div style="max-width:320px;font-size:14.5px;line-height:1.5;color:#dcbcbc;">' + (en ? 'You received 3 warnings for sending fake payment proofs. Your account is locked for 24 hours.' : 'Umepata maonyo 3 kwa kutuma picha za malipo za uongo. Akaunti yako imefungwa kwa masaa 24.') + '</div>'
+      + '<div id="mgLockT" style="font-size:34px;font-weight:800;letter-spacing:.04em;margin-top:6px;"></div>'
+      + '<div style="font-size:12.5px;color:#a98;max-width:300px;">' + (en ? 'Time left. The app will reopen automatically when it ends.' : 'Muda uliobaki. App itafunguka yenyewe ukiisha.') + '</div>';
+    document.body.appendChild(ov);
+  }
+  function tick(){
+    var left = until - Date.now();
+    if(left <= 0){ mgLockCheck(); return; }
+    var h = Math.floor(left/3600000), m = Math.floor(left%3600000/60000), sc = Math.floor(left%60000/1000);
+    var el = document.getElementById('mgLockT'); if(el) el.textContent = (h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc;
+  }
+  tick(); clearInterval(__mgLockT); __mgLockT = setInterval(tick, 1000);
+}
+setTimeout(mgLockCheck, 300);
+var __mgWarnUnsub = null, __mgWarnShown = {};
+function mgWarnModal(w, n, locked){
+  if(document.getElementById('mgWarn')) return;
+  var ov = document.createElement('div'); ov.id = 'mgWarn';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:100003;background:rgba(10,4,4,.94);display:flex;align-items:center;justify-content:center;padding:22px;font-family:"Baloo 2",sans-serif;';
+  var en = (typeof currentLang !== 'undefined' && currentLang === 'en');
+  ov.innerHTML = '<div style="max-width:420px;width:100%;background:#1a0f10;border:2px solid #e5484d;border-radius:22px;padding:24px 20px;text-align:center;box-shadow:0 0 60px rgba(229,72,77,.35);">'
+    + '<div style="font-size:54px;line-height:1;">⚠️</div>'
+    + '<div style="color:#ff6b6b;font-size:21px;font-weight:800;margin:10px 0 2px;">' + (en ? 'STRICT WARNING' : 'ONYO KALI') + (n > 1 ? ' #' + n : '') + '</div>'
+    + '<div style="color:#ffb4b4;font-size:12px;margin-bottom:14px;">' + (en ? 'From the mumbigames admin' : 'Kutoka kwa admin wa mumbigames') + '</div>'
+    + '<div style="color:#f1dcdc;font-size:14.5px;line-height:1.5;text-align:left;">'
+    + (en
+      ? 'We checked the payment proof you sent' + (w.gameName ? ' for <b>' + String(w.gameName).replace(/</g,'&lt;') + '</b>' : '') + ' and found it is <b>FAKE</b> (not a real payment). Trying to get a game without paying is <b>fraud / theft</b> and is strictly forbidden.<br><br>Your request was rejected. If you try it again, your account will be <b>permanently banned</b> and you will lose all your tokens and access to the app. Such deception is also a legal offence.'
+      : 'Tumekagua picha ya malipo uliyotuma' + (w.gameName ? ' kwa ajili ya <b>' + String(w.gameName).replace(/</g,'&lt;') + '</b>' : '') + ' na tumegundua ni <b>YA UONGO</b> (si malipo halisi). Kujaribu kupata game bila kulipa ni <b>udanganyifu / wizi</b> na ni kosa linalokatazwa kabisa.<br><br>Ombi lako limekataliwa. Ukirudia, akaunti yako itafungwa <b>moja kwa moja na kwa kudumu</b>, utapoteza token zako zote na nafasi ya kutumia app. Udanganyifu wa aina hii pia ni kosa kisheria.')
+    + '</div>'
+    + (locked ? '<div style="margin-top:14px;padding:10px 12px;border-radius:12px;background:rgba(229,72,77,.18);border:1px solid #e5484d;color:#ffd0d0;font-size:13.5px;font-weight:700;text-align:left;">' + (en ? '⛔ This is your 3rd warning. Your account is now LOCKED for 24 hours.' : '⛔ Hili ni onyo lako la 3. Akaunti yako sasa IMEFUNGWA kwa masaa 24.') + '</div>' : '')
+    + '<button id="mgWarnOk" style="margin-top:18px;width:100%;padding:13px;border:0;border-radius:14px;background:#e5484d;color:#fff;font:800 16px \'Baloo 2\',sans-serif;">' + (en ? 'I understand' : 'Nimeelewa') + '</button></div>';
+  document.body.appendChild(ov);
+  document.getElementById('mgWarnOk').onclick = function(){
+    try{ db.collection('userWarnings').doc(w.id).update({seen:true, seenAt:Date.now()}).catch(function(e){ console.error(e); }); }catch(e){}
+    __mgWarnShown[w.id] = 1; try{ ov.remove(); }catch(e){}
+    try{ mgLockCheck(); }catch(e){}
+  };
+}
+auth.onAuthStateChanged(function(u){
+  try{ if(__mgWarnUnsub){ __mgWarnUnsub(); __mgWarnUnsub = null; } }catch(e){}
+  if(!u) return;
+  try{
+    __mgWarnUnsub = db.collection('userWarnings').where('uid','==',u.uid).onSnapshot(function(snap){
+      var all = snap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+      var pend = all.filter(function(w){ return !w.seen && !__mgWarnShown[w.id]; }).sort(function(a,b){ return (a.createdAt||0)-(b.createdAt||0); });
+      // Maonyo 3 (3, 6, 9...) = akaunti inafungwa masaa 24 tangu onyo hilo
+      var sorted = all.slice().sort(function(a,b){ return (a.createdAt||0)-(b.createdAt||0); });
+      var lockUntil = 0;
+      sorted.forEach(function(w,i){ if((i+1) % 3 === 0){ lockUntil = Math.max(lockUntil, (w.createdAt||0) + 24*3600*1000); } });
+      try{ if(lockUntil > Date.now() && !isSuperAdmin()) localStorage.setItem('mg-lock', String(lockUntil)); else if(!lockUntil) localStorage.removeItem('mg-lock'); }catch(e){}
+      if(pend.length) mgWarnModal(pend[0], all.length, lockUntil > Date.now() && pend[0].createdAt >= lockUntil - 24*3600*1000 && all.length % 3 === 0);
+      else mgLockCheck();
+    }, function(e){ console.error(e); });
+  }catch(e){ console.error(e); }
+});
+</script>
+<script>
+// ================= TOURNAMENT PRO (muonekano mpya, kufuata, link ya mwaliko) =================
+var TN_IC = {
+  trophy:'<svg viewBox="0 0 24 24" width="{s}" height="{s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>',
+  star:'<svg viewBox="0 0 24 24" width="{s}" height="{s}" fill="{f}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>',
+  users:'<svg viewBox="0 0 24 24" width="{s}" height="{s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .6 3.2 2.3 3.5 5.2"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" width="{s}" height="{s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" width="{s}" height="{s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.800 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  ball:'<svg viewBox="0 0 24 24" width="{s}" height="{s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.8 2.8-1.4 4.4H9.6l-1.4-4.4zM12 3v4.5M3.5 9.5l4.7.8M20.500 9.500l-4.700.8M6.500 19l2.900-4.300M17.500 19l-2.900-4.300"/></svg>',
+  user:'<svg viewBox="0 0 24 24" width="{s}" height="{s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4.200 4-6 8-6s7.200 1.800 8 6"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" width="{s}" height="{s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.500 6.500l4 4"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" width="{s}" height="{s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>'
+};
+function tnI(n, s, f){ return (TN_IC[n]||'').replace(/\{s\}/g, s||18).replace('{f}', f||'none'); }
+
+// ---- Nembo (crest) ya timu: ngao yenye herufi, rangi kulingana na jina ----
+var TN_PAL = [['#d4756f','#7a2f2b'],['#4da3ff','#1b4f8a'],['#3ddc84','#14683a'],['#f2b84b','#8a5a0a'],['#a78bfa','#4b2f8a'],['#22d3ee','#0b6577'],['#ff7eb6','#8a2a58'],['#94a3b8','#334155']];
+function tnHash(str){ var h = 0; str = String(str||''); for(var i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) >>> 0; } return h; }
+function tnInit(name){
+  var w = String(name||'?').replace(/[^A-Za-z0-9À-ɏ ]/g,' ').trim().split(/\s+/).filter(Boolean);
+  if(!w.length) return '?';
+  return (w.length === 1 ? w[0].slice(0,2) : (w[0][0] + w[1][0])).toUpperCase();
+}
+function tnLogoErr(img){ try{ var n = img.getAttribute('data-n'), sz = parseInt(img.getAttribute('data-s'),10) || 34; var tmp = document.createElement('div'); tmp.innerHTML = tnCrest(n, sz, true); img.parentNode.replaceWith(tmp.firstChild); }catch(e){} }
+function tnCrest(name, size, noLogo){
+  size = size || 34;
+  if(!name || name === 'BYE') return '<span class="tn-crest" style="width:'+size+'px;height:'+size+'px;opacity:.35"><svg viewBox="0 0 40 46" width="'+size+'" height="'+Math.round(size*1.15)+'"><path d="M20 2 37 8v16c0 10-8 17-17 20C11 41 3 34 3 24V8z" fill="#2a3345"/></svg></span>';
+  var lg = noLogo ? '' : (window.__tnLogoMap || {})[name];
+  if(lg) return '<span class="tn-crest tn-crest-img" style="width:'+size+'px;height:'+size+'px"><img src="' + escapeHtml(mgImg(lg, Math.max(120, size*3))) + '" alt="" loading="lazy" data-n="' + escapeHtml(name) + '" data-s="' + size + '" onerror="tnLogoErr(this)"></span>';
+  var c = TN_PAL[tnHash(name) % TN_PAL.length], id = 'g' + tnHash(name);
+  return '<span class="tn-crest" style="width:'+size+'px;height:'+Math.round(size*1.15)+'px"><svg viewBox="0 0 40 46" width="'+size+'" height="'+Math.round(size*1.15)+'"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+c[0]+'"/><stop offset="1" stop-color="'+c[1]+'"/></linearGradient></defs><path d="M20 2 37 8v16c0 10-8 17-17 20C11 41 3 34 3 24V8z" fill="url(#'+id+')" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><path d="M20 2 37 8v6H3V8z" fill="rgba(255,255,255,.14)"/><text x="20" y="'+(tnInit(name).length>1?30:31)+'" text-anchor="middle" font-family="Baloo 2,Arial,sans-serif" font-weight="800" font-size="'+(tnInit(name).length>1?15:18)+'" fill="#fff">'+escapeHtml(tnInit(name))+'</text></svg></span>';
+}
+
+// ---- Kufuata (Ninafuata) ----
+function tnFollowList(){ try{ return JSON.parse(localStorage.getItem('mg-tfollow') || '[]'); }catch(e){ return []; } }
+function tnIsFollowing(id){ return tnFollowList().indexOf(id) > -1; }
+function tnSaveFollow(list){ try{ localStorage.setItem('mg-tfollow', JSON.stringify(list)); }catch(e){} }
+function tnFollowAdd(id, silent){
+  var l = tnFollowList(); if(l.indexOf(id) > -1) return; l.push(id); tnSaveFollow(l);
+  try{ if(auth.currentUser) db.collection('users').doc(auth.currentUser.uid).set({followedTourns: firebase.firestore.FieldValue.arrayUnion(id)}, {merge:true}).catch(function(){}); }catch(e){}
+  if(!silent){ try{ db.collection('tournaments').doc(id).update({followers: firebase.firestore.FieldValue.increment(1)}).catch(function(){}); }catch(e){} }
+}
+function tnFollowRemove(id){
+  var l = tnFollowList().filter(function(x){ return x !== id; }); tnSaveFollow(l);
+  try{ if(auth.currentUser) db.collection('users').doc(auth.currentUser.uid).set({followedTourns: firebase.firestore.FieldValue.arrayRemove(id)}, {merge:true}).catch(function(){}); }catch(e){}
+  try{ db.collection('tournaments').doc(id).update({followers: firebase.firestore.FieldValue.increment(-1)}).catch(function(){}); }catch(e){}
+}
+function tnToggleFollow(id, ev){
+  if(ev){ ev.stopPropagation(); }
+  if(tnIsFollowing(id)){ tnFollowRemove(id); showAppNotification(tvT('Umeacha kufuata','Unfollowed'), '', '☆'); }
+  else { tnFollowAdd(id); showAppNotification(tvT('Unafuata tournament hii ⭐','You now follow this tournament ⭐'), tvT('Utapata taarifa matokeo mapya yakiingia.','You will be notified of new results.'), '🏆'); }
+  try{ renderTournamentList(); }catch(e){}
+  try{ if(tournDetailData && tournDetailData.id === id) tnRenderFollowBtn(); }catch(e){}
+}
+function tnToggleFollowCur(){ if(tournDetailData) tnToggleFollow(tournDetailData.id); }
+function tnRenderFollowBtn(){
+  var b = document.getElementById('tdFollowBtn'); if(!b || !tournDetailData) return;
+  var on = tnIsFollowing(tournDetailData.id);
+  b.classList.toggle('on', on);
+  b.innerHTML = tnI('star', 19, on ? 'currentColor' : 'none');
+}
+// Unganisha orodha ya akaunti na ya simu ukiingia
+auth.onAuthStateChanged(function(u){
+  if(!u) return;
+  db.collection('users').doc(u.uid).get().then(function(d){
+    var remote = (d.exists && Array.isArray(d.data().followedTourns)) ? d.data().followedTourns : [];
+    var local = tnFollowList(), all = local.slice();
+    remote.forEach(function(x){ if(all.indexOf(x) < 0) all.push(x); });
+    tnSaveFollow(all);
+    var add = all.filter(function(x){ return remote.indexOf(x) < 0; });
+    if(add.length) db.collection('users').doc(u.uid).set({followedTourns: firebase.firestore.FieldValue.arrayUnion.apply(null, add)}, {merge:true}).catch(function(){});
+  }).catch(function(){});
+});
+// Taarifa ya matokeo mapya kwa tournament unazofuata
+function tnCheckFollowed(){
+  var l = tnFollowList().slice(0, 8), delay = 0;
+  l.forEach(function(id){
+    setTimeout(function(){
+      db.collection('tournaments').doc(id).get().then(function(d){
+        if(!d.exists) return; var t = d.data();
+        var done = (t.matches||[]).filter(function(m){ return m.status === 'done'; }).length;
+        var seen = parseInt(localStorage.getItem('mg-tourn-seen-'+id) || '-1', 10);
+        if(seen >= 0 && done > seen){ showAppNotification(tvT('🏆 Matokeo mapya','🏆 New results'), (t.name||'') + ' — ' + tvT('bonyeza kuona','tap to view'), '🏆', t.image||'', {onclick:function(){ openTournamentDetail(id); }}); }
+        if(seen < 0 || done !== seen){ if(seen < 0) localStorage.setItem('mg-tourn-seen-'+id, String(done)); }
+      }).catch(function(){});
+    }, delay); delay += 1500;
+  });
+}
+mgLater(tnCheckFollowed, 6000);
+
+// ---- Hali ya tournament / bingwa ----
+function tnChampion(t){
+  var m = t.matches || [], std;
+  function winOf(x){ return x && x.winner && x.winner !== 'BYE' ? x.winner : (x && x.status==='done' ? (x.scoreA > x.scoreB ? x.teamA : (x.scoreB > x.scoreA ? x.teamB : null)) : null); }
+  if(t.format === 'double'){ var gf = m.filter(function(x){ return x.bracket==='final' && x.status==='done'; })[0]; return gf ? winOf(gf) : null; }
+  if(t.format === 'single' || t.format === 'group_knockout'){
+    var w = m.filter(function(x){ return x.bracket==='winners'; }); if(!w.length) return null;
+    var mr = Math.max.apply(null, w.map(function(x){ return x.round; })), last = w.filter(function(x){ return x.round === mr; });
+    if(last.length === 1 && (last[0].status==='done' || last[0].status==='bye')) return winOf(last[0]);
+    return null;
+  }
+  if(m.length && m.every(function(x){ return x.status==='done' || x.status==='bye'; })){
+    std = computeStandings(m, (t.teams||[]).map(function(x){ return x.name; })); return std.length ? std[0].name : null;
+  }
+  return null;
+}
+function tnStatus(t){
+  var m = (t.matches||[]).filter(function(x){ return x.status !== 'bye'; }), done = m.filter(function(x){ return x.status==='done'; }).length;
+  if(tnChampion(t)) return {k:'done', l:tvT('Imekamilika','Finished'), p:100};
+  if(done > 0) return {k:'live', l:tvT('Inaendelea','Ongoing'), p: Math.round(done/Math.max(1,m.length)*100)};
+  return {k:'soon', l:tvT('Inaanza','Upcoming'), p:0};
+}
+function tnSportLabel(t){ var s = SPORTS.find(function(x){ return x.key===t.sport; }); return s ? s.label : ''; }
+function tnFormatLabel(t){ var f = FORMATS.find(function(x){ return x.key===t.format; }); return f ? f.title : ''; }
+
+// ---- ORODHA ----
+var tnFilter = 'all';
+function tnSetFilter(f){ tnFilter = f; renderTournamentList(); }
+function showTournaments(){
+  hideAllViews();
+  document.getElementById('tournamentView').style.display = 'flex';
+  document.getElementById('tournListPanel').style.display = 'block';
+  document.getElementById('tournWizard').style.display = 'none';
+  loadTournaments();
+  tnFetchFollowedMissing();
+  renderTournamentList();
+}
+function tnFetchFollowedMissing(){
+  tnFollowList().forEach(function(id){
+    if(allTournaments.some(function(t){ return t.id === id; })) return;
+    db.collection('tournaments').doc(id).get().then(function(d){ if(d.exists) mergeTournaments([Object.assign({id:d.id}, d.data())]); }).catch(function(){});
+  });
+}
+function renderTournamentList(){
+  var el = document.getElementById('tournList'); if(!el) return;
+  var tabs = document.getElementById('tnTabs');
+  if(tabs){
+    var names = {all:tvT('Zote','All'), follow:tvT('Ninafuata','Following'), mine:tvT('Zangu','Mine')};
+    Array.prototype.forEach.call(tabs.children, function(c){ c.textContent = names[c.getAttribute('data-f')]; c.classList.toggle('on', c.getAttribute('data-f') === tnFilter); });
+  }
+  var lbl = document.getElementById('tnCreateLbl'); if(lbl) lbl.textContent = tvT('Unda Tournament Mpya','Create New Tournament');
+  var ti = document.getElementById('tnTitle'); if(ti) ti.textContent = '🏆 ' + tvT('Mashindano','Tournaments');
+  var su = document.getElementById('tnSub'); if(su) su.textContent = tvT('Unda ligi yako, fuata, alika marafiki','Create your league, follow, invite friends');
+  var si = document.getElementById('tournSearchInput'); if(si) si.placeholder = tvT('Tafuta tournament...','Search tournaments...');
+  var q = ((si||{}).value || '').trim().toLowerCase();
+  var fl = tnFollowList(), uid = auth.currentUser ? auth.currentUser.uid : null;
+  var list = allTournaments.filter(function(t){
+    if(q && (t.name||'').toLowerCase().indexOf(q) < 0) return false;
+    if(tnFilter === 'follow') return fl.indexOf(t.id) > -1;
+    if(tnFilter === 'mine') return uid && t.ownerUid === uid;
+    return true;
+  });
+  if(!list.length){
+    var msg = tnFilter === 'follow' ? tvT('Bado hufuati tournament yoyote. Bonyeza ⭐ kwenye tournament kuifuata.','You do not follow any tournament yet. Tap ⭐ on a tournament to follow it.')
+            : tnFilter === 'mine' ? (uid ? tvT('Bado hujaunda tournament. Bonyeza "Unda Tournament Mpya".','You have not created a tournament yet.') : tvT('Ingia kwenye akaunti yako kuona tournament zako.','Log in to see your tournaments.'))
+            : tvT('Bado hakuna tournament. Kuwa wa kwanza kuunda! 🏆','No tournaments yet. Be the first to create one! 🏆');
+    el.innerHTML = '<div class="tn-empty"><div>' + tnI('trophy', 46) + '</div><p>' + escapeHtml(msg) + '</p></div>';
+    return;
+  }
+  el.innerHTML = list.map(function(t){
+    var st = tnStatus(t), on = fl.indexOf(t.id) > -1, nTeams = (t.teams||[]).length, hasCover = !!t.image;
+    var cover = hasCover ? 'background-image:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.65)),url(\'' + escapeHtml(mgImg(t.image, 700)).replace(/'/g,'%27') + '\')' : '';
+    var doneCount = (t.matches||[]).filter(function(m){ return m.status==='done'; }).length;
+    var seen = parseInt(localStorage.getItem('mg-tourn-seen-'+t.id) || '0', 10);
+    var dot = (on && doneCount > seen) ? '<i class="tn-newdot"></i>' : '';
+    return '<div class="tn-card" onclick="openTournamentDetail(\'' + t.id + '\')">'
+      + '<div class="tn-cover' + (hasCover ? '' : ' nocover') + '" style="' + cover + '">'
+      + (hasCover ? '' : '<span class="tn-cov-ic">' + tnI('trophy', 44) + '</span>')
+      + '<span class="tn-st st-' + st.k + '">' + (st.k==='live' ? '<b></b>' : '') + escapeHtml(st.l) + '</span>'
+      + '<button class="tn-star' + (on ? ' on' : '') + '" onclick="tnToggleFollow(\'' + t.id + '\',event)" aria-label="Follow">' + tnI('star', 19, on ? 'currentColor' : 'none') + '</button>' + dot
+      + '</div>'
+      + '<div class="tn-info"><div class="tn-name">' + escapeHtml(t.name||'') + '</div>'
+      + '<div class="tn-sub">' + escapeHtml(tnSportLabel(t)) + (tnFormatLabel(t) ? ' · ' + escapeHtml(tnFormatLabel(t)) : '') + '</div>'
+      + '<div class="tn-stats"><span>' + tnI('users', 14) + ' ' + nTeams + '</span><span>' + tnI('star', 14, 'currentColor') + ' ' + Math.max(0, t.followers||0) + '</span><span>' + (t.public ? '🌍' : '🔒') + '</span><span class="tn-by">' + tnI('user', 14) + ' ' + escapeHtml(t.ownerName||'—') + '</span></div>'
+      + (st.k === 'live' ? '<div class="tn-bar"><i style="width:' + st.p + '%"></i></div>' : '')
+      + '</div></div>';
+  }).join('');
+}
+
+// ---- UKURASA WA TOURNAMENT ----
+function openTournamentDetail(id){
+  hideAllViews();
+  document.getElementById('tournDetailView').style.display = 'flex';
+  if(tournDetailUnsub){ tournDetailUnsub(); tournDetailUnsub = null; }
+  tournDetailTab = 'matches'; tournDetailData = null;
+  document.getElementById('tdName').textContent = '…';
+  document.getElementById('tdMatchesPanel').innerHTML = '<div class="tn-empty"><p>' + escapeHtml(tvT('Inapakia...','Loading...')) + '</p></div>';
+  tournDetailUnsub = db.collection('tournaments').doc(id).onSnapshot(function(doc){
+    if(!doc.exists){
+      document.getElementById('tdName').textContent = tvT('Tournament imefutwa','Tournament deleted');
+      document.getElementById('tdMatchesPanel').innerHTML = '';
+      return;
+    }
+    tournDetailData = Object.assign({id: doc.id}, doc.data());
+    renderTournamentDetail();
+    var done = (tournDetailData.matches||[]).filter(function(m){ return m.status==='done'; }).length;
+    try{ localStorage.setItem('mg-tourn-seen-'+id, String(done)); }catch(e){}
+  }, function(err){ console.error(err); document.getElementById('tdMatchesPanel').innerHTML = '<div class="tn-empty"><p>' + escapeHtml(tvT('Imeshindwa kupakia. Angalia mtandao.','Failed to load. Check your connection.')) + '</p></div>'; });
+}
+function shareTournamentDetail(){ if(tournDetailData) shareTournament(tournDetailData.id, tournDetailData.name); }
+function tnLink(id){ return window.location.origin + window.location.pathname + '?tournament=' + encodeURIComponent(id); }
+function shareTournament(id, name){
+  var link = tnLink(id);
+  var text = tvT('Jiunge na tournament "' + name + '" kwenye mumbigames, fuata matokeo yote: ', 'Join the tournament "' + name + '" on mumbigames and follow all results: ') + link;
+  if(navigator.share){ navigator.share({title:name, text:text, url:link}).catch(function(){}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(text).then(function(){ showAppNotification(tvT('Link imenakiliwa ✅','Link copied ✅'), tvT('Bandika kwa rafiki yako.','Paste it to your friend.'), '🔗'); }); }
+  else { prompt(tvT('Nakili link hii:','Copy this link:'), link); }
+}
+function tnCopyLink(){ if(!tournDetailData) return; var link = tnLink(tournDetailData.id); if(navigator.clipboard){ navigator.clipboard.writeText(link).then(function(){ showAppNotification(tvT('Link imenakiliwa ✅','Link copied ✅'), '', '🔗'); }); } else { prompt(tvT('Nakili link hii:','Copy this link:'), link); } }
+function setTournDetailTab(tab){
+  tournDetailTab = tab;
+  var names = {matches:tvT('Michezo','Matches'), standings:tvT('Msimamo','Table'), scorers:tvT('Wafungaji','Scorers'), teams:tvT('Timu','Teams'), info:tvT('Maelezo','Info')};
+  document.querySelectorAll('.td-tab').forEach(function(el){ el.textContent = names[el.dataset.tab]; el.classList.toggle('active', el.dataset.tab === tab); });
+  ['matches','standings','scorers','teams','info'].forEach(function(k){ var p = document.getElementById({matches:'tdMatchesPanel',standings:'tdStandingsPanel',scorers:'tdScorersPanel',teams:'tdTeamsPanel',info:'tdInfoPanel'}[k]); if(p) p.style.display = k === tab ? 'block' : 'none'; });
+}
+function scoreLabel(m){
+  var s = m.scoreA + ' - ' + m.scoreB;
+  if(m.pkA !== undefined && m.pkA !== null) s += ' (PK ' + m.pkA + '-' + m.pkB + ')';
+  return s;
+}
+function renderStandingsTable(matches, teamNames, qualify){
+  var rows = computeStandings(matches, teamNames);
+  return '<div class="tn-table"><div class="tn-th"><span>#</span><span class="tn-tn">' + escapeHtml(tvT('Timu','Team')) + '</span><span>P</span><span>W</span><span>D</span><span>L</span><span>GD</span><span>Pts</span></div>'
+    + rows.map(function(s,i){
+      return '<div class="tn-tr' + (qualify && i < qualify ? ' q' : '') + '"><span class="tn-pos">' + (i+1) + '</span><span class="tn-tn">' + tnCrest(s.name, 22) + '<b>' + escapeHtml(s.name) + '</b></span><span>' + s.P + '</span><span>' + s.W + '</span><span>' + s.D + '</span><span>' + s.L + '</span><span>' + (s.GD>0?'+':'') + s.GD + '</span><span class="tn-pts">' + s.Pts + '</span></div>';
+    }).join('') + '</div>';
+}
+function tnRoundTitle(m, total){
+  if(m.group) return tvT('Kundi ','Group ') + m.group;
+  if(m.bracket === 'losers') return 'Losers · R' + m.round;
+  if(m.bracket === 'final') return 'Grand Final';
+  if(m.bracket === 'third') return tvT('Mshindi wa 3 (nafasi ya 3)','3rd place match');
+  return null;
+}
+function renderMatchRow(tournId, m, isOwner){
+  var isBye = m.status === 'bye', isDone = m.status === 'done';
+  var winA = isDone && (m.winner ? m.winner === m.teamA : m.scoreA > m.scoreB), winB = isDone && (m.winner ? m.winner === m.teamB : m.scoreB > m.scoreA);
+  var ko = isKnockoutMatch(m);
+  var stl = isBye ? '<span class="tnm-st bye">BYE</span>' : (isDone ? '<span class="tnm-st done">' + escapeHtml(tvT('Imekamilika','Full time')) + '</span>' : '<span class="tnm-st">' + escapeHtml(tvT('Inakuja','Upcoming')) + '</span>');
+  var mid = isBye ? '<div class="tnm-sc bye">—</div>'
+    : (isOwner && !isDone) ? '<div class="tnm-in"><input type="number" inputmode="numeric" min="0" id="ms_' + tournId + '_' + m.id + '_a" value="' + (m.scoreA ?? '') + '"><span>:</span><input type="number" inputmode="numeric" min="0" id="ms_' + tournId + '_' + m.id + '_b" value="' + (m.scoreB ?? '') + '"></div>'
+    : '<div class="tnm-sc' + (isDone ? ' done' : '') + '">' + (isDone ? escapeHtml(scoreLabel(m)) : 'VS') + '</div>';
+  var when = (m.date || m.venue) ? '<div class="tnm-when">' + (m.date ? tnI('cal', 13) + ' ' + escapeHtml(m.date) : '') + (m.venue ? ' &nbsp; ' + tnI('pin', 13) + ' ' + escapeHtml(m.venue) : '') + '</div>' : '';
+  var scLine = '';
+  if(isDone && m.goals && m.goals.length){
+    var gl = function(side){ return m.goals.filter(function(g){ return g.side === side; }).map(function(g){ return escapeHtml(g.name) + (g.n > 1 ? ' ×' + g.n : ''); }).join(', '); };
+    scLine = '<div class="tnm-goals"><div>⚽ ' + (gl('A') || '—') + '</div><div>' + (gl('B') || '—') + ' ⚽</div></div>';
+  }
+  var ctl = '';
+  if(isOwner && !isBye){
+    ctl = '<div class="tnm-ctl">'
+      + (!isDone ? '<button class="tnm-save" onclick="saveMatchResult(\'' + tournId + '\',' + m.id + ')">' + escapeHtml(tvT('Hifadhi matokeo','Save result')) + '</button>' : '')
+      + (isDone ? '<button class="tnm-mini" onclick="tnOpenScorers(' + m.id + ')">⚽ ' + escapeHtml(tvT('Wafungaji','Scorers')) + '</button>' : '')
+      + '<button class="tnm-mini" onclick="tnSetWhen(\'' + tournId + '\',' + m.id + ')">' + tnI('cal', 15) + ' ' + escapeHtml(tvT('Tarehe/Uwanja','Date/Venue')) + '</button>'
+      + (isDone && !ko ? '<button class="tnm-mini" onclick="tnReopen(\'' + tournId + '\',' + m.id + ')">' + tnI('edit', 15) + ' ' + escapeHtml(tvT('Rekebisha','Edit')) + '</button>' : '')
+      + '</div>';
+  }
+  return '<div class="tnm"><div class="tnm-top"><span>' + escapeHtml(tnRoundTitle(m) || '') + '</span>' + stl + '</div>'
+    + '<div class="tnm-row"><div class="tnm-t' + (winA ? ' win' : '') + '">' + tnCrest(m.teamA, 34) + '<b>' + escapeHtml(m.teamA) + '</b></div>' + mid + '<div class="tnm-t r' + (winB ? ' win' : '') + '">' + tnCrest(m.teamB, 34) + '<b>' + escapeHtml(m.teamB) + '</b></div></div>'
+    + scLine + when + ctl + '</div>';
+}
+async function tnWriteMatches(mutator){
+  var t = tournDetailData; if(!t) return;
+  var matches = (t.matches||[]).map(function(m){ return Object.assign({}, m); });
+  if(mutator(matches) === false) return;
+  try{ await db.collection('tournaments').doc(t.id).update({matches: matches}); }
+  catch(e){ console.error(e); alert(tvT('Imeshindwa kuhifadhi. Jaribu tena.','Could not save. Try again.')); }
+}
+function tnSetWhen(tid, mid){
+  var t = tournDetailData; if(!t) return;
+  var cur = (t.matches||[]).find(function(m){ return m.id === mid; }) || {};
+  var d = prompt(tvT('Tarehe na saa ya mechi (mf. Jumamosi 20 Des, saa 10 jioni). Acha tupu kufuta:','Match date and time (e.g. Sat 20 Dec, 4 PM). Leave empty to clear:'), cur.date || '');
+  if(d === null) return;
+  var v = prompt(tvT('Uwanja / Mahali (hiari):','Venue (optional):'), cur.venue || '');
+  if(v === null) v = cur.venue || '';
+  tnWriteMatches(function(ms){ var m = ms.find(function(x){ return x.id === mid; }); if(!m) return false; m.date = d.trim(); m.venue = v.trim(); });
+}
+function tnReopen(tid, mid){
+  var t = tournDetailData; if(!t) return;
+  if(t.format === 'single' || t.format === 'double'){ alert(tvT('Matokeo ya knockout hayarekebishwi baada ya raundi kuendelea.','Knockout results cannot be edited once rounds advance.')); return; }
+  if(!confirm(tvT('Rekebisha matokeo ya mechi hii? Yatafutwa ili uyaweke upya.','Edit this match result? It will be cleared so you can re-enter it.'))) return;
+  tnWriteMatches(function(ms){
+    var m = ms.find(function(x){ return x.id === mid; }); if(!m || isKnockoutMatch(m)) return false;
+    if(t.format === 'group_knockout' && ms.some(function(x){ return x.bracket === 'winners'; })){ alert(tvT('Knockout imeshaanza, matokeo ya makundi hayarekebishwi tena.','Knockout has started; group results can no longer be edited.')); return false; }
+    m.status = 'pending'; m.scoreA = null; m.scoreB = null; delete m.winner; delete m.pkA; delete m.pkB;
+  });
+}
+function renderBracketColumns(koMatches, tournId, isOwner){
+  if(!koMatches.length) return '<div class="tn-empty"><p>' + escapeHtml(tvT('Hakuna michezo bado.','No matches yet.')) + '</p></div>';
+  var rounds = Array.from(new Set(koMatches.map(function(m){ return m.round; }))).sort(function(a,b){ return a-b; }), total = rounds.length;
+  return '<div class="tn-bracket">' + rounds.map(function(r){
+    var rm = koMatches.filter(function(m){ return m.round === r; });
+    return '<div class="tn-bcol"><div class="tn-bhead">' + escapeHtml(knockoutRoundLabel(r, total)) + '</div>' + rm.map(function(m){ return renderMatchRow(tournId, m, isOwner); }).join('') + '</div>';
+  }).join('') + '</div>';
+}
+function tnSection(title, inner){ return '<div class="tn-sec"><div class="tn-sec-t">' + title + '</div>' + inner + '</div>'; }
+function renderTournamentDetail(){
+  var t = tournDetailData; if(!t) return;
+  var st = tnStatus(t), champ = tnChampion(t), matches = t.matches || [];
+  var isOwner = !!(auth.currentUser && t.ownerUid === auth.currentUser.uid);
+  var teamNames = (t.teams||[]).map(function(x){ return x.name; });
+  window.__tnLogoMap = {}; (t.teams||[]).forEach(function(x){ if(x.logo) window.__tnLogoMap[x.name] = x.logo; });
+  // hero
+  var hero = document.getElementById('tdHero');
+  hero.style.backgroundImage = t.image ? 'linear-gradient(180deg,rgba(15,20,28,.45),rgba(15,20,28,.95)),url(\'' + escapeHtml(mgImg(t.image, 1000)).replace(/'/g,'%27') + '\')' : '';
+  document.getElementById('tdLogo').innerHTML = t.image ? '<img src="' + escapeHtml(mgImg(t.image, 240)) + '" alt="">' : tnI('trophy', 34);
+  document.getElementById('tdName').textContent = t.name || '';
+  document.getElementById('tdMeta').textContent = [tnSportLabel(t), tnFormatLabel(t)].filter(Boolean).join(' · ');
+  document.getElementById('tdChips').innerHTML = '<span class="tn-chip st-' + st.k + '">' + (st.k==='live' ? '<b></b>' : '') + escapeHtml(st.l) + '</span>'
+    + '<span class="tn-chip">' + tnI('users', 13) + ' ' + teamNames.length + '</span>'
+    + '<span class="tn-chip">' + tnI('star', 13, 'currentColor') + ' ' + Math.max(0, t.followers||0) + ' ' + escapeHtml(tvT('wanafuata','followers')) + '</span>'
+    + '<span class="tn-chip">' + (t.public ? '🌍 Public' : '🔒 Private') + '</span>';
+  tnRenderFollowBtn();
+  // mwaliko kupitia link
+  var inv = document.getElementById('tdInvite');
+  if(window.__tnInvite && !tnIsFollowing(t.id)){
+    inv.innerHTML = '<div class="tn-invite"><div><b>' + escapeHtml(tvT('Umealikwa! 🎉','You are invited! 🎉')) + '</b><br><span>' + escapeHtml(tvT('Fuata tournament hii upate matokeo yote.','Follow this tournament to get all results.')) + '</span></div><button onclick="tnToggleFollowCur();window.__tnInvite=false;">' + tnI('star', 16, 'currentColor') + ' ' + escapeHtml(tvT('Fuata','Follow')) + '</button></div>';
+  } else inv.innerHTML = '';
+  // bingwa
+  document.getElementById('tdChampion').innerHTML = champ ? '<div class="tn-champ"><div class="tn-champ-ic">' + tnI('trophy', 30) + '</div><div class="tn-champ-b"><span>' + escapeHtml(tvT('BINGWA','CHAMPION')) + '</span><div>' + tnCrest(champ, 30) + '<b>' + escapeHtml(champ) + '</b></div></div></div>' : '';
+  try{ tnRenderPodium(t); }catch(e){ console.error(e); }
+  // note
+  var noteEl = document.getElementById('tdNote');
+  if(t.format === 'double'){ noteEl.style.display = 'block'; noteEl.textContent = tvT('Double Elimination: kila timu ina nafasi ya pili kwenye Losers Bracket. Grand Final moja huamua bingwa.','Double Elimination: every team gets a second chance in the Losers Bracket. A single Grand Final decides the champion.'); }
+  else if(t.format === 'group_knockout'){ noteEl.style.display = 'block'; noteEl.textContent = tvT('Timu zimegawanywa makundi ya ~4. Bora 2 wa kila kundi wanaingia Knockout baada ya michezo yote ya makundi.','Teams are split into groups of ~4. The top 2 of each group advance to the knockout once all group games are done.'); }
+  else noteEl.style.display = 'none';
+  // MICHEZO
+  var mh = '';
+  if(t.format === 'group_knockout'){
+    mh += Object.keys(t.groups||{}).sort().map(function(g){
+      var gm = matches.filter(function(m){ return m.bracket==='group' && m.group===g; });
+      return '<div class="tn-grp"><div class="tn-grp-h"><span>' + g + '</span><b>' + escapeHtml(tvT('Kundi ','Group ')) + g + '</b><em>' + escapeHtml(tvT('Wanaopita: ','Qualify: ')) + (t.qualify||2) + '</em></div>' + renderStandingsTable(gm, (t.groups||{})[g]||[], t.qualify||2) + '<div class="tn-grp-m">' + gm.map(function(m){ return renderMatchRow(t.id, m, isOwner); }).join('') + '</div></div>';
+    }).join('');
+    var ko = matches.filter(function(m){ return m.bracket === 'winners'; });
+    var th3 = matches.filter(function(m){ return m.bracket === 'third'; });
+    mh += ko.length ? tnSection(tnI('trophy',15) + ' Knockout', renderBracketColumns(ko, t.id, isOwner) + (th3.length ? '<div class="tn-third">' + th3.map(function(m){ return renderMatchRow(t.id, m, isOwner); }).join('') + '</div>' : '')) : '<div class="tn-empty small"><p>' + escapeHtml(tvT('Knockout itaanza yenyewe baada ya michezo yote ya makundi.','Knockout starts automatically after all group games.')) + '</p></div>';
+  } else if(t.format === 'single'){
+    mh = renderBracketColumns(matches.filter(function(m){ return m.bracket==='winners'; }), t.id, isOwner);
+    var th3b = matches.filter(function(m){ return m.bracket === 'third'; });
+    if(th3b.length) mh += tnSection('🥉 ' + escapeHtml(tvT('Mshindi wa 3','3rd place')), th3b.map(function(m){ return renderMatchRow(t.id, m, isOwner); }).join(''));
+  } else if(t.format === 'double'){
+    mh += tnSection('Winners Bracket', renderBracketColumns(matches.filter(function(m){ return m.bracket==='winners'; }), t.id, isOwner));
+    var lb = matches.filter(function(m){ return m.bracket==='losers'; }); if(lb.length) mh += tnSection('Losers Bracket', renderBracketColumns(lb, t.id, isOwner));
+    var gf = matches.filter(function(m){ return m.bracket==='final'; }); if(gf.length) mh += tnSection('Grand Final', gf.map(function(m){ return renderMatchRow(t.id, m, isOwner); }).join(''));
+  } else {
+    var rounds = Array.from(new Set(matches.map(function(m){ return m.round; }))).sort(function(a,b){ return a-b; });
+    mh = rounds.map(function(r){ return tnSection(escapeHtml(tvT('Raundi ','Round ')) + r, matches.filter(function(m){ return m.round===r; }).map(function(m){ return renderMatchRow(t.id, m, isOwner); }).join('')); }).join('') || '<div class="tn-empty small"><p>' + escapeHtml(tvT('Hakuna michezo bado.','No matches yet.')) + '</p></div>';
+  }
+  document.getElementById('tdMatchesPanel').innerHTML = mh;
+  // MSIMAMO
+  var sh = '';
+  if(t.format === 'group_knockout'){
+    sh = Object.keys(t.groups||{}).sort().map(function(g){ return tnSection(escapeHtml(tvT('Kundi ','Group ')) + g, renderStandingsTable(matches.filter(function(m){ return m.group===g; }), t.groups[g], 2)); }).join('');
+  } else if(t.format === 'single' || t.format === 'double'){
+    sh = '<div class="tn-empty small"><p>' + escapeHtml(tvT('Knockout haina msimamo wa pointi. Angalia michezo kwenye tab ya "Michezo".','Knockout has no points table. See the "Matches" tab.')) + '</p></div>';
+  } else sh = renderStandingsTable(matches, teamNames);
+  document.getElementById('tdStandingsPanel').innerHTML = sh;
+  // WAFUNGAJI
+  var sc = {}; matches.forEach(function(m){ (m.goals||[]).forEach(function(g){ var team = g.side === 'A' ? m.teamA : m.teamB, k = g.name.toLowerCase() + '|' + team; sc[k] = sc[k] || {name:g.name, team:team, n:0}; sc[k].n += (g.n||1); }); });
+  var top = Object.keys(sc).map(function(k){ return sc[k]; }).sort(function(a,b){ return b.n - a.n || a.name.localeCompare(b.name); });
+  document.getElementById('tdScorersPanel').innerHTML = top.length
+    ? '<div class="tn-sc-list">' + top.map(function(x,i){ return '<div class="tn-sc-row' + (i<3 ? ' top' : '') + '"><span class="tn-sc-pos">' + (i+1) + '</span>' + tnCrest(x.team, 30) + '<div class="tn-sc-n"><b>' + escapeHtml(x.name) + '</b><span>' + escapeHtml(x.team) + '</span></div><div class="tn-sc-g">' + x.n + ' ⚽</div></div>'; }).join('') + '</div>'
+    : '<div class="tn-empty small"><p>' + escapeHtml(isOwner ? tvT('Bado hakuna wafungaji. Baada ya mechi kuisha, bonyeza "⚽ Wafungaji" kwenye mechi kuongeza majina ya waliofunga.','No scorers yet. After a match is finished, tap "⚽ Scorers" on it to add who scored.') : tvT('Bado hakuna wafungaji walioandikwa.','No scorers recorded yet.')) + '</p></div>';
+  // TIMU
+  var groupOf = {}; Object.keys(t.groups||{}).forEach(function(g){ t.groups[g].forEach(function(n){ groupOf[n] = g; }); });
+  document.getElementById('tdTeamsPanel').innerHTML = (isOwner ? '<div class="tn-hint">' + escapeHtml(tvT('Gusa timu kuweka au kubadilisha nembo yake 📷','Tap a team to set or change its logo 📷')) + '</div>' : '') + '<div class="tn-teams">' + teamNames.map(function(n){ return '<div class="tn-team"' + (isOwner ? ' onclick="tnPickTeamLogo(\'' + escapeHtml(n).replace(/'/g,'') + '\')"' : '') + '>' + tnCrest(n, 48) + '<b>' + escapeHtml(n) + '</b>' + (groupOf[n] ? '<span>' + escapeHtml(tvT('Kundi ','Group ')) + groupOf[n] + '</span>' : '') + '</div>'; }).join('') + '</div>';
+  // MAELEZO
+  var done = matches.filter(function(m){ return m.status==='done'; }).length, tot = matches.filter(function(m){ return m.status!=='bye'; }).length;
+  var row = function(ic, l, v){ return v ? '<div class="tn-irow">' + ic + '<div><span>' + escapeHtml(l) + '</span><b>' + v + '</b></div></div>' : ''; };
+  document.getElementById('tdInfoPanel').innerHTML = '<div class="tn-info-card">'
+    + (t.description ? '<p class="tn-desc">' + escapeHtml(t.description) + '</p>' : '')
+    + row(tnI('user', 18), tvT('Mwandaaji','Organizer'), escapeHtml(t.ownerName || '—'))
+    + row(tnI('ball', 18), tvT('Mchezo','Game'), escapeHtml(tnSportLabel(t)))
+    + row(tnI('trophy', 18), tvT('Muundo','Format'), escapeHtml(tnFormatLabel(t)))
+    + row(tnI('cal', 18), tvT('Inaanza','Starts'), t.startDate ? escapeHtml(t.startDate) : '')
+    + row(tnI('pin', 18), tvT('Mahali','Location'), t.location ? escapeHtml(t.location) : '')
+    + row(tnI('users', 18), tvT('Timu','Teams'), String(teamNames.length))
+    + row(tnI('ball', 18), tvT('Michezo iliyochezwa','Games played'), done + ' / ' + tot)
+    + '</div>'
+    + '<div class="tn-share"><div class="tn-share-t">' + escapeHtml(tvT('Alika watu wajiunge','Invite people')) + '</div><div class="tn-share-l">' + escapeHtml(tnLink(t.id)) + '</div><div class="tn-share-b"><button onclick="tnShareWA()" class="wa">WhatsApp</button><button onclick="tnCopyLink()">' + escapeHtml(tvT('Nakili link','Copy link')) + '</button><button onclick="shareTournamentDetail()">' + escapeHtml(tvT('Shiriki','Share')) + '</button></div></div>'
+    + '<button class="tn-linkbtn" onclick="tnCopyLink()">' + '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg> ' + escapeHtml(tvT('Nakili link ya mwaliko','Copy invite link')) + '</button>'
+    + (isOwner ? '<button class="tn-delbtn" onclick="tnDeleteCur()">' + tnI('trash', 18) + ' ' + escapeHtml(tvT('Futa tournament hii','Delete this tournament')) + '</button>' : '');
+  setTournDetailTab(tournDetailTab);
+}
+async function tnDeleteCur(){
+  var t = tournDetailData; if(!t) return;
+  if(!confirm(tvT('Futa tournament "' + t.name + '" kabisa? Haiwezi kurudishwa.','Delete tournament "' + t.name + '" permanently? This cannot be undone.'))) return;
+  try{ await db.collection('tournaments').doc(t.id).delete(); tnFollowRemove(t.id); allTournaments = allTournaments.filter(function(x){ return x.id !== t.id; }); showTournaments(); }
+  catch(e){ console.error(e); alert(tvT('Imeshindwa kufuta.','Could not delete.')); }
+}
+
+// ---- Nembo ya timu, wafungaji, utangulizi wa Tournament ----
+async function tnTeamLogoRow(inp){
+  var f = inp.files && inp.files[0]; if(!f) return;
+  var row = inp.closest('div'); var ph = inp.parentNode.querySelector('.tn-lg-ph');
+  if(!f.type.startsWith('image/')){ alert(tvT('Chagua picha halali.','Choose a valid image.')); return; }
+  ph.textContent = '…';
+  try{ var url = await uploadToImgbb(f); row.dataset.logo = url; ph.innerHTML = '<img src="' + escapeHtml(mgImg(url,120)) + '" alt="">'; }
+  catch(e){ console.error(e); ph.textContent = '📷'; alert(tvT('Imeshindwa kupakia nembo. Jaribu tena.','Could not upload logo. Try again.')); }
+}
+function tnPickTeamLogo(name){
+  var t = tournDetailData; if(!t || !auth.currentUser || t.ownerUid !== auth.currentUser.uid) return;
+  var i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
+  i.onchange = async function(){
+    var f = i.files && i.files[0]; if(!f) return;
+    try{
+      showAppNotification(tvT('Inapakia nembo...','Uploading logo...'), '', '📷');
+      var url = await uploadToImgbb(f);
+      var teams = (t.teams||[]).map(function(x){ var o = Object.assign({}, x); if(o.name === name) o.logo = url; return o; });
+      await db.collection('tournaments').doc(t.id).update({teams: teams});
+    }catch(e){ console.error(e); alert(tvT('Imeshindwa kuweka nembo.','Could not set logo.')); }
+  };
+  i.click();
+}
+function tnShareWA(){
+  if(!tournDetailData) return;
+  var t = tournDetailData;
+  var txt = tvT('🏆 Jiunge na *' + t.name + '* kwenye mumbigames! Fuata ratiba, matokeo na msimamo wote hapa: ', '🏆 Join *' + t.name + '* on mumbigames! Follow the fixtures, results and table here: ') + tnLink(t.id);
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+}
+function tnOpenScorers(mid){
+  var t = tournDetailData; if(!t) return;
+  var m = (t.matches||[]).find(function(x){ return x.id === mid; }); if(!m) return;
+  var old = document.getElementById('tnScSheet'); if(old) old.remove();
+  var ov = document.createElement('div'); ov.id = 'tnScSheet';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;';
+  function rowHtml(side, g){ return '<div class="tn-sc-edit"><input class="sn" placeholder="' + escapeHtml(tvT('Jina la aliyefunga','Scorer name')) + '" value="' + escapeHtml((g&&g.name)||'') + '" maxlength="30"><input class="sg" type="number" min="1" inputmode="numeric" value="' + ((g&&g.n)||1) + '"><b onclick="this.parentNode.remove()">✕</b></div>'; }
+  var goals = m.goals || [];
+  function col(side, team){ var gs = goals.filter(function(g){ return g.side === side; }); return '<div class="tn-sc-col" data-side="' + side + '"><div class="tn-sc-h">' + tnCrest(team, 24) + '<b>' + escapeHtml(team) + '</b></div><div class="rows">' + gs.map(function(g){ return rowHtml(side, g); }).join('') + '</div><button type="button" class="add">+ ' + escapeHtml(tvT('Ongeza mfungaji','Add scorer')) + '</button></div>'; }
+  ov.innerHTML = '<div class="tn-sheet"><div class="tn-sheet-h"><b>⚽ ' + escapeHtml(tvT('Wafungaji wa mechi','Match scorers')) + '</b><span onclick="document.getElementById(\'tnScSheet\').remove()">✕</span></div>'
+    + '<div class="tn-sheet-b">' + col('A', m.teamA) + col('B', m.teamB) + '</div><button class="tn-sheet-save" id="tnScSave">' + escapeHtml(tvT('Hifadhi','Save')) + '</button></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e){ if(e.target === ov) ov.remove(); });
+  ov.querySelectorAll('.add').forEach(function(b){ b.onclick = function(){ var d = document.createElement('div'); d.innerHTML = rowHtml('', null); b.parentNode.querySelector('.rows').appendChild(d.firstChild); }; });
+  document.getElementById('tnScSave').onclick = function(){
+    var out = [];
+    ov.querySelectorAll('.tn-sc-col').forEach(function(c){ var side = c.dataset.side; c.querySelectorAll('.tn-sc-edit').forEach(function(r){ var n = r.querySelector('.sn').value.trim(), g = parseInt(r.querySelector('.sg').value, 10) || 1; if(n) out.push({side:side, name:n, n:Math.max(1, Math.min(30, g))}); }); });
+    ov.remove();
+    tnWriteMatches(function(ms){ var x = ms.find(function(y){ return y.id === mid; }); if(!x) return false; x.goals = out; });
+  };
+}
+// ---- Utangulizi (mara moja) na bango la juu la Tournament ----
+function tnRenderHero(){
+  var h = document.getElementById('tnHero'); if(!h) return;
+  h.innerHTML = '<div class="tn-bar2"><span>' + escapeHtml(tvT('Ratiba, msimamo, wafungaji na link ya kualika.','Fixtures, table, scorers and an invite link.')) + '</span><button onclick="tnIntro(true)">' + escapeHtml(tvT('Inavyofanya kazi','How it works')) + '</button></div>';
+}
+function tnIntro(force){
+  try{ if(!force && localStorage.getItem('mg-tn-intro')) return; }catch(e){}
+  if(document.getElementById('tnIntro')) return;
+  var slides = [
+    ['trophy', tvT('Unda tournament yako','Create your tournament'), tvT('Weka jina, picha na mchezo. Chagua muundo: Ligi, Knockout, Makundi au Double Elimination.','Add a name, photo and game. Pick a format: League, Knockout, Groups or Double Elimination.')],
+    ['users', tvT('Ongeza timu na nembo','Add teams with logos'), tvT('Weka timu au wachezaji na nembo zao. Ratiba inatengenezwa yenyewe papo hapo.','Add teams or players with their logos. The fixtures are generated instantly.')],
+    ['ball', tvT('Andika matokeo na wafungaji','Record results and scorers'), tvT('Weka matokeo baada ya kila mechi. Msimamo na orodha ya wafungaji vinajisasisha vyenyewe.','Enter results after each match. The table and top scorers update automatically.')],
+    ['star', tvT('Alika kwa link','Invite by link'), tvT('Tuma link kwa WhatsApp. Kila mtu anaweza kufuata, kuona matokeo na kupata taarifa mpya.','Send the link on WhatsApp. Anyone can follow, see results and get updates.')]
+  ], i = 0;
+  var ov = document.createElement('div'); ov.id = 'tnIntro';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9500;background:linear-gradient(180deg,#121923,#1a2030);display:flex;flex-direction:column;padding:26px 24px calc(26px + env(safe-area-inset-bottom));color:#eef2f8;font-family:"Baloo 2",sans-serif;';
+  document.body.appendChild(ov);
+  function draw(){
+    var sl = slides[i], last = i === slides.length - 1;
+    ov.innerHTML = '<div style="text-align:right;"><span style="color:#93a0b5;font-size:14px;" onclick="tnIntroClose()">' + escapeHtml(tvT('Ruka','Skip')) + '</span></div>'
+      + '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;"><div class="tn-intro-ic">' + tnI(sl[0], 64) + '</div><div style="font-size:25px;font-weight:800;line-height:1.15;">' + escapeHtml(sl[1]) + '</div><div style="color:#9fb0c8;font-size:15px;line-height:1.45;max-width:320px;">' + escapeHtml(sl[2]) + '</div></div>'
+      + '<div style="display:flex;justify-content:center;gap:7px;margin-bottom:16px;">' + slides.map(function(_,k){ return '<i style="width:' + (k===i?22:8) + 'px;height:8px;border-radius:8px;background:' + (k===i?'#d4756f':'#3a4558') + ';transition:.2s"></i>'; }).join('') + '</div>'
+      + '<button id="tnIntroNext" style="width:100%;padding:14px;border:0;border-radius:16px;background:#d4756f;color:#fff;font:800 17px \'Baloo 2\',sans-serif;">' + escapeHtml(last ? tvT('Anza','Get started') : tvT('Endelea','Next')) + '</button>';
+    document.getElementById('tnIntroNext').onclick = function(){ if(last) tnIntroClose(); else { i++; draw(); } };
+  }
+  draw();
+}
+function tnIntroClose(){ try{ localStorage.setItem('mg-tn-intro','1'); }catch(e){} var o = document.getElementById('tnIntro'); if(o) o.remove(); }
+(function(){ var _st = showTournaments; showTournaments = function(){ _st.apply(this, arguments); try{ tnRenderHero(); setTimeout(tnIntro, 350); }catch(e){ console.error(e); } }; })();
+(function(){ var _rl = renderTournamentList; renderTournamentList = function(){ _rl.apply(this, arguments); try{ tnRenderHero(); }catch(e){} }; })();
+
+// ---- Chaguzi za muundo (mshindi wa 3, makundi, ligi ya nyumbani/ugenini) ----
+function tnRenderFormatOpts(key){
+  var w = document.getElementById('tFormatOpts'); if(!w) return;
+  var box = function(id, title, sub){ return '<label class="tn-opt"><div><b>' + title + '</b><span>' + sub + '</span></div><input type="checkbox" id="' + id + '"><i></i></label>'; };
+  var h = '';
+  if(key === 'single' || key === 'group_knockout') h += box('tOptThird', escapeHtml(tvT('Mchezo wa mshindi wa 3','3rd place match')), escapeHtml(tvT('Waliopoteza nusu fainali wanacheza kupata nafasi ya 3','Semi-final losers play for 3rd place')));
+  if(key === 'round_robin') h += box('tOptLegs', escapeHtml(tvT('Nyumbani na ugenini','Home and away')), escapeHtml(tvT('Kila timu inacheza na kila timu mara mbili','Every team plays every other team twice')));
+  if(key === 'group_knockout'){
+    h += '<div class="tn-opt2"><label>' + escapeHtml(tvT('Idadi ya makundi','Number of groups')) + '</label><select id="tOptGroups"><option value="0">' + escapeHtml(tvT('Otomatiki (~4 kwa kundi)','Auto (~4 per group)')) + '</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="6">6</option><option value="8">8</option></select>'
+      + '<label>' + escapeHtml(tvT('Wanaopita kila kundi','Qualify from each group')) + '</label><select id="tOptQual"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div>';
+  }
+  w.innerHTML = h;
+}
+function tnReadFormatOpts(format){
+  var g = function(id){ return document.getElementById(id); };
+  var o = {};
+  if(g('tOptThird') && g('tOptThird').checked) o.third = true;
+  if(g('tOptLegs') && g('tOptLegs').checked) o.legs = 2;
+  if(g('tOptGroups')) o.groupCount = parseInt(g('tOptGroups').value, 10) || 0;
+  if(g('tOptQual')) o.qualify = parseInt(g('tOptQual').value, 10) || 2;
+  return o;
+}
+// ---- Orodha ya washindi (1 hadi 10) ----
+function tnFinalRanking(t){
+  if(!tnChampion(t)) return [];
+  var m = t.matches || [], names = (t.teams||[]).map(function(x){ return x.name; }), out = [], seen = {};
+  function push(n, pos){ if(!n || n === 'BYE' || seen[n]) return; seen[n] = 1; out.push({name:n, pos:pos}); }
+  function winOf(x){ return x && x.winner && x.winner !== 'BYE' ? x.winner : (x && x.status==='done' ? (x.scoreA > x.scoreB ? x.teamA : (x.scoreB > x.scoreA ? x.teamB : null)) : null); }
+  function loserOf(x){ if(!x || x.status !== 'done') return null; var w = winOf(x); return w === x.teamA ? x.teamB : x.teamA; }
+  function koRank(){
+    var w = m.filter(function(x){ return x.bracket === 'winners'; }); if(!w.length) return;
+    var mr = Math.max.apply(null, w.map(function(x){ return x.round; })), fin = w.filter(function(x){ return x.round === mr; })[0];
+    push(winOf(fin), 1); push(loserOf(fin), 2);
+    var third = m.filter(function(x){ return x.bracket === 'third' && x.status === 'done'; })[0], pos = 3;
+    if(third){ push(winOf(third), 3); push(loserOf(third), 4); pos = 5; }
+    for(var r = mr - 1; r >= 1; r--){
+      var ls = w.filter(function(x){ return x.round === r && x.status === 'done'; }).map(loserOf).filter(function(n){ return n && !seen[n]; });
+      ls.forEach(function(n){ push(n, pos); }); pos += ls.length;
+    }
+  }
+  if(t.format === 'single'){ koRank(); }
+  else if(t.format === 'group_knockout'){
+    koRank();
+    var rest = computeStandings(m.filter(function(x){ return x.bracket === 'group'; }), names).filter(function(x){ return !seen[x.name]; });
+    rest.forEach(function(x){ push(x.name, out.length + 1); });
+  } else if(t.format === 'double'){
+    var gf = m.filter(function(x){ return x.bracket === 'final' && x.status === 'done'; })[0];
+    if(gf){ push(winOf(gf), 1); push(loserOf(gf), 2); }
+    m.filter(function(x){ return x.bracket === 'losers' && x.status === 'done'; }).sort(function(a,b){ return b.round - a.round; }).forEach(function(x){ push(loserOf(x), out.length + 1); });
+    names.forEach(function(n){ push(n, out.length + 1); });
+  } else {
+    computeStandings(m, names).forEach(function(x, i){ push(x.name, i + 1); });
+  }
+  return out.slice(0, 10);
+}
+function tnRenderPodium(t){
+  var el = document.getElementById('tdPodium'); if(!el) return;
+  var rk = tnFinalRanking(t);
+  if(!rk.length){ el.innerHTML = ''; return; }
+  var med = {1:'🥇',2:'🥈',3:'🥉'};
+  var top3 = rk.filter(function(x){ return x.pos <= 3; }).slice(0,3), rest = rk.filter(function(x){ return top3.indexOf(x) < 0; });
+  var order = [top3.filter(function(x){ return x.pos===2; })[0], top3.filter(function(x){ return x.pos===1; })[0], top3.filter(function(x){ return x.pos===3; })[0]];
+  el.innerHTML = '<div class="tn-pod"><div class="tn-pod-t">🏆 ' + escapeHtml(tvT('Washindi wa mashindano','Tournament winners')) + '</div>'
+    + '<div class="tn-pod-top">' + order.map(function(x, i){ return x ? '<div class="tn-pod-c p' + x.pos + '">' + '<div class="m">' + med[x.pos] + '</div>' + tnCrest(x.name, x.pos===1 ? 54 : 44) + '<b>' + escapeHtml(x.name) + '</b></div>' : '<div class="tn-pod-c"></div>'; }).join('') + '</div>'
+    + (rest.length ? '<div class="tn-pod-list">' + rest.map(function(x){ return '<div class="tn-pod-r"><span class="n">' + x.pos + '</span>' + tnCrest(x.name, 24) + '<b>' + escapeHtml(x.name) + '</b></div>'; }).join('') + '</div>' : '')
+    + '<button class="tn-pod-share" onclick="tnShareWinners()">' + escapeHtml(tvT('Shiriki washindi WhatsApp','Share winners on WhatsApp')) + '</button></div>';
+}
+function tnShareWinners(){
+  var t = tournDetailData; if(!t) return; var rk = tnFinalRanking(t); if(!rk.length) return;
+  var med = {1:'🥇',2:'🥈',3:'🥉'};
+  var txt = '🏆 *' + t.name + '* — ' + tvT('Washindi','Winners') + '\n\n' + rk.map(function(x){ return (med[x.pos] || (x.pos + '.')) + ' ' + x.name; }).join('\n') + '\n\n' + tnLink(t.id);
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+}
+if(window.__mgDeepLinkTournId){ window.__tnInvite = true; setTimeout(function(){ try{ openTournamentDetail(window.__mgDeepLinkTournId); }catch(e){ console.error(e); } }, 900); }
 </script>
 <div id="mgNet"><i class="nd"></i><div><b id="mgNetT"></b><span id="mgNetS"></span></div></div>
 <div id="mgOff"><div class="oi"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#d4756f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="#d4756f"/><path d="M3 3l18 18"/></svg></div><h2 id="mgOffT"></h2><p id="mgOffS"></p><button id="mgOffB"></button></div>

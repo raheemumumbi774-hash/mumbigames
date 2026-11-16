@@ -2344,7 +2344,8 @@ function findDuplicateProof(p){
   }) || null;
 }
 function paymentCard(p){
-  const delBtn = `<button class="btn-sm btn-remove" onclick="deletePaymentRequest('${p.id}')">🗑️ Futa Kabisa</button>`;
+  const delBtn = `<button class="btn-sm btn-remove" onclick="deletePaymentRequest('${p.id}')">🗑️ Futa Kabisa</button>`
+    + (p.uid ? ` <button class="btn-sm btn-reject" style="background:#e5484d;color:#fff;" onclick="sendFraudWarning('${p.id}')">⚠️ Onyo</button>` : '');
   let actions = '';
   if(p.status==='pending'){
     actions = `<div class="listing-actions">
@@ -2385,6 +2386,20 @@ function paymentCard(p){
       ${actions}
     </div>
   </div>`;
+}
+// Picha ya muamala ya uongo: tuma ONYO KALI kwa mhusika (litaonekana skrini nzima kwenye app yake) na ondoa ombi.
+async function sendFraudWarning(id){
+  const p = paymentRequests.find(x=>x.id===id); if(!p) return;
+  if(!p.uid){ showToast('Mtumiaji huyu hana akaunti — onyo haliwezi kutumwa.'); return; }
+  if(!confirm('Tuma ONYO KALI kwa mtumiaji huyu (picha ya muamala ya uongo) na ufute ombi lake?')) return;
+  try{
+    await db.collection('userWarnings').add({uid: p.uid, name: p.userName || p.userEmail || '', reason: 'fake-payment', gameName: p.gameName || '', amount: p.price || '', seen: false, createdAt: Date.now(), by: ((firebase.auth().currentUser)||{}).uid || ''});
+    await db.collection('paymentRequests').doc(id).delete();
+    showToast('Onyo limetumwa kwa mhusika na ombi limefutwa.');
+  }catch(e){
+    console.error(e);
+    showToast('Imeshindwa kutuma onyo. Hakikisha firestore.rules mpya imepakiwa (ina userWarnings).');
+  }
 }
 async function setPaymentStatus(id, status){
   try{
