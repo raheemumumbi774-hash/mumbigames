@@ -897,6 +897,11 @@ function admImg(u,w){ try{ u=String(u||''); if(!/^https?:\/\//i.test(u)||u.index
       <label>Link ya tangazo (mtu akibonyeza "Endelea", anaenda wapi)</label>
       <input type="text" id="adLinkUrl" placeholder="https://...">
 
+      <label>💬 Namba ya WhatsApp (hiari — ukiijaza, button inafungua WhatsApp badala ya link)</label>
+      <input type="text" id="adWaPhone" placeholder="07XXXXXXXX">
+      <label>Ujumbe utakaoandikwa WhatsApp (hiari)</label>
+      <textarea id="adWaMsg" placeholder="mfano: Habari, nimeona ofa ya punguzo la bei, naomba maelezo" style="min-height:60px;"></textarea>
+
       <label>Maandishi ya button</label>
       <input type="text" id="adButtonText" placeholder="mfano: Bofya Uendelee" value="Bofya Uendelee">
 
@@ -2546,6 +2551,8 @@ function resetAdForm(){
   document.getElementById('adTitle').value = '';
   document.getElementById('adSubtitle').value = '';
   document.getElementById('adLinkUrl').value = '';
+  document.getElementById('adWaPhone').value = '';
+  document.getElementById('adWaMsg').value = '';
   document.getElementById('adButtonText').value = 'Bofya Uendelee';
   document.getElementById('adImage').value = '';
   document.getElementById('adVideoUrl').value = '';
@@ -2593,6 +2600,8 @@ function editSponsoredAd(id){
   document.getElementById('adTitle').value = a.title || '';
   document.getElementById('adSubtitle').value = a.subtitle || '';
   document.getElementById('adLinkUrl').value = a.linkUrl || '';
+  document.getElementById('adWaPhone').value = a.waPhone || '';
+  document.getElementById('adWaMsg').value = a.waMessage || '';
   document.getElementById('adButtonText').value = a.buttonText || 'Bofya Uendelee';
   document.getElementById('adImage').value = a.image || '';
   document.getElementById('adVideoUrl').value = a.videoUrl || '';
@@ -2629,6 +2638,8 @@ async function saveSponsoredAd(){
     title: document.getElementById('adTitle').value.trim(),
     subtitle: document.getElementById('adSubtitle').value.trim(),
     linkUrl: document.getElementById('adLinkUrl').value.trim(),
+    waPhone: document.getElementById('adWaPhone').value.trim(),
+    waMessage: document.getElementById('adWaMsg').value.trim(),
     buttonText: document.getElementById('adButtonText').value.trim() || 'Bofya Uendelee',
     image: document.getElementById('adImage').value.trim(),
     videoUrl: document.getElementById('adVideoUrl').value.trim(),

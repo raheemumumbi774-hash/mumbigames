@@ -1868,6 +1868,7 @@
 .tn-pod-r{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--panel);}
 .tn-pod-r .n{width:22px;text-align:center;font-weight:800;color:var(--sub);} .tn-pod-r b{font-size:13px;}
 .tn-pod-share{width:100%;margin-top:12px;padding:11px;border:0;border-radius:12px;background:#25d366;color:#06260f;font:800 13px 'Baloo 2',sans-serif;}
+.mg-wa-card{margin-top:8px;width:100%;border:0;border-radius:10px;padding:8px;font-weight:800;font-size:13px;background:#25d366;color:#05260f;cursor:pointer}
 </style>
 </head>
 <body>
@@ -1958,7 +1959,7 @@
   <a class="mf-mail" href="mailto:raheemmumbi374@gmail.com">raheemmumbi374@gmail.com</a>
   <div class="mf-help" id="mfHelp" onclick="toggleHelp()">Help Center <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
   <div class="mf-helpbody" id="mfHelpBody"></div>
-  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.16-e</div></div>
+  <div class="mg-copy"><span class="mg-cp">© <span id="mgCopyYear">2026</span> mumbigames</span><div style="font-size:9px;opacity:.45;margin-top:4px;letter-spacing:.5px;">v2026.11.19-a</div></div>
 </div>
 <div class="overlay" id="legalOverlay" onclick="if(event.target===this) closeLegal()">
   <div class="modal" style="max-width:480px;">
@@ -4093,7 +4094,7 @@ function renderSponsoredAd(){
     return;
   }
   db.collection('sponsoredAds').where('enabled','==',true).get().then(snap=>{
-    const list = snap.docs.map(d=>d.data()).filter(a=>a.linkUrl && ((a.adType==='video' && a.videoUrl) || (a.adType!=='video' && a.image)));
+    const list = snap.docs.map(d=>d.data()).filter(a=>(a.linkUrl||a.waPhone) && ((a.adType==='video' && a.videoUrl) || (a.adType!=='video' && a.image)));
     sponsoredAdsCache = list;
     applySponsoredAd(pickRandomAd(list));
   }).catch(()=>{ box.style.display = 'none'; });
@@ -4118,8 +4119,17 @@ function youtubeEmbedUrl(url){
   }catch(e){ return null; }
 }
 
+function mgAdHref(d){
+  if(d.waPhone){
+    const ph = normalizeTzPhone(d.waPhone);
+    const msg = d.waMessage || ('Habari, nimeona tangazo lako kwenye mumbigames: ' + (d.title||'') + '. Naomba maelezo zaidi.');
+    return 'https://wa.me/' + ph + '?text=' + encodeURIComponent(msg);
+  }
+  return d.linkUrl;
+}
 function applySponsoredAd(d){
   const box = document.getElementById('sponsoredAdBox');
+  if(d && !d.linkUrl && d.waPhone) d.linkUrl = 'wa';
   if(!d || !d.enabled || !d.linkUrl){
     box.style.display = 'none';
     return;
@@ -4156,7 +4166,7 @@ function applySponsoredAd(d){
   document.getElementById('adBoxTitle').textContent = d.title || '';
   document.getElementById('adBoxSubtitle').textContent = d.subtitle || '';
   const btn = document.getElementById('adBoxButton');
-  btn.href = d.linkUrl;
+  btn.href = mgAdHref(d);
   btn.textContent = d.buttonText || 'Bofya Uendelee';
   box.style.display = 'block';
 }
@@ -8705,7 +8715,7 @@ function normalizeTzPhone(phone){
 }
 function buildListingWaLink(listing){
   const phone = normalizeTzPhone(listing.sellerPhone);
-  const msg = 'Hello🖐 nataka ninunue bidhaa uliyo weka kwenye app ya mumbigames: ' + (listing.title||'');
+  const msg = 'Hello 🖐 ' + (listing.sellerName?listing.sellerName+', ':'') + 'nimeona bidhaa yako kwenye app ya mumbigames na ninaihitaji:\n\n🛍️ ' + (listing.title||'') + (listing.price?'\n💰 Bei: TZS '+listing.price:'') + '\n\nBado inapatikana? Naweza kuipata vipi?';
   return 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
 }
 
@@ -8751,6 +8761,7 @@ function renderDukaList(){
             <span class="d-gprice">TZS ${escapeHtml(l.price)}</span>
             ${l.wasPrice ? `<span class="d-gwas">${escapeHtml(l.wasPrice)}</span>` : ''}
           </div>
+          ${outOfStock ? '' : `<button type="button" class="mg-wa-card" onclick="event.stopPropagation();buyListing('${l.id}')">💬 WhatsApp</button>`}
         </div>
       </div>`;
   }).join('') : '<div class="empty">'+tvT('Hakuna bidhaa inayolingana. 🛍️','No matching items. 🛍️')+'</div>';
@@ -8965,6 +8976,10 @@ async function submitListing(){
   const editId = document.getElementById('lEditId').value.trim();
   if(!title || !price || !sellerName || !sellerPhone){
     alert('Jaza jina la bidhaa, bei, jina lako na namba yako kabla ya kutuma.');
+    return;
+  }
+  if(!/^255[67]\d{8}$/.test(normalizeTzPhone(sellerPhone))){
+    alert('Namba ya WhatsApp si sahihi. Andika mfano: 0712345678');
     return;
   }
   try{
